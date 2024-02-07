@@ -1,6 +1,5 @@
 ﻿using CSI.IBTA.AuthService.DTOs;
-using CSI.IBTA.Shared.Entities;
-using CSI.IBTA.Shared.IConfiguration;
+using CSI.IBTA.AuthService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.AuthService.Controllers
@@ -9,31 +8,24 @@ namespace CSI.IBTA.AuthService.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAuthenticationService _authenticationService;
 
-        public AuthController(IUnitOfWork unitOfWork)
+        public AuthController(IAuthenticationService authenticationService)
         {
-            _unitOfWork = unitOfWork;
+            _authenticationService = authenticationService;
         }
 
-        [HttpGet(Name = "Login")]
-        public async Task<IActionResult> Login(LoginRequest query)
+        [HttpPost(Name = "Login")]
+        public async Task<IActionResult> Login(LoginRequest request)
         {
-            var account = await _unitOfWork.Accounts.GetById(2);
-            var employer = await _unitOfWork.Employers.GetById(1);
+            var response = await _authenticationService.Login(request);
 
-            bool success = await _unitOfWork.Users.Upsert(new User
+            if (response == null)
             {
-                Id = 3,
-                Firstname = "TestasUP",
-                Lastname = "Testas2Up",
-                Account = account,
-                Employer = employer
-            });
+                return BadRequest();
+            }
 
-            await _unitOfWork.CompleteAsync();
-
-            return success ? Ok("OK") : BadRequest("Failed");
+            return Ok(response);
         }
     }
 }

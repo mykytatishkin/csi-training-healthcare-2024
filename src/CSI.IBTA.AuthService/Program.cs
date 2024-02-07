@@ -1,3 +1,5 @@
+using CSI.IBTA.AuthService.Interfaces;
+using CSI.IBTA.AuthService.Services;
 using CSI.IBTA.DataLayer;
 using CSI.IBTA.DataLayer.Models;
 
@@ -16,7 +18,7 @@ namespace CSI.IBTA.AuthService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<CsiHealthcare2024Context>();
+            builder.Services.AddAuthService();
             builder.Services.AddDataLayer();
 
             var app = builder.Build();
