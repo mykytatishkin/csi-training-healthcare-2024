@@ -12,6 +12,8 @@ namespace CSI.IBTA.DataLayer.Data
         private readonly ILogger _logger;
 
         public IUserRepository Users { get; private set; }
+        public IAccountRepository Accounts { get; private set; }
+        public IEmployerRepository Employers { get; private set; }
 
         public UnitOfWork(CsiHealthcare2024Context context, ILoggerFactory loggerFactory)
         {
@@ -19,6 +21,8 @@ namespace CSI.IBTA.DataLayer.Data
             _logger = loggerFactory.CreateLogger("logs");
 
             Users = new UserRepository(context, _logger);
+            Accounts = new AccountRepository(context, _logger);
+            Employers = new EmployerRepository(context, _logger);
         }
 
         public async Task CompleteAsync()

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace CSI.IBTA.DataLayer.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected CsiHealthcare2024Context context;
         internal DbSet<T> dbSet;
@@ -32,14 +32,22 @@ namespace CSI.IBTA.DataLayer.Repositories
             return true;
         }
 
-        public virtual Task<bool> Delete(int id)
+        public virtual async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            var entity = await dbSet.FindAsync(id);
+
+            if (entity == null)
+            {
+                return false;
+            }
+
+            dbSet.Remove(entity);
+            return true;
         }
 
-        public virtual Task<IEnumerable<T>> All()
+        public virtual async Task<IEnumerable<T>> All()
         {
-            throw new NotImplementedException();
+            return await dbSet.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
@@ -47,9 +55,6 @@ namespace CSI.IBTA.DataLayer.Repositories
             return await dbSet.Where(predicate).ToListAsync();
         }
 
-        public virtual Task<bool> Upsert(T entity)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract Task<bool> Upsert(T entity);
     }
 }
