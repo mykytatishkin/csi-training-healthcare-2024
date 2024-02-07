@@ -1,0 +1,6 @@
+@CSI.IBTA.AuthService_HostAddress = http://localhost:5085
+
+GET {{CSI.IBTA.AuthService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
