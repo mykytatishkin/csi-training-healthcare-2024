@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CSI.IBTA.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSI.IBTA.DataLayer.Models;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CSI.IBTA.DataLayer.Models;
+namespace CSI.IBTA.Shared.Entities;
 
 public partial class Test
 {
