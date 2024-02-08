@@ -8,11 +8,11 @@ namespace CSI.IBTA.DataLayer.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected CsiHealthcare2024Context _context;
+        protected UserManagementContext _context;
         internal DbSet<T> _dbSet;
         public readonly ILogger _logger;
 
-        public GenericRepository(CsiHealthcare2024Context context, ILogger logger)
+        public GenericRepository(UserManagementContext context, ILogger logger)
         {
             _context = context;
             _dbSet = context.Set<T>();
