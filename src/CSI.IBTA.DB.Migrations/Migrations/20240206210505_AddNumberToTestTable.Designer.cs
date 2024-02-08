@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSI.IBTA.DB.Migrations.Migrations
 {
-    [DbContext(typeof(CsiHealthcare2024Context))]
+    [DbContext(typeof(UserManagementContext))]
     [Migration("20240206210505_AddNumberToTestTable")]
     partial class AddNumberToTestTable
     {
