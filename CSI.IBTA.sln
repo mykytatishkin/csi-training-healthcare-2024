@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.DB.Migrations", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.DataLayer", "src\CSI.IBTA.DataLayer\CSI.IBTA.DataLayer.csproj", "{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSI.IBTA.AuthService", "src\CSI.IBTA.AuthService\CSI.IBTA.AuthService.csproj", "{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.AuthService", "src\CSI.IBTA.AuthService\CSI.IBTA.AuthService.csproj", "{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +78,14 @@ Global
 		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Release-no-db|Any CPU.ActiveCfg = Release|Any CPU
+		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Release-no-db|Any CPU.Build.0 = Release|Any CPU
+		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release-no-db|Any CPU.ActiveCfg = Release|Any CPU
+		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release-no-db|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

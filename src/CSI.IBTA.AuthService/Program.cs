@@ -1,7 +1,5 @@
-using CSI.IBTA.AuthService.Interfaces;
-using CSI.IBTA.AuthService.Services;
+using CSI.IBTA.AuthService.Middlewares;
 using CSI.IBTA.DataLayer;
-using CSI.IBTA.DataLayer.Models;
 
 namespace CSI.IBTA.AuthService
 {
@@ -11,15 +9,15 @@ namespace CSI.IBTA.AuthService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddAuthService();
-            builder.Services.AddDataLayer();
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new Exception("Connection string is null");
+            
+            builder.Services.AddAuthService(builder.Configuration);
+            builder.Services.AddDataLayer(connectionString);
 
             var app = builder.Build();
 
@@ -30,13 +28,10 @@ namespace CSI.IBTA.AuthService
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }
