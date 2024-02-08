@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-CSI.IBTA.ProcessingService-8e4a1c43-592a-420a-9b07-de54133a183a</UserSecretsId>
+    <Configurations>Debug;Release;Release-no-db</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
