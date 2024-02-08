@@ -1,60 +1,63 @@
-﻿using CSI.IBTA.DataLayer.Models;
-using CSI.IBTA.Shared.Interfaces;
+﻿using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 namespace CSI.IBTA.DataLayer.Repositories
 {
-    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected CsiHealthcare2024Context context;
-        internal DbSet<T> dbSet;
+        protected CsiHealthcare2024Context _context;
+        internal DbSet<T> _dbSet;
         public readonly ILogger _logger;
 
-        public GenericRepository(
-            CsiHealthcare2024Context context,
-            ILogger logger)
+        public GenericRepository(CsiHealthcare2024Context context, ILogger logger)
         {
-            this.context = context;
-            this.dbSet = context.Set<T>();
+            _context = context;
+            _dbSet = context.Set<T>();
             _logger = logger;
         }
 
         public virtual async Task<T?> GetById(int id)
         {
-            return await dbSet.FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public virtual async Task<bool> Add(T entity)
         {
-            await dbSet.AddAsync(entity);
+            await _dbSet.AddAsync(entity);
             return true;
         }
 
         public virtual async Task<bool> Delete(int id)
         {
-            var entity = await dbSet.FindAsync(id);
+            var entity = await _dbSet.FindAsync(id);
 
             if (entity == null)
             {
                 return false;
             }
 
-            dbSet.Remove(entity);
+            _dbSet.Remove(entity);
             return true;
         }
 
         public virtual async Task<IEnumerable<T>> All()
         {
-            return await dbSet.ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {
-            return await dbSet.Where(predicate).ToListAsync();
+            return await _dbSet.Where(predicate).ToListAsync();
         }
 
-        public abstract Task<bool> Upsert(T entity);
+        public virtual bool Upsert(T entity)
+        {
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+            return true;
+        }
     }
 }

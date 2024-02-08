@@ -1,5 +1,5 @@
 ﻿using CSI.IBTA.DataLayer.Data;
-using CSI.IBTA.Shared.IConfiguration;
+using CSI.IBTA.DataLayer.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CSI.IBTA.DataLayer
