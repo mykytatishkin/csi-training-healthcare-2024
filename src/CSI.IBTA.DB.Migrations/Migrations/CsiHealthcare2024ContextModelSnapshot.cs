@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSI.IBTA.DataLayer.Migrations
 {
-    [DbContext(typeof(CsiHealthcare2024Context))]
+    [DbContext(typeof(UserManagementContext))]
     partial class CsiHealthcare2024ContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

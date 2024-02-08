@@ -15,13 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.Shared", "src\CSI.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{184FDAF1-A872-4456-9A50-6E94C499B056}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSI.IBTA.Administrator.Tests", "tests\CSI.IBTA.Administrator.Tests\CSI.IBTA.Administrator.Tests.csproj", "{F09118CF-52F3-4DC7-ACDC-11E24EE7429A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.Administrator.Tests", "tests\CSI.IBTA.Administrator.Tests\CSI.IBTA.Administrator.Tests.csproj", "{F09118CF-52F3-4DC7-ACDC-11E24EE7429A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{35017032-6445-459B-87B0-B7771008863E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.DB.Migrations", "src\CSI.IBTA.DB.Migrations\CSI.IBTA.DB.Migrations.csproj", "{B41857E6-CA47-4AEB-B0A9-D6F8E93C0C19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSI.IBTA.DataLayer", "src\CSI.IBTA.DataLayer\CSI.IBTA.DataLayer.csproj", "{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.DataLayer", "src\CSI.IBTA.DataLayer\CSI.IBTA.DataLayer.csproj", "{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

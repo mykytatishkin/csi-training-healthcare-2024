@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSI.IBTA.DataLayer.Migrations
 {
-    [DbContext(typeof(CsiHealthcare2024Context))]
+    [DbContext(typeof(UserManagementContext))]
     [Migration("20240206195808_InitialMigration")]
     partial class InitialMigration
     {
