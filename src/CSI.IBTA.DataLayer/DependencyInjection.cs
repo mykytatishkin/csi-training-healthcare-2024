@@ -12,12 +12,12 @@ namespace CSI.IBTA.DataLayer
             this IServiceCollection services,
             string connectionString)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            
             services.AddDbContext<UserManagementContext>(options =>
                 options.UseSqlServer(
                     connectionString,
                     b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
+            
+            services.AddScoped<IUnitOfWork, UnitOfWork>();            
             
             return services;
         }

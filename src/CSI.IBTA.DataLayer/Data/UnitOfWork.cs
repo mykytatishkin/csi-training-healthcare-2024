@@ -8,17 +8,17 @@ namespace CSI.IBTA.DataLayer.Data
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly CsiHealthcare2024Context _context;
+        private readonly UserManagementContext _context;
         private readonly ILogger _logger;
 
-        public IGenericRepository<User> Accounts { get; private set; }
-
-        public UnitOfWork(CsiHealthcare2024Context context, ILoggerFactory loggerFactory)
+        public IGenericRepository<Account> Accounts { get; private set; }
+        
+        public UnitOfWork(UserManagementContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
             _logger = loggerFactory.CreateLogger("logs");
 
-            Accounts = new GenericRepository<User>(context, _logger);
+            Accounts = new GenericRepository<Account>(context, _logger);
         }
 
         public async Task CompleteAsync()
