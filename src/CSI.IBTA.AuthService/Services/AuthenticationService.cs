@@ -1,7 +1,7 @@
-﻿using CSI.IBTA.AuthService.DTOs;
-using CSI.IBTA.AuthService.Exceptions;
+﻿using CSI.IBTA.AuthService.Exceptions;
 using CSI.IBTA.AuthService.Interfaces;
 using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.Shared;
 
 namespace CSI.IBTA.AuthService.Services
 {

@@ -1,5 +1,5 @@
-﻿using CSI.IBTA.AuthService.DTOs;
-using CSI.IBTA.AuthService.Interfaces;
+﻿using CSI.IBTA.AuthService.Interfaces;
+using CSI.IBTA.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.AuthService.Controllers
