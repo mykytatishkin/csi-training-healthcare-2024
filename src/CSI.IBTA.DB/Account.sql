@@ -4,5 +4,6 @@
 	[Username] VARCHAR(24) NOT NULL,
 	[Password] VARCHAR(32) NOT NULL,
 	[RoleId] INT NOT NULL,
-	CONSTRAINT FK_AccountRole FOREIGN KEY (RoleId) REFERENCES Role(Id)
+
+	CONSTRAINT FK_AccountRole FOREIGN KEY (RoleId) REFERENCES [dbo].[Role](Id)
 )

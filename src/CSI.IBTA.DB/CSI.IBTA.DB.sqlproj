@@ -58,7 +58,6 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Test.sql" />
     <Build Include="Account.sql" />
     <Build Include="Role.sql" />
     <Build Include="User.sql" />
@@ -67,6 +66,7 @@
     <Build Include="Phone.sql" />
     <Build Include="Email.sql" />
     <Build Include="Settings.sql" />
+    <Build Include="EmployerUsers.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="CSI.IBTA.DB.refactorlog" />
