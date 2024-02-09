@@ -1,19 +1,20 @@
-﻿body {
+﻿@import url('global.css');
+
+body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: var(--background-color);
 }
 
 .login-container {
     width: 420px;
     margin: 100px auto;
-    background-color: #fff;
+    background-color: var(--container-background-color);
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px var(--box-shadow-color);
     padding: 10px 30px 15px 0px;
 }
 
 .form-group {
-    margin-top: 20px;
     display: flex;
     align-items: center;
 }
@@ -22,29 +23,36 @@
     flex: 1;
     text-align: right;
     margin-right: 30px;
+    margin-top: 20px;
 }
 
 .form-group input {
     flex: 2;
     padding: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--form-border-color);
     border-radius: 3px;
+    margin-top: 20px;
 }
 
 .form-group button {
     width: 125px;
     padding: 2px;
-    background-color: #007bff;
+    background-color: var(--button-primary-color);
     color: #fff;
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    margin-top: 15px;
     margin-left: auto;
     border-radius: 10px;
     font-size: 18px;
 }
 
 .form-group button:hover {
-    background-color: #0056b3;
+    background-color: var(--button-primary-hover-color);
+}
+
+.text-danger {
+    margin-top: 15px;
+    margin-left: 25px;
+    color: var(--text-danger-color);
 }

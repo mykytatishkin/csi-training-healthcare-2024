@@ -12,14 +12,18 @@
 </head>
 <body>
     <div class="login-container">
-        <form action="/login" method="post">
+        @model LoginViewModel
+        <form asp-controller="Login" asp-action="Login" method="post">
             <div class="form-group">
-                <label for="username">User Name</label>
-                <input type="text" id="username" name="username" required>
+                <label for="Username">User Name</label>
+                <input asp-for="Username" class="form-control" required />
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <div asp-validation-summary="All" class="text-danger"></div>
             </div>
             <div class="form-group">
                 <button type="submit">Login</button>
