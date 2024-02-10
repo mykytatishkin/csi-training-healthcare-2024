@@ -1,31 +1,22 @@
 using CSI.IBTA.Administrator.Models;
-using CSI.IBTA.Shared;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Text;
-using Newtonsoft.Json;
 using System.Net;
-using System.IdentityModel.Tokens.Jwt;
-using Newtonsoft.Json.Linq;
+using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Extensions;
+using CSI.IBTA.Administrator.Endpoints;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly ILogger<LoginController> _logger;
-        private readonly HttpClient _httpClient;
+        private readonly IAuthClient _client;
+        private readonly IJwtTokenService _jwtTokenService;
 
-        public LoginController(ILogger<LoginController> logger, IConfiguration configuration)
+        public LoginController(IAuthClient client, IJwtTokenService jwtTokenService)
         {
-            _logger = logger;
-            _httpClient = new HttpClient();
-            var authServiceApiUrl = configuration.GetValue<string>("AuthServiceApiUrl");
-            if (string.IsNullOrEmpty(authServiceApiUrl))
-            {
-                _logger.LogError("AuthServiceApiUrl is missing in appsettings.json");
-                throw new InvalidOperationException("AuthServiceApiUrl is missing in appsettings.json");
-            }
-            _httpClient.BaseAddress = new Uri(authServiceApiUrl);
+            _client = client;
+            _jwtTokenService = jwtTokenService;
         }
 
         public IActionResult Index()
@@ -41,12 +32,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 return View("Index", model);
             }
 
-            var apiEndpoint = "v1/Auth";
-            var dto = new LoginRequest(model.Username, model.Password);
-            var jsonBody = JsonConvert.SerializeObject(dto);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync(apiEndpoint, content);
+            var response = await _client.PostAsync(model.ToDto(), AuthApiEndpoints.Auth);
             if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -60,29 +46,16 @@ namespace CSI.IBTA.Administrator.Controllers
                 return View("Index", model);
             }
 
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var tokenObject = JsonConvert.DeserializeObject<JToken>(responseContent);
-            var token = tokenObject?["token"]?.Value<string>();
+            var (isAdmin, token) = await _jwtTokenService.CheckUserIsAdminAsync(response);
 
-            if(token == null) _logger.LogError("Failed to deserialize token");
-
-            var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(token);
-            var role = jwtSecurityToken.Claims
-                    .FirstOrDefault(claim => claim.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?
-                    .Value;
-
-            if(role != "Administrator")
+            if(!isAdmin)
             {
                 ModelState.AddModelError("", "Access to administrator portal denied");
                 return View("Index", model);
             }
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true
-            };
-            Response.Cookies.Append("jwtToken", token ?? "", cookieOptions);
+            var cookieOptions =_jwtTokenService.GetCookieOptions();
+            Response.Cookies.Append("jwtToken", token, cookieOptions);
             return RedirectToAction("Index", "Home");
         }
 

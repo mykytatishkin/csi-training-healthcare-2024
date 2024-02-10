@@ -1,7 +1,15 @@
+using CSI.IBTA.Administrator.Clients;
+using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddLogging();
+
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<IAuthClient, AuthClient>();
 
 var app = builder.Build();
 
