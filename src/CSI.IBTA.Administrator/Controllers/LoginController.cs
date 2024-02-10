@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
 using System.Net;
+using System.IdentityModel.Tokens.Jwt;
+using Newtonsoft.Json.Linq;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -22,10 +24,6 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 _logger.LogError("AuthServiceApiUrl is missing in appsettings.json");
                 throw new InvalidOperationException("AuthServiceApiUrl is missing in appsettings.json");
-            }
-            else
-            {
-                Console.WriteLine("skdksd");
             }
             _httpClient.BaseAddress = new Uri(authServiceApiUrl);
         }
@@ -46,31 +44,46 @@ namespace CSI.IBTA.Administrator.Controllers
             var apiEndpoint = "v1/Auth";
             var dto = new LoginRequest(model.Username, model.Password);
             var jsonBody = JsonConvert.SerializeObject(dto);
-
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(apiEndpoint, content);
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var token = await response.Content.ReadAsStringAsync();
-
-                var cookieOptions = new CookieOptions
+                if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
-                    HttpOnly = true
-                };
-                Response.Cookies.Append("jwtToken", token, cookieOptions);
+                    ModelState.AddModelError("", "Server error");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid username or password");
+                }
+                return View("Index", model);
+            }
 
-                return RedirectToAction("Index", "Home");
-            }
-            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var tokenObject = JsonConvert.DeserializeObject<JToken>(responseContent);
+            var token = tokenObject?["token"]?.Value<string>();
+
+            if(token == null) _logger.LogError("Failed to deserialize token");
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var role = jwtSecurityToken.Claims
+                    .FirstOrDefault(claim => claim.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?
+                    .Value;
+
+            if(role != "Administrator")
             {
-                ModelState.AddModelError("", "Server error");
+                ModelState.AddModelError("", "Access to administrator portal denied");
+                return View("Index", model);
             }
-            else
+
+            var cookieOptions = new CookieOptions
             {
-                ModelState.AddModelError("", "Invalid username or password");
-            }
-            return View("Index", model);
+                HttpOnly = true
+            };
+            Response.Cookies.Append("jwtToken", token ?? "", cookieOptions);
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Logout()
