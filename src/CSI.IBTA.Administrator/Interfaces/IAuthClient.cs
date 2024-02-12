@@ -1,7 +1,10 @@
-﻿namespace CSI.IBTA.Administrator.Interfaces
+﻿using CSI.IBTA.Shared;
+using CSI.IBTA.Shared.Types;
+
+namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IAuthClient
     {
-        Task<HttpResponseMessage> PostAsync<T>(T dto, string apiEndpoint) where T : class;
+        Task<AuthenticationResult> Authenticate(LoginRequest request);
     }
 }

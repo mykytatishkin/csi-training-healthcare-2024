@@ -7,9 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddLogging();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-builder.Services.AddScoped<IAuthClient, AuthClient>();
+builder.Services.AddHttpClient<IAuthClient, AuthClient>();
 
 var app = builder.Build();
 

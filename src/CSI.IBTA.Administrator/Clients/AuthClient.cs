@@ -1,18 +1,26 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
+using CSI.IBTA.Administrator.Constants;
+using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Shared;
+using CSI.IBTA.Shared.Types;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CSI.IBTA.Administrator.Clients
 {
-    public class AuthClient : IAuthClient
+    internal class AuthClient : IAuthClient
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<AuthClient> _logger;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthClient(ILogger<AuthClient> logger, IConfiguration configuration)
+        public AuthClient(HttpClient httpClient, IJwtTokenService jwtTokenService, ILogger<AuthClient> logger, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
-            _httpClient = new HttpClient();
+            _httpClient = httpClient;
             var authServiceApiUrl = configuration.GetValue<string>("AuthServiceApiUrl");
             if (string.IsNullOrEmpty(authServiceApiUrl))
             {
@@ -20,14 +28,45 @@ namespace CSI.IBTA.Administrator.Clients
                 throw new InvalidOperationException("AuthServiceApiUrl is missing in appsettings.json");
             }
             _httpClient.BaseAddress = new Uri(authServiceApiUrl);
+            _jwtTokenService = jwtTokenService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<HttpResponseMessage> PostAsync <T> (T dto, string apiEndpoint) where T : class
+        public async Task<AuthenticationResult> Authenticate(LoginRequest request)
         {
-            var jsonBody = JsonConvert.SerializeObject(dto);
+            var defaultErrorMessage = "An error occurred during authentication";
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                _logger.LogError("HttpContext is null");
+                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+            }
+            var jsonBody = JsonConvert.SerializeObject(request);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            return await _httpClient.PostAsync(apiEndpoint, content);
+            var response = await _httpClient.PostAsync(AuthApiEndpoints.Auth, content);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+                return new AuthenticationResult { Success = false, Description = "Invalid credentials" };
+
+            if (!response.IsSuccessStatusCode)
+                return new AuthenticationResult { Success = false, Description = response.ReasonPhrase ?? defaultErrorMessage };
+            
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var jToken = JsonConvert.DeserializeObject<JToken>(responseContent);
+
+            if (jToken == null)
+            {
+                _logger.LogError("Failed to extract token from response");
+                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+            }
+
+            var (isAdmin, token) = _jwtTokenService.IsAdmin(jToken);
+
+            if (!isAdmin)
+                return new AuthenticationResult { Success = false, Description = "Access to portal denied" };
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.JwtTokenCookieName, token, _jwtTokenService.GetCookieOptions());
+            return new AuthenticationResult { Success = true, Description = "Authentication successful" }; 
         }
     }
 }
