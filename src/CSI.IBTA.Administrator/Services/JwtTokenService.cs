@@ -5,7 +5,7 @@ using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Services
 {
-    public class JwtTokenService : IJwtTokenService
+    internal class JwtTokenService : IJwtTokenService
     {
         private readonly ILogger<JwtTokenService> _logger;
         public JwtTokenService(ILogger<JwtTokenService> logger)
