@@ -5,5 +5,5 @@
 	[State] BIT NOT NULL,
 	[EmployerId] INT NOT NULL,
 
-	CONSTRAINT FK_SettingsEmployer FOREIGN KEY (EmployerId) REFERENCES [dbo].[Employer](Id)
+	CONSTRAINT FK_Settings_Employer_EmployerId FOREIGN KEY (EmployerId) REFERENCES [dbo].[Employer](Id)
 )

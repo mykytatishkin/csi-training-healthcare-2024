@@ -4,5 +4,5 @@
 	[Email] VARCHAR(60) NOT NULL,
 	[AccountId] INT NOT NULL,
 
-	CONSTRAINT FK_EmailUser FOREIGN KEY (AccountId) REFERENCES [dbo].[User](Id)
+	CONSTRAINT FK_Email_User_AccountId FOREIGN KEY (AccountId) REFERENCES [dbo].[User](Id)
 )

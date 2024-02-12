@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[Package]
+(
+	[Id] INT NOT NULL PRIMARY KEY,
+	[Name] VARCHAR(50) NOT NULL,
+	[PlanStart] DATETIME NOT NULL,
+	[PlanEnd] DATETIME NOT NULL,
+	[PayrollFrequency] VARCHAR(30) NOT NULL
+)

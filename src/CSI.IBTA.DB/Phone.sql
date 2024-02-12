@@ -4,5 +4,5 @@
 	[Phone] VARCHAR(30) NOT NULL,
 	[AccountId] INT NOT NULL,
 
-	CONSTRAINT FK_PhoneUser FOREIGN KEY (AccountId) REFERENCES [dbo].[User](Id)
+	CONSTRAINT FK_Phone_User_AccountId FOREIGN KEY (AccountId) REFERENCES [dbo].[User](Id)
 )

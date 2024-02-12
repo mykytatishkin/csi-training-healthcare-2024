@@ -7,5 +7,5 @@
 	[Zip] VARCHAR(9) NOT NULL,
 	[AccountId] INT NOT NULL,
 
-	CONSTRAINT FK_AddressUser FOREIGN KEY (AccountId) REFERENCES [dbo].[User](Id)
+	CONSTRAINT FK_Address_User_AccountId FOREIGN KEY (AccountId) REFERENCES [dbo].[User](Id)
 )

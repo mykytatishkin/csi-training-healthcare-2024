@@ -5,5 +5,5 @@
 	[LastName] VARCHAR(30) NOT NULL,
 	[AccountId] INT NOT NULL,
 
-	CONSTRAINT FK_UserAccount FOREIGN KEY (AccountId) REFERENCES [dbo].[Account](Id)
+	CONSTRAINT FK_User_Account_AccountId FOREIGN KEY (AccountId) REFERENCES [dbo].[Account](Id)
 )
