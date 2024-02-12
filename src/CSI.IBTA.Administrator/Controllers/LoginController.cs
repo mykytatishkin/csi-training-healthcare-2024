@@ -41,7 +41,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Invalid username or password");
+                    ModelState.AddModelError("", "Invalid credentials");
                 }
                 return View("Index", model);
             }

@@ -5,6 +5,7 @@ using CSI.IBTA.Administrator.Interfaces;
 
 namespace CSI.IBTA.Administrator.Services
 {
+    //should this class be moved to Shared project so that it could be reused by Employer and Consumer portals?
     public class JwtTokenService : IJwtTokenService
     {
         private readonly ILogger<JwtTokenService> _logger;
