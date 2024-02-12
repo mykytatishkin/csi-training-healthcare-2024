@@ -1,8 +1,9 @@
 ﻿namespace CSI.IBTA.Shared.Entities
 {
-    public class Role
+    public enum Role
     {
-        public int Id { get; set; }
-        public string RoleName { get; set; } = null!;
+        Employee = 1,
+        EmployerAdmin = 2,
+        Administrator = 3
     }
 }

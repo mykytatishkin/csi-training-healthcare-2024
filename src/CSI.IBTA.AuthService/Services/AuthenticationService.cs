@@ -31,13 +31,6 @@ namespace CSI.IBTA.AuthService.Services
             }
 
             var account = result.Single();
-            var role = await _unitOfWork.Roles.GetById(account.RoleId);
-
-            if (role == null)
-            {
-                // Should we write exactly what happened for user?
-                throw new InternalServerErrorException("Something went wrong");
-            }
 
             bool isPasswordCorrect = _passwordHasher.Verify(request.Password, account.Password);
 
@@ -46,7 +39,7 @@ namespace CSI.IBTA.AuthService.Services
                 throw new UnauthorizedException("Invalid credentials");
             }
 
-            var token = _jwtTokenGenerator.GenerateToken(account.Id, role.RoleName);
+            var token = _jwtTokenGenerator.GenerateToken(account.Id, account.Role.ToString());
 
             return new LoginResponse(token);
         }

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Services
 {
@@ -40,7 +41,7 @@ namespace CSI.IBTA.Administrator.Services
                 .FirstOrDefault(claim => claim.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?
                 .Value;
 
-            return role == "Administrator" ? (true, token) : (false, "");
+            return role == Role.Administrator.ToString() ? (true, token) : (false, "");
         }
     }
 }
