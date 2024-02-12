@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.DataLayer", "src\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSI.IBTA.AuthService", "src\CSI.IBTA.AuthService\CSI.IBTA.AuthService.csproj", "{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSI.IBTA.UserService", "src\CSI.IBTA.UserService\CSI.IBTA.UserService.csproj", "{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,12 @@ Global
 		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release|Any CPU.Build.0 = Release|Any CPU
 		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release-no-db|Any CPU.ActiveCfg = Release|Any CPU
 		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release-no-db|Any CPU.Build.0 = Release|Any CPU
+		{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8}.Release-no-db|Any CPU.ActiveCfg = Release|Any CPU
+		{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8}.Release-no-db|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +108,7 @@ Global
 		{B41857E6-CA47-4AEB-B0A9-D6F8E93C0C19} = {184FDAF1-A872-4456-9A50-6E94C499B056}
 		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB} = {184FDAF1-A872-4456-9A50-6E94C499B056}
 		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95} = {184FDAF1-A872-4456-9A50-6E94C499B056}
+		{EBDEB42B-B51C-46A2-BE15-208A06CF7FC8} = {184FDAF1-A872-4456-9A50-6E94C499B056}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B4D356A8-C3E0-41B7-88B2-7EDD98F10B84}

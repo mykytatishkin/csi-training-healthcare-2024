@@ -1,3 +1,8 @@
+using CSI.IBTA.UserService.Interfaces;
+using CSI.IBTA.UserService.Services;
+using CSI.IBTA.DataLayer;
+using CSI.IBTA.AuthService.Interfaces;
+using CSI.IBTA.AuthService.Authentication;
 
 namespace CSI.IBTA.UserService
 {
@@ -14,6 +19,14 @@ namespace CSI.IBTA.UserService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddScoped<IUserService, UserServiceS>();
+
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new Exception("Connection string is null");
+
+            builder.Services.AddDataLayer(connectionString);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -24,10 +37,7 @@ namespace CSI.IBTA.UserService
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

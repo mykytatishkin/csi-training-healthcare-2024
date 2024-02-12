@@ -12,6 +12,8 @@ namespace CSI.IBTA.DataLayer.Data
         private readonly ILogger _logger;
 
         public IGenericRepository<Account> Accounts { get; private set; }
+        public IGenericRepository<User> Users { get; private set; }
+        public IGenericRepository<Role> Roles { get; private set; }
 
         public UnitOfWork(UserManagementContext context, ILoggerFactory loggerFactory)
         {
@@ -19,6 +21,8 @@ namespace CSI.IBTA.DataLayer.Data
             _logger = loggerFactory.CreateLogger("logs");
 
             Accounts = new GenericRepository<Account>(context, _logger);
+            Users = new GenericRepository<User>(context, _logger);
+            Roles = new GenericRepository<Role>(context, _logger);
         }
 
         public async Task CompleteAsync()
