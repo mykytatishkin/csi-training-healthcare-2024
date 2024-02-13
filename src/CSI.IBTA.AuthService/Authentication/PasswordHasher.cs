@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace CSI.IBTA.AuthService.Authentication
 {
-    public class PasswordHasher : IPasswordHasher
+    internal class PasswordHasher : IPasswordHasher
     {
         private readonly int _saltByteSize = 24;
         private readonly int _hashByteSize = 24;

@@ -1,4 +1,3 @@
-using CSI.IBTA.AuthService.Middlewares;
 using CSI.IBTA.DataLayer;
 
 namespace CSI.IBTA.AuthService
@@ -28,7 +27,6 @@ namespace CSI.IBTA.AuthService
                 app.UseSwaggerUI();
             }
 
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

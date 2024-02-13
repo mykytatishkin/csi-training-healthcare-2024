@@ -1,6 +1,6 @@
 ﻿using CSI.IBTA.AuthService.Interfaces;
-using CSI.IBTA.Shared;
 using Microsoft.AspNetCore.Mvc;
+using CSI.IBTA.Shared;
 
 namespace CSI.IBTA.AuthService.Controllers
 {
@@ -20,12 +20,15 @@ namespace CSI.IBTA.AuthService.Controllers
         {
             var response = await _authenticationService.Login(request);
 
-            if (response == null)
+            if (response.HasError)
             {
-                return BadRequest();
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response);
+            return Ok(response.Result);
         }
     }
 }
