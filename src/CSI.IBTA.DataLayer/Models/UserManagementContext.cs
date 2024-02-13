@@ -20,7 +20,6 @@ public partial class UserManagementContext : DbContext
             {
                 Id = 1,
                 Username = "Admin",
-                // Is this seeding method fine?
                 // Password: admin
                 Password = "1000:+cW1d+J1cdzepfIFXH2lTzJUXFhFt6wO:2YU157R4anp5Y9Qrdbh5tRXo2KIhV8Ik",
                 Role = Role.Administrator
