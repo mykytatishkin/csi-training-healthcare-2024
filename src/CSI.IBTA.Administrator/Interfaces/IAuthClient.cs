@@ -1,4 +1,4 @@
-﻿using CSI.IBTA.Shared;
+﻿using CSI.IBTA.Shared.DTOs.Login;
 using CSI.IBTA.Shared.Types;
 
 namespace CSI.IBTA.Administrator.Interfaces

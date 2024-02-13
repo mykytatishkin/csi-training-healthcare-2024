@@ -1,5 +1,5 @@
 ﻿using CSI.IBTA.Administrator.Models;
-using CSI.IBTA.Shared;
+using CSI.IBTA.Shared.DTOs.Login;
 
 namespace CSI.IBTA.Administrator.Extensions
 {

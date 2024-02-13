@@ -1,6 +1,6 @@
 ﻿using CSI.IBTA.AuthService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using CSI.IBTA.Shared;
+using CSI.IBTA.Shared.DTOs.Login;
 
 namespace CSI.IBTA.AuthService.Controllers
 {
