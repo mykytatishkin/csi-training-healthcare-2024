@@ -21,6 +21,7 @@ namespace CSI.IBTA.UserService
 
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IEmployersService, EmployersService>();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("Connection string is null");

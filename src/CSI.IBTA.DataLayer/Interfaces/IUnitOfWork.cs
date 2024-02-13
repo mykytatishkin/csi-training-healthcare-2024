@@ -6,6 +6,7 @@ namespace CSI.IBTA.DataLayer.Interfaces
     {
         IGenericRepository<Account> Accounts { get; }
         IGenericRepository<User> Users { get; }
+        IGenericRepository<Employer> Employers { get; }
 
         Task CompleteAsync();
     }

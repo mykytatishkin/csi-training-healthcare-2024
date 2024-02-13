@@ -6,7 +6,7 @@ using CSI.IBTA.UserService.Interfaces;
 
 namespace CSI.IBTA.UserService.Services
 {
-    public class UsersService : IUsersService
+    internal class UsersService : IUsersService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;

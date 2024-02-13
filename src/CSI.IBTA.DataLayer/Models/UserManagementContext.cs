@@ -7,6 +7,7 @@ public partial class UserManagementContext : DbContext
 {
     public DbSet<Account> Accounts { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Employer> Employers { get; set; }
 
     public UserManagementContext(DbContextOptions<UserManagementContext> options)
         : base(options)

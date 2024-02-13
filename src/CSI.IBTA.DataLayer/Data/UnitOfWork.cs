@@ -13,6 +13,7 @@ namespace CSI.IBTA.DataLayer.Data
 
         public IGenericRepository<Account> Accounts { get; private set; }
         public IGenericRepository<User> Users { get; private set; }
+        public IGenericRepository<Employer> Employers { get; private set; }
 
         public UnitOfWork(UserManagementContext context, ILoggerFactory loggerFactory)
         {
@@ -21,6 +22,7 @@ namespace CSI.IBTA.DataLayer.Data
 
             Accounts = new GenericRepository<Account>(context, _logger);
             Users = new GenericRepository<User>(context, _logger);
+            Employers = new GenericRepository<Employer>(context, _logger);
         }
 
         public async Task CompleteAsync()
