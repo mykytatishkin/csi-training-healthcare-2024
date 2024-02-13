@@ -8,9 +8,9 @@ namespace CSI.IBTA.UserService.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IUsersService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IUsersService userService)
         {
             _userService = userService;
         }

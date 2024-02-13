@@ -20,7 +20,7 @@ namespace CSI.IBTA.UserService
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddScoped<IUserService, UserServiceS>();
+            builder.Services.AddScoped<IUsersService, UsersService>();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("Connection string is null");

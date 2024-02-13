@@ -1,20 +1,17 @@
-﻿using Azure.Core;
-using CSI.IBTA.AuthService.Interfaces;
+﻿using CSI.IBTA.AuthService.Interfaces;
 using CSI.IBTA.DataLayer.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.UserService.Services
 {
-    public class UserServiceS : IUserService
+    public class UsersService : IUsersService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
 
-        public UserServiceS( 
+        public UsersService( 
             IUnitOfWork unitOfWork,
             IPasswordHasher passwordHasher)
         {
@@ -49,7 +46,7 @@ namespace CSI.IBTA.UserService.Services
             {
                 Username = createUserDto.UserName,
                 Password = _passwordHasher.Hash(createUserDto.Password),
-                RoleId = createUserDto.RoleId
+                Role = createUserDto.Role
             };
 
             User newUser = new User()
@@ -62,7 +59,7 @@ namespace CSI.IBTA.UserService.Services
             await _unitOfWork.Accounts.Add(newAccount);
             await _unitOfWork.Users.Add(newUser);
             await _unitOfWork.CompleteAsync();
-            return new NewUserDto(newUser.Id, newUser.Account.Username, newUser.Account.Password, newUser.Firstname, newUser.Lastname, newUser.Account.Id, newUser.Account.RoleId);
+            return new NewUserDto(newUser.Id, newUser.Account.Username, newUser.Account.Password, newUser.Firstname, newUser.Lastname, newUser.Account.Id, newUser.Account.Role);
         }
 
         public async Task<NewUserDto?> UpdateUser(int userId, UpdateUserDto updateUserDto)
@@ -96,7 +93,7 @@ namespace CSI.IBTA.UserService.Services
             _unitOfWork.Accounts.Upsert(account);
             _unitOfWork.Users.Upsert(user);
             await _unitOfWork.CompleteAsync();
-            return new NewUserDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.Account.Id, user.Account.RoleId);
+            return new NewUserDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.Account.Id, user.Account.Role);
         }
 
         public async Task<bool> DeleteUser(int userId)

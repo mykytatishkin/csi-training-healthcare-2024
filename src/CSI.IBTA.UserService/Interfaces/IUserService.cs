@@ -1,9 +1,8 @@
 ﻿using CSI.IBTA.Shared.DTOs;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.UserService.Interfaces
 {
-    public interface IUserService
+    public interface IUsersService
     {
         
         public Task<UserDto?> GetUser(int accountId);
