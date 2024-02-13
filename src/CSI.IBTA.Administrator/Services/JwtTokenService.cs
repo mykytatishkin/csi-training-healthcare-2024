@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Services
 {
-    //should this class be moved to Shared project so that it could be reused by Employer and Consumer portals?
-    public class JwtTokenService : IJwtTokenService
+    internal class JwtTokenService : IJwtTokenService
     {
         private readonly ILogger<JwtTokenService> _logger;
         public JwtTokenService(ILogger<JwtTokenService> logger)
@@ -23,25 +21,23 @@ namespace CSI.IBTA.Administrator.Services
             };
         }
 
-        public async Task<(bool isAdmin, string token)> CheckUserIsAdminAsync(HttpResponseMessage response)
+        public (bool isAdmin, string token) IsAdmin(JToken token)
         {
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var tokenObject = JsonConvert.DeserializeObject<JToken>(responseContent);
-            var token = tokenObject?["token"]?.Value<string>();
+            var t = token["token"]?.Value<string>();
 
-            if (token == null)
+            if (t == null)
             {
-                _logger.LogError("Failed to deserialize token");
+                _logger.LogError("Failed to get token value");
                 return (false, "");
             }
 
             var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var jwtSecurityToken = handler.ReadJwtToken(t);
             var role = jwtSecurityToken.Claims
                 .FirstOrDefault(claim => claim.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?
                 .Value;
 
-            return role == Role.Administrator.ToString() ? (true, token) : (false, "");
+            return role == Role.Administrator.ToString() ? (true, t) : (false, "");
         }
     }
 }

@@ -1,19 +1,20 @@
-﻿using CSI.IBTA.AuthService.Exceptions;
+﻿using CSI.IBTA.AuthService.DTOs.Errors;
 using CSI.IBTA.AuthService.Interfaces;
 using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.AuthService.DTOs;
 using CSI.IBTA.Shared;
 
 namespace CSI.IBTA.AuthService.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    internal class AuthenticationService : IAuthenticationService
     {
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IUnitOfWork _unitOfWork;
 
         public AuthenticationService(
-            IJwtTokenGenerator jwtTokenGenerator, 
-            IPasswordHasher passwordHasher, 
+            IJwtTokenGenerator jwtTokenGenerator,
+            IPasswordHasher passwordHasher,
             IUnitOfWork unitOfWork)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
@@ -21,13 +22,13 @@ namespace CSI.IBTA.AuthService.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<LoginResponse> Login(LoginRequest request)
+        public async Task<GenericResponse<LoginResponse>> Login(LoginRequest request)
         {
             var result = await _unitOfWork.Accounts.Find(a => a.Username == request.Username);
 
             if (!result.Any())
             {
-                throw new UnauthorizedException("Invalid credentials");
+                return new GenericResponse<LoginResponse>(true, Errors.InvalidCredentials, null);
             }
 
             var account = result.Single();
@@ -36,12 +37,12 @@ namespace CSI.IBTA.AuthService.Services
 
             if (isPasswordCorrect == false)
             {
-                throw new UnauthorizedException("Invalid credentials");
+                return new GenericResponse<LoginResponse>(true, Errors.InvalidCredentials, null);
             }
 
             var token = _jwtTokenGenerator.GenerateToken(account.Id, account.Role.ToString());
 
-            return new LoginResponse(token);
+            return new GenericResponse<LoginResponse>(false, null, new LoginResponse(token));
         }
     }
 }
