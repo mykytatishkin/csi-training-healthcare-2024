@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
+	<Configurations>Debug;Release;Release-no-db</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
