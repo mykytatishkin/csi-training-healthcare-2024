@@ -12,7 +12,7 @@ namespace CSI.IBTA.DataLayer.Data
         private readonly ILogger _logger;
 
         public IGenericRepository<Account> Accounts { get; private set; }
-        
+
         public UnitOfWork(UserManagementContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
