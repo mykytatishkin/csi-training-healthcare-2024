@@ -1,8 +1,6 @@
 using CSI.IBTA.UserService.Interfaces;
 using CSI.IBTA.UserService.Services;
 using CSI.IBTA.DataLayer;
-using CSI.IBTA.AuthService.Interfaces;
-using CSI.IBTA.AuthService.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -22,7 +20,6 @@ namespace CSI.IBTA.UserService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IUsersService, UsersService>();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")

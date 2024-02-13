@@ -2,11 +2,11 @@
 
 namespace CSI.IBTA.Shared.Entities
 {
-    internal class Phone
+    public class Phone
     {
         public int Id { get; set; }
         [Column("Phone")]
-        public int PhoneNumber { get; set; }
-        public Account Account { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public User Account { get; set; } = null!;
     }
 }

@@ -1,4 +1,4 @@
-﻿using CSI.IBTA.AuthService.DTOs;
+﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared;
 
 namespace CSI.IBTA.AuthService.Interfaces

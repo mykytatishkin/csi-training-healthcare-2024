@@ -1,24 +1,22 @@
-﻿using CSI.IBTA.AuthService.DTOs.Errors;
+﻿using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.AuthService.Interfaces;
 using CSI.IBTA.DataLayer.Interfaces;
-using CSI.IBTA.AuthService.DTOs;
+using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared;
+using CSI.IBTA.Shared.Utils;
 
 namespace CSI.IBTA.AuthService.Services
 {
     internal class AuthenticationService : IAuthenticationService
     {
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly IPasswordHasher _passwordHasher;
         private readonly IUnitOfWork _unitOfWork;
 
         public AuthenticationService(
             IJwtTokenGenerator jwtTokenGenerator,
-            IPasswordHasher passwordHasher,
             IUnitOfWork unitOfWork)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
-            _passwordHasher = passwordHasher;
             _unitOfWork = unitOfWork;
         }
 
@@ -33,7 +31,7 @@ namespace CSI.IBTA.AuthService.Services
 
             var account = result.Single();
 
-            bool isPasswordCorrect = _passwordHasher.Verify(request.Password, account.Password);
+            bool isPasswordCorrect = PasswordHasher.Verify(request.Password, account.Password);
 
             if (isPasswordCorrect == false)
             {

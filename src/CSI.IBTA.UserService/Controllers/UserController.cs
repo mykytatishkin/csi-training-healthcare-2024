@@ -1,7 +1,6 @@
 ﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.UserService.Controllers
@@ -23,12 +22,15 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.GetUser(accountId, HttpContext);
 
-            if (response == null)
+            if (response.HasError)
             {
-                return BadRequest();
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response);
+            return Ok(response.Result);
         }
 
         [HttpPost]
@@ -36,12 +38,15 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.CreateUser(createUserDto, HttpContext);
 
-            if (response == null)
+            if (response.HasError)
             {
-                return BadRequest();
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response);
+            return Ok(response.Result);
         }
 
         [HttpPatch("{userId}")]
@@ -49,12 +54,15 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.UpdateUser(userId, updateUserDto, HttpContext);
 
-            if (response == null)
+            if (response.HasError)
             {
-                return BadRequest();
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response);
+            return Ok(response.Result);
         }
 
         [HttpDelete("{userId}")]
@@ -62,12 +70,15 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.DeleteUser(userId, HttpContext);
 
-            if (response == false)
+            if (response.HasError)
             {
-                return BadRequest();
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response);
+            return Ok(response.Result);
         }
     }
 }
