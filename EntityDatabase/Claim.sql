@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Claim]
 (
-	[Id] INT NOT NULL PRIMARY KEY,
+	[Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	[EmployeeId] INT NOT NULL,
 	[ClaimNumber] VARCHAR(50) NOT NULL,
 	[DateOfService] DATETIME NOT NULL,
