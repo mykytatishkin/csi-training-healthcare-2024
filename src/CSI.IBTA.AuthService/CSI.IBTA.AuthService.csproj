@@ -21,4 +21,8 @@
     <ProjectReference Include="..\CSI.IBTA.DB.Migrations\CSI.IBTA.DB.Migrations.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
 </Project>

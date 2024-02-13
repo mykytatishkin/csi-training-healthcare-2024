@@ -1,19 +1,18 @@
-﻿using CSI.IBTA.AuthService.Interfaces;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
-namespace CSI.IBTA.AuthService.Authentication
+namespace CSI.IBTA.Shared.Utils
 {
-    public class PasswordHasher : IPasswordHasher
+    public static class PasswordHasher
     {
-        private readonly int _saltByteSize = 24;
-        private readonly int _hashByteSize = 24;
-        private readonly int _pbkdf2Iterations = 1000;
+        private static readonly int _saltByteSize = 24;
+        private static readonly int _hashByteSize = 24;
+        private static readonly int _pbkdf2Iterations = 1000;
 
-        private readonly int _iterationIndex = 0;
-        private readonly int _saltIndex = 1;
-        private readonly int _pbkdf2Index = 2;
+        private static readonly int _iterationIndex = 0;
+        private static readonly int _saltIndex = 1;
+        private static readonly int _pbkdf2Index = 2;
 
-        public string Hash(string password)
+        public static string Hash(string password)
         {
             byte[] salt = RandomNumberGenerator.GetBytes(_saltByteSize);
             byte[] hash = PBKDF2(password, salt, _pbkdf2Iterations, _hashByteSize);
@@ -23,7 +22,7 @@ namespace CSI.IBTA.AuthService.Authentication
                 Convert.ToBase64String(hash);
         }
 
-        public bool Verify(string password, string correctHash)
+        public static bool Verify(string password, string correctHash)
         {
             char[] delimiter = [':'];
             string[] split = correctHash.Split(delimiter);

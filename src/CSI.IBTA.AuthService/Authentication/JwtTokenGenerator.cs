@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CSI.IBTA.AuthService.Authentication
 {
-    public class JwtTokenGenerator : IJwtTokenGenerator
+    internal class JwtTokenGenerator : IJwtTokenGenerator
     {
         private readonly JwtSettings _jwtSettings;
 

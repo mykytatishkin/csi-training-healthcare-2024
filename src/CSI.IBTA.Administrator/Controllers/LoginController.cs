@@ -1,22 +1,19 @@
 using CSI.IBTA.Administrator.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Net;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Extensions;
-using CSI.IBTA.Administrator.Endpoints;
+using CSI.IBTA.Administrator.Constants;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
     public class LoginController : Controller
     {
         private readonly IAuthClient _client;
-        private readonly IJwtTokenService _jwtTokenService;
 
-        public LoginController(IAuthClient client, IJwtTokenService jwtTokenService)
+        public LoginController(IAuthClient client)
         {
             _client = client;
-            _jwtTokenService = jwtTokenService;
         }
 
         public IActionResult Index()
@@ -32,36 +29,19 @@ namespace CSI.IBTA.Administrator.Controllers
                 return View("Index", model);
             }
 
-            var response = await _client.PostAsync(model.ToDto(), AuthApiEndpoints.Auth);
-            if (!response.IsSuccessStatusCode)
+            var response = await _client.Authenticate(model.ToDto());
+            if (!response.Success)
             {
-                if (response.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    ModelState.AddModelError("", "Server error");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid credentials");
-                }
+                ModelState.AddModelError("", response.Description);
                 return View("Index", model);
             }
 
-            var (isAdmin, token) = await _jwtTokenService.CheckUserIsAdminAsync(response);
-
-            if(!isAdmin)
-            {
-                ModelState.AddModelError("", "Access to administrator portal denied");
-                return View("Index", model);
-            }
-
-            var cookieOptions =_jwtTokenService.GetCookieOptions();
-            Response.Cookies.Append("jwtToken", token, cookieOptions);
             return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Logout()
         {
-            Response.Cookies.Delete("jwtToken");
+            Response.Cookies.Delete(TokenConstants.JwtTokenCookieName);
             return RedirectToAction("Index");
         }
 

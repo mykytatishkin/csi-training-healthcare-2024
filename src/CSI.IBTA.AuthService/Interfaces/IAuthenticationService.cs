@@ -1,9 +1,10 @@
-﻿using CSI.IBTA.Shared;
+﻿using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared;
 
 namespace CSI.IBTA.AuthService.Interfaces
 {
     public interface IAuthenticationService
     {
-        public Task<LoginResponse> Login(LoginRequest request);
+        public Task<GenericResponse<LoginResponse>> Login(LoginRequest request);
     }
 }

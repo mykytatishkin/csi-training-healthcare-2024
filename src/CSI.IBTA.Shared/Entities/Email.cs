@@ -6,7 +6,7 @@ namespace CSI.IBTA.Shared.Entities
     {
         public int Id { get; set; }
         [Column("Email")]
-        public string EmailAddress { get; set; }
-        public Account Account { get; set; } = null!;
+        public string EmailAddress { get; set; } = null!;
+        public User Account { get; set; } = null!;
     }
 }
