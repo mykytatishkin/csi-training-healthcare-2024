@@ -1,5 +1,7 @@
 ﻿using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.UserService.Controllers
@@ -16,6 +18,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("{employerId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetEmployerProfile(int employerId)
         {
             var response = await _employerService.GetEmployerProfile(employerId);
@@ -25,10 +28,11 @@ namespace CSI.IBTA.UserService.Controllers
                 return NotFound(response.description);
             }
 
-            return NoContent();
+            return Ok(response.value);
         }
 
         [HttpPost]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> CreateEmployer([FromForm] CreateEmployerDto dto)
         {
             var response = await _employerService.CreateEmployer(dto);
@@ -42,6 +46,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPut("{employerId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> UpdateEmployer(int employerId, [FromForm] UpdateEmployerDto dto)
         {
             var response = await _employerService.UpdateEmployer(employerId, dto);
@@ -55,6 +60,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpDelete("{employerId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> DeleteUser(int employerId)
         {
             var response = await _employerService.DeleteEmployer(employerId);
