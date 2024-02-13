@@ -1,5 +1,7 @@
 ﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.UserService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.UserService.Controllers
@@ -16,9 +18,10 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("{accountId}")]
+        [Authorize]
         public async Task<IActionResult> GetUser(int accountId)
         {
-            var response = await _userService.GetUser(accountId);
+            var response = await _userService.GetUser(accountId, HttpContext);
 
             if (response == null)
             {
@@ -31,7 +34,7 @@ namespace CSI.IBTA.UserService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
-            var response = await _userService.CreateUser(createUserDto);
+            var response = await _userService.CreateUser(createUserDto, HttpContext);
 
             if (response == null)
             {
@@ -44,7 +47,7 @@ namespace CSI.IBTA.UserService.Controllers
         [HttpPatch("{userId}")]
         public async Task<IActionResult> UpdateUser(int userId, UpdateUserDto updateUserDto)
         {
-            var response = await _userService.UpdateUser(userId, updateUserDto);
+            var response = await _userService.UpdateUser(userId, updateUserDto, HttpContext);
 
             if (response == null)
             {
@@ -57,7 +60,7 @@ namespace CSI.IBTA.UserService.Controllers
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteUser(int userId)
         {
-            var response = await _userService.DeleteUser(userId);
+            var response = await _userService.DeleteUser(userId, HttpContext);
 
             if (response == false)
             {

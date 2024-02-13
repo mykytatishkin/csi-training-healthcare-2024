@@ -3,6 +3,9 @@ using CSI.IBTA.UserService.Services;
 using CSI.IBTA.DataLayer;
 using CSI.IBTA.AuthService.Interfaces;
 using CSI.IBTA.AuthService.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CSI.IBTA.UserService
 {
@@ -27,6 +30,19 @@ namespace CSI.IBTA.UserService
 
             builder.Services.AddDataLayer(connectionString);
 
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters.ValidAudience = builder.Configuration["JwtSettings:Audience"];
+                options.TokenValidationParameters.ValidIssuer = builder.Configuration["JwtSettings:Issuer"];
+                options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]));
+            });
+            builder.Services.AddAuthorization();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -37,6 +53,8 @@ namespace CSI.IBTA.UserService
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
