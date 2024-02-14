@@ -1,5 +1,5 @@
 ﻿using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared;
+using CSI.IBTA.Shared.DTOs.Login;
 
 namespace CSI.IBTA.AuthService.Interfaces
 {

@@ -2,8 +2,8 @@
 using CSI.IBTA.AuthService.Interfaces;
 using CSI.IBTA.DataLayer.Interfaces;
 using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared;
 using CSI.IBTA.Shared.Utils;
+using CSI.IBTA.Shared.DTOs.Login;
 
 namespace CSI.IBTA.AuthService.Services
 {

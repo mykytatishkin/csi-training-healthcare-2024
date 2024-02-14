@@ -3,7 +3,7 @@ using System.Text;
 using CSI.IBTA.Administrator.Constants;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
-using CSI.IBTA.Shared;
+using CSI.IBTA.Shared.DTOs.Login;
 using CSI.IBTA.Shared.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
