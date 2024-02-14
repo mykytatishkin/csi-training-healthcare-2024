@@ -7,15 +7,16 @@ using System.Diagnostics;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
-    public class LoginController : Controller
+    public class AuthController : Controller
     {
         private readonly IAuthClient _client;
 
-        public LoginController(IAuthClient client)
+        public AuthController(IAuthClient client)
         {
             _client = client;
         }
 
+        [HttpGet("/Login")]
         public IActionResult Index()
         {
             return View();

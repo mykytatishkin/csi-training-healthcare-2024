@@ -7,18 +7,24 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CSI.IBTA.Administrator.Constants;
 
 namespace CSI.IBTA.Administrator.Services
 {
     internal class JwtTokenService : IJwtTokenService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<JwtTokenService> _logger;
         private readonly JwtSettings _jwtSettings;
 
-        public JwtTokenService(ILogger<JwtTokenService> logger, IOptions<JwtSettings> jwtSettings)
+        public JwtTokenService(
+            ILogger<JwtTokenService> logger, 
+            IOptions<JwtSettings> jwtSettings, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _jwtSettings = jwtSettings.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public CookieOptions GetCookieOptions()
@@ -71,6 +77,25 @@ namespace CSI.IBTA.Administrator.Services
             {
                 return false;
             }
+        }
+
+        public string? GetCachedToken()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext == null)
+            {
+                return null;
+            }
+
+            string? token = httpContext.Request.Cookies[TokenConstants.JwtTokenCookieName];
+
+            if (token == null)
+            {
+                return null;
+            }
+
+            return token;
         }
     }
 }
