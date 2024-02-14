@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Account.sql" />
-    <Build Include="Role.sql" />
     <Build Include="User.sql" />
     <Build Include="Employer.sql" />
     <Build Include="Address.sql" />
