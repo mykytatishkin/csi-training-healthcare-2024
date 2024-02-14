@@ -6,6 +6,5 @@
         public string Firstname { get; set; } = null!;
         public string Lastname { get; set; } = null!;
         public Account Account { get; set; } = null!;
-        public Employer Employer { get; set; } = null!;
     }
 }
