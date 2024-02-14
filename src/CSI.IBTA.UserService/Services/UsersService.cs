@@ -19,6 +19,23 @@ namespace CSI.IBTA.UserService.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<GenericResponse<UserDto[]>> GetAllUsers(HttpContext httpContext)
+        {
+            await _unitOfWork.Accounts.All();
+            await _unitOfWork.Employers.All();
+            var employerUsers = (await _unitOfWork.EmployerUsers.All()).ToArray();
+            var userList = (await _unitOfWork.Users.All())
+                .Select(user => new UserDto(user.Id, user.Account.Username, 
+                user.Firstname, user.Lastname, user.Account.Id, 
+                UserHasEmployer(employerUsers, user)))
+                .ToArray();
+
+            //.Select(user => new UserDto(user.Id, user.Account.Username, 
+            //user.Firstname, user.Lastname, user.Account.Id, employerId));
+            
+            return new GenericResponse<UserDto[]>(false, null, userList);
+        }
+
         public async Task<GenericResponse<UserDto>> GetUser(int accountId, HttpContext httpContext)
         {
             await _unitOfWork.Accounts.All();
@@ -269,6 +286,16 @@ namespace CSI.IBTA.UserService.Services
             return managedUserRole != Role.Administrator && 
                 (IsNextSuperiorRole(authUserRole, managedUserRole) 
                 || authUserRole == Role.Administrator);
+        }
+
+        private int UserHasEmployer(EmployerUser[] EmployerUsers, User user)
+        {
+            for (int i = 0; i < EmployerUsers.Length; i++)
+            {
+                if (EmployerUsers[i].User.Id == user.Id)
+                    return EmployerUsers[i].Employer.Id;
+            }
+            return -1;
         }
     }
 }
