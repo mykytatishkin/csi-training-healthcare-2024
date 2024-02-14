@@ -6,6 +6,7 @@ using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.UserService.Interfaces;
 using System.Net;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -22,6 +23,8 @@ namespace CSI.IBTA.UserService.Services
         public async Task<GenericResponse<UserDto>> GetUser(int accountId, HttpContext httpContext)
         {
             await _unitOfWork.Accounts.All();
+            await _unitOfWork.EmployerUsers.All();
+            await _unitOfWork.Employers.All();
             var result = await _unitOfWork.Users.Find(a => a.Account.Id == accountId);
             
             if (!result.Any())
@@ -33,8 +36,10 @@ namespace CSI.IBTA.UserService.Services
             {
                 return new GenericResponse<UserDto>(true, new HttpError("Invalid User Role", HttpStatusCode.Unauthorized), null);
             }
+            var employerUser = await _unitOfWork.EmployerUsers.Find(a => a.User.Id == user.Id);
+            int employerId = employerUser.Any() ? employerUser.First().Employer.Id : -1;
             return new GenericResponse<UserDto>(false, null,
-                new UserDto(user.Id, user.Account.Username, user.Firstname, user.Lastname, user.Account.Id)
+                new UserDto(user.Id, user.Account.Username, user.Firstname, user.Lastname, user.Account.Id, employerId)
                 );
         }
 
@@ -50,6 +55,12 @@ namespace CSI.IBTA.UserService.Services
             if (existingUser.Any())
             {
                 return new GenericResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
+            }
+
+            var employer = await _unitOfWork.Employers.Find(a => a.Id == createUserDto.EmployerId);
+            if (!employer.Any())
+            {
+                return new GenericResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
             }
 
             Account newAccount = new Account()
@@ -87,68 +98,75 @@ namespace CSI.IBTA.UserService.Services
                 Account = newUser,
             };
 
+            EmployerUser newEmployerUser = new EmployerUser()
+            {
+                Employer = employer.First(),
+                User = newUser
+            };
+
             await _unitOfWork.Accounts.Add(newAccount);
             await _unitOfWork.Users.Add(newUser);
             await _unitOfWork.Addresses.Add(newUserAddress);
             await _unitOfWork.Emails.Add(newUserEmail);
             await _unitOfWork.Phones.Add(newUserPhone);
+            await _unitOfWork.EmployerUsers.Add(newEmployerUser);
             await _unitOfWork.CompleteAsync();
             return new GenericResponse<NewUserDto>(false, null,
                 new NewUserDto(newUser.Id, newUser.Account.Username, newUser.Account.Password
-                , newUser.Firstname, newUser.Lastname, newUser.Account.Id, newUser.Account.Role
+                , newUser.Firstname, newUser.Lastname, newUser.Account.Id, newEmployerUser.Employer.Id, newUser.Account.Role
                 , newUserPhone.PhoneNumber, newUserEmail.EmailAddress
                 , newUserAddress.State, newUserAddress.Street, newUserAddress.City, newUserAddress.Zip)
-                );                
+            );
         }
 
-        public async Task<GenericResponse<NewUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto, HttpContext httpContext)
+        public async Task<GenericResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto, HttpContext httpContext)
         {
             await _unitOfWork.Accounts.All();
             var existingUser = await _unitOfWork.Users.Find(a => a.Id == userId);
 
             if (!existingUser.Any())
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
             var user = existingUser.First();
             var s = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (int.Parse(s) != user.Account.Id && !IsNextSuperiorRole(httpContext.User, user.Account.Role))
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("User is unauthorized", HttpStatusCode.Unauthorized), null);
+                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User is unauthorized", HttpStatusCode.Unauthorized), null);
             }
 
             var sameUsernameAccount = await _unitOfWork.Users.Find(a => a.Account.Username == updateUserDto.UserName && a.Id != userId);
 
             if (sameUsernameAccount.Any())
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("Account with new username already exists", HttpStatusCode.UnprocessableEntity), null);
+                return new GenericResponse<UpdatedUserDto>(true, new HttpError("Account with new username already exists", HttpStatusCode.UnprocessableEntity), null);
             }
 
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Id == user.Account.Id);
 
             if (!existingAccount.Any())
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("Account not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<UpdatedUserDto>(true, new HttpError("Account not found", HttpStatusCode.NotFound), null);
             }
 
             var userAddress = await _unitOfWork.Addresses.Find(a => a.Account.Id == user.Id);
             if (!userAddress.Any())
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("User address not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User address not found", HttpStatusCode.NotFound), null);
             }
             var address = userAddress.First();
 
             var userEmail = await _unitOfWork.Emails.Find(a => a.Account.Id == user.Id);
             if (!userEmail.Any())
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("User email not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User email not found", HttpStatusCode.NotFound), null);
             }
             var email = userEmail.First();
 
             var userPhone= await _unitOfWork.Phones.Find(a => a.Account.Id == user.Id);
             if (!userPhone.Any())
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("User phone not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User phone not found", HttpStatusCode.NotFound), null);
             }
             var phone = userPhone.First();
 
@@ -174,8 +192,8 @@ namespace CSI.IBTA.UserService.Services
             _unitOfWork.Emails.Upsert(email);
             _unitOfWork.Phones.Upsert(phone);
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<NewUserDto>(false, null,
-                new NewUserDto(user.Id, user.Account.Username, user.Account.Password
+            return new GenericResponse<UpdatedUserDto>(false, null,
+                new UpdatedUserDto(user.Id, user.Account.Username, user.Account.Password
                 , user.Firstname, user.Lastname, user.Account.Id, user.Account.Role
                 , phone.PhoneNumber, email.EmailAddress
                 , address.State, address.Street, address.City, address.Zip)
@@ -211,9 +229,15 @@ namespace CSI.IBTA.UserService.Services
             }
 
             var userPhone = await _unitOfWork.Phones.Find(a => a.Account.Id == user.Id);
-            if (!userPhone.Any())
+            if (userPhone.Any())
             {
                 await _unitOfWork.Phones.Delete(userPhone.First().Id);
+            }
+
+            var employerUser = await _unitOfWork.EmployerUsers.Find(a => a.User.Id == user.Id);
+            if (employerUser.Any())
+            {
+                await _unitOfWork.EmployerUsers.Delete(employerUser.First().Id);
             }
 
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Id == user.Account.Id);

@@ -7,7 +7,7 @@ namespace CSI.IBTA.UserService.Interfaces
         
         public Task<GenericResponse<UserDto>> GetUser(int accountId, HttpContext httpContext);
         public Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto, HttpContext httpContext);
-        public Task<GenericResponse<NewUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto, HttpContext httpContext);
+        public Task<GenericResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto, HttpContext httpContext);
         public Task<GenericResponse<bool>> DeleteUser(int userId, HttpContext httpContext);
     }
 }
