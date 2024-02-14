@@ -3,6 +3,7 @@ using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CSI.IBTA.UserService.Controllers
 {
@@ -18,17 +19,20 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("{employerId}")]
-        [Authorize(Roles = nameof(Role.Administrator))]
-        public async Task<IActionResult> GetEmployerProfile(int employerId)
+        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        public async Task<IActionResult> GetEmployer(int employerId)
         {
-            var response = await _employerService.GetEmployerProfile(employerId);
+            var response = await _employerService.GetEmployer(employerId);
 
-            if (response.value == null)
+            if (response.Error != null)
             {
-                return NotFound(response.description);
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response.value);
+            return Ok(response.Result);
         }
 
         [HttpPost]
@@ -37,12 +41,15 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _employerService.CreateEmployer(dto);
 
-            if (response.value == null)
+            if (response.Error != null)
             {
-                return BadRequest(response.description);
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response.value);
+            return Ok(response.Result);
         }
 
         [HttpPut("{employerId}")]
@@ -51,12 +58,15 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _employerService.UpdateEmployer(employerId, dto);
 
-            if (response.value == null)
+            if (response.Error != null)
             {
-                return BadRequest(response.description);
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            return Ok(response.value);
+            return Ok(response.Result);
         }
 
         [HttpDelete("{employerId}")]
@@ -65,9 +75,12 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _employerService.DeleteEmployer(employerId);
 
-            if (response.value != true)
+            if (response.Error != null)
             {
-                return BadRequest(response.description);
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
             return NoContent();
