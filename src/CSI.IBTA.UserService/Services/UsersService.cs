@@ -6,7 +6,6 @@ using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.UserService.Interfaces;
 using System.Net;
 using System.Security.Claims;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CSI.IBTA.UserService.Services
 {

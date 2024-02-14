@@ -3,7 +3,6 @@ using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace CSI.IBTA.UserService.Controllers
 {
@@ -40,6 +39,23 @@ namespace CSI.IBTA.UserService.Controllers
         public async Task<IActionResult> CreateEmployer([FromForm] CreateEmployerDto dto)
         {
             var response = await _employerService.CreateEmployer(dto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> GelAllEmployers()
+        {
+            var response = await _employerService.GetAll();
 
             if (response.Error != null)
             {

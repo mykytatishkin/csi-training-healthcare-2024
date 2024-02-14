@@ -117,5 +117,14 @@ namespace CSI.IBTA.UserService.Services
 
             return new GenericResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
         }
+
+        public async Task<GenericResponse<EmployerDto[]>> GetAll()
+        {
+            var res = await _unitOfWork.Employers.All();
+
+            if (res == null) return new GenericResponse<EmployerDto[]>(true, new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
+
+            return new GenericResponse<EmployerDto[]>(false, null, res.Select(e => new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo)).ToArray());
+        }
     }
 }

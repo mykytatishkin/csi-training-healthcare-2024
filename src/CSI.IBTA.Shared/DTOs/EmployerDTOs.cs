@@ -1,5 +1,4 @@
-﻿using CSI.IBTA.Shared.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace CSI.IBTA.Shared.DTOs
 {
