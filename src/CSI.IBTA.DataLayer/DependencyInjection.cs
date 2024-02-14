@@ -1,4 +1,6 @@
-﻿using CSI.IBTA.DataLayer.Models;
+using CSI.IBTA.DataLayer.Data;
+using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +16,8 @@ namespace CSI.IBTA.DataLayer
                 options.UseSqlServer(
                     connectionString,
                     b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
+            
+            services.AddScoped<IUnitOfWork, UnitOfWork>();            
             
             return services;
         }
