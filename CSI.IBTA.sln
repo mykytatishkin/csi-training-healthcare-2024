@@ -86,9 +86,6 @@ Global
 		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Release-no-db|Any CPU.ActiveCfg = Release|Any CPU
 		{0CEDB630-6D1D-4C41-A09D-C7EDFC8F72EB}.Release-no-db|Any CPU.Build.0 = Release|Any CPU
-<<<<<<<<< Temporary merge branch 1
-
-=========
 		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15CC6A5E-7B96-477D-BA61-74CC58B2DB95}.Release|Any CPU.ActiveCfg = Release|Any CPU
