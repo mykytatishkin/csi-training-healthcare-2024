@@ -10,6 +10,7 @@ namespace CSI.IBTA.DataLayer.Interfaces
         IGenericRepository<Address> Addresses { get; }
         IGenericRepository<Email> Emails { get; }
         IGenericRepository<Phone> Phones { get; }
+        IGenericRepository<EmployerUser> EmployerUsers { get; }
 
         Task CompleteAsync();
     }

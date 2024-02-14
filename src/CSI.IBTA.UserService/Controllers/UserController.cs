@@ -22,7 +22,7 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.GetUser(accountId, HttpContext);
 
-            if (response.HasError)
+            if (response.Error != null)
             {
                 return Problem(
                     title: response.Error!.Title,
@@ -38,7 +38,7 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.CreateUser(createUserDto, HttpContext);
 
-            if (response.HasError)
+            if (response.Error != null)
             {
                 return Problem(
                     title: response.Error!.Title,
@@ -54,7 +54,7 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.UpdateUser(userId, updateUserDto, HttpContext);
 
-            if (response.HasError)
+            if (response.Error != null)
             {
                 return Problem(
                     title: response.Error!.Title,
@@ -70,7 +70,7 @@ namespace CSI.IBTA.UserService.Controllers
         {
             var response = await _userService.DeleteUser(userId, HttpContext);
 
-            if (response.HasError)
+            if (response.Error != null)
             {
                 return Problem(
                     title: response.Error!.Title,
@@ -78,7 +78,7 @@ namespace CSI.IBTA.UserService.Controllers
                 );
             }
 
-            return Ok(response.Result);
+            return NoContent();
         }
     }
 }
