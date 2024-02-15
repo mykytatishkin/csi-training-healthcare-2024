@@ -59,5 +59,17 @@ namespace CSI.IBTA.DataLayer.Repositories
             _context.Entry(entity).State = EntityState.Modified;
             return true;
         }
+
+        public IQueryable<T> Include(params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (includes != null)
+            {
+                query = includes.Aggregate(query, (current, include) => current.Include(include));
+            }
+
+            return query;
+        }
     }
 }

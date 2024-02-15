@@ -12,7 +12,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations
 {
     [DbContext(typeof(UserManagementContext))]
     [Migration("20240213111647_users-table")]
-    partial class userstable
+    partial class Users
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

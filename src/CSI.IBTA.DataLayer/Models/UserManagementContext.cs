@@ -31,5 +31,9 @@ public partial class UserManagementContext : DbContext
                 Role = Role.Administrator
             }
         );
+        modelBuilder.Entity<Account>()
+        .HasOne(e => e.User)
+        .WithOne(e => e.Account)
+        .HasForeignKey<User>("AccountId");
     }
 }

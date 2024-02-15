@@ -6,6 +6,7 @@ using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.UserService.Interfaces;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -21,41 +22,37 @@ namespace CSI.IBTA.UserService.Services
 
         public async Task<GenericResponse<UserDto[]>> GetAllUsers(HttpContext httpContext)
         {
-            await _unitOfWork.Accounts.All();
-            await _unitOfWork.Employers.All();
-            var employerUsers = (await _unitOfWork.EmployerUsers.All()).ToArray();
-            var userList = (await _unitOfWork.Users.All())
+            var userList = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Employer)
                 .Select(user => new UserDto(user.Id, user.Account.Username, 
-                user.Firstname, user.Lastname, user.Account.Id, 
-                UserHasEmployer(employerUsers, user)))
-                .ToArray();
-
-            //.Select(user => new UserDto(user.Id, user.Account.Username, 
-            //user.Firstname, user.Lastname, user.Account.Id, employerId));
+                user.Firstname, user.Lastname, user.Account.Id,
+                user.Employer == null ? null : user.Employer.Id))
+                .ToArrayAsync();
             
             return new GenericResponse<UserDto[]>(false, null, userList);
         }
 
         public async Task<GenericResponse<UserDto>> GetUser(int accountId, HttpContext httpContext)
         {
-            await _unitOfWork.Accounts.All();
-            await _unitOfWork.EmployerUsers.All();
-            await _unitOfWork.Employers.All();
-            var result = await _unitOfWork.Users.Find(a => a.Account.Id == accountId);
+            var user = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Employer)
+                .FirstOrDefaultAsync(a => a.Account.Id == accountId);
             
-            if (!result.Any())
+            if (user == null)
             {
                 return new GenericResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
-            var user = result.First();
+
             if (!IsSuperiorRole(httpContext.User, user.Account.Role))
             {
                 return new GenericResponse<UserDto>(true, new HttpError("Invalid User Role", HttpStatusCode.Unauthorized), null);
             }
-            var employerUser = await _unitOfWork.EmployerUsers.Find(a => a.User.Id == user.Id);
-            int employerId = employerUser.Any() ? employerUser.First().Employer.Id : -1;
+
             return new GenericResponse<UserDto>(false, null,
-                new UserDto(user.Id, user.Account.Username, user.Firstname, user.Lastname, user.Account.Id, employerId)
+                new UserDto(user.Id, user.Account.Username, user.Firstname, user.Lastname, 
+                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
                 );
         }
 
@@ -66,203 +63,139 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<NewUserDto>(true, new HttpError("Invalid User Role", HttpStatusCode.UnprocessableEntity), null);
             }
 
-            var existingUser = await _unitOfWork.Users.Find(a => a.Account.Username == createUserDto.UserName);
+            var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);
             
-            if (existingUser.Any())
+            if (existingAccount.Any())
             {
                 return new GenericResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
             }
-
-            var employer = await _unitOfWork.Employers.Find(a => a.Id == createUserDto.EmployerId);
-            if (!employer.Any())
-            {
-                return new GenericResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
-            }
-
-            Account newAccount = new Account()
-            {
-                Username = createUserDto.UserName,
-                Password = PasswordHasher.Hash(createUserDto.Password),
-                Role = createUserDto.Role
-            };
 
             User newUser = new User()
             {
                 Firstname = createUserDto.FirstName,
                 Lastname = createUserDto.LastName,
-                Account = newAccount,
+                Account = new Account()
+                {
+                    Username = createUserDto.UserName,
+                    Password = PasswordHasher.Hash(createUserDto.Password),
+                    Role = createUserDto.Role
+                },
+                Addresses = new List<Address>()
+                {
+                    new Address()
+                    {
+                        State = createUserDto.AddressState,
+                        Street = createUserDto.AddressStreet,
+                        City = createUserDto.AddressCity,
+                        Zip = createUserDto.AddressZip,
+                    }
+                },
+                Emails = new List<Email>()
+                {
+                    new Email()
+                    {
+                        EmailAddress = createUserDto.EmailAddress,
+                    }
+                },
+                Phones = new List<Phone>()
+                {
+                    new Phone()
+                    {
+                        PhoneNumber = createUserDto.PhoneNumber,
+                    }
+                }
             };
 
-            Address newUserAddress = new Address()
+            if (createUserDto.EmployerId != null)
             {
-                State = createUserDto.AddressState,
-                Street = createUserDto.AddressStreet,
-                City = createUserDto.AddressCity,
-                Zip = createUserDto.AddressZip,
-                Account = newUser
-            };
+                Employer? employer = await _unitOfWork.Employers.GetById((int)createUserDto.EmployerId);
+                if (employer == null)
+                {
+                    return new GenericResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+                } else
+                {
+                    newUser.Employer = employer;
+                }
+            }
 
-            Email newUserEmail = new Email()
-            {
-                EmailAddress = createUserDto.EmailAddress,
-                Account = newUser,
-            };
-
-            Phone newUserPhone = new Phone()
-            {
-                PhoneNumber = createUserDto.PhoneNumber,
-                Account = newUser,
-            };
-
-            EmployerUser newEmployerUser = new EmployerUser()
-            {
-                Employer = employer.First(),
-                User = newUser
-            };
-
-            await _unitOfWork.Accounts.Add(newAccount);
             await _unitOfWork.Users.Add(newUser);
-            await _unitOfWork.Addresses.Add(newUserAddress);
-            await _unitOfWork.Emails.Add(newUserEmail);
-            await _unitOfWork.Phones.Add(newUserPhone);
-            await _unitOfWork.EmployerUsers.Add(newEmployerUser);
             await _unitOfWork.CompleteAsync();
             return new GenericResponse<NewUserDto>(false, null,
                 new NewUserDto(newUser.Id, newUser.Account.Username, newUser.Account.Password
-                , newUser.Firstname, newUser.Lastname, newUser.Account.Id, newEmployerUser.Employer.Id, newUser.Account.Role
-                , newUserPhone.PhoneNumber, newUserEmail.EmailAddress
-                , newUserAddress.State, newUserAddress.Street, newUserAddress.City, newUserAddress.Zip)
+                , newUser.Firstname, newUser.Lastname, newUser.Account.Id, newUser.Employer == null ? null : newUser.Employer.Id, newUser.Account.Role
+                , newUser.Phones[0].PhoneNumber, newUser.Emails[0].EmailAddress
+                , newUser.Addresses[0].State, newUser.Addresses[0].Street, newUser.Addresses[0].City, newUser.Addresses[0].Zip)
             );
         }
 
         public async Task<GenericResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto, HttpContext httpContext)
         {
-            await _unitOfWork.Accounts.All();
-            var existingUser = await _unitOfWork.Users.Find(a => a.Id == userId);
+            var user = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Addresses)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
+                .FirstOrDefaultAsync(a => a.Id == userId);
 
-            if (!existingUser.Any())
+            if (user == null)
             {
                 return new GenericResponse<UpdatedUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
-            var user = existingUser.First();
-            var s = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (int.Parse(s) != user.Account.Id && !IsNextSuperiorRole(httpContext.User, user.Account.Role))
+
+            var authUserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (int.Parse(authUserId) != user.Account.Id 
+                && !IsNextSuperiorRole(httpContext.User, user.Account.Role))
             {
                 return new GenericResponse<UpdatedUserDto>(true, new HttpError("User is unauthorized", HttpStatusCode.Unauthorized), null);
             }
 
-            var sameUsernameAccount = await _unitOfWork.Users.Find(a => a.Account.Username == updateUserDto.UserName && a.Id != userId);
-
-            if (sameUsernameAccount.Any())
+            if (updateUserDto.UserName != null)
             {
-                return new GenericResponse<UpdatedUserDto>(true, new HttpError("Account with new username already exists", HttpStatusCode.UnprocessableEntity), null);
+                var sameUsernameAccount = await _unitOfWork.Accounts.Find(a => a.Username == updateUserDto.UserName);
+                if (sameUsernameAccount.Any())
+                {
+                    return new GenericResponse<UpdatedUserDto>(true, new HttpError("Account with new username already exists. Remove username from request paramaters if changing username is not intended.", HttpStatusCode.UnprocessableEntity), null);
+                }
+                user.Account.Username = updateUserDto.UserName;
             }
 
-            var existingAccount = await _unitOfWork.Accounts.Find(a => a.Id == user.Account.Id);
-
-            if (!existingAccount.Any())
-            {
-                return new GenericResponse<UpdatedUserDto>(true, new HttpError("Account not found", HttpStatusCode.NotFound), null);
-            }
-
-            var userAddress = await _unitOfWork.Addresses.Find(a => a.Account.Id == user.Id);
-            if (!userAddress.Any())
-            {
-                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User address not found", HttpStatusCode.NotFound), null);
-            }
-            var address = userAddress.First();
-
-            var userEmail = await _unitOfWork.Emails.Find(a => a.Account.Id == user.Id);
-            if (!userEmail.Any())
-            {
-                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User email not found", HttpStatusCode.NotFound), null);
-            }
-            var email = userEmail.First();
-
-            var userPhone= await _unitOfWork.Phones.Find(a => a.Account.Id == user.Id);
-            if (!userPhone.Any())
-            {
-                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User phone not found", HttpStatusCode.NotFound), null);
-            }
-            var phone = userPhone.First();
-
-            var account = existingAccount.First();
-            account.Username = updateUserDto.UserName;
-            account.Password = PasswordHasher.Hash(updateUserDto.Password);
-
-
+            user.Account.Password = PasswordHasher.Hash(updateUserDto.Password);
             user.Firstname = updateUserDto.FirstName;
             user.Lastname = updateUserDto.LastName;
-            user.Account = account;
+            user.Addresses[0].State = updateUserDto.AddressState;
+            user.Addresses[0].Street = updateUserDto.AddressStreet;
+            user.Addresses[0].City = updateUserDto.AddressCity;
+            user.Addresses[0].Zip = updateUserDto.AddressZip;
+            user.Emails[0].EmailAddress = updateUserDto.EmailAddress;
+            user.Phones[0].PhoneNumber = updateUserDto.PhoneNumber;
 
-            address.State = updateUserDto.AddressState;
-            address.Street = updateUserDto.AddressStreet;
-            address.City = updateUserDto.AddressCity;
-            address.Zip = updateUserDto.AddressZip;
-            email.EmailAddress = updateUserDto.EmailAddress;
-            phone.PhoneNumber = updateUserDto.PhoneNumber;
-
-            _unitOfWork.Accounts.Upsert(account);
             _unitOfWork.Users.Upsert(user);
-            _unitOfWork.Addresses.Upsert(address);
-            _unitOfWork.Emails.Upsert(email);
-            _unitOfWork.Phones.Upsert(phone);
             await _unitOfWork.CompleteAsync();
             return new GenericResponse<UpdatedUserDto>(false, null,
                 new UpdatedUserDto(user.Id, user.Account.Username, user.Account.Password
                 , user.Firstname, user.Lastname, user.Account.Id, user.Account.Role
-                , phone.PhoneNumber, email.EmailAddress
-                , address.State, address.Street, address.City, address.Zip)
+                , user.Phones[0].PhoneNumber, user.Emails[0].EmailAddress
+                , user.Addresses[0].State, user.Addresses[0].Street, user.Addresses[0].City, user.Addresses[0].Zip)
                 );
         }
 
         public async Task<GenericResponse<bool>> DeleteUser(int userId, HttpContext httpContext)
         {
-            await _unitOfWork.Accounts.All();
-            var existingUser = await _unitOfWork.Users.Find(a => a.Id == userId);
+            var user = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-            if (!existingUser.Any())
+            if (user == null)
             {
                 return new GenericResponse<bool>(true, new HttpError("User not found", HttpStatusCode.NotFound), false);
             }
-            var user = existingUser.First();
 
             if (!IsNextSuperiorRole(httpContext.User, user.Account.Role))
             {
                 return new GenericResponse<bool>(true, new HttpError("User role invalid", HttpStatusCode.Unauthorized), false);
             }
 
-            var userAddress = await _unitOfWork.Addresses.Find(a => a.Account.Id == user.Id);
-            if (userAddress.Any())
-            {
-                await _unitOfWork.Addresses.Delete(userAddress.First().Id);
-            }
-
-            var userEmail = await _unitOfWork.Emails.Find(a => a.Account.Id == user.Id);
-            if (userEmail.Any())
-            {
-                await _unitOfWork.Emails.Delete(userEmail.First().Id);
-            }
-
-            var userPhone = await _unitOfWork.Phones.Find(a => a.Account.Id == user.Id);
-            if (userPhone.Any())
-            {
-                await _unitOfWork.Phones.Delete(userPhone.First().Id);
-            }
-
-            var employerUser = await _unitOfWork.EmployerUsers.Find(a => a.User.Id == user.Id);
-            if (employerUser.Any())
-            {
-                await _unitOfWork.EmployerUsers.Delete(employerUser.First().Id);
-            }
-
-            var existingAccount = await _unitOfWork.Accounts.Find(a => a.Id == user.Account.Id);
-
-            if (existingAccount.Any())
-            {
-                await _unitOfWork.Accounts.Delete(existingAccount.First().Id);
-            }
-
+            await _unitOfWork.Accounts.Delete(user.Account.Id);
             await _unitOfWork.Users.Delete(user.Id);
             await _unitOfWork.CompleteAsync();
             return new GenericResponse<bool>(false, null, true);
@@ -286,16 +219,6 @@ namespace CSI.IBTA.UserService.Services
             return managedUserRole != Role.Administrator && 
                 (IsNextSuperiorRole(authUserRole, managedUserRole) 
                 || authUserRole == Role.Administrator);
-        }
-
-        private int UserHasEmployer(EmployerUser[] EmployerUsers, User user)
-        {
-            for (int i = 0; i < EmployerUsers.Length; i++)
-            {
-                if (EmployerUsers[i].User.Id == user.Id)
-                    return EmployerUsers[i].Employer.Id;
-            }
-            return -1;
         }
     }
 }
