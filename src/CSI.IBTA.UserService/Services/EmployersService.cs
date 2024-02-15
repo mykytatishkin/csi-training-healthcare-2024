@@ -3,7 +3,6 @@ using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
-using CSI.IBTA.UserService.Utils;
 using System.Net;
 
 namespace CSI.IBTA.UserService.Services
@@ -11,10 +10,29 @@ namespace CSI.IBTA.UserService.Services
     internal class EmployersService : IEmployersService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFileService _fileService;
+        private readonly List<(string key, bool value)> _defaultSettings;
+        private readonly ILogger<EmployersService> _logger;
 
-        public EmployersService(IUnitOfWork unitOfWork)
+        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUnitOfWork unitOfWork, IFileService fileService)
         {
             _unitOfWork = unitOfWork;
+            _fileService = fileService;
+            _logger = logger;
+            var defaultSettings = configuration.GetSection("DefaultEmployerSettings").GetChildren();
+            if (defaultSettings == null)
+                _logger.LogError("Default employer settings is missing in appsettings.json");
+
+            _defaultSettings = new List<(string key, bool value)>();
+            foreach (var setting in defaultSettings!)
+            {
+                if (!bool.TryParse(setting.Value, out bool val))
+                {
+                    _logger.LogError($"Failed to parse value for {setting.Key} setting");
+                    throw new InvalidOperationException("Failed to parse employer settings");
+                }
+                _defaultSettings.Add((setting.Key, val));
+            }
         }
 
         public async Task<GenericResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto)
@@ -36,12 +54,18 @@ namespace CSI.IBTA.UserService.Services
                 State = dto.State,
                 Street = dto.Street,
                 City = dto.City,
-                Zip = dto.ZipCode
+                Zip = dto.ZipCode,
+                Settings = _defaultSettings.Select(x =>
+                    new Settings() 
+                    {
+                        Condition = x.key,
+                        State = x.value
+                    }).ToList()
             };
 
             if (dto.LogoFile != null)
             {
-                var res = FileUtils.EncryptImage(dto.LogoFile);
+                var res = _fileService.EncryptImage(dto.LogoFile);
                 if (res.encryptedFile == null) return new GenericResponse<EmployerDto>(true, new HttpError("Logo file is in incorrect format", HttpStatusCode.BadRequest), null);
 
                 e.Logo = res.encryptedFile;
@@ -78,9 +102,9 @@ namespace CSI.IBTA.UserService.Services
             e.City = dto.City;
             e.Zip = dto.ZipCode;
 
-            if (dto.newLogoFile != null)
+            if (dto.NewLogoFile != null)
             {
-                var res = FileUtils.EncryptImage(dto.newLogoFile);
+                var res = _fileService.EncryptImage(dto.NewLogoFile);
                 if (res.encryptedFile == null) return new GenericResponse<EmployerDto>(true, new HttpError("Logo file is in incorrect format", HttpStatusCode.BadRequest), null);
 
                 e.Logo = res.encryptedFile;

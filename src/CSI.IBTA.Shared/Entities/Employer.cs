@@ -12,5 +12,6 @@
         public string City { get; set; } = null!;
         public string Zip { get; set; } = null!;
         public string? Logo { get; set; } = null;
+        public IList<Settings> Settings { get; set; } = new List<Settings>();
     }
 }

@@ -5,7 +5,7 @@
 namespace CSI.IBTA.DB.Migrations.Migrations
 {
     /// <inheritdoc />
-    public partial class userstable : Migration
+    public partial class Users : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

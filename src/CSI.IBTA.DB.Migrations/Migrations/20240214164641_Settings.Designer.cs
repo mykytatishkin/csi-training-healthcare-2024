@@ -3,6 +3,7 @@ using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSI.IBTA.DB.Migrations.Migrations
 {
     [DbContext(typeof(UserManagementContext))]
-    partial class UserManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240214164641_Settings")]
+    partial class Settings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -311,7 +314,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Settings", b =>
                 {
                     b.HasOne("CSI.IBTA.Shared.Entities.Employer", "Employer")
-                        .WithMany("Settings")
+                        .WithMany()
                         .HasForeignKey("EmployerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -328,11 +331,6 @@ namespace CSI.IBTA.DB.Migrations.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Employer", b =>
-                {
-                    b.Navigation("Settings");
                 });
 #pragma warning restore 612, 618
         }

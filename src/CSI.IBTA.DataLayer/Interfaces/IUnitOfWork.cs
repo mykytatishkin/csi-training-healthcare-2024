@@ -11,6 +11,7 @@ namespace CSI.IBTA.DataLayer.Interfaces
         IGenericRepository<Email> Emails { get; }
         IGenericRepository<Phone> Phones { get; }
         IGenericRepository<EmployerUser> EmployerUsers { get; }
+        IGenericRepository<Settings> Settings { get; }
 
         Task CompleteAsync();
     }

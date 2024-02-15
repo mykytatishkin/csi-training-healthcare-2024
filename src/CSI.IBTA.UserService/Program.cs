@@ -19,9 +19,12 @@ namespace CSI.IBTA.UserService
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddLogging();
 
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<IEmployersService, EmployersService>();
+
+            builder.Services.AddSingleton<IFileService, FileService>();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("Connection string is null");
