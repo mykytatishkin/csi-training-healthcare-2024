@@ -1,0 +1,58 @@
+﻿@import url('global.css');
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+}
+
+.login-container {
+    width: 420px;
+    margin: 100px auto;
+    background-color: var(--container-background-color);
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px var(--box-shadow-color);
+    padding: 10px 30px 15px 0px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+}
+
+.form-group label {
+    flex: 1;
+    text-align: right;
+    margin-right: 30px;
+    margin-top: 20px;
+}
+
+.form-group input {
+    flex: 2;
+    padding: 5px;
+    border: 1px solid var(--form-border-color);
+    border-radius: 3px;
+    margin-top: 20px;
+}
+
+.form-group button {
+    width: 125px;
+    padding: 2px;
+    background-color: var(--button-primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: auto;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+.form-group button:hover {
+    background-color: var(--button-primary-hover-color);
+}
+
+.text-danger {
+    margin-top: 15px;
+    margin-left: 25px;
+    color: var(--text-danger-color);
+}

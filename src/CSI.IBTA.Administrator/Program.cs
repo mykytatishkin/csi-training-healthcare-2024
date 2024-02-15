@@ -1,14 +1,22 @@
+using CSI.IBTA.Administrator.Clients;
+using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddLogging();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddHttpClient<IAuthClient, AuthClient>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Login/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -22,6 +30,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();
