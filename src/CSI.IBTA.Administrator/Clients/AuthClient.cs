@@ -50,23 +50,39 @@ namespace CSI.IBTA.Administrator.Clients
 
             if (!response.IsSuccessStatusCode)
                 return new AuthenticationResult { Success = false, Description = response.ReasonPhrase ?? defaultErrorMessage };
-            
+
             var responseContent = await response.Content.ReadAsStringAsync();
             var jToken = JsonConvert.DeserializeObject<JToken>(responseContent);
 
             if (jToken == null)
             {
-                _logger.LogError("Failed to extract token from response");
+                _logger.LogError("Failed to extract JToken from response");
+                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+            }
+            
+            var token = jToken["token"]?.Value<string>();
+
+            if (token == null)
+            {
+                _logger.LogError("Response did not have a token");
+                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+            }
+            
+            bool isTokenValid = _jwtTokenService.IsTokenValid(token);
+            
+            if (!isTokenValid)
+            {
+                _logger.LogWarning("Tampered token was used to login");
                 return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
             }
 
-            var (isAdmin, token) = _jwtTokenService.IsAdmin(jToken);
+            var isAdmin = _jwtTokenService.IsAdmin(token);
 
             if (!isAdmin)
                 return new AuthenticationResult { Success = false, Description = "Access to portal denied" };
 
             _httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.JwtTokenCookieName, token, _jwtTokenService.GetCookieOptions());
-            return new AuthenticationResult { Success = true, Description = "Authentication successful" }; 
+            return new AuthenticationResult { Success = true, Description = "Authentication successful" };
         }
     }
 }

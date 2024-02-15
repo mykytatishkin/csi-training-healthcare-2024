@@ -1,15 +1,10 @@
-using CSI.IBTA.Administrator.Clients;
-using CSI.IBTA.Administrator.Interfaces;
-using CSI.IBTA.Administrator.Services;
+using CSI.IBTA.Administrator;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddLogging();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-builder.Services.AddHttpClient<IAuthClient, AuthClient>();
+builder.Services.AddAdministratorPortal(builder.Configuration);
 
 var app = builder.Build();
 
@@ -30,6 +25,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Login}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
