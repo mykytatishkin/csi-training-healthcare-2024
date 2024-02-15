@@ -7,6 +7,7 @@
         public string Street { get; set; } = null!;
         public string City { get; set; } = null!;
         public string Zip { get; set; } = null!;
-        public User Account { get; set; } = null!;
+        public int UserId { get; set; }
+        public User User { get; set; } = null!;
     }
 }
