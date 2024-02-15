@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace CSI.IBTA.Administrator.Interfaces
+﻿namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IJwtTokenService
     {
-        (bool isAdmin, string token) IsAdmin(JToken token);
+        bool IsAdmin(string token);
         CookieOptions GetCookieOptions();
+        bool IsTokenValid(string token);
+        string? GetCachedToken();
     }
 }
