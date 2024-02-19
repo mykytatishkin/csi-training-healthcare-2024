@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace CSI.IBTA.AuthService.DTOs.Errors
+namespace CSI.IBTA.Shared.DTOs.Errors
 {
     public static class Errors
     {
