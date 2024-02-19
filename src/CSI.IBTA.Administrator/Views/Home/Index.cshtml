@@ -8,12 +8,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/css/logout.css">
+    <style>
+        
+        .form-columns {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .form-column {
+            width:300px;
+            margin-bottom: 20px; 
+        }
+
+        .form-row {
+            margin-top:5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px; 
+            margin-right: 10px; 
+        }
+
+        .form-row input {
+            flex: 1;
+        }
+    </style>
     <title>Welcome</title>
 </head>
 <body>
     <div>
         <a asp-controller="Auth" asp-action="Logout" class="btn btn-primary float-right">Logout</a>
     </div>
+
+    <div>
+        <button id="addEmployerButton" class="btn btn-primary">Add Employer</button>
+    </div>
+
+    <div id="employerForm" style="display: none;">
+        <h4>Employer Administration</h4>
+        <form asp-action="AddEmployer" method="post">
+            <div class="form-columns">
+                <div class="form-column">
+                    <div class="form-row">
+                        <label for="Name">Name:</label>
+                        <input type="text" name="Name" id="Name" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="Code">Code:</label>
+                        <input type="text" name="Code" id="Code" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="Email">Email:</label>
+                        <input type="email" name="Email" id="Email" required />
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-row">
+                        <label for="Street">Street:</label>
+                        <input type="text" name="Street" id="Street" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="City">City:</label>
+                        <input type="text" name="City" id="City" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="State">State:</label>
+                        <input type="text" name="State" id="State" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="ZipCode">Zip Code:</label>
+                        <input type="text" name="ZipCode" id="ZipCode" required />
+                    </div>
+                    <div class="form-row">
+                        <label for="Phone">Phone:</label>
+                        <input type="text" name="Phone" id="Phone" required />
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("addEmployerButton").addEventListener("click", function () {
+            var form = document.getElementById("employerForm");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        });
+    </script>
 </body>
 </html>
-
