@@ -20,6 +20,7 @@ namespace CSI.IBTA.Administrator
             services.AddHttpContextAccessor();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddHttpClient<IAuthClient, AuthClient>();
+            services.AddHttpClient<IUserServiceClient, UserServiceClient>();
             return services;
         }
     }
