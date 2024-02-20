@@ -1,8 +1,6 @@
-﻿@using CSI.IBTA.Shared.Entities
-@{
+﻿@{
     ViewData["Title"] = "Administrator Portal";
 }
-@model List<Employer>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,44 +11,7 @@
 </head>
 <body>
     <div>
-        <a asp-controller="Auth" asp-action="Logout" class="btn btn-primary float-right">Logout</a>
-        <form asp-action="Index" method="get">
-            <div class="form-actions no-color">
-                <p>
-                    Find by name: 
-                    <input type="text" name="NameFilter" value="@ViewData["CurrentNameFilter"]" />
-                    Find by code:
-                    <input type="text" name="CodeFilter" value="@ViewData["CurrentCodeFilter"]" />
-                    <input type="submit" value="Search" class="btn btn-default" /> |
-                    <a asp-action="Index">Back to Full List</a>
-                </p>
-            </div>
-        </form>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Code
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Code)
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <a asp-controller="Auth" asp-action="Logout" class="btn btn-primary float-right">Logout</a>        
     </div>
 
 
