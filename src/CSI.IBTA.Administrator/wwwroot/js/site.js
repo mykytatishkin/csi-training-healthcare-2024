@@ -7,15 +7,14 @@ function showTable() {
     $("#control-employer").hide();
 }
 
-function showControl(id) {
-    console.log("ShowControl(" + id + ")")
+function showControl(id, name) {
+    console.log("ShowControl(" + id + "," + name + ")")
     $("#table-employer").hide();
     $("#control-employer").show();
     let a = document.getElementById("employer-id");
-    a.textContent = id;
+    a.textContent = name;
 }
 
 function a(id) {
     alert(id)
-
 }
