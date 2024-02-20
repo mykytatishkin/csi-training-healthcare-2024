@@ -1,0 +1,144 @@
+﻿@model CreateEmployerUserViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/employer-user/index.css">
+    <title>Welcome</title>
+</head>
+<body>
+    <div class="user-information-section">
+        <p>User Information</p>
+        <form asp-controller="EmployerUser" asp-action="Create" method="post">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Firstname</td>
+                        <td><input asp-for="Firstname" type="text" required /></td>
+                    </tr>
+                    <tr>
+                        <td>Lastname</td>
+                        <td><input asp-for="Lastname" type="text" required /></td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td><input asp-for="Email" type="email" required /></td>
+                    </tr>
+                    <tr>
+                        <td>Username</td>
+                        <td><input asp-for="Username" type="text" required /></td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><input asp-for="Password" type="password" id="passwordInput" required /></td>
+                        <td><button type="button" onclick="setRandomPassword()">Generate</button></td>
+                    </tr>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                        </td>
+                    </tr>
+                    }
+                    <tr>
+                        <td></td>
+                        <td><button type="submit">Save</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="employer-users-section">
+        <div class="scrollable-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="action-buttons">
+            <button>Add</button>
+            <button>Update</button>
+        </div>
+    </div>
+    <button>Return</button>
+</body>
+</html>
+
+<script type="text/javascript">
+    function generateRandomPassword(length) {
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$%^&*()-_=+[]{}|;:'\",.<>/?";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    }
+
+    function setRandomPassword() {
+        const passwordLength = 12;
+        const password = generateRandomPassword(passwordLength);
+        const passwordInput = document.getElementById("passwordInput");
+
+        if (passwordInput) {
+            passwordInput.value = password;
+        } else {
+            console.error("Input field not found!");
+        }
+    }
+</script>

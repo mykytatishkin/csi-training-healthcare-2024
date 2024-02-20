@@ -1,0 +1,38 @@
+﻿.employer-users-section {
+    display: flex;
+    flex-direction: row;
+}
+
+    .employer-users-section table,
+    .employer-users-section th,
+    .employer-users-section td,
+    .employer-users-section tr {
+        border: 1px solid;
+    }
+
+    .employer-users-section thead {
+        background-color: lightgray;
+    }
+
+    .employer-users-section .scrollable-table {
+        max-height: 200px;
+        overflow: auto;
+    }
+
+    .employer-users-section thead,
+    .employer-users-section th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .employer-users-section .action-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
+.text-danger {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: var(--text-danger-color);
+}
