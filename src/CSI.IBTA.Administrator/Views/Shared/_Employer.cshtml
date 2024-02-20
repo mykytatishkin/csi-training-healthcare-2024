@@ -6,6 +6,19 @@
 @using CSI.IBTA.Shared.Entities
 @model List<Employer>
 
+<script>
+    function showTable() {
+        $("#table-employer").show();
+        $("#control-employer").hide();
+    }
+
+    function showControl(id) {
+        console.log("ShowControl("+id+")")
+        $("#table-employer").hide();
+        $("#control-employer").show();
+    }
+</script>
+
 <div id="table-employer" class="container">
     <div class="row">
         <div class="col-sm-8">
@@ -46,7 +59,8 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="showControl()"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                <a onclick="showControl(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -68,14 +82,3 @@
     @Html.Partial("_EmployerAdministration")
 </div>
 
-<script>
-    function showTable() {
-        $("#table-employer").show();
-        $("#control-employer").hide();
-    }
-
-    function showControl() {
-        $("#table-employer").hide();
-        $("#control-employer").show();
-    }
-</script>
