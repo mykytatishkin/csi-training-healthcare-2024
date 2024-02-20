@@ -38,13 +38,16 @@ body {
     display: inline-block;
     padding: 6px;
     background-color: var(--container-background-color);
-    color: var(--button-primary-color);
     border: none;
     border-radius: 3px;
     cursor: pointer;
     font-size: 20px;
     margin-top: 20px;
 }
+
+    .partial-btn:hover {
+        color: var(--button-primary-color);
+    }
 
 .left {
     position: absolute;
