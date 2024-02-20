@@ -1,0 +1,74 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using CSI.IBTA.Shared.Entities
+@model List<Employer>
+
+<script>
+</script>
+
+<div id="table-employer" class="container">
+    <div class="row">
+        <div class="col-sm-8">
+
+        </div>
+        <div class="col-sm-4">
+            <button class="btn btn-primary">Add New Employer</button>
+        </div>
+    </div>
+    
+    <span class="border-label" style="text-align:left">Search Criteria</span>
+    <div class="row form-columns">
+        <form asp-action="Index" method="get">
+            <div class="form-actions no-color">
+                <p>
+                    <label for="NameFilter">Employer Name:</label>
+                    <input type="text" name="NameFilter" value="@ViewData["CurrentNameFilter"]" />
+                    <label for="CodeFilter">Employer Code:</label>
+                    <input type="text" name="CodeFilter" value="@ViewData["CurrentCodeFilter"]" />
+                    <input type="submit" value="Search" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-primary">Back to Full List</a>
+                </p>
+            </div>
+        </form>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="table-data">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Employer Name</th>
+                        <th>Employer Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a onclick="showControl(@item.Id, '@item.Name')"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Code)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div style="text-align:right" class="pages">
+                <button class="btn btn-primary btn-small">Prev</button>
+                <span>0</span>
+                <button class="btn btn-primary btn-small">Next</button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+<div id="control-employer" style="display: none;">
+    @Html.Partial("_EmployerAdministration")
+</div>
+

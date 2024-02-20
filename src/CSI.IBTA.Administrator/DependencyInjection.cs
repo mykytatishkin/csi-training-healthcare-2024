@@ -22,6 +22,7 @@ namespace CSI.IBTA.Administrator
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddHttpClient<IAuthClient, AuthClient>();
             services.AddHttpClient<IEmployerUserClient, EmployerUserClient>();
+            services.AddHttpClient<IUserServiceClient, UserServiceClient>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

@@ -1,0 +1,47 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using CSI.IBTA.Shared.Entities
+@model List<Employer>
+
+
+
+<script>
+    
+</script>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8"></div>
+        <div class="col-sm-4">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Choose different</a>
+        </div>
+        <span class="form-row label">Employer Administration for &nbsp;<span id="employer-id">ID</span></span>
+    <div class="form-columns">
+        
+        <div class="row">
+            <div class="col">
+                <span>Employer Setup</span>
+                <div class="row-column">
+                    <a onclick="a()" class="btn btn-primary">Manage Profile</a>
+                </div>
+                <div class="row-column">
+                    <a asp-area="" asp-controller="" asp-action="" class="btn btn-primary">Manage Users</a>
+                </div>
+                <div class="row-column">
+                    <a asp-area="" asp-controller="" asp-action="" class="btn btn-primary">Manage Rules</a>
+                </div>
+            </div>
+            <div class="col">
+                <span>Plan Setup</span>
+                <div class="row-column">
+                    <a asp-area="" asp-controller="" asp-action="" class="btn btn-primary">Manage Plans</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
