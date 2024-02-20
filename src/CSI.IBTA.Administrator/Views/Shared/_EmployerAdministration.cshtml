@@ -6,11 +6,10 @@
 @using CSI.IBTA.Shared.Entities
 @model List<Employer>
 
+
+
 <script>
-    function a() { 
-    alert(id)
     
-    }
 </script>
 
 
@@ -20,7 +19,7 @@
         <div class="col-sm-4">
             <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Choose different</a>
         </div>
-    <span class="form-row label">Employer Administration for </span>
+        <span class="form-row label">Employer Administration for &nbsp;<span id="employer-id">ID</span></span>
     <div class="form-columns">
         
         <div class="row">
