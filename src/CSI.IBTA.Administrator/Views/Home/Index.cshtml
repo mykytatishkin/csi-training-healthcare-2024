@@ -14,6 +14,20 @@
     <div>
         <a asp-controller="Auth" asp-action="Logout" class="btn btn-primary float-right">Logout</a>
     </div>
+
+    <div class="Home-Panel">
+        <div class="Logo">
+            <img src="" alt="">
+        </div>
+
+        <div class="btn">
+            <button class="btn btn-primary">Employer</button>
+            <button class="btn btn-primary">Claims</button>
+            <div class="panel">
+                @Html.Partial("_Employer")
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
