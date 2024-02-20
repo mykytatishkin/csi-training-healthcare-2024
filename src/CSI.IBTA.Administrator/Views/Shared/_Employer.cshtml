@@ -5,7 +5,8 @@
 }
 @using CSI.IBTA.Shared.Entities
 @model List<Employer>
-<div class="container">
+
+<div id="table-employer" class="container">
     <div class="row">
         <div class="col-sm-8">
 
@@ -45,7 +46,7 @@
                     {
                         <tr>
                             <td>
-                                <a asp-area="" asp-controller="Home" asp-action="Privacy"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                <a onclick="showControl()"> @Html.DisplayFor(modelItem => item.Name) </a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -63,3 +64,18 @@
         </div>
     </div>
 </div>
+<div id="control-employer" style="display: none;">
+    @Html.Partial("_EmployerAdministration")
+</div>
+
+<script>
+    function showTable() {
+        $("#table-employer").show();
+        $("#control-employer").hide();
+    }
+
+    function showControl() {
+        $("#table-employer").hide();
+        $("#control-employer").show();
+    }
+</script>
