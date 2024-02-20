@@ -30,13 +30,39 @@
                             <button class="right partial-btn">Claims</button>
                         </div>
                         <div class="panel">
-                            @Html.Partial("_Employer")
+                            <div class="control">
+                                <button class="left partial-btn active" onclick="showEmployer()">Employer</button>
+                                <button class="right partial-btn" onclick="showClaims()">Claims</button>
+                            </div>
+                            <div id="employer-content">
+                                @Html.Partial("_Employer")
+                            </div>
+                            <div id="claims-content" style="display: none;">
+                                @Html.Partial("_Claims")
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        function showEmployer() {
+            $("#employer-content").show();
+            $("#claims-content").hide();
+            $(".left.partial-btn").addClass("active");
+            $(".right.partial-btn").removeClass("active");
+        }
+
+        function showClaims() {
+            $("#employer-content").hide();
+            $("#claims-content").show();
+            $(".left.partial-btn").removeClass("active");
+            $(".right.partial-btn").addClass("active");
+        }
+    </script>
 </body>
 </html>
 
