@@ -20,3 +20,26 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.partial {
+    border-color: black;
+    border-style: solid;
+    border-radius: 3px;
+}
+
+.table-data {
+    border-color: black;
+    border-style: solid;
+    border-radius: 3px;
+
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover{
+    color:dodgerblue
+}
