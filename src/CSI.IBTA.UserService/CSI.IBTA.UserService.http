@@ -1,0 +1,6 @@
+@CSI.IBTA.UserService_HostAddress = http://localhost:5075
+
+GET {{CSI.IBTA.UserService_HostAddress}}/user/
+Accept: application/json
+
+###
