@@ -3,6 +3,7 @@ using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CSI.IBTA.UserService.Controllers
 {
@@ -19,9 +20,9 @@ namespace CSI.IBTA.UserService.Controllers
 
         [HttpGet]
         [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
-        public async Task<IActionResult> GetAllUsers(int accountId)
+        public async Task<IActionResult> GetAllUsers()
         {
-            var response = await _userService.GetAllUsers(HttpContext);
+            var response = await _userService.GetAllUsers();
 
             if (response.Error != null)
             {
@@ -38,7 +39,7 @@ namespace CSI.IBTA.UserService.Controllers
         [Authorize]
         public async Task<IActionResult> GetUser(int accountId)
         {
-            var response = await _userService.GetUser(accountId, HttpContext);
+            var response = await _userService.GetUserByAccountId(accountId);
 
             if (response.Error != null)
             {
@@ -52,9 +53,15 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
-            var response = await _userService.CreateUser(createUserDto, HttpContext);
+            if (!IsNextSuperiorRole(HttpContext.User, createUserDto.Role))
+            {
+                return Unauthorized("Invalid User Role");
+            }
+
+            var response = await _userService.CreateUser(createUserDto);
 
             if (response.Error != null)
             {
@@ -68,9 +75,25 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPatch("{userId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateUser(int userId, UpdateUserDto updateUserDto)
         {
-            var response = await _userService.UpdateUser(userId, updateUserDto, HttpContext);
+            var getResponse = await _userService.GetUser(userId);
+            if (getResponse.Error != null)
+            {
+                return Problem(
+                    title: getResponse.Error!.Title,
+                    statusCode: (int)getResponse.Error.StatusCode
+                );
+            }
+            var authUserId = (HttpContext.User).FindFirstValue(ClaimTypes.NameIdentifier);
+            if (authUserId == null || (int.Parse(authUserId) != getResponse.Result.AccountId
+                && !IsNextSuperiorRole(HttpContext.User, getResponse.Result.Role)))
+            {
+                return Unauthorized("User is unauthorized");
+            }
+
+            var response = await _userService.UpdateUser(userId, updateUserDto);
 
             if (response.Error != null)
             {
@@ -84,9 +107,23 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpDelete("{userId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUser(int userId)
         {
-            var response = await _userService.DeleteUser(userId, HttpContext);
+            var getResponse = await _userService.GetUser(userId);
+            if (getResponse.Error != null)
+            {
+                return Problem(
+                    title: getResponse.Error!.Title,
+                    statusCode: (int)getResponse.Error.StatusCode
+                );
+            }
+            if (!IsNextSuperiorRole(HttpContext.User, getResponse.Result.Role))
+            {
+                return Unauthorized("User is unauthorized");
+            }
+
+            var response = await _userService.DeleteUser(userId);
 
             if (response.Error != null)
             {
@@ -97,6 +134,26 @@ namespace CSI.IBTA.UserService.Controllers
             }
 
             return NoContent();
+        }
+
+        private bool IsNextSuperiorRole(Role authUserRole, Role managedUserRole)
+        {
+            return (authUserRole == Role.Administrator && managedUserRole == Role.EmployerAdmin)
+                || (authUserRole == Role.EmployerAdmin && managedUserRole == Role.Employee);
+        }
+
+        private bool IsNextSuperiorRole(ClaimsPrincipal authenticatedUser, Role managedUserRole)
+        {
+            Enum.TryParse(authenticatedUser.FindFirstValue(ClaimTypes.Role), out Role authUserRole);
+            return IsNextSuperiorRole(authUserRole, managedUserRole);
+        }
+
+        private bool IsSuperiorRole(ClaimsPrincipal authenticatedUser, Role managedUserRole)
+        {
+            Enum.TryParse(authenticatedUser.FindFirstValue(ClaimTypes.Role), out Role authUserRole);
+            return managedUserRole != Role.Administrator &&
+                (IsNextSuperiorRole(authUserRole, managedUserRole)
+                || authUserRole == Role.Administrator);
         }
     }
 }

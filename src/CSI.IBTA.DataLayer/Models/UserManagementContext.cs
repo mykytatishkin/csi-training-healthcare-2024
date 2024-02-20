@@ -12,6 +12,7 @@ public partial class UserManagementContext : DbContext
     public DbSet<Phone> Phones { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<EmployerUser> EmployerUsers { get; set; }
+    public DbSet<Settings> Settings { get; set; }
 
     public UserManagementContext(DbContextOptions<UserManagementContext> options)
         : base(options)
@@ -35,5 +36,11 @@ public partial class UserManagementContext : DbContext
         .HasOne(e => e.User)
         .WithOne(e => e.Account)
         .HasForeignKey<User>("AccountId");
+
+        modelBuilder.Entity<Employer>()
+            .HasMany(x => x.Settings)
+            .WithOne(x => x.Employer)
+            .IsRequired();
+   
     }
 }

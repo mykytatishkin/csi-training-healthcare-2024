@@ -5,7 +5,6 @@ using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.UserService.Interfaces;
 using System.Net;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSI.IBTA.UserService.Services
@@ -20,12 +19,12 @@ namespace CSI.IBTA.UserService.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<GenericResponse<UserDto[]>> GetAllUsers(HttpContext httpContext)
+        public async Task<GenericResponse<UserDto[]>> GetAllUsers()
         {
             var userList = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
-                .Select(user => new UserDto(user.Id, user.Account.Username, 
+                .Select(user => new UserDto(user.Id, user.Account.Role, user.Account.Username, 
                 user.Firstname, user.Lastname, user.Account.Id,
                 user.Employer == null ? null : user.Employer.Id))
                 .ToArrayAsync();
@@ -33,7 +32,7 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<UserDto[]>(false, null, userList);
         }
 
-        public async Task<GenericResponse<UserDto>> GetUser(int accountId, HttpContext httpContext)
+        public async Task<GenericResponse<UserDto>> GetUserByAccountId(int accountId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -45,24 +44,32 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            if (!IsSuperiorRole(httpContext.User, user.Account.Role))
-            {
-                return new GenericResponse<UserDto>(true, new HttpError("Invalid User Role", HttpStatusCode.Unauthorized), null);
-            }
-
             return new GenericResponse<UserDto>(false, null,
-                new UserDto(user.Id, user.Account.Username, user.Firstname, user.Lastname, 
+                new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname, 
                 user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
                 );
         }
 
-        public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto, HttpContext httpContext)
+        public async Task<GenericResponse<UserDto>> GetUser(int userId)
         {
-            if (!IsNextSuperiorRole(httpContext.User, createUserDto.Role))
+            var user = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Employer)
+                .FirstOrDefaultAsync(a => a.Id == userId);
+
+            if (user == null)
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("Invalid User Role", HttpStatusCode.UnprocessableEntity), null);
+                return new GenericResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
+            return new GenericResponse<UserDto>(false, null,
+                new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname,
+                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
+                );
+        }
+
+        public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
+        {
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);
             
             if (existingAccount.Any())
@@ -128,7 +135,7 @@ namespace CSI.IBTA.UserService.Services
             );
         }
 
-        public async Task<GenericResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto, HttpContext httpContext)
+        public async Task<GenericResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -142,12 +149,6 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<UpdatedUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            var authUserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (int.Parse(authUserId) != user.Account.Id 
-                && !IsNextSuperiorRole(httpContext.User, user.Account.Role))
-            {
-                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User is unauthorized", HttpStatusCode.Unauthorized), null);
-            }
 
             if (updateUserDto.UserName != null)
             {
@@ -179,7 +180,7 @@ namespace CSI.IBTA.UserService.Services
                 );
         }
 
-        public async Task<GenericResponse<bool>> DeleteUser(int userId, HttpContext httpContext)
+        public async Task<GenericResponse<bool>> DeleteUser(int userId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -190,35 +191,10 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<bool>(true, new HttpError("User not found", HttpStatusCode.NotFound), false);
             }
 
-            if (!IsNextSuperiorRole(httpContext.User, user.Account.Role))
-            {
-                return new GenericResponse<bool>(true, new HttpError("User role invalid", HttpStatusCode.Unauthorized), false);
-            }
-
             await _unitOfWork.Accounts.Delete(user.Account.Id);
             await _unitOfWork.Users.Delete(user.Id);
             await _unitOfWork.CompleteAsync();
             return new GenericResponse<bool>(false, null, true);
-        }
-
-        private bool IsNextSuperiorRole(Role authUserRole, Role managedUserRole)
-        {
-            return (authUserRole == Role.Administrator && managedUserRole == Role.EmployerAdmin)
-                || (authUserRole == Role.EmployerAdmin && managedUserRole == Role.Employee);
-        }
-
-        private bool IsNextSuperiorRole(ClaimsPrincipal authenticatedUser, Role managedUserRole)
-        {
-            Enum.TryParse(authenticatedUser.FindFirstValue(ClaimTypes.Role), out Role authUserRole);
-            return IsNextSuperiorRole(authUserRole, managedUserRole);
-        }
-
-        private bool IsSuperiorRole(ClaimsPrincipal authenticatedUser, Role managedUserRole)
-        {
-            Enum.TryParse(authenticatedUser.FindFirstValue(ClaimTypes.Role), out Role authUserRole);
-            return managedUserRole != Role.Administrator && 
-                (IsNextSuperiorRole(authUserRole, managedUserRole) 
-                || authUserRole == Role.Administrator);
         }
     }
 }
