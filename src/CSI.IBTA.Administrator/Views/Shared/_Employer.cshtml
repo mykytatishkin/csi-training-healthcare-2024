@@ -14,9 +14,9 @@
             <button class="btn btn-primary">Add New Employer</button>
         </div>
     </div>
-    <div class="row">
-        <h4 style="text-align:left">Search Criteria</h4>
-
+    
+    <span class="border-label" style="text-align:left">Search Criteria</span>
+    <div class="row form-columns">
         <form asp-action="Index" method="get">
             <div class="form-actions no-color">
                 <p>
@@ -24,12 +24,13 @@
                     <input type="text" name="NameFilter" value="@ViewData["CurrentNameFilter"]" />
                     <label for="CodeFilter">Employer Code:</label>
                     <input type="text" name="CodeFilter" value="@ViewData["CurrentCodeFilter"]" />
-                    <input type="submit" value="Search" class="btn btn-primary" /> |
+                    <input type="submit" value="Search" class="btn btn-primary" />
                     <a asp-action="Index" class="btn btn-primary">Back to Full List</a>
                 </p>
             </div>
         </form>
     </div>
+    <br/>
     <div class="row">
         <div class="table-data">
             <table class="table table-striped">

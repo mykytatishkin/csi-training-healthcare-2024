@@ -23,16 +23,37 @@ body {
 
 
 .partial {
-    border-color: black;
-    border-style: solid;
-    border-radius: 3px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
 }
 
-.table-data {
-    border-color: black;
-    border-style: solid;
-    border-radius: 3px;
+.control {
+    align-items: center;
+    position: relative;
+    top: -30px;
+}
 
+.partial-btn {
+    display: inline-block;
+    padding: 6px;
+    background-color: var(--container-background-color);
+    color: var(--button-primary-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.left {
+    position: absolute;
+    left: 1px;
+}
+
+.right {
+    position: absolute;
+    right: 1px;
 }
 
 a {

@@ -1,0 +1,93 @@
+﻿.form {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.form-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.form-logo {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.form-logo img {
+    display: none;
+    width: 100%;
+    max-height: 120px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.form-logo input {
+    padding: 0px;
+    height: 30px;
+    width: 150px;
+    border-radius: 15px;
+    margin-left: 10px;
+}
+
+.logo-name-display {
+    border: 1px solid #ccc;
+    width: 450px;
+    height: 30px;
+}
+
+.form-column {
+    width: 300px;
+    margin-top: 15px;
+}
+
+.form-row {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.form-row label {
+    width: 100px;
+    margin-right: 10px;
+}
+
+.form-row input {
+    flex: 1;
+}
+
+.border-label {
+    position: relative;
+    left: 25px;
+    top: 12px;
+    background-color: white;
+    padding: 0 10px;
+}
+
+.form-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.form-buttons button {
+    padding: 0px;
+    height: 30px;
+    width: 120px;
+    border-radius: 15px;
+}
+
+.table-data {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+}
