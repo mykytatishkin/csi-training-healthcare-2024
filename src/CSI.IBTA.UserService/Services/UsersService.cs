@@ -19,7 +19,7 @@ namespace CSI.IBTA.UserService.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<GenericResponse<UserDto[]>> GetAllUsers()
+        public async Task<GenericHttpResponse<UserDto[]>> GetAllUsers()
         {
             var userList = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -29,10 +29,10 @@ namespace CSI.IBTA.UserService.Services
                 user.Employer == null ? null : user.Employer.Id))
                 .ToArrayAsync();
             
-            return new GenericResponse<UserDto[]>(false, null, userList);
+            return new GenericHttpResponse<UserDto[]>(false, null, userList);
         }
 
-        public async Task<GenericResponse<UserDto>> GetUserByAccountId(int accountId)
+        public async Task<GenericHttpResponse<UserDto>> GetUserByAccountId(int accountId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -41,16 +41,16 @@ namespace CSI.IBTA.UserService.Services
             
             if (user == null)
             {
-                return new GenericResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
+                return new GenericHttpResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericResponse<UserDto>(false, null,
+            return new GenericHttpResponse<UserDto>(false, null,
                 new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname, 
                 user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
                 );
         }
 
-        public async Task<GenericResponse<UserDto>> GetUser(int userId)
+        public async Task<GenericHttpResponse<UserDto>> GetUser(int userId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -59,22 +59,22 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
+                return new GenericHttpResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericResponse<UserDto>(false, null,
+            return new GenericHttpResponse<UserDto>(false, null,
                 new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname,
                 user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
                 );
         }
 
-        public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
+        public async Task<GenericHttpResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
         {
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);
             
             if (existingAccount.Any())
             {
-                return new GenericResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
+                return new GenericHttpResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
             }
 
             User newUser = new User()
@@ -118,7 +118,7 @@ namespace CSI.IBTA.UserService.Services
                 Employer? employer = await _unitOfWork.Employers.GetById((int)createUserDto.EmployerId);
                 if (employer == null)
                 {
-                    return new GenericResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+                    return new GenericHttpResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
                 } else
                 {
                     newUser.Employer = employer;
@@ -127,7 +127,7 @@ namespace CSI.IBTA.UserService.Services
 
             await _unitOfWork.Users.Add(newUser);
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<NewUserDto>(false, null,
+            return new GenericHttpResponse<NewUserDto>(false, null,
                 new NewUserDto(newUser.Id, newUser.Account.Username, newUser.Account.Password
                 , newUser.Firstname, newUser.Lastname, newUser.Account.Id, newUser.Employer == null ? null : newUser.Employer.Id, newUser.Account.Role
                 , newUser.Phones[0].PhoneNumber, newUser.Emails[0].EmailAddress
@@ -135,7 +135,7 @@ namespace CSI.IBTA.UserService.Services
             );
         }
 
-        public async Task<GenericResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto)
+        public async Task<GenericHttpResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -146,7 +146,7 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericResponse<UpdatedUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
+                return new GenericHttpResponse<UpdatedUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
 
@@ -155,7 +155,7 @@ namespace CSI.IBTA.UserService.Services
                 var sameUsernameAccount = await _unitOfWork.Accounts.Find(a => a.Username == updateUserDto.UserName);
                 if (sameUsernameAccount.Any())
                 {
-                    return new GenericResponse<UpdatedUserDto>(true, new HttpError("Account with new username already exists. Remove username from request paramaters if changing username is not intended.", HttpStatusCode.UnprocessableEntity), null);
+                    return new GenericHttpResponse<UpdatedUserDto>(true, new HttpError("Account with new username already exists. Remove username from request paramaters if changing username is not intended.", HttpStatusCode.UnprocessableEntity), null);
                 }
                 user.Account.Username = updateUserDto.UserName;
             }
@@ -172,7 +172,7 @@ namespace CSI.IBTA.UserService.Services
 
             _unitOfWork.Users.Upsert(user);
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<UpdatedUserDto>(false, null,
+            return new GenericHttpResponse<UpdatedUserDto>(false, null,
                 new UpdatedUserDto(user.Id, user.Account.Username, user.Account.Password
                 , user.Firstname, user.Lastname, user.Account.Id, user.Account.Role
                 , user.Phones[0].PhoneNumber, user.Emails[0].EmailAddress
@@ -180,7 +180,7 @@ namespace CSI.IBTA.UserService.Services
                 );
         }
 
-        public async Task<GenericResponse<bool>> DeleteUser(int userId)
+        public async Task<GenericHttpResponse<bool>> DeleteUser(int userId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -188,13 +188,13 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericResponse<bool>(true, new HttpError("User not found", HttpStatusCode.NotFound), false);
+                return new GenericHttpResponse<bool>(true, new HttpError("User not found", HttpStatusCode.NotFound), false);
             }
 
             await _unitOfWork.Accounts.Delete(user.Account.Id);
             await _unitOfWork.Users.Delete(user.Id);
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<bool>(false, null, true);
+            return new GenericHttpResponse<bool>(false, null, true);
         }
     }
 }

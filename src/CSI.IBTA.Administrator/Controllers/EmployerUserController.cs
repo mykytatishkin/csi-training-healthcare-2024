@@ -1,25 +1,72 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Models;
+using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [Route("EmployerUsers")]
     public class EmployerUserController : Controller
     {
-        public IActionResult Index()
+        private readonly IEmployerUserClient _employerUserClient;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IMapper _mapper;
+
+        public EmployerUserController(
+            IEmployerUserClient employerUserClient,
+            IJwtTokenService jwtTokenService,
+            IMapper mapper)
         {
+            _employerUserClient = employerUserClient;
+            _mapper = mapper;
+            _jwtTokenService = jwtTokenService;
+        }
+
+        [HttpGet("Admin")]
+        public IActionResult Index(int employerId)
+        {
+            Console.WriteLine("Idzas: " + employerId);
             return View();
         }
 
-        public IActionResult Create()
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create(int employerId, CreateEmployerUserViewModel model)
         {
-            ModelState.AddModelError("", "Test error");
-            return View("Index");
-
             if (!ModelState.IsValid)
             {
                 return View("Index");
             }
 
-            return RedirectToAction("Index", "Home");
+            string? token = _jwtTokenService.GetCachedToken();
+
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            Console.WriteLine("Anotha idz: " + employerId);
+            Console.WriteLine("dgjdgd: " + model.Username);
+            //var command = _mapper.Map<CreateEmployerUserCommand>(ModelState);
+
+            var command = new CreateUserDto(
+                model.Username,
+                model.Password,
+                model.Firstname,
+                model.Lastname,
+                Role.EmployerAdmin,
+                employerId,
+                "", "", "", "", "", "");
+
+            var response = await _employerUserClient.CreateEmployerUser(command, token);
+
+            if (response.Error != null)
+            {
+                ModelState.AddModelError("", response.Error.Title);
+            }
+
+            return RedirectToAction("Index", new { employerId });
         }
     }
 }

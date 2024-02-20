@@ -5,6 +5,6 @@ namespace CSI.IBTA.AuthService.Interfaces
 {
     public interface IAuthenticationService
     {
-        public Task<GenericResponse<LoginResponse>> Login(LoginRequest request);
+        public Task<GenericHttpResponse<LoginResponse>> Login(LoginRequest request);
     }
 }

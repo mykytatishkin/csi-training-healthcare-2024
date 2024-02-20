@@ -11,7 +11,8 @@
 <body>
     <div class="user-information-section">
         <p>User Information</p>
-        <form asp-controller="EmployerUser" asp-action="Create" method="post">
+        <form asp-controller="EmployerUsers" asp-action="Create" asp-route-employerId="@Context.Request.Query["employerId"]" method="post">
+            @* <input type="hidden" name="employerId" value="@ViewData["employerId"]" /> *@
             <table>
                 <tbody>
                     <tr>

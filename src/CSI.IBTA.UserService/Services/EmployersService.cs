@@ -35,14 +35,14 @@ namespace CSI.IBTA.UserService.Services
             }
         }
 
-        public async Task<GenericResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto)
+        public async Task<GenericHttpResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto)
         {
             var hasSameCombination = await _unitOfWork.Employers
                 .Find(x => x.Name == dto.Name && x.Code == dto.Code);
 
             if (hasSameCombination.Any())
             {
-                return new GenericResponse<EmployerDto>(true, new HttpError("There is an employer with the same code and name combination", HttpStatusCode.BadRequest), null);
+                return new GenericHttpResponse<EmployerDto>(true, new HttpError("There is an employer with the same code and name combination", HttpStatusCode.BadRequest), null);
             }
 
             var e = new Employer()
@@ -66,31 +66,31 @@ namespace CSI.IBTA.UserService.Services
             if (dto.LogoFile != null)
             {
                 var res = _fileService.EncryptImage(dto.LogoFile);
-                if (res.encryptedFile == null) return new GenericResponse<EmployerDto>(true, new HttpError("Logo file is in incorrect format", HttpStatusCode.BadRequest), null);
+                if (res.encryptedFile == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Logo file is in incorrect format", HttpStatusCode.BadRequest), null);
 
                 e.Logo = res.encryptedFile;
             }
 
             var success = await _unitOfWork.Employers.Add(e);
             if(!success)
-                return new GenericResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
+                return new GenericHttpResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
         }
 
-        public async Task<GenericResponse<EmployerDto>> UpdateEmployer(int employerId, UpdateEmployerDto dto)
+        public async Task<GenericHttpResponse<EmployerDto>> UpdateEmployer(int employerId, UpdateEmployerDto dto)
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if(e == null) return new GenericResponse<EmployerDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+            if(e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             var hasSameCombination = await _unitOfWork.Employers
                 .Find(x => x.Name == dto.Name && x.Code == dto.Code);
 
             if (hasSameCombination.Any())
             {
-                return new GenericResponse<EmployerDto>(true, new HttpError("There is an employer with the same code and name combination", HttpStatusCode.BadRequest), null);
+                return new GenericHttpResponse<EmployerDto>(true, new HttpError("There is an employer with the same code and name combination", HttpStatusCode.BadRequest), null);
             }
 
             e.Name = dto.Name;
@@ -105,50 +105,50 @@ namespace CSI.IBTA.UserService.Services
             if (dto.NewLogoFile != null)
             {
                 var res = _fileService.EncryptImage(dto.NewLogoFile);
-                if (res.encryptedFile == null) return new GenericResponse<EmployerDto>(true, new HttpError("Logo file is in incorrect format", HttpStatusCode.BadRequest), null);
+                if (res.encryptedFile == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Logo file is in incorrect format", HttpStatusCode.BadRequest), null);
 
                 e.Logo = res.encryptedFile;
             }
 
             var success = _unitOfWork.Employers.Upsert(e);
             if (!success)
-                return new GenericResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
+                return new GenericHttpResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
         }
 
-        public async Task<GenericResponse<bool>> DeleteEmployer(int employerId)
+        public async Task<GenericHttpResponse<bool>> DeleteEmployer(int employerId)
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericResponse<bool>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), false);
+            if (e == null) return new GenericHttpResponse<bool>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), false);
 
             var success = await _unitOfWork.Employers.Delete(e.Id);
 
             if (!success)
-                return new GenericResponse<bool>(true, new HttpError("Server failed to delete employer", HttpStatusCode.InternalServerError), false);
+                return new GenericHttpResponse<bool>(true, new HttpError("Server failed to delete employer", HttpStatusCode.InternalServerError), false);
             
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<bool>(false, null, true);
+            return new GenericHttpResponse<bool>(false, null, true);
         }
 
-        public async Task<GenericResponse<EmployerDto>> GetEmployer(int employerId)
+        public async Task<GenericHttpResponse<EmployerDto>> GetEmployer(int employerId)
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericResponse<EmployerDto>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), null);
 
-            return new GenericResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
         }
 
-        public async Task<GenericResponse<EmployerDto[]>> GetAll()
+        public async Task<GenericHttpResponse<EmployerDto[]>> GetAll()
         {
             var res = await _unitOfWork.Employers.All();
 
-            if (res == null) return new GenericResponse<EmployerDto[]>(true, new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
+            if (res == null) return new GenericHttpResponse<EmployerDto[]>(true, new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
 
-            return new GenericResponse<EmployerDto[]>(false, null, res.Select(e => new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo)).ToArray());
+            return new GenericHttpResponse<EmployerDto[]>(false, null, res.Select(e => new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo)).ToArray());
         }
     }
 }

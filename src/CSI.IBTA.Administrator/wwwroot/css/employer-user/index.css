@@ -33,6 +33,9 @@
 
 .text-danger {
     margin-top: 5px;
-    margin-bottom: 5px;
     color: var(--text-danger-color);
+}
+
+div.text-danger ul {
+    margin-bottom: 5px;
 }
