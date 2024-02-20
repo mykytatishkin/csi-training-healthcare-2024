@@ -15,16 +15,26 @@
         <a asp-controller="Auth" asp-action="Logout" class="btn btn-primary float-right">Logout</a>
     </div>
 
-    <div class="Home-Panel">
-        <div class="Logo">
-            <img src="" alt="">
-        </div>
 
-        <div class="btn">
-            <button class="btn btn-primary">Employer</button>
-            <button class="btn btn-primary">Claims</button>
-            <div class="panel">
-                @Html.Partial("_Employer")
+    <div class="text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="Logo">
+                        <img src="https://cdn4.iconfinder.com/data/icons/finance-and-business-set2/32/fin32px079-512.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="btn">
+                        <button class="btn btn-primary">Employer</button>
+                        <button class="btn btn-primary">Claims</button>
+                        <div class="panel">
+                            @Html.Partial("_Employer")
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
