@@ -5,15 +5,20 @@ namespace CSI.IBTA.Administrator.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IUserServiceClient _userServiceClient;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public HomeController(IJwtTokenService jwtTokenService)
+        public HomeController(IJwtTokenService jwtTokenService, IUserServiceClient userServiceClient)
         {
             _jwtTokenService = jwtTokenService;
+            _userServiceClient = userServiceClient;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string nameFilter, string codeFilter)
         {
+            ViewData["CurrentNameFilter"] = nameFilter;
+            ViewData["CurrentCodeFilter"] = codeFilter;
+
             var token = _jwtTokenService.GetCachedToken();
 
             if (token == null)
@@ -28,7 +33,21 @@ namespace CSI.IBTA.Administrator.Controllers
                 return RedirectToAction("Logout", "Auth");
             }
 
-            return View();
+            var Employers = await _userServiceClient.GetEmployers(token);
+            if (Employers != null) 
+            {
+                if (!String.IsNullOrEmpty(nameFilter))
+                {
+                    Employers = Employers.Where(s => s.Name.Contains(nameFilter)).ToList();
+                }
+                if (!String.IsNullOrEmpty(codeFilter))
+                {
+                    Employers = Employers.Where(s => s.Code.Contains(codeFilter)).ToList();
+                }
+            }
+
+
+            return View(Employers);
         }
     }
 }

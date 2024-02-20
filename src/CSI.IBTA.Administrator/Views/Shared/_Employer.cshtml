@@ -3,6 +3,8 @@
 *@
 @{
 }
+@using CSI.IBTA.Shared.Entities
+@model List<Employer>
 <div class="container">
     <div class="row">
         <div class="col-sm-8">
@@ -13,22 +15,20 @@
         </div>
     </div>
     <div class="row">
-        <h4 style="text-align:left">Search Criterea</h4>
-        <div class="col-sm">
-            <div class="field">
-                Employer Name
-                <input type="text">
+        <h4 style="text-align:left">Search Criteria</h4>
+
+        <form asp-action="Index" method="get">
+            <div class="form-actions no-color">
+                <p>
+                    <label for="NameFilter">Employer Name:</label>
+                    <input type="text" name="NameFilter" value="@ViewData["CurrentNameFilter"]" />
+                    <label for="CodeFilter">Employer Code:</label>
+                    <input type="text" name="CodeFilter" value="@ViewData["CurrentCodeFilter"]" />
+                    <input type="submit" value="Search" class="btn btn-primary" /> |
+                    <a asp-action="Index" class="btn btn-primary">Back to Full List</a>
+                </p>
             </div>
-        </div>
-        <div class="col-sm">
-            <div class="field">
-                Employer Code
-                <input type="text">
-            </div>
-        </div>
-        <div class="col-sm">
-            <button class="btn btn-primary">Search</button>
-        </div>
+        </form>
     </div>
     <div class="row">
         <div class="table-data">
@@ -40,18 +40,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th><a href="https://google.com">Coherent Solutions</a></th>
-                        <td>US</td>
-                    </tr>
-                    <tr>
-                        <th><a href="https://google.com">Coherent Solutions</a></th>
-                        <td>BY</td>
-                    </tr>
-                    <tr>
-                        <th><a href="https://google.com">ISSoft</a></th>
-                        <td>UK</td>
-                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Code)
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
             <div style="text-align:right" class="pages">

@@ -4,6 +4,7 @@ using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSI.IBTA.DB.Migrations.Migrations
 {
     [DbContext(typeof(UserManagementContext))]
-    partial class UserManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240215151635_UserSubEntities")]
+    partial class UserSubEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,6 +90,29 @@ namespace CSI.IBTA.DB.Migrations.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Email", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Email");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Emails");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Employer", b =>
@@ -182,28 +208,6 @@ namespace CSI.IBTA.DB.Migrations.Migrations
 
                     b.ToTable("Phones");
                 });
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Email", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<int>("AccountId")
-                    .HasColumnType("int");
-
-                b.Property<string>("EmailAddress")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)")
-                    .HasColumnName("Email");
-
-                b.HasKey("Id");
-
-                b.HasIndex("AccountId");
-
-                b.ToTable("Emails");
-            });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.User", b =>
                 {
@@ -216,52 +220,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Phone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("Phones");
-                });
-
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Settings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Condition")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EmployerId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("State")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployerId");
-
-                    b.ToTable("Settings");
-                });
-
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccountId")
+                    b.Property<int?>("EmployerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Firstname")
@@ -277,18 +236,9 @@ namespace CSI.IBTA.DB.Migrations.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
+                    b.HasIndex("EmployerId");
+
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Address", b =>
-                {
-                    b.HasOne("CSI.IBTA.Shared.Entities.User", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Address", b =>
@@ -356,33 +306,22 @@ namespace CSI.IBTA.DB.Migrations.Migrations
                         .HasForeignKey("EmployerId");
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Settings", b =>
-                {
-                    b.HasOne("CSI.IBTA.Shared.Entities.Employer", "Employer")
-                        .WithMany("Settings")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Employer");
                 });
 
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.User", b =>
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Account", b =>
                 {
-                    b.HasOne("CSI.IBTA.Shared.Entities.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Employer", b =>
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.User", b =>
                 {
-                    b.Navigation("Settings");
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Emails");
+
+                    b.Navigation("Phones");
                 });
 #pragma warning restore 612, 618
         }
