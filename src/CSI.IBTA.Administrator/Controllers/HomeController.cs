@@ -1,57 +1,57 @@
-﻿using CSI.IBTA.Administrator.Interfaces;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.RenderTree;
-using Microsoft.AspNetCore.Components.Web;
+﻿using CSI.IBTA.Administrator.Extensions;
+using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Models;
 using Microsoft.AspNetCore.Mvc;
+using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
-        private readonly IJwtTokenService _jwtTokenService;
 
-        public HomeController(IJwtTokenService jwtTokenService, IUserServiceClient userServiceClient)
+        public HomeController(IUserServiceClient userServiceClient)
         {
-            _jwtTokenService = jwtTokenService;
             _userServiceClient = userServiceClient;
         }
 
-        public async Task<IActionResult> Index(string nameFilter, string codeFilter)
+        public async Task<IActionResult> Index(string? nameFilter, string? codeFilter)
         {
             ViewData["CurrentNameFilter"] = nameFilter;
             ViewData["CurrentCodeFilter"] = codeFilter;
 
-            var token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
-            bool isTokenValid = _jwtTokenService.IsTokenValid(token);
-
-            if (!isTokenValid)
-            {
-                return RedirectToAction("Logout", "Auth");
-            }
-
-            var Employers = await _userServiceClient.GetEmployers(token);
-            if (Employers != null) 
+            var employers = await _userServiceClient.GetEmployers();
+            if (employers != null) 
             {
                 if (!String.IsNullOrEmpty(nameFilter))
                 {
-                    Employers = Employers.Where(s => s.Name.Contains(nameFilter)).ToList();
+                    employers = employers.Where(s => s.Name.Contains(nameFilter)).ToList();
                 }
                 if (!String.IsNullOrEmpty(codeFilter))
                 {
-                    Employers = Employers.Where(s => s.Code.Contains(codeFilter)).ToList();
+                    employers = employers.Where(s => s.Code.Contains(codeFilter)).ToList();
                 }
             }
-
-
-            return View(Employers);
+            
+            return View(new HomeViewModel() { Employers = employers ?? new List<Employer>()});
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddEmployer(CreateEmployerViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var res = await _userServiceClient.CreateEmployer(model.ToDto());
+            if (!res.Success)
+            {
+                ModelState.AddModelError("", res.Description);
+                return View("Index");
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

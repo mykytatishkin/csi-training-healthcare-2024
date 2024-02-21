@@ -4,10 +4,8 @@
 @{
 }
 @using CSI.IBTA.Shared.Entities
-@model List<Employer>
+@model HomeViewModel
 
-<script>
-</script>
 
 <div id="table-employer" class="container">
     <div class="row">
@@ -15,10 +13,10 @@
 
         </div>
         <div class="col-sm-4">
-            <button class="btn btn-primary">Add New Employer</button>
+             <button class="btn btn-primary" onclick="showCreateEmployerForm()">Add New Employer</button>
         </div>
     </div>
-    
+
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
         <form asp-action="Index" method="get">
@@ -45,12 +43,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Employers)
                     {
                         <tr>
                             <td>
                                 <a onclick="showControl(@item.Id, '@item.Name')"> @Html.DisplayFor(modelItem => item.Name) </a>
-                                
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -64,11 +61,14 @@
                 <span>0</span>
                 <button class="btn btn-primary btn-small">Next</button>
             </div>
-           
+
         </div>
     </div>
 </div>
 <div id="control-employer" style="display: none;">
-    @Html.Partial("_EmployerAdministration")
+    @Html.Partial("_EmployerAdministration", Model.Employers)
 </div>
 
+<div id="control-employer-form" style="display: none;">
+    @Html.Partial("_EmployerForm", Model.CreateEmployerViewModel)
+</div>

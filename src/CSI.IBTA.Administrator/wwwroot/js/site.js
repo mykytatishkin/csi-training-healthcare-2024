@@ -15,6 +15,16 @@ function showControl(id, name) {
     a.textContent = name;
 }
 
+function showCreateEmployerForm() {
+    $("#table-employer").hide();
+    $("#control-employer-form").show();
+}
+
+function hideCreateEmployerForm() {
+    $("#control-employer-form").hide();
+    $("#table-employer").show();
+}
+
 function a(id) {
     alert(id)
 }
