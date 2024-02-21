@@ -6,6 +6,10 @@
 @using CSI.IBTA.Shared.Entities
 @model HomeViewModel
 
+@{
+    var prevDisabled = !Model.Employers.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Employers.HasNextPage ? "disabled" : "";
+}
 
 <div id="table-employer" class="container">
     <div class="row">
@@ -57,9 +61,21 @@
                 </tbody>
             </table>
             <div style="text-align:right" class="pages">
-                <button class="btn btn-primary btn-small">Prev</button>
-                <span>0</span>
-                <button class="btn btn-primary btn-small">Next</button>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.Employers.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @prevDisabled">
+                    Previous
+                </a>
+                <span>@Model.Employers.PageIndex</span>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.Employers.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @nextDisabled">
+                    Next
+                </a>
             </div>
 
         </div>
@@ -72,3 +88,6 @@
 <div id="control-employer-form" style="display: none;">
     @Html.Partial("_EmployerForm", Model.CreateEmployerViewModel)
 </div>
+
+
+
