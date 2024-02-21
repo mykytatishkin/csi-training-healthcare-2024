@@ -12,8 +12,9 @@
 </head>
 <body>
 
-    <div>
+    <div class="nav-buttons">
         <button id="addEmployerButton" class="btn btn-primary">Add Employer</button>
+        <button onclick="handleCancel(event)" id="selectDifferentEmployerButton" class="btn btn-primary" style="display:none">Select a different employer</button>
     </div>
     <div id="employerForm" class="form" style="display:none;">
         <h4>Employer Administration</h4>
@@ -96,6 +97,8 @@
             btn.style.display = "block";
             var form = document.getElementById("employerForm");
             form.style.display = "none";
+            var btn = document.getElementById("selectDifferentEmployerButton");
+            btn.style.display = "none";
         }
         function previewImage(event) {
             var reader = new FileReader();
@@ -114,6 +117,8 @@
             btn.style.display = "none";
             var form = document.getElementById("employerForm");
             form.style.display = "block";
+            var btn = document.getElementById("selectDifferentEmployerButton");
+            btn.style.display = "block";
         });
     </script>
 </body>

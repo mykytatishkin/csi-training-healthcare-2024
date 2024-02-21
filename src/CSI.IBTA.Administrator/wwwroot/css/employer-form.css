@@ -41,7 +41,7 @@
     padding: 0px;
     height: 30px;
     width: 150px;
-    border-radius: 15px;
+    border-radius: 10px;
     margin-left: 10px;
 }
 
@@ -93,11 +93,21 @@
     padding: 0px;
     height: 30px;
     width: 120px;
-    border-radius: 15px;
+    border-radius: 10px;
 }
 
 .form-errors {
     display: flex;
     margin: 0 auto;
+}
+
+.nav-buttons {
+    margin-top:10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-buttons button {
+    border-radius: 7px;
 }
    
