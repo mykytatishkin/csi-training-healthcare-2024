@@ -30,7 +30,7 @@ namespace CSI.IBTA.Administrator.Clients
             _jwtTokenService = jwtTokenService;
         }
 
-        public async Task<List<Employer>?> GetEmployers()
+        public async Task<IQueryable<Employer>?> GetEmployers()
         {
             var token = _jwtTokenService.GetCachedToken();
             if (token == null) return null;
@@ -46,9 +46,8 @@ namespace CSI.IBTA.Administrator.Clients
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var employersList = JsonConvert.DeserializeObject<List<Employer>>(responseContent);
-
-            return employersList;
+            var employers= JsonConvert.DeserializeObject<List<Employer>>(responseContent).AsQueryable();
+            return employers;
         }
 
         public async Task<TaskResult> CreateEmployer(CreateEmployerDto dto)
