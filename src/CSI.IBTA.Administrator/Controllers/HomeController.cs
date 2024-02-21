@@ -1,7 +1,6 @@
 ﻿using CSI.IBTA.Administrator.Interfaces;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.RenderTree;
-using Microsoft.AspNetCore.Components.Web;
+using CSI.IBTA.Shared.DataStructures;
+using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
@@ -17,8 +16,20 @@ namespace CSI.IBTA.Administrator.Controllers
             _userServiceClient = userServiceClient;
         }
 
-        public async Task<IActionResult> Index(string nameFilter, string codeFilter)
+        public async Task<IActionResult> Index(
+            string nameFilter, 
+            string codeFilter,
+            string currentNameFilter,
+            string currentCodeFilter,
+            int? pageNumber,
+            int? pageSize)
         {
+            if (nameFilter != null || codeFilter != null)
+            {
+                pageNumber = 1;
+            }
+            nameFilter = nameFilter ?? currentNameFilter;
+            codeFilter = codeFilter ?? currentCodeFilter;
             ViewData["CurrentNameFilter"] = nameFilter;
             ViewData["CurrentCodeFilter"] = codeFilter;
 
@@ -41,16 +52,15 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 if (!String.IsNullOrEmpty(nameFilter))
                 {
-                    Employers = Employers.Where(s => s.Name.Contains(nameFilter)).ToList();
+                    Employers = Employers.Where(s => s.Name.Contains(nameFilter));
                 }
                 if (!String.IsNullOrEmpty(codeFilter))
                 {
-                    Employers = Employers.Where(s => s.Code.Contains(codeFilter)).ToList();
+                    Employers = Employers.Where(s => s.Code.Equals(codeFilter));
                 }
             }
 
-
-            return View(Employers);
+            return View(new PaginatedList<Employer>(Employers, pageNumber ?? 1, pageSize ?? 5));
         }
 
     }

@@ -1,15 +1,8 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Text;
-using CSI.IBTA.Administrator.Constants;
+﻿using System.Net.Http.Headers;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
-using CSI.IBTA.Shared.DTOs.Login;
 using CSI.IBTA.Shared.Entities;
-using CSI.IBTA.Shared.Types;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -33,7 +26,7 @@ namespace CSI.IBTA.Administrator.Clients
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<List<Employer>?> GetEmployers(string token)
+        public async Task<IQueryable<Employer>?> GetEmployers(string token)
         {
             if (_httpContextAccessor.HttpContext == null)
             {
@@ -52,9 +45,8 @@ namespace CSI.IBTA.Administrator.Clients
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var employersList = JsonConvert.DeserializeObject<List<Employer>>(responseContent);
-
-            return employersList;
+            var employers= JsonConvert.DeserializeObject<List<Employer>>(responseContent).AsQueryable();
+            return employers;
         }
     }
 }
