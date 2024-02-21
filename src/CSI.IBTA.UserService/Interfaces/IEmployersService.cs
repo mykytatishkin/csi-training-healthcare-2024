@@ -9,5 +9,6 @@ namespace CSI.IBTA.UserService.Interfaces
         public Task<GenericHttpResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto);
         public Task<GenericHttpResponse<EmployerDto>> UpdateEmployer(int employerId, UpdateEmployerDto dto);
         public Task<GenericHttpResponse<bool>> DeleteEmployer(int employerId);
+        public Task<GenericHttpResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId);
     }
 }

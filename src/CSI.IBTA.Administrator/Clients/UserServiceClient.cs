@@ -43,7 +43,7 @@ namespace CSI.IBTA.Administrator.Clients
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _httpClient.GetAsync(AuthApiEndpoints.UserServiceEmployers);
+            var response = await _httpClient.GetAsync(AuthServiceApiEndpoints.UserServiceEmployers);
 
             if (!response.IsSuccessStatusCode)
             {

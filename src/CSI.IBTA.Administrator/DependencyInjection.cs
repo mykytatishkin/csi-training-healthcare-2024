@@ -23,6 +23,7 @@ namespace CSI.IBTA.Administrator
             services.AddHttpClient<IAuthClient, AuthClient>();
             services.AddHttpClient<IEmployerUserClient, EmployerUserClient>();
             services.AddHttpClient<IUserServiceClient, UserServiceClient>();
+            services.AddHttpClient<IEmployerClient, EmployerClient>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

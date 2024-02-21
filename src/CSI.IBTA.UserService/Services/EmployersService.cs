@@ -4,6 +4,7 @@ using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -56,7 +57,7 @@ namespace CSI.IBTA.UserService.Services
                 City = dto.City,
                 Zip = dto.ZipCode,
                 Settings = _defaultSettings.Select(x =>
-                    new Settings() 
+                    new Settings()
                     {
                         Condition = x.key,
                         State = x.value
@@ -72,7 +73,7 @@ namespace CSI.IBTA.UserService.Services
             }
 
             var success = await _unitOfWork.Employers.Add(e);
-            if(!success)
+            if (!success)
                 return new GenericHttpResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
@@ -83,7 +84,7 @@ namespace CSI.IBTA.UserService.Services
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if(e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             var hasSameCombination = await _unitOfWork.Employers
                 .Find(x => x.Name == dto.Name && x.Code == dto.Code);
@@ -128,7 +129,7 @@ namespace CSI.IBTA.UserService.Services
 
             if (!success)
                 return new GenericHttpResponse<bool>(true, new HttpError("Server failed to delete employer", HttpStatusCode.InternalServerError), false);
-            
+
             await _unitOfWork.CompleteAsync();
             return new GenericHttpResponse<bool>(false, null, true);
         }
@@ -149,6 +150,51 @@ namespace CSI.IBTA.UserService.Services
             if (res == null) return new GenericHttpResponse<EmployerDto[]>(true, new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
 
             return new GenericHttpResponse<EmployerDto[]>(false, null, res.Select(e => new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo)).ToArray());
+        }
+
+        public async Task<GenericHttpResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId)
+        {
+            var response = await _unitOfWork.Users.Find(u => u.EmployerId == employerId);
+
+            if (response == null)
+            {
+                var error = new HttpError("Server failed to fetch employer users", HttpStatusCode.InternalServerError);
+                return new GenericHttpResponse<IEnumerable<UserDto>>(true, error, null);
+            }
+
+            var userDtos = new List<UserDto>();
+            foreach (User user in response)
+            {
+                var userAccount = await _unitOfWork.Accounts.GetById(user.Id);
+
+                if (userAccount == null)
+                {
+                    var error = new HttpError("Server failed to fetch employer user's account", HttpStatusCode.InternalServerError);
+                    return new GenericHttpResponse<IEnumerable<UserDto>>(true, error, null);
+                }
+
+                var userEmail = await _unitOfWork.Emails.GetById(user.Id);
+
+                if (userEmail == null)
+                {
+                    var error = new HttpError("Server failed to fetch employer user's email", HttpStatusCode.InternalServerError);
+                    return new GenericHttpResponse<IEnumerable<UserDto>>(true, error, null);
+                }
+
+                var userDto = new UserDto(
+                    user.Id,
+                    userAccount.Role,
+                    userAccount.Username,
+                    user.Firstname,
+                    user.Lastname,
+                    user.AccountId,
+                    user.EmployerId,
+                    userEmail.EmailAddress);
+
+                userDtos.Add(userDto);
+            }
+
+            return new GenericHttpResponse<IEnumerable<UserDto>>(false, null, userDtos);
         }
     }
 }

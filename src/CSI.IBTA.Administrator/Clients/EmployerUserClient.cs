@@ -47,7 +47,7 @@ namespace CSI.IBTA.Administrator.Clients
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.PostAsync(UserApiEndpoints.CreateUser, content);
+            var response = await _httpClient.PostAsync(UserServiceApiEndpoints.CreateUser, content);
 
             if (!response.IsSuccessStatusCode)
             {

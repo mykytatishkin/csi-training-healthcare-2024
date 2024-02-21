@@ -13,7 +13,7 @@ namespace CSI.IBTA.UserService.Services
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public UsersService( 
+        public UsersService(
             IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -24,11 +24,12 @@ namespace CSI.IBTA.UserService.Services
             var userList = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
-                .Select(user => new UserDto(user.Id, user.Account.Role, user.Account.Username, 
+                .Include(u => u.Emails)
+                .Select(user => new UserDto(user.Id, user.Account.Role, user.Account.Username,
                 user.Firstname, user.Lastname, user.Account.Id,
-                user.Employer == null ? null : user.Employer.Id))
+                user.Employer == null ? null : user.Employer.Id, user.Emails[0].EmailAddress))
                 .ToArrayAsync();
-            
+
             return new GenericHttpResponse<UserDto[]>(false, null, userList);
         }
 
@@ -37,16 +38,17 @@ namespace CSI.IBTA.UserService.Services
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
+                .Include(u => u.Emails)
                 .FirstOrDefaultAsync(a => a.Account.Id == accountId);
-            
+
             if (user == null)
             {
                 return new GenericHttpResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
             return new GenericHttpResponse<UserDto>(false, null,
-                new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname, 
-                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
+                new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname,
+                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id, user.Emails[0].EmailAddress)
                 );
         }
 
@@ -55,6 +57,7 @@ namespace CSI.IBTA.UserService.Services
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
+                .Include(u => u.Emails)
                 .FirstOrDefaultAsync(a => a.Id == userId);
 
             if (user == null)
@@ -64,14 +67,14 @@ namespace CSI.IBTA.UserService.Services
 
             return new GenericHttpResponse<UserDto>(false, null,
                 new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname,
-                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
+                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id, user.Emails[0].EmailAddress)
                 );
         }
 
         public async Task<GenericHttpResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
         {
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);
-            
+
             if (existingAccount.Any())
             {
                 return new GenericHttpResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
@@ -119,7 +122,8 @@ namespace CSI.IBTA.UserService.Services
                 if (employer == null)
                 {
                     return new GenericHttpResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
-                } else
+                }
+                else
                 {
                     newUser.Employer = employer;
                 }

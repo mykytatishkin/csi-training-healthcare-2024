@@ -43,7 +43,7 @@ namespace CSI.IBTA.Administrator.Clients
             var jsonBody = JsonConvert.SerializeObject(request);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(AuthApiEndpoints.Auth, content);
+            var response = await _httpClient.PostAsync(AuthServiceApiEndpoints.Auth, content);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
                 return new AuthenticationResult { Success = false, Description = "Invalid credentials" };

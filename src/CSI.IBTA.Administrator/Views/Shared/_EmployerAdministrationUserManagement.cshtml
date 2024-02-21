@@ -1,0 +1,121 @@
+﻿@model UserManagementViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/employer-user/index.css">
+    <title>Welcome</title>
+</head>
+<body>
+    <div class="user-information-section">
+        <p class="text-align-left">User Information</p>
+        <form asp-controller="Employer" asp-action="User" method="post">
+            @Html.HiddenFor(m => m.EmployerId)
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="text-align-right">Firstname:* </td>
+                        <td><input asp-for="CreaterEmployerUserVM.Firstname" type="text" required /></td>
+                    </tr>
+                    <tr>
+                        <td class="text-align-right">Lastname:* </td>
+                        <td><input asp-for="CreaterEmployerUserVM.Lastname" type="text" required /></td>
+                    </tr>
+                    <tr>
+                        <td class="text-align-right">Email:* </td>
+                        <td><input asp-for="CreaterEmployerUserVM.Email" type="email" required /></td>
+                    </tr>
+                    <tr>
+                        <td class="text-align-right">Username:* </td>
+                        <td><input asp-for="CreaterEmployerUserVM.Username" type="text" required /></td>
+                    </tr>
+                    <tr>
+                        <td class="text-align-right">Password:* </td>
+                        <td><input asp-for="CreaterEmployerUserVM.Password" type="password" id="passwordInput" required /></td>
+                        <td><button type="button" onclick="setRandomPassword()">Generate</button></td>
+                    </tr>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td></td>
+                        <td><button class="submit-button" type="submit">Save</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="employer-users-section">
+        <div class="scrollable-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.EmployerUsers!)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => user.FirstName) @Html.DisplayFor(modelItem => user.LastName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => user.UserName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => user.EmailAddress)
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td>Firstname Lastname</td>
+                        <td>Username</td>
+                        <td>Email@gmail.com</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="action-buttons">
+            <button>Add</button>
+            <button>Update</button>
+        </div>
+    </div>
+    <button class="return-button">Return</button>
+</body>
+</html>

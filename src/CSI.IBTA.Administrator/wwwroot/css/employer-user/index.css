@@ -1,7 +1,14 @@
-﻿.employer-users-section {
-    display: flex;
-    flex-direction: row;
+﻿.user-information-section {
+    border: solid 1px;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
 }
+
+    .employer-users-section {
+        display: flex;
+        flex-direction: row;
+    }
 
     .employer-users-section table,
     .employer-users-section th,
@@ -38,4 +45,18 @@
 
 div.text-danger ul {
     margin-bottom: 5px;
+}
+
+.return-button,
+.submit-button {
+    display: flex;
+    justify-content: start;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.text-align-left {
+    text-align: left;
 }

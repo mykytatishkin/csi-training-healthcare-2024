@@ -1,6 +1,4 @@
-﻿using CSI.IBTA.Administrator.DTOs.EmployerUser;
-using CSI.IBTA.Administrator.Models;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace CSI.IBTA.Administrator.Mapping
 {
@@ -8,7 +6,7 @@ namespace CSI.IBTA.Administrator.Mapping
     {
         public MapperProfile()
         {
-            CreateMap<CreateEmployerUserViewModel, CreateEmployerUserCommand>();
+            //CreateMap<CreateEmployerUserViewModel, CreateEmployerUserCommand>();
         }
     }
 }

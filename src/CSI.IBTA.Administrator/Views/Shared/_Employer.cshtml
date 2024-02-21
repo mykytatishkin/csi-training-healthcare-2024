@@ -1,24 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@using CSI.IBTA.Shared.Entities
+﻿@using CSI.IBTA.Shared.Entities
 @model List<Employer>
-
-<script>
-</script>
 
 <div id="table-employer" class="container">
     <div class="row">
         <div class="col-sm-8">
-
         </div>
         <div class="col-sm-4">
             <button class="btn btn-primary">Add New Employer</button>
         </div>
     </div>
-    
+
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
         <form asp-action="Index" method="get">
@@ -34,10 +25,10 @@
             </div>
         </form>
     </div>
-    <br/>
+    <br />
     <div class="row">
         <div class="table-data">
-            <table class="table table-striped">
+            <table class="table table-striped" id="employer-table">
                 <thead>
                     <tr>
                         <th>Employer Name</th>
@@ -49,8 +40,7 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="showControl(@item.Id, '@item.Name')"> @Html.DisplayFor(modelItem => item.Name) </a>
-                                
+                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -64,11 +54,66 @@
                 <span>0</span>
                 <button class="btn btn-primary btn-small">Next</button>
             </div>
-           
+
         </div>
     </div>
 </div>
-<div id="control-employer" style="display: none;">
-    @Html.Partial("_EmployerAdministration")
-</div>
+<div id="control-employer" style="display: none;" />
 
+<script type="text/javascript">
+    function showEmployerDetails(employerId) {
+        fetch('/Employer?employerId=' + employerId)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('control-employer').innerHTML = data;
+                $("#table-employer").hide();
+                $("#control-employer").show();
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    function showEmployerUsersManagement(employerId) {
+        fetch('/Employer/Users?employerId=' + employerId)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('employer-partial-action').innerHTML = data;
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    function generateRandomPassword(length) {
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$%^&*()-_=+[]{}|;:'\",.<>/?";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    }
+
+    function setRandomPassword() {
+        const passwordLength = 12;
+        const password = generateRandomPassword(passwordLength);
+        const passwordInput = document.getElementById("passwordInput");
+
+        if (passwordInput) {
+            passwordInput.value = password;
+        } else {
+            console.error("Input field not found!");
+        }
+    }
+</script>
