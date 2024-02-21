@@ -24,12 +24,17 @@
     align-items: center;
 }
 
-.form-logo img {
-    display: none;
+.logo-preview {
+    margin-bottom:10px;
+    max-height: 200px;
     width: 100%;
-    max-height: 120px;
-    margin-top: 5px;
-    margin-bottom: 15px;
+    display: flex;
+    justify-content: center
+}
+
+.logo-preview img {
+    display:none;
+    object-fit: contain;
 }
 
 .form-logo input {
@@ -43,7 +48,10 @@
 .logo-name-display {
     border: 1px solid var(--form-border-color);
     width: 450px;
-    height: 30px;
+    min-height:30px;
+    height: auto;
+    max-height: 60px;
+    overflow: auto; 
 }
 
 .form-column {

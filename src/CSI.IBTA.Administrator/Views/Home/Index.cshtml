@@ -15,10 +15,10 @@
     <div>
         <button id="addEmployerButton" class="btn btn-primary">Add Employer</button>
     </div>
-    <div id="employerForm" class="form" style="display:none">
+    <div id="employerForm" class="form" style="display:none;">
         <h4>Employer Administration</h4>
-        <div class="form-logo" style="border:none">
-            <img id="imagePreview" src="#" alt="Logo Preview" />
+        <div class="logo-preview">
+            <img id="imagePreview" src="#" alt="Logo Preview">
         </div>
         @model CreateEmployerViewModel
         <form asp-action="AddEmployer" method="post" EncType="multipart/form-data">
@@ -63,7 +63,9 @@
             </div>
             <span class="border-label">Logo</span>
             <div class="form-logo">
-                <img id="imagePreview2" src="#" alt="Logo Preview" />
+                <div class="logo-preview">
+                    <img id="imagePreview2" src="#">
+                </div>
                 <div class="logo-name-display" id="fileNameDisplay"></div>
                 <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('Logo').click();" />
                 <input type="file" name="Logo" style="display:none;" onchange="previewImage(event); updateFileName(event);" accept="image/*" id="Logo" />
