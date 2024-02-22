@@ -4,8 +4,6 @@ using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DataStructures;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Drawing;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -54,18 +52,13 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEmployer(CreateEmployerViewModel model)
+        public async Task<IActionResult> AddEmployer(HomeViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var res = await _userServiceClient.CreateEmployer(model.ToDto());
+            var res = await _userServiceClient.CreateEmployer(model.CreateEmployerViewModel.ToDto());
             if (!res.Success)
             {
                 ModelState.AddModelError("", res.Description);
-                return View("Index");
+                return View("Index", model);
             }
 
             return RedirectToAction("Index", "Home");

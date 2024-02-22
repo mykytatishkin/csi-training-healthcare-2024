@@ -1,13 +1,14 @@
 ﻿@{
 }
+@model CreateEmployerViewModel;
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
-    <link rel="stylesheet" href="~/css/employer-form.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome</title>
+        <link rel="stylesheet" href="~/css/employer-form.css">
+    </head>
 <body>
 <div>
     <div class="nav-buttons">
@@ -19,22 +20,21 @@
         <div class="logo-preview">
             <img id="imagePreview" src="#" alt="Logo Preview">
         </div>
-        @model CreateEmployerViewModel
-        <form asp-action="AddEmployer" method="post" EncType="multipart/form-data">
+        <form id="employer-form" EncType="multipart/form-data">
             <span class="border-label">Profile</span>
             <div class="form-columns">
                 <div class="form-column">
                     <div class="form-row">
                         <label for="Name">Name:*</label>
-                        <input type="text" name="Name" id="Name" required />
+                            <input type="text" name="Name" id="Name" required />
                     </div>
                     <div class="form-row">
                         <label for="Code">Code:*</label>
-                        <input type="text" name="Code" id="Code" required />
+                            <input type="text" name="Code" id="Code" required />
                     </div>
                     <div class="form-row">
                         <label for="Email">Email:*</label>
-                        <input type="email" name="Email" id="Email" required />
+                            <input type="email" name="Email" id="Email" required />
                     </div>
                 </div>
                 <div class="form-column">
@@ -52,11 +52,11 @@
                     </div>
                     <div class="form-row">
                         <label for="ZipCode">Zip Code:*</label>
-                        <input type="text" name="ZipCode" id="ZipCode" required />
+                            <input type="text" name="ZipCode" id="ZipCode" required />
                     </div>
                     <div class="form-row">
                         <label for="Phone">Phone:*</label>
-                        <input type="text" name="Phone" id="Phone" required />
+                            <input type="text" name="Phone" id="Phone" required />
                     </div>
                 </div>
             </div>
@@ -67,39 +67,14 @@
                 </div>
                 <div class="logo-name-display" id="fileNameDisplay"></div>
                 <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('Logo').click();" />
-                <input type="file" name="Logo" style="display:none;" onchange="previewImage(event); updateFileName(event);" accept="image/*" id="Logo" />
+                    <input type="file" name="Logo" style="display:none;" onchange="previewImage(event); updateFileName(event);" accept="image/*" id="Logo" />
             </div>
+            </form>
             <div class="form-buttons">
-                <div asp-validation-summary="All" class="form-errors text-danger"></div>
+                <div id="employer-form-errors" class="form-errors text-danger"></div>
                  <button onclick="hideCreateEmployerForm()" class="btn btn-outline-primary">Cancel</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" onclick="handleEmployerFormSubmit()" class="btn btn-primary">Submit</button>
             </div>
-        </form>
         </div>
-        <script>
-        function updateFileName(event) {
-            const input = event.target;
-            const fileNameDisplay = document.getElementById("fileNameDisplay");
-
-            if (input.files && input.files[0]) {
-                const fileName = input.files[0].name;
-                fileNameDisplay.textContent = fileName;
-            } else {
-                fileNameDisplay.textContent = "";
-            }
-        }
-        function previewImage(event) {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var output = document.getElementById('imagePreview');
-                output.src = reader.result;
-                output.style.display = 'block';
-                var output2 = document.getElementById('imagePreview2');
-                output2.src = reader.result;
-                output2.style.display = 'block';
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-        </script>
     </div>
 </body>

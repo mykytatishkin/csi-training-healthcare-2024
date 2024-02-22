@@ -17,7 +17,7 @@
 
         </div>
         <div class="col-sm-4">
-             <button class="btn btn-primary" onclick="showCreateEmployerForm()">Add New Employer</button>
+            <button class="btn btn-primary" onclick="showEmployerForm()">Add New Employer</button>
         </div>
     </div>
 
@@ -85,9 +85,28 @@
     @Html.Partial("_EmployerAdministration", Model.Employers)
 </div>
 
-<div id="control-employer-form" style="display: none;">
-    @Html.Partial("_EmployerForm", Model.CreateEmployerViewModel)
-</div>
+<div id="control-employer-form" style="display: none;"/>
 
+<script type="text/javascript">
+    function showEmployerForm() {
+        fetch(`/Employer/EmployerForm`)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('control-employer-form').innerHTML = data;
+            $("#table-employer").hide();
+            $("#control-employer-form").show();
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+    
+</script>
+<script type="text/javascript" src="~/Scripts/employer-create-form.js"></script>
 
 
