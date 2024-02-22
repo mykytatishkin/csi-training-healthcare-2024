@@ -1,10 +1,10 @@
-﻿
-:root {
+﻿:root {
     --background-color: #f4f4f4;
     --container-background-color: #fff;
     --box-shadow-color: rgba(0, 0, 0, 0.1);
     --form-border-color: #ccc;
     --button-primary-color: #007bff;
     --button-primary-hover-color: #0056b3;
+    --button-secondary-color: #6c757d;
     --text-danger-color: red;
 }

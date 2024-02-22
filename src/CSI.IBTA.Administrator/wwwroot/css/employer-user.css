@@ -19,13 +19,6 @@
     flex-direction: row;
 }
 
-    /*    .employer-users-section table,
-    .employer-users-section th,
-    .employer-users-section td,
-    .employer-users-section tr {
-        border: 1px solid;
-    }*/
-
     .employer-users-section th,
     .employer-users-section td {
         border: 1px solid #ddd;
@@ -37,42 +30,47 @@
     }
 
     .employer-users-section thead {
-        background-color: lightgray;
+        background-color: #6c757d;
+        color: white;
     }
 
-.hoverable-row:hover {
-    background-color: #D3D3D3 !important;
-    color: black;
-    cursor: pointer;
-}
+    .employer-users-section th {
+        font-weight: normal;
+    }
+
+    .employer-users-section .hoverable-row:hover {
+        background-color: lightgray !important;
+        color: black;
+        cursor: pointer;
+    }
+
+    .employer-users-section .scrollable-table {
+        max-height: 206px;
+        overflow: auto;
+    }
+
+    .employer-users-section thead,
+    .employer-users-section th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .employer-users-section .action-buttons {
+        display: flex;
+        flex-direction: column;
+        margin-left: 20px;
+        width: 100px;
+    }
+
+        .employer-users-section .action-buttons button {
+            margin-bottom: 8px;
+        }
 
 .highlight {
-    background-color: #D3D3D3 !important;
+    background-color: lightgray !important;
     color: black;
 }
-
-.employer-users-section .scrollable-table {
-    max-height: 200px;
-    overflow: auto;
-}
-
-.employer-users-section thead,
-.employer-users-section th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
-.employer-users-section .action-buttons {
-    display: flex;
-    flex-direction: column;
-    margin-left: 20px;
-    width: 100px;
-}
-
-    .employer-users-section .action-buttons button {
-        margin-bottom: 8px;
-    }
 
 .text-danger {
     margin-top: 5px;
@@ -98,6 +96,7 @@ div.text-danger ul {
 
 .user-management {
     margin-top: 24px;
+    margin-bottom: 8px;
 }
 
 #return-button {
@@ -116,4 +115,9 @@ div.text-danger ul {
     color: white;
     padding: 4px 12px 4px 12px;
     background-color: var(--button-primary-color);
+}
+
+.custom-button.secondary {
+    /*background-color: var(--button-secondary-color);*/
+    background-color: #6c757d;
 }
