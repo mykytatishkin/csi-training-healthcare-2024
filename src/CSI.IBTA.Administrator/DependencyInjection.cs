@@ -3,7 +3,6 @@ using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Services;
 using CSI.IBTA.AuthService.Authentication;
 using Microsoft.Extensions.Options;
-using System.Reflection;
 
 namespace CSI.IBTA.Administrator
 {
@@ -24,7 +23,6 @@ namespace CSI.IBTA.Administrator
             services.AddHttpClient<IEmployerUserClient, EmployerUserClient>();
             services.AddHttpClient<IUserServiceClient, UserServiceClient>();
             services.AddHttpClient<IEmployerClient, EmployerClient>();
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }
     }
