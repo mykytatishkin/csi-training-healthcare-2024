@@ -68,16 +68,16 @@
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
-                <span>@Model.Employers.PageIndex</span>
+                <span style="color:dodgerblue">@Model.Employers.PageIndex</span>
                 @for(int i = Model.Employers.PageIndex; i < Model.Employers.TotalPages; i++)
                 {
-                    if(Model.Employers.PageIndex + i <= Model.Employers.TotalPages) {
+                    if(1 + i <= Model.Employers.TotalPages) {
                         <a asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
-                           asp-route-pageNumber="@(Model.Employers.PageIndex + i)"
+                           asp-route-pageNumber="@(i + 1)"
                            asp-route-currentFilter="@ViewData["CurrentFilter"]"
                            class="btn btn-default @nextDisabled">
-                            @Convert.ToInt32(Model.Employers.PageIndex + i)
+                            @Convert.ToInt32(1 + i)
                         </a>
                     }
                 }
@@ -89,8 +89,11 @@
                    class="btn btn-default @nextDisabled">
                     Next
                 </a>
+                <div class="test">
+                
             </div>
-
+            </div>
+            
         </div>
     </div>
 </div>
@@ -101,6 +104,3 @@
 <div id="control-employer-form" style="display: none;">
     @Html.Partial("_EmployerForm", Model.CreateEmployerViewModel)
 </div>
-
-
-
