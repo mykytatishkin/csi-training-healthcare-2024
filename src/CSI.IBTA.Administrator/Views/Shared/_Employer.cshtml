@@ -68,6 +68,21 @@
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
+                @if(Model.Employers.PageIndex > 1 )
+                {
+                    int i = Model.Employers.TotalPages;
+                    while(i > Model.Employers.PageIndex)
+                    {
+                        <a asp-action="Index"
+                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                           asp-route-pageNumber="@(i - 2)"
+                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                           class="btn btn-default @prevDisabled">
+                            @Convert.ToInt32(i - 2)
+                        </a>
+                        i--;
+                    }
+                }
                 <span style="color:dodgerblue">@Model.Employers.PageIndex</span>
                 @for(int i = Model.Employers.PageIndex; i < Model.Employers.TotalPages; i++)
                 {
@@ -77,7 +92,7 @@
                            asp-route-pageNumber="@(i + 1)"
                            asp-route-currentFilter="@ViewData["CurrentFilter"]"
                            class="btn btn-default @nextDisabled">
-                            @Convert.ToInt32(1 + i)
+                            @Convert.ToInt32(i + 1)
                         </a>
                     }
                 }
