@@ -23,7 +23,7 @@
                     <tbody>
                         @foreach (var user in Model.EmployerUsers!)
                         {
-                            <tr class="hoverable-row" data-userId="@user.Id" onclick="highlightEmployerUserRow(this)">
+                            <tr class="hoverable-row" data-userId="@user.Id" onclick="onEmployerUserRowClick(this)">
                                 <td>
                                     @Html.DisplayFor(modelItem => user.FirstName) @Html.DisplayFor(modelItem => user.LastName)
                                 </td>
@@ -44,6 +44,7 @@
             </div>
         </div>
         <button class="align-left custom-button" id="return-button" onclick="showEmployerAdministration(@Model.EmployerId)">Return</button>
+        <p class="error-text text-align-left" id="employer-user-management-errors"></p>
     </div>
 </body>
 </html>

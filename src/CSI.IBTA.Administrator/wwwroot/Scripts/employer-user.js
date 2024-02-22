@@ -3,7 +3,10 @@
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
+                showError("employer-user-management-errors", "There was an error, try again");
+                return;
             }
+
             return response.text();
         })
         .then(function (data) {
@@ -13,7 +16,32 @@
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", "There was an error, try again");
         });
+}
+
+function showEmployerUsersManagement(employerId) {
+    fetch('/Employer/Users?employerId=' + employerId)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+                showError("employer-administration-menu-errors", "There was an error, try again");
+                return;
+            }
+
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            showError("employer-administration-menu-errors", "There was an error, try again");
+        });
+}
+
+function showError(id, text) {
+    document.getElementById(id).innerText = text;
 }
 
 function generateRandomPassword(length) {
@@ -49,20 +77,19 @@ function showUserInformationSection() {
 
 let selectedUserId = -1;
 let selectedUserRowElement = null;
+let updateButton = null;
 
-function highlightEmployerUserRow(element) {
-    const updateButton = document.getElementById('update-button');
+function onEmployerUserRowClick(element) {
+    updateButton = document.getElementById('update-button');
     currentId = element.getAttribute('data-userId');
 
     if (selectedUserId == currentId) {
-        updateButton.setAttribute('hidden', true);
-        element.classList.remove("highlight");
-        selectedUserId = -1;
-        selectedUserRowElement = null;
+        deselectEmployerUserRow();
     } else {
         if (selectedUserRowElement != null) {
             selectedUserRowElement.classList.remove("highlight");
         }
+
         element.classList.add("highlight");
         selectedUserId = element.getAttribute('data-userId');
         selectedUserRowElement = element;
@@ -70,12 +97,22 @@ function highlightEmployerUserRow(element) {
     }
 }
 
+function deselectEmployerUserRow() {
+    updateButton.setAttribute('hidden', true);
+    selectedUserRowElement.classList.remove("highlight");
+    selectedUserId = -1;
+    selectedUserRowElement = null;
+}
+
 function showCreateUserSection(employerId) {
     fetch('/Employer/CreateUser?employerId=' + employerId)
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
+                showError("employer-user-management-errors", "There was an error, try again");
+                return;
             }
+
             return response.text();
         })
         .then(function (data) {
@@ -83,6 +120,7 @@ function showCreateUserSection(employerId) {
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", "There was an error, try again");
         });
 }
 
@@ -91,7 +129,10 @@ function showUpdateUserSection(employerId) {
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
+                showError("employer-user-management-errors", "There was an error, try again");
+                return;
             }
+
             return response.text();
         })
         .then(function (data) {
@@ -99,6 +140,7 @@ function showUpdateUserSection(employerId) {
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", "There was an error, try again");
         });
 }
 
@@ -111,19 +153,23 @@ function saveUserData() {
     }
 
     var formData = new FormData(form);
-    
-    fetch('/Employer/' + formData.get('ActionName') + '?employerId=' + formData.get('EmployerId') + '&userId=' + selectedUserId, {
+
+    fetch(`/Employer/${formData.get('ActionName')}?employerId=${formData.get('EmployerId')}&userId=${selectedUserId}`, {
         method: 'POST',
         body: formData,
     })
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
+                showError("employer-user-management-errors", "There was an error, try again");
+                return;
             }
 
             showEmployerUsersManagement(formData.get('EmployerId'));
+            deselectEmployerUserRow();
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", "There was an error, try again");
         });
 }
