@@ -59,3 +59,21 @@ function previewImage(event) {
     };
     reader.readAsDataURL(event.target.files[0]);
 }
+
+function showEmployerForm() {
+    fetch(`/Employer/EmployerForm`)
+    .then(function (response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(function (data) {
+        document.getElementById('control-employer-form').innerHTML = data;
+        $("#table-employer").hide();
+        $("#control-employer-form").show();
+    })
+    .catch(function (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
