@@ -9,10 +9,7 @@
     <link rel="stylesheet" href="~/css/logout.css">
     <title>Welcome</title>
 </head>
-<body>
-
-
-
+<body>    
     <div class="text-center">
         <div class="container">
             <div class="row">
@@ -35,13 +32,12 @@
                                 <button class="right partial-btn" onclick="showClaims()">Claims</button>
                             </div>
                             <div id="employer-content">
-                                @Html.Partial("_Employer")
+                                <partial name="_Employer" />
                             </div>
                             <div id="claims-content" style="display: none;">
-                                @Html.Partial("_Claims")
+                                <partial name="_Claims" />
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

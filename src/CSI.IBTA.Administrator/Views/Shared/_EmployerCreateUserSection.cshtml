@@ -4,7 +4,7 @@
     <div class="align-left">
         <span class="border-label">User Information</span>
     </div>
-    <form asp-controller="Employer" asp-action="@Model.ActionName" method="post">
+    <form asp-controller="Employer" asp-action="@Model.ActionName" method="post" id="employer-user-create-form">
         @Html.HiddenFor(m => m.EmployerId)
         @Html.HiddenFor(m => m.ActionName)
         @Html.HiddenFor(m => m.UserId)
@@ -44,7 +44,7 @@
                 }
                 <tr>
                     <td></td>
-                    <td><button class="align-left custom-button" type="submit">Save</button></td>
+                    <td><button class="align-left custom-button" onclick="saveUserData()" type="button">Save</button></td>
                 </tr>
             </tbody>
         </table>

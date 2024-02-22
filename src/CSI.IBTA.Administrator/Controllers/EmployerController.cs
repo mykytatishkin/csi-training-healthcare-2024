@@ -47,7 +47,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpGet("Users")]
         public async Task<IActionResult> Users(int employerId)
         {
-            var response = await _employerClient.GetEmployerUsers(employerId);
+            var response = await _employerUserClient.GetEmployerUsers(employerId);
 
             if (response.Error != null || response.Result == null)
             {
@@ -73,13 +73,6 @@ namespace CSI.IBTA.Administrator.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            string? token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
             var command = new CreateUserDto(
                 model.CreateEmployerUserVM.Username,
                 model.CreateEmployerUserVM.Password,
@@ -91,7 +84,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.CreateEmployerUserVM.Email,
                 "", "", "", "");
 
-            var response = await _employerUserClient.CreateEmployerUser(command, token);
+            var response = await _employerUserClient.CreateEmployerUser(command);
 
             if (response.Error != null)
             {
@@ -147,13 +140,6 @@ namespace CSI.IBTA.Administrator.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            string? token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
             var command = new CreateUserDto(
                 model.Username,
                 model.Password,
@@ -165,7 +151,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.Email,
                 "", "", "", "");
 
-            var response = await _employerUserClient.CreateEmployerUser(command, token);
+            var response = await _employerUserClient.CreateEmployerUser(command);
 
             if (response.Error != null)
             {
@@ -191,13 +177,6 @@ namespace CSI.IBTA.Administrator.Controllers
                 return PartialView("_EmployerCreateUserSection", model);
             }
 
-            string? token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
             var command = new PutUserDto(
                 model.Username,
                 model.Password,
@@ -207,7 +186,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.Email,
                 "", "", "", "");
 
-            var response = await _employerUserClient.UpdateEmployerUser(command, model.UserId.Value, token);
+            var response = await _employerUserClient.UpdateEmployerUser(command, model.UserId.Value);
 
             if (response.Error != null)
             {

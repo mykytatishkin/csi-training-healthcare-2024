@@ -51,7 +51,7 @@ namespace CSI.IBTA.Administrator.Clients
 
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
-            string requestUrl = string.Format(UserServiceApiEndpoints.GetEmployer, id);
+            string requestUrl = string.Format(UserServiceApiEndpoints.Employer, id);
             var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
@@ -66,40 +66,6 @@ namespace CSI.IBTA.Administrator.Clients
             var employer = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
 
             return new GenericInternalResponse<EmployerDto>(false, null, employer);
-        }
-
-        public async Task<GenericInternalResponse<List<UserDto>>> GetEmployerUsers(int employerId)
-        {
-            if (_httpContextAccessor.HttpContext == null)
-            {
-                _logger.LogError("HttpContext is null");
-                return new GenericInternalResponse<List<UserDto>>(true, InternalErrors.BaseInternalError, null);
-            }
-
-            string? token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return new GenericInternalResponse<List<UserDto>>(true, InternalErrors.InvalidToken, null);
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-            string requestUrl = string.Format(UserServiceApiEndpoints.GetEmployerUsers, employerId);
-            var response = await _httpClient.GetAsync(requestUrl);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = response.ReasonPhrase != null ?
-                    new InternalError(response.ReasonPhrase) :
-                    InternalErrors.BaseInternalError;
-                return new GenericInternalResponse<List<UserDto>>(true, error, null);
-            }
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var employerUsers = JsonConvert.DeserializeObject<List<UserDto>>(responseContent);
-
-            return new GenericInternalResponse<List<UserDto>>(false, null, employerUsers);
         }
     }
 }

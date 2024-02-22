@@ -101,3 +101,29 @@ function showUpdateUserSection(employerId) {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
+
+function saveUserData() {
+    var form = document.getElementById('employer-user-create-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+    
+    fetch('/Employer/' + formData.get('ActionName') + '?employerId=' + formData.get('EmployerId') + '&userId=' + selectedUserId, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            showEmployerUsersManagement(formData.get('EmployerId'));
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}

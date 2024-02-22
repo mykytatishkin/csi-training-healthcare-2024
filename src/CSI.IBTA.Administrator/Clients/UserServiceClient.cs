@@ -47,7 +47,7 @@ namespace CSI.IBTA.Administrator.Clients
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _httpClient.GetAsync(AuthServiceApiEndpoints.UserServiceEmployers);
+            var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Employers);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -78,7 +78,7 @@ namespace CSI.IBTA.Administrator.Clients
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            string requestUrl = string.Format(UserServiceApiEndpoints.GetUser, userId);
+            string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);
             var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
