@@ -1,4 +1,4 @@
-﻿/*﻿@import url('global.css');*/
+﻿@import url('global.css');
 
 .user-information-section {
     border: solid 1px var(--form-border-color);
@@ -120,8 +120,8 @@ div.text-danger ul {
 }
 
     .custom-button.secondary {
-        background-color: var(--button-secondary-color);
-        /*background-color: #6c757d;*/
+        /*background-color: var(--button-secondary-color);*/
+        background-color: #6c757d;
     }
 
 .error-text {
