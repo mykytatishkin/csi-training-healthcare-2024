@@ -69,6 +69,19 @@
                     Previous
                 </a>
                 <span>@Model.Employers.PageIndex</span>
+                @for(int i = Model.Employers.PageIndex; i < Model.Employers.TotalPages; i++)
+                {
+                    if(Model.Employers.PageIndex + i <= Model.Employers.TotalPages) {
+                        <a asp-action="Index"
+                           asp-route-sortOrder="@ViewData["CurrentSort"]"
+                           asp-route-pageNumber="@(Model.Employers.PageIndex + i)"
+                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                           class="btn btn-default @nextDisabled">
+                            @Convert.ToInt32(Model.Employers.PageIndex + i)
+                        </a>
+                    }
+                }
+
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["CurrentSort"]"
                    asp-route-pageNumber="@(Model.Employers.PageIndex + 1)"
