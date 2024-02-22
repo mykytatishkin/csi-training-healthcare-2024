@@ -30,7 +30,7 @@
                     <td class="text-align-right">Password:* </td>
                     <td class="align-left">
                         <input asp-for="Password" type="password" id="passwordInput" required />
-                        <button type="button" onclick="setRandomPassword()">Generate</button>
+                        <button class="custom-button" id="generate-password-button" type="button" onclick="setRandomPassword()">Generate</button>
                     </td>
                 </tr>
                 @if (!ViewData.ModelState.IsValid)
@@ -44,7 +44,7 @@
                 }
                 <tr>
                     <td></td>
-                    <td><button class="align-left" type="submit">Save</button></td>
+                    <td><button class="align-left custom-button" type="submit">Save</button></td>
                 </tr>
             </tbody>
         </table>

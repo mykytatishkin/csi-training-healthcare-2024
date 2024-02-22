@@ -1,5 +1,5 @@
 ﻿@using CSI.IBTA.Shared.DTOs
-@model EmployerDto
+@model int
 
 <div class="form-columns">
     <div class="row">
@@ -9,7 +9,7 @@
                 <a onclick="a()" class="btn btn-primary">Manage Profile</a>
             </div>
             <div class="row-column">
-                <button onclick="showEmployerUsersManagement(@Model.Id)" class="btn btn-primary">Manage Users</button>
+                <button onclick="showEmployerUsersManagement(@Model)" class="btn btn-primary">Manage Users</button>
             </div>
             <div class="row-column">
                 <a asp-area="" asp-controller="" asp-action="" class="btn btn-primary">Manage Rules</a>

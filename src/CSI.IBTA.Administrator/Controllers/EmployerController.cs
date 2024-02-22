@@ -38,6 +38,12 @@ namespace CSI.IBTA.Administrator.Controllers
             return PartialView("_EmployerAdministration", response.Result);
         }
 
+        [HttpGet("AdministrationMenu")]
+        public IActionResult AdministrationMenu(int employerId)
+        {
+            return PartialView("_EmployerAdministrationMenu", employerId);
+        }
+
         [HttpGet("Users")]
         public async Task<IActionResult> Users(int employerId)
         {

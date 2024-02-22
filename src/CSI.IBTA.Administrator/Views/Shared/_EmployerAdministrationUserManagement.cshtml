@@ -5,75 +5,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="~/css/employer-user/index.css">
+    <link rel="stylesheet" href="~/css/employer-user.css">
     <title>Welcome</title>
 </head>
 <body>
-    <div class="spacer">.</div>
-    <div id="user-create-section"></div>
-    <div class="employer-users-section">
-        <div class="scrollable-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model.EmployerUsers!)
-                    {
-                        <tr class="hoverable-row" data-userId="@user.Id" onclick="highlightRow(this)">
-                            <td>
-                                @Html.DisplayFor(modelItem => user.FirstName) @Html.DisplayFor(modelItem => user.LastName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => user.UserName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => user.EmailAddress)
-                            </td>
+    <div class="user-management">
+        <div id="user-create-section"></div>
+        <div class="employer-users-section">
+            <div class="scrollable-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
                         </tr>
-                    }
-                    <tr>
-                        <td>Firstname Lastname</td>
-                        <td>Username</td>
-                        <td>Email@gmail.com</td>
-                    </tr>
-                    <tr>
-                        <td>Firstname Lastname</td>
-                        <td>Username</td>
-                        <td>Email@gmail.com</td>
-                    </tr>
-                    <tr>
-                        <td>Firstname Lastname</td>
-                        <td>Username</td>
-                        <td>Email@gmail.com</td>
-                    </tr>
-                    <tr>
-                        <td>Firstname Lastname</td>
-                        <td>Username</td>
-                        <td>Email@gmail.com</td>
-                    </tr>
-                    <tr>
-                        <td>Firstname Lastname</td>
-                        <td>Username</td>
-                        <td>Email@gmail.com</td>
-                    </tr>
-                    <tr>
-                        <td>Firstname Lastname</td>
-                        <td>Username</td>
-                        <td>Email@gmail.com</td>
-                    </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.EmployerUsers!)
+                        {
+                            <tr class="hoverable-row" data-userId="@user.Id" onclick="highlightRow(this)">
+                                <td>
+                                    @Html.DisplayFor(modelItem => user.FirstName) @Html.DisplayFor(modelItem => user.LastName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => user.UserName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => user.EmailAddress)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="action-buttons">
+                <button class="custom-button" onclick="showCreateUserSection(@Model.EmployerId)">Add</button>
+                <button class="custom-button" id="update-button" onclick="showUpdateUserSection(@Model.EmployerId)" hidden>Update</button>
+            </div>
         </div>
-        <div class="action-buttons">
-            <button onclick="showCreateUserSection(@Model.EmployerId)">Add</button>
-            <button id="update-button" onclick="showUpdateUserSection(@Model.EmployerId)" hidden>Update</button>
-        </div>
+        <button class="align-left custom-button" id="return-button" onclick="showEmployerAdministration(@Model.EmployerId)">Return</button>
     </div>
-    <button class="align-left">Return</button>
 </body>
 </html>
