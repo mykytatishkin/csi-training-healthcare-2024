@@ -70,17 +70,17 @@
                 </a>
                 @if(Model.Employers.PageIndex > 1 )
                 {
-                    int i = Model.Employers.PageIndex;
-                    while(i < Model.Employers.TotalPages)
+                    int i = Model.Employers.TotalPages;
+                    while(i > Model.Employers.PageIndex)
                     {
                         <a asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
-                           asp-route-pageNumber="@(i - 1)"
+                           asp-route-pageNumber="@(i - 2)"
                            asp-route-currentFilter="@ViewData["CurrentFilter"]"
                            class="btn btn-default @prevDisabled">
-                            @Convert.ToInt32(i - 1)
+                            @Convert.ToInt32(i - 2)
                         </a>
-                        i++;
+                        i--;
                     }
                 }
                 <span style="color:dodgerblue">@Model.Employers.PageIndex</span>
