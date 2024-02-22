@@ -59,5 +59,31 @@ namespace CSI.IBTA.Administrator.Clients
 
             return new GenericInternalResponse<bool?>(false, null, true);
         }
+
+        public async Task<GenericInternalResponse<bool?>> UpdateEmployerUser(PutUserDto command, int userId, string token)
+        {
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                _logger.LogError("HttpContext is null");
+                return new GenericInternalResponse<bool?>(true, InternalErrors.BaseInternalError, null);
+            }
+
+            var jsonBody = JsonConvert.SerializeObject(command);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+            string requestUrl = string.Format(UserServiceApiEndpoints.PatchEmployerUser, userId);
+            var response = await _httpClient.PutAsync(requestUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = response.ReasonPhrase != null ?
+                    new InternalError(response.ReasonPhrase) :
+                    InternalErrors.BaseInternalError;
+                return new GenericInternalResponse<bool?>(true, error, null);
+            }
+
+            return new GenericInternalResponse<bool?>(false, null, true);
+        }
     }
 }

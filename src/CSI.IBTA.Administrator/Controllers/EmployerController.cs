@@ -11,16 +11,19 @@ namespace CSI.IBTA.Administrator.Controllers
     {
         private readonly IEmployerClient _employerClient;
         private readonly IEmployerUserClient _employerUserClient;
+        private readonly IUserServiceClient _userServiceClient;
         private readonly IJwtTokenService _jwtTokenService;
 
         public EmployerController(
             IEmployerClient employerClient,
             IEmployerUserClient employerUserClient,
-            IJwtTokenService jwtTokenService)
+            IJwtTokenService jwtTokenService,
+            IUserServiceClient userServiceClient)
         {
             _employerClient = employerClient;
             _employerUserClient = employerUserClient;
             _jwtTokenService = jwtTokenService;
+            _userServiceClient = userServiceClient;
         }
 
         public async Task<IActionResult> Index(int employerId)
@@ -49,7 +52,7 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 EmployerId = employerId,
                 EmployerUsers = response.Result,
-                CreaterEmployerUserVM = new CreateEmployerUserViewModel()
+                CreateEmployerUserVM = new EmployerUserViewModel()
             };
 
             return PartialView("_EmployerAdministrationUserManagement", viewModel);
@@ -72,17 +75,133 @@ namespace CSI.IBTA.Administrator.Controllers
             }
 
             var command = new CreateUserDto(
-                model.CreaterEmployerUserVM.Username,
-                model.CreaterEmployerUserVM.Password,
-                model.CreaterEmployerUserVM.Firstname,
-                model.CreaterEmployerUserVM.Lastname,
+                model.CreateEmployerUserVM.Username,
+                model.CreateEmployerUserVM.Password,
+                model.CreateEmployerUserVM.Firstname,
+                model.CreateEmployerUserVM.Lastname,
                 Role.EmployerAdmin,
                 employerId,
-                "", 
-                model.CreaterEmployerUserVM.Email,
+                "",
+                model.CreateEmployerUserVM.Email,
                 "", "", "", "");
 
             var response = await _employerUserClient.CreateEmployerUser(command, token);
+
+            if (response.Error != null)
+            {
+                ModelState.AddModelError("", response.Error.Title);
+            }
+
+            //return PartialView("_EmployerAdministrationUserManagement", model);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet("CreateUser")]
+        public IActionResult CreateUser(int employerId)
+        {
+            var viewModel = new EmployerUserViewModel
+            {
+                ActionName = "CreateUser",
+                EmployerId = employerId
+            };
+
+            return PartialView("_EmployerCreateUserSection", viewModel);
+        }
+
+        [HttpGet("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(int userId, int employerId)
+        {
+            var response = await _userServiceClient.GetUser(userId);
+
+            if (response.Error != null || response.Result == null)
+            {
+                throw new Exception("Failed to retrieve user");
+            }
+
+            var viewModel = new EmployerUserViewModel
+            {
+                ActionName = "UpdateUser",
+                UserId = userId,
+                EmployerId = employerId,
+                Firstname = response.Result.FirstName,
+                Lastname = response.Result.LastName,
+                Email = response.Result.EmailAddress,
+                Username = response.Result.UserName
+            };
+
+            return PartialView("_EmployerCreateUserSection", viewModel);
+        }
+
+        [HttpPost("CreateUser")]
+        public async Task<IActionResult> CreateUser(EmployerUserViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                //return PartialView("_EmployerAdministrationUserManagement", model);
+                return RedirectToAction("Index", "Home");
+            }
+
+            string? token = _jwtTokenService.GetCachedToken();
+
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var command = new CreateUserDto(
+                model.Username,
+                model.Password,
+                model.Firstname,
+                model.Lastname,
+                Role.EmployerAdmin,
+                model.EmployerId,
+                "",
+                model.Email,
+                "", "", "", "");
+
+            var response = await _employerUserClient.CreateEmployerUser(command, token);
+
+            if (response.Error != null)
+            {
+                ModelState.AddModelError("", response.Error.Title);
+            }
+
+            //return PartialView("_EmployerAdministrationUserManagement", model);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(EmployerUserViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                //return PartialView("_EmployerAdministrationUserManagement", model);
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (model.UserId == null)
+            {
+                ModelState.AddModelError("", "Something went wrong... Try refreshing");
+                return PartialView("_EmployerCreateUserSection", model);
+            }
+
+            string? token = _jwtTokenService.GetCachedToken();
+
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var command = new PutUserDto(
+                model.Username,
+                model.Password,
+                model.Firstname,
+                model.Lastname,
+                "",
+                model.Email,
+                "", "", "", "");
+
+            var response = await _employerUserClient.UpdateEmployerUser(command, model.UserId.Value, token);
 
             if (response.Error != null)
             {

@@ -184,6 +184,67 @@ namespace CSI.IBTA.UserService.Services
                 );
         }
 
+        public async Task<GenericHttpResponse<UpdatedUserDto>> PutUser(int userId, PutUserDto putUserDto)
+        {
+            var user = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Addresses)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return new GenericHttpResponse<UpdatedUserDto>(
+                    true, HttpErrors.ResourceNotFound, null
+                );
+            }
+
+            var conflictingUser = await _unitOfWork.Accounts
+                .Find(a => a.Username == putUserDto.UserName && a.Id != user.AccountId);
+
+            if (conflictingUser.Any())
+            {
+                return new GenericHttpResponse<UpdatedUserDto>(
+                    true, HttpErrors.Conflict, null
+                );
+            }
+
+            user.Account.Username = putUserDto.UserName;
+            user.Account.Password = PasswordHasher.Hash(putUserDto.Password);
+            user.Firstname = putUserDto.FirstName;
+            user.Lastname = putUserDto.LastName;
+            user.Addresses[0].State = putUserDto.AddressState;
+            user.Addresses[0].Street = putUserDto.AddressStreet;
+            user.Addresses[0].City = putUserDto.AddressCity;
+            user.Addresses[0].Zip = putUserDto.AddressZip;
+            user.Emails[0].EmailAddress = putUserDto.EmailAddress;
+            user.Phones[0].PhoneNumber = putUserDto.PhoneNumber;
+
+            await _unitOfWork.CompleteAsync();
+
+            return new GenericHttpResponse<UpdatedUserDto>(
+                false,
+                null,
+                new UpdatedUserDto(
+                    user.Id,
+                    user.Account.Username,
+                    user.Account.Password,
+                    user.Firstname,
+                    user.Lastname,
+                    user.Account.Id,
+                    user.Account.Role,
+                    user.Phones[0].PhoneNumber,
+                    user.Emails[0].EmailAddress,
+                    user.Addresses[0].State,
+                    user.Addresses[0].Street,
+                    user.Addresses[0].City,
+                    user.Addresses[0].Zip
+                )
+            );
+        }
+
+
         public async Task<GenericHttpResponse<bool>> DeleteUser(int userId)
         {
             var user = await _unitOfWork.Users

@@ -9,50 +9,8 @@
     <title>Welcome</title>
 </head>
 <body>
-    <div class="user-information-section">
-        <p class="text-align-left">User Information</p>
-        <form asp-controller="Employer" asp-action="User" method="post">
-            @Html.HiddenFor(m => m.EmployerId)
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="text-align-right">Firstname:* </td>
-                        <td><input asp-for="CreaterEmployerUserVM.Firstname" type="text" required /></td>
-                    </tr>
-                    <tr>
-                        <td class="text-align-right">Lastname:* </td>
-                        <td><input asp-for="CreaterEmployerUserVM.Lastname" type="text" required /></td>
-                    </tr>
-                    <tr>
-                        <td class="text-align-right">Email:* </td>
-                        <td><input asp-for="CreaterEmployerUserVM.Email" type="email" required /></td>
-                    </tr>
-                    <tr>
-                        <td class="text-align-right">Username:* </td>
-                        <td><input asp-for="CreaterEmployerUserVM.Username" type="text" required /></td>
-                    </tr>
-                    <tr>
-                        <td class="text-align-right">Password:* </td>
-                        <td><input asp-for="CreaterEmployerUserVM.Password" type="password" id="passwordInput" required /></td>
-                        <td><button type="button" onclick="setRandomPassword()">Generate</button></td>
-                    </tr>
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <tr>
-                            <td></td>
-                            <td>
-                                <div asp-validation-summary="All" class="text-danger"></div>
-                            </td>
-                        </tr>
-                    }
-                    <tr>
-                        <td></td>
-                        <td><button class="submit-button" type="submit">Save</button></td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
+    <div class="spacer">.</div>
+    <div id="user-create-section"></div>
     <div class="employer-users-section">
         <div class="scrollable-table">
             <table>
@@ -66,7 +24,7 @@
                 <tbody>
                     @foreach (var user in Model.EmployerUsers!)
                     {
-                        <tr>
+                        <tr class="hoverable-row" data-userId="@user.Id" onclick="highlightRow(this)">
                             <td>
                                 @Html.DisplayFor(modelItem => user.FirstName) @Html.DisplayFor(modelItem => user.LastName)
                             </td>
@@ -112,10 +70,10 @@
             </table>
         </div>
         <div class="action-buttons">
-            <button>Add</button>
-            <button>Update</button>
+            <button onclick="showCreateUserSection(@Model.EmployerId)">Add</button>
+            <button id="update-button" onclick="showUpdateUserSection(@Model.EmployerId)" hidden>Update</button>
         </div>
     </div>
-    <button class="return-button">Return</button>
+    <button class="align-left">Return</button>
 </body>
 </html>

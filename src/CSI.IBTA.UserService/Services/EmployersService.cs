@@ -165,7 +165,7 @@ namespace CSI.IBTA.UserService.Services
             var userDtos = new List<UserDto>();
             foreach (User user in response)
             {
-                var userAccount = await _unitOfWork.Accounts.GetById(user.Id);
+                var userAccount = await _unitOfWork.Accounts.GetById(user.AccountId);
 
                 if (userAccount == null)
                 {

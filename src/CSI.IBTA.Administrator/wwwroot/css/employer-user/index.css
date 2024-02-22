@@ -1,14 +1,14 @@
 ﻿.user-information-section {
     border: solid 1px;
     border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 20px;
+    padding: 10px 0px 15px 20px;
+    margin-bottom: 30px;
 }
 
-    .employer-users-section {
-        display: flex;
-        flex-direction: row;
-    }
+.employer-users-section {
+    display: flex;
+    flex-direction: row;
+}
 
     .employer-users-section table,
     .employer-users-section th,
@@ -21,22 +21,33 @@
         background-color: lightgray;
     }
 
-    .employer-users-section .scrollable-table {
-        max-height: 200px;
-        overflow: auto;
-    }
+.hoverable-row:hover {
+    background-color: dimgrey;
+    color: white;
+    cursor: pointer;
+}
 
-    .employer-users-section thead,
-    .employer-users-section th {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-    }
+.highlight {
+    background-color: dimgrey;
+    color: white;
+}
 
-    .employer-users-section .action-buttons {
-        display: flex;
-        flex-direction: column;
-    }
+.employer-users-section .scrollable-table {
+    max-height: 200px;
+    overflow: auto;
+}
+
+.employer-users-section thead,
+.employer-users-section th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.employer-users-section .action-buttons {
+    display: flex;
+    flex-direction: column;
+}
 
 .text-danger {
     margin-top: 5px;
@@ -47,8 +58,7 @@ div.text-danger ul {
     margin-bottom: 5px;
 }
 
-.return-button,
-.submit-button {
+.align-left {
     display: flex;
     justify-content: start;
 }
@@ -59,4 +69,16 @@ div.text-danger ul {
 
 .text-align-left {
     text-align: left;
+}
+
+.spacer {
+    margin-top: 15px;
+    opacity: 0;
+}
+
+.border-label {
+    position: relative;
+    top: -23px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
 }

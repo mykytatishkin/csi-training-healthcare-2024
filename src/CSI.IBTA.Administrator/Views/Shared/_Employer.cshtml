@@ -116,4 +116,73 @@
             console.error("Input field not found!");
         }
     }
+
+    function showUserInformationSection() {
+        var element = document.querySelector('.user-information-section');
+        if (element.hasAttribute('hidden')) {
+            element.removeAttribute('hidden');
+        } else {
+            element.setAttribute('hidden', 'true');
+        }
+    }
+
+    let selectedId = -1;
+    let selectedElement = null;
+
+    function highlightRow(element) {
+        const updateButton = document.getElementById('update-button');
+        currentId = element.getAttribute('data-userId');
+
+        if (selectedId == currentId) {
+            updateButton.setAttribute('hidden', true);
+            element.classList.remove("highlight");
+            selectedId = -1;
+            selectedElement = null;
+        } else {
+            if (selectedElement != null) {
+                selectedElement.classList.remove("highlight");
+            }
+            element.classList.add("highlight");
+            selectedId = element.getAttribute('data-userId');
+            selectedElement = element;
+            updateButton.removeAttribute('hidden');
+        }
+    }
+
+    function updateUser() {
+        console.log(selectedId);
+        console.log(selectedElement);
+    }
+
+    function showCreateUserSection(employerId) {
+        fetch('/Employer/CreateUser?employerId=' + employerId)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('user-create-section').innerHTML = data;
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    function showUpdateUserSection(employerId) {
+        fetch('/Employer/UpdateUser?employerId=' + employerId + '&userId=' + selectedId)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('user-create-section').innerHTML = data;
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
 </script>
