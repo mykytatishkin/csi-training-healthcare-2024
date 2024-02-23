@@ -17,11 +17,11 @@ function showControl(id, name) {
 
 function showCreateEmployerForm() {
     $("#table-employer").hide();
-    $("#control-employer-form").show();
+    $("#control-employer").show();
 }
 
 function hideCreateEmployerForm() {
-    $("#control-employer-form").hide();
+    $("#control-employer").hide();
     $("#table-employer").show();
 }
 

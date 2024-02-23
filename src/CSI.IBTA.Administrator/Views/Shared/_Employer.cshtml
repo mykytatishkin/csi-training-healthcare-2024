@@ -51,7 +51,7 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="showControl(@item.Id, '@item.Name')"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -110,9 +110,26 @@
         </div>
     </div>
 </div>
-<div id="employer-administration" />
-<div id="control-employer-form"/>
-
+<div id="control-employer" />
+<script type="text/javascript">
+    function showEmployerDetails(employerId) {
+        fetch('/Employer?employerId=' + employerId)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('control-employer').innerHTML = data;
+                $("#table-employer").hide();
+                $("#control-employer").show();
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
 <script type="text/javascript" src="~/Scripts/employer-create-form.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
 
