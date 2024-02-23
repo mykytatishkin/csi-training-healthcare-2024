@@ -122,7 +122,19 @@ namespace CSI.IBTA.Administrator.Clients
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _httpClient.PatchAsync(UserServiceApiEndpoints.Settings + "/" + employerId, new StringContent("abc"));
+            var list = new[] { new { condition = model.EmployerSettings[0].Condition
+                , state = model.EmployerSettings[0].State } }.ToList();
+            for (int i = 1; i < model.EmployerSettings.Count; i++)
+            {
+                list.Add(new
+                {
+                    condition = model.EmployerSettings[i].Condition
+                ,
+                    state = model.EmployerSettings[i].State
+                });
+            }
+            var content = JsonContent.Create(list);
+            var response = await _httpClient.PatchAsync(UserServiceApiEndpoints.Settings + "/" + employerId, content);
 
             if (!response.IsSuccessStatusCode)
             {

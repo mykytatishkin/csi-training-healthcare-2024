@@ -130,21 +130,11 @@ function saveUserData() {
 
 function saveSettings(employerId) {
     var form = document.getElementById('employer-settings-form');
-    console.log("Form: " + form);
     if (form.checkValidity() == false) {
         form.reportValidity();
         return;
     }
-
     var formData = new FormData(form);
-    console.log(formData.get("EmployerId"));
-    formData.append('key1', 'value1');
-
-    console.log("Form data:");
-    for (var pair of formData.entries()) {
-        console.log(pair[0] + ', ' + pair[1]);
-    }
-
     fetch('/Employer/AllSettings?employerId=' + employerId, {
         method: 'PATCH',
         body: formData,

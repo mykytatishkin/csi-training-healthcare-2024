@@ -1,7 +1,7 @@
 ﻿@model EmployerSettingsViewModel
 
-<table class="table">
-    <form asp-controller="Employer" asp-action="AllSettings" method="post" id="employer-settings-form">
+<form asp-controller="Employer" asp-action="AllSettings" method="post" id="employer-settings-form">
+    <table class="table">
         @Html.HiddenFor(m => m.EmployerId)
         @Html.HiddenFor(m => m.ActionName)
         <thead>
@@ -15,22 +15,26 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model.EmployerSettings)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Condition)
-                </td>
-                <td>
+            @for(int i = 0; i < @Model.EmployerSettings.Count; i++)
+            {
+                @Html.HiddenFor(m => m.EmployerSettings[i].Condition)
+                <tr>
                     @{
-                        var firstEnabled = item.State ? "Checked" : "";
-                        var secondEnabled = !item.State ? "Checked" : "";
+                        var item = Model.EmployerSettings[i];
                     }
-                    <input name="@Html.DisplayFor(modelItem => item.Condition)" type="radio" value="true" @firstEnabled >
-                    <input name="@Html.DisplayFor(modelItem => item.Condition)" type="radio" value="false" @secondEnabled >
-                </td>
-            </tr>
-        }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Condition)
+                    </td>
+                    <td>
+                        @{
+                            var firstEnabled = item.State ? "Checked" : "";
+                            var secondEnabled = !item.State ? "Checked" : "";
+                        }
+                            @Html.RadioButtonFor(m => m.EmployerSettings[i].State, true)
+                            @Html.RadioButtonFor(m => m.EmployerSettings[i].State, false)
+                    </td>
+                </tr>
+            }
 
         @if (!ViewData.ModelState.IsValid)
         {
@@ -45,5 +49,5 @@
             <td><button class="align-left custom-button" onclick="saveSettings(@Model.EmployerId)" type="button">Submit</button></td>
         </tr>
         </tbody>
-    </form>
-</table>
+    </table>
+</form>
