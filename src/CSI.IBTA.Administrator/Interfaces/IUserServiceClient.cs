@@ -7,6 +7,7 @@ namespace CSI.IBTA.Administrator.Interfaces
     public interface IUserServiceClient
     {
         Task<IQueryable<Employer>?> GetEmployers();
-        Task<TaskResult> CreateEmployer(CreateEmployerDto dto);
+        Task<TaskResult<EmployerDto?>> CreateEmployer(CreateEmployerDto dto);
+        Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id);
     }
 }

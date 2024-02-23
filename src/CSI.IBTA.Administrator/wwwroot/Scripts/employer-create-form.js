@@ -7,27 +7,44 @@
     }
 
     var formData = new FormData(form);
-
     fetch('/Employer', {
         method: 'POST',
         body: formData,
     })
     .then(function (response) {
-        if (!response.ok) {
-            var errors = document.getElementById('employer-form-errors');
-            errors.textContent = "There was a problem with the fetch operation";
-        }
-
         return response.json();
     })
-    .then(function (data) {
-        if (!data.success) {
+        .then(function (data) {
+            if (data.value == null) {
             var errors = document.getElementById('employer-form-errors');
-            errors.textContent = data.errorMessage;
+            errors.textContent = data.description;
         }
         else {
-            document.getElementById('control-employer-form').style.display = "none";
-            document.getElementById('table-employer').style.display = "block";
+
+            fetch('/Employer/AdministrationMenu?employerId=' + data.value.id)
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                        showError("employer-user-management-errors", "There was an error, try again");
+                        return;
+                    }
+
+                    return response.text();
+                })
+                .then(function (data) {
+                    var e = document.getElementById('employer-administration');
+                    console.error(e);
+                    document.getElementById('employer-administration').innerHTML = data;
+                    $("#employer-administration").show();
+                    $("#control-employer-form").hide();
+                })
+                .catch(function (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                    showError("employer-user-management-errors", "There was an error, try again");
+                });
+            
+            //document.getElementById('control-employer-form').style.display = "none";
+            //document.getElementById('table-employer').style.display = "block";
         }
 
     })
@@ -68,10 +85,12 @@ function showEmployerForm() {
         }
         return response.text();
     })
-    .then(function (data) {
-        document.getElementById('control-employer-form').innerHTML = data;
+        .then(function (data) {
+            let form = document.getElementById('control-employer-form');
+            form.innerHTML = data;
+            $("#control-employer-form").show();
+
         $("#table-employer").hide();
-        $("#control-employer-form").show();
     })
     .catch(function (error) {
         console.error('There was a problem with the fetch operation:', error);

@@ -1,9 +1,9 @@
 ﻿
 namespace CSI.IBTA.Shared.Types
 {
-    public class TaskResult
+    public class TaskResult<T>
     {
-        public bool Success { get; set; }
+        public T? Value { get; set; }
         public string Description { get; set; }
     }
 }

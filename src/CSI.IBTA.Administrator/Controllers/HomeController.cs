@@ -1,5 +1,4 @@
-﻿using CSI.IBTA.Administrator.Extensions;
-using CSI.IBTA.Administrator.Interfaces;
+﻿using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DataStructures;
 using CSI.IBTA.Shared.Entities;
@@ -49,19 +48,6 @@ namespace CSI.IBTA.Administrator.Controllers
             var paginatedEmployers = new PaginatedList<Employer>(employers ?? new List<Employer>().AsQueryable(), pageNumber ?? 1, pageSize ?? 1);
 
             return View(new HomeViewModel() { Employers = paginatedEmployers });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddEmployer(HomeViewModel model)
-        {
-            var res = await _userServiceClient.CreateEmployer(model.CreateEmployerViewModel.ToDto());
-            if (!res.Success)
-            {
-                ModelState.AddModelError("", res.Description);
-                return View("Index", model);
-            }
-
-            return RedirectToAction("Index", "Home");
         }
     }
 }

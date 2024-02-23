@@ -1,0 +1,31 @@
+﻿﻿@using CSI.IBTA.Shared.DTOs
+@model int
+
+<head>
+    <link rel="stylesheet" href="~/css/employer-user.css">
+</head>
+<div class="form-columns">
+    <div>
+        <div class="row">
+            <div class="col">
+                <span>Employer Setup</span>
+                <div class="row-column">
+                    <a onclick="a()" class="btn btn-primary">Manage Profile</a>
+                </div>
+                <div class="row-column">
+                    <button onclick="showEmployerUsersManagement(@Model)" class="btn btn-primary">Manage Users</button>
+                </div>
+                <div class="row-column">
+                    <a asp-area="" asp-controller="" asp-action="" class="btn btn-primary">Manage Rules</a>
+                </div>
+            </div>
+            <div class="col">
+                <span>Plan Setup</span>
+                <div class="row-column">
+                    <a asp-area="" asp-controller="" asp-action="" class="btn btn-primary">Manage Plans</a>
+                </div>
+            </div>
+        </div>
+        <p class="error-text" id="employer-administration-menu-errors"></p>
+    </div>
+</div>
