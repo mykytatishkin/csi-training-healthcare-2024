@@ -10,5 +10,7 @@
 
         public const string EmployerUsers = "v1/Employer/{0}/Users";
         public const string EmployerUser = "v1/User/{0}";
+
+        public const string Settings = Employers + "/AllSettings";
     }
 }

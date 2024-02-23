@@ -3,6 +3,7 @@ using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -195,6 +196,58 @@ namespace CSI.IBTA.UserService.Services
             }
 
             return new GenericHttpResponse<IEnumerable<UserDto>>(false, null, userDtos);
+        }
+
+        public async Task<GenericHttpResponse<SettingsDto[]>> GetAllEmployerSettings(int employerId)
+        {
+            var e = await _unitOfWork.Settings.Find(s => s.EmployerId == employerId);
+
+            if (e == null) return new GenericHttpResponse<SettingsDto[]>(true, new HttpError("Settings not found", HttpStatusCode.NotFound), null);
+
+            return new GenericHttpResponse<SettingsDto[]>(false, null, e.Select(s => new SettingsDto(s.Condition, s.State)).ToArray());
+        }
+
+        public async Task<GenericHttpResponse<bool?>> GetEmployerSettingValue(int employerId, string condition)
+        {
+            bool wrongCondition = true;
+            foreach (var s in _defaultSettings)
+                if (s.key.Equals(condition))
+                {
+                    wrongCondition = false;
+                    break;
+                }
+            if (wrongCondition)
+                return new GenericHttpResponse<bool?>(true, new HttpError("Wrong settings type", HttpStatusCode.NotFound), null);
+
+            var e = await _unitOfWork.Settings.Find(s => s.EmployerId == employerId && s.Condition.Equals(condition));
+            if (e == null) return new GenericHttpResponse<bool?>(true, new HttpError("Settings not found", HttpStatusCode.NotFound), null);
+
+            return new GenericHttpResponse<bool?>(false, null, e.First().State);
+        }
+
+        public async Task<GenericHttpResponse<SettingsDto[]>> UpdateEmployerSettings(int employerId, SettingsDto[] SettingsDtos)
+        {
+            var e = await _unitOfWork.Employers.Include(e => e.Settings)
+                .FirstOrDefaultAsync(s => s.Id == employerId);
+            if (e == null) return new GenericHttpResponse<SettingsDto[]>(true, new HttpError("Settings not found", HttpStatusCode.NotFound), null);
+
+            foreach (var newSetting in e.Settings)
+            {
+                foreach (var formSetting in SettingsDtos)
+                {
+                    if (newSetting.Condition.Equals(formSetting.Condition))
+                    {
+                        newSetting.State = formSetting.State;
+                    }
+                }
+            }
+
+            var success = _unitOfWork.Employers.Upsert(e);
+            if (!success)
+                return new GenericHttpResponse<SettingsDto[]>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
+            await _unitOfWork.CompleteAsync();
+
+            return new GenericHttpResponse<SettingsDto[]>(false, null, e.Settings.Select(s => new SettingsDto(s.Condition, s.State)).ToArray());
         }
     }
 }

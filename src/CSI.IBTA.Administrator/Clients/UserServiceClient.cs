@@ -5,6 +5,7 @@ using System.Text;
 using CSI.IBTA.Administrator.Constants;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.DTOs.Login;
@@ -70,7 +71,7 @@ namespace CSI.IBTA.Administrator.Clients
             }
 
             string? token = _jwtTokenService.GetCachedToken();
-            
+
             if (token == null)
             {
                 return new GenericInternalResponse<UserDto>(true, InternalErrors.InvalidToken, null);
@@ -91,6 +92,48 @@ namespace CSI.IBTA.Administrator.Clients
             var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
 
             return new GenericInternalResponse<UserDto>(false, null, user);
+        }
+
+        public async Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId)
+        {
+            var token = _jwtTokenService.GetCachedToken();
+            if (token == null) return null;
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Settings + "/" + employerId);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
+        }
+
+        public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, EmployerSettingsViewModel model)
+        {
+            var token = _jwtTokenService.GetCachedToken();
+            if (token == null) return null;
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.PatchAsync(UserServiceApiEndpoints.Settings + "/" + employerId, new StringContent("abc"));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
         }
     }
 }

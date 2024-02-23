@@ -111,7 +111,7 @@ function saveUserData() {
     }
 
     var formData = new FormData(form);
-    
+
     fetch('/Employer/' + formData.get('ActionName') + '?employerId=' + formData.get('EmployerId') + '&userId=' + selectedUserId, {
         method: 'POST',
         body: formData,
@@ -122,6 +122,39 @@ function saveUserData() {
             }
 
             showEmployerUsersManagement(formData.get('EmployerId'));
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function saveSettings(employerId) {
+    var form = document.getElementById('employer-settings-form');
+    console.log("Form: " + form);
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+    console.log(formData.get("EmployerId"));
+    formData.append('key1', 'value1');
+
+    console.log("Form data:");
+    for (var pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch('/Employer/AllSettings?employerId=' + employerId, {
+        method: 'PATCH',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            showEmployerSettings(employerId);
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);

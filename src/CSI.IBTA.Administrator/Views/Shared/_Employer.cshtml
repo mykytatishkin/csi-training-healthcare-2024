@@ -94,6 +94,22 @@
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
+
+    function showEmployerSettings(employerId) {
+        fetch('/Employer/AllSettings?employerId=' + employerId)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('employer-partial-action').innerHTML = data;
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
 </script>
 
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
