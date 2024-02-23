@@ -209,7 +209,6 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var viewModel = new EmployerSettingsViewModel
             {
-                ActionName = "AllSettings",
                 EmployerId = employerId,
                 EmployerSettings = response.ToList()
             };
@@ -229,7 +228,6 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var viewModel = new EmployerSettingsViewModel
             {
-                ActionName = "AllSettings",
                 EmployerId = employerId,
                 EmployerSettings = response.ToList()
             };
