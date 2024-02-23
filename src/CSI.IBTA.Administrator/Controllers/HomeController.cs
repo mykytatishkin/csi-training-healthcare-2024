@@ -1,5 +1,4 @@
 ﻿using CSI.IBTA.Administrator.Interfaces;
-using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DataStructures;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -45,9 +44,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 }
             }
 
-            var paginatedEmployers = new PaginatedList<Employer>(employers ?? new List<Employer>().AsQueryable(), pageNumber ?? 1, pageSize ?? 1);
-
-            return View(new HomeViewModel() { Employers = paginatedEmployers });
+            return(View( new PaginatedList<Employer>(employers ?? new List<Employer>().AsQueryable(), pageNumber ?? 1, pageSize ?? 1)));
         }
     }
 }

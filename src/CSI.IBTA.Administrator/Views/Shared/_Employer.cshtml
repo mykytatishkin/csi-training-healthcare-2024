@@ -3,12 +3,13 @@
 *@
 @{
 }
+@using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.Entities
-@model HomeViewModel
+@model PaginatedList<Employer>
 
 @{
-    var prevDisabled = !Model.Employers.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.Employers.HasNextPage ? "disabled" : "";
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
 <div id="table-employer" class="container">
@@ -47,7 +48,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Employers)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <td>
@@ -63,15 +64,15 @@
             <div style="text-align:right" class="pages">
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["CurrentSort"]"
-                   asp-route-pageNumber="@(Model.Employers.PageIndex - 1)"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
-                @if(Model.Employers.PageIndex > 1 )
+                @if(Model.PageIndex > 1 )
                 {
-                    int i = Model.Employers.TotalPages;
-                    while(i > Model.Employers.PageIndex)
+                    int i = Model.TotalPages;
+                    while(i > Model.PageIndex)
                     {
                         <a asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
@@ -83,10 +84,10 @@
                         i--;
                     }
                 }
-                <span style="color:dodgerblue">@Model.Employers.PageIndex</span>
-                @for(int i = Model.Employers.PageIndex; i < Model.Employers.TotalPages; i++)
+                <span style="color:dodgerblue">@Model.PageIndex</span>
+                @for(int i = Model.PageIndex; i < Model.TotalPages; i++)
                 {
-                    if(1 + i <= Model.Employers.TotalPages) {
+                    if(1 + i <= Model.TotalPages) {
                         <a asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
                            asp-route-pageNumber="@(i + 1)"
@@ -99,7 +100,7 @@
 
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["CurrentSort"]"
-                   asp-route-pageNumber="@(Model.Employers.PageIndex + 1)"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
                    class="btn btn-default @nextDisabled">
                     Next
@@ -111,25 +112,7 @@
     </div>
 </div>
 <div id="control-employer" />
-<script type="text/javascript">
-    function showEmployerDetails(employerId) {
-        fetch('/Employer?employerId=' + employerId)
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(function (data) {
-                document.getElementById('control-employer').innerHTML = data;
-                $("#table-employer").hide();
-                $("#control-employer").show();
-            })
-            .catch(function (error) {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
-</script>
+<script type="text/javascript" src="~/Scripts/employer.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-create-form.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
 

@@ -1,0 +1,134 @@
+﻿@import url('global.css');
+
+.user-information-section {
+    border: solid 1px var(--form-border-color);
+    border-radius: 10px;
+    padding: 4px 0px 16px 20px;
+    margin-bottom: 28px;
+}
+
+.user-information-section table {
+    border-spacing: 4px;
+    border-collapse: separate;
+}
+
+.user-information-section #generate-password-button {
+    margin-left: 4px;
+}
+
+.employer-users-section {
+    display: flex;
+    flex-direction: row;
+}
+
+.employer-users-section th,
+.employer-users-section td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.employer-users-section tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.employer-users-section thead {
+    background-color: #6c757d;
+    color: white;
+}
+
+.employer-users-section th {
+    font-weight: normal;
+}
+
+.employer-users-section .hoverable-row:hover {
+    background-color: lightgray !important;
+    color: black;
+    cursor: pointer;
+}
+
+.employer-users-section .scrollable-table {
+    max-height: 206px;
+    overflow: auto;
+}
+
+.employer-users-section thead,
+.employer-users-section th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.employer-users-section .action-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    width: 100px;
+}
+
+    .employer-users-section .action-buttons button {
+        margin-bottom: 8px;
+    }
+
+.highlight {
+    background-color: lightgray !important;
+    color: black;
+}
+
+.text-danger {
+    margin-top: 5px;
+    color: var(--text-danger-color);
+}
+
+div.text-danger ul {
+    margin-bottom: 4px;
+}
+
+.align-left {
+    display: flex;
+    justify-content: start;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.text-align-left {
+    text-align: left;
+}
+
+.user-management {
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+#return-button {
+    margin-top: 24px;
+}
+
+.border-label {
+    position: relative;
+    top: -18px;
+    background-color: var(--container-background-color);
+}
+
+.custom-button {
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 4px 12px 4px 12px;
+    background-color: var(--button-primary-color);
+}
+
+    .custom-button.secondary {
+        /*background-color: var(--button-secondary-color);*/
+        background-color: #6c757d;
+    }
+
+.error-text {
+    color: var(--text-danger-color);
+}
+
+#employer-administration-menu-errors,
+#employer-user-management-errors {
+    margin-top: 20px !important;
+}

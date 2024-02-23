@@ -20,29 +20,7 @@
             errors.textContent = data.description;
         }
         else {
-                showEmployerDetails(data.value.id);
-            //fetch('/Employer/AdministrationMenu?employerId=' + data.value.id)
-            //    .then(function (response) {
-            //        if (!response.ok) {
-            //            throw new Error('Network response was not ok');
-            //            showError("employer-user-management-errors", "There was an error, try again");
-            //            return;
-            //        }
-
-            //        return response.text();
-            //    })
-            //    .then(function (data) {
-            //        var e = document.getElementById('control-employer');
-            //        console.error(e);
-            //        document.getElementById('control-employer').innerHTML = data;
-            //    })
-            //    .catch(function (error) {
-            //        console.error('There was a problem with the fetch operation:', error);
-            //        showError("employer-user-management-errors", "There was an error, try again");
-            //    });
-            
-            //document.getElementById('control-employer-form').style.display = "none";
-            //document.getElementById('table-employer').style.display = "block";
+            showEmployerDetails(data.value.id);
         }
 
     })
