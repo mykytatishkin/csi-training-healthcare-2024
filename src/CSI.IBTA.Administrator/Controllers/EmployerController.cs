@@ -218,13 +218,13 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPatch("AllSettings")]
-        public async Task<IActionResult> AllSettings(int employerId, EmployerSettingsViewModel SettingsDtos)
+        public async Task<IActionResult> AllSettings(int employerId, EmployerSettingsViewModel model)
         {
-            var response = await _userServiceClient.UpdateEmployerSettings(employerId, SettingsDtos);
+            var response = await _userServiceClient.UpdateEmployerSettings(employerId, model.EmployerSettings);
 
             if (response == null)
             {
-                throw new Exception("Failed to retrieve employer users");
+                throw new Exception("Failed to retrieve employer settings");
             }
 
             var viewModel = new EmployerSettingsViewModel
