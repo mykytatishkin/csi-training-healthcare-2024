@@ -87,7 +87,7 @@ namespace CSI.IBTA.UserService.Services
             if(e == null) return new GenericResponse<EmployerDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             var hasSameCombination = await _unitOfWork.Employers
-                .Find(x => x.Name == dto.Name && x.Code == dto.Code);
+                .Find(x => x.Name == dto.Name && x.Code == dto.Code && employerId != x.Id);
 
             if (hasSameCombination.Any())
             {
