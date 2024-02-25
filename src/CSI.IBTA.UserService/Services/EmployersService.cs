@@ -1,4 +1,5 @@
-﻿using CSI.IBTA.DataLayer.Interfaces;
+﻿using AutoMapper;
+using CSI.IBTA.DataLayer.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
@@ -14,8 +15,9 @@ namespace CSI.IBTA.UserService.Services
         private readonly IFileService _fileService;
         private readonly List<(string key, bool value)> _defaultSettings;
         private readonly ILogger<EmployersService> _logger;
+        private readonly IMapper _mapper;
 
-        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUnitOfWork unitOfWork, IFileService fileService)
+        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUnitOfWork unitOfWork, IFileService fileService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
@@ -34,6 +36,7 @@ namespace CSI.IBTA.UserService.Services
                 }
                 _defaultSettings.Add((setting.Key, val));
             }
+            _mapper = mapper;
         }
 
         public async Task<GenericHttpResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto)
@@ -77,7 +80,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericHttpResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
-            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, _mapper.Map<EmployerDto>(e));
         }
 
         public async Task<GenericHttpResponse<EmployerDto>> UpdateEmployer(int employerId, UpdateEmployerDto dto)
@@ -116,7 +119,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericHttpResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
-            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null,_mapper.Map<EmployerDto>(e));
         }
 
         public async Task<GenericHttpResponse<bool>> DeleteEmployer(int employerId)
@@ -140,7 +143,7 @@ namespace CSI.IBTA.UserService.Services
 
             if (e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), null);
 
-            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, _mapper.Map<EmployerDto>(e));
         }
 
         public async Task<GenericHttpResponse<EmployerDto[]>> GetAll()
@@ -149,7 +152,7 @@ namespace CSI.IBTA.UserService.Services
 
             if (res == null) return new GenericHttpResponse<EmployerDto[]>(true, new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
 
-            return new GenericHttpResponse<EmployerDto[]>(false, null, res.Select(e => new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo)).ToArray());
+            return new GenericHttpResponse<EmployerDto[]>(false, null, res.Select(_mapper.Map<EmployerDto>));
         }
 
         public async Task<GenericHttpResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId)

@@ -4,7 +4,7 @@ namespace CSI.IBTA.UserService.Interfaces
 {
     public interface IUsersService
     {
-        public Task<GenericHttpResponse<UserDto[]>> GetAllUsers();
+        public Task<GenericHttpResponse<IEnumerable<UserDto>>> GetAllUsers();
         public Task<GenericHttpResponse<UserDto>> GetUserByAccountId(int accountId);
         public Task<GenericHttpResponse<UserDto>> GetUser(int userId);
         public Task<GenericHttpResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto);
