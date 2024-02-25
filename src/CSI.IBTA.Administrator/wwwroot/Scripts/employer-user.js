@@ -65,6 +65,11 @@ function onEmployerUserRowClick(element) {
     } else {
         selectEmployerUserRow(element);
     }
+
+    if (userOperation == "update") {
+        hideUserSection();
+    }
+    userOperation = "";
 }
 
 function selectEmployerUserRow(element) {
@@ -85,14 +90,9 @@ function deselectEmployerUserRow() {
         updateButton = document.getElementById('update-button');
         updateButton.setAttribute('hidden', true);
 
-        if (userOperation == "update") {
-            hideUserSection();
-        }
-
         selectedUserRowElement.classList.remove("highlight");
         selectedUserId = -1;
         selectedUserRowElement = null;
-        userOperation = "";
     }
 }
 
@@ -101,6 +101,12 @@ function hideUserSection() {
 }
 
 function showCreateUserSection(employerId) {
+    if (userOperation == "create") {
+        document.getElementById('user-create-section').innerHTML = null;
+        userOperation = "";
+        return;
+    }
+
     function onSuccess(data) {
         document.getElementById('user-create-section').innerHTML = data;
         userOperation = "create";

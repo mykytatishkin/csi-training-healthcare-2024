@@ -21,7 +21,7 @@ namespace CSI.IBTA.UserService.Services
             _mapper = mapper;
         }
 
-        public async Task<GenericResponse<IEnumerable<UserDto>>> GetAllUsers()
+        public async Task<GenericHttpResponse<IEnumerable<UserDto>>> GetAllUsers()
         {
             var users = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -29,7 +29,7 @@ namespace CSI.IBTA.UserService.Services
                 .ToListAsync();
 
             var userDtos = users.Select(_mapper.Map<UserDto>);
-            return new GenericResponse<IEnumerable<UserDto>>(false, null, userDtos);
+            return new GenericHttpResponse<IEnumerable<UserDto>>(false, null, userDtos);
         }
 
         public async Task<GenericHttpResponse<UserDto>> GetUserByAccountId(int accountId)
@@ -45,7 +45,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericHttpResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
+            return new GenericHttpResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
         }
 
         public async Task<GenericHttpResponse<UserDto>> GetUser(int userId)
@@ -61,7 +61,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericHttpResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
+            return new GenericHttpResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
         }
 
         public async Task<GenericHttpResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
