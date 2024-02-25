@@ -13,8 +13,7 @@ namespace CSI.IBTA.UserService.Services
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public UsersService(
-            IUnitOfWork unitOfWork)
+        public UsersService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -77,7 +76,7 @@ namespace CSI.IBTA.UserService.Services
 
             if (existingAccount.Any())
             {
-                return new GenericHttpResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
+                return new GenericHttpResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.Conflict), null);
             }
 
             User newUser = new User()

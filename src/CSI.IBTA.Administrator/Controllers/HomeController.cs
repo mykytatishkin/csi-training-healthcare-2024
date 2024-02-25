@@ -1,19 +1,16 @@
-﻿using CSI.IBTA.Administrator.Interfaces;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.RenderTree;
-using Microsoft.AspNetCore.Components.Web;
+﻿using CSI.IBTA.Administrator.Filters;
+using CSI.IBTA.Administrator.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
-        private readonly IJwtTokenService _jwtTokenService;
 
-        public HomeController(IJwtTokenService jwtTokenService, IUserServiceClient userServiceClient)
+        public HomeController(IUserServiceClient userServiceClient)
         {
-            _jwtTokenService = jwtTokenService;
             _userServiceClient = userServiceClient;
         }
 
@@ -22,35 +19,21 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentNameFilter"] = nameFilter;
             ViewData["CurrentCodeFilter"] = codeFilter;
 
-            var token = _jwtTokenService.GetCachedToken();
+            var employers = await _userServiceClient.GetEmployers();
 
-            if (token == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
-            bool isTokenValid = _jwtTokenService.IsTokenValid(token);
-
-            if (!isTokenValid)
-            {
-                return RedirectToAction("Logout", "Auth");
-            }
-
-            var Employers = await _userServiceClient.GetEmployers(token);
-            if (Employers != null) 
+            if (employers != null) 
             {
                 if (!String.IsNullOrEmpty(nameFilter))
                 {
-                    Employers = Employers.Where(s => s.Name.Contains(nameFilter)).ToList();
+                    employers = employers.Where(s => s.Name.Contains(nameFilter)).ToList();
                 }
                 if (!String.IsNullOrEmpty(codeFilter))
                 {
-                    Employers = Employers.Where(s => s.Code.Contains(codeFilter)).ToList();
+                    employers = employers.Where(s => s.Code.Contains(codeFilter)).ToList();
                 }
             }
 
-
-            return View(Employers);
+            return View(employers);
         }
 
     }

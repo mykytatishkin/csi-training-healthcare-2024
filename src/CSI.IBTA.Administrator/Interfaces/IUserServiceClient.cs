@@ -5,7 +5,7 @@ namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IUserServiceClient
     {
-        Task<List<Employer>?> GetEmployers(string token);
+        Task<List<Employer>?> GetEmployers();
         Task<GenericInternalResponse<UserDto>> GetUser(int userId);
     }
 }
