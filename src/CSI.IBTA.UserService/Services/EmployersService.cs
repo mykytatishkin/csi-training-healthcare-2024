@@ -126,7 +126,7 @@ namespace CSI.IBTA.UserService.Services
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericHttpResponse<bool>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), false);
+            if (e == null) return new GenericHttpResponse<bool>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), false);
 
             var success = await _unitOfWork.Employers.Delete(e.Id);
 
@@ -141,7 +141,7 @@ namespace CSI.IBTA.UserService.Services
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             return new GenericHttpResponse<EmployerDto>(false, null, _mapper.Map<EmployerDto>(e));
         }

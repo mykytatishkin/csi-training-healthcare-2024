@@ -69,7 +69,6 @@ function onEmployerUserRowClick(element) {
     if (userOperation == "update") {
         hideUserSection();
     }
-    userOperation = "";
 }
 
 function selectEmployerUserRow(element) {

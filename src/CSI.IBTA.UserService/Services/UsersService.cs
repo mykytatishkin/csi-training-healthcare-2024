@@ -127,45 +127,6 @@ namespace CSI.IBTA.UserService.Services
             return new GenericHttpResponse<NewUserDto>(false, null, _mapper.Map<NewUserDto>(newUser));
         }
 
-        public async Task<GenericHttpResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto)
-        {
-            var user = await _unitOfWork.Users
-                .Include(u => u.Account)
-                .Include(u => u.Addresses)
-                .Include(u => u.Emails)
-                .Include(u => u.Phones)
-                .FirstOrDefaultAsync(a => a.Id == userId);
-
-            if (user == null)
-            {
-                return new GenericHttpResponse<UpdatedUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
-            }
-
-            if (updateUserDto.UserName != null)
-            {
-                var sameUsernameAccount = await _unitOfWork.Accounts.Find(a => a.Username == updateUserDto.UserName);
-                if (sameUsernameAccount.Any())
-                {
-                    return new GenericHttpResponse<UpdatedUserDto>(true, new HttpError("Account with new username already exists. Remove username from request paramaters if changing username is not intended.", HttpStatusCode.UnprocessableEntity), null);
-                }
-                user.Account.Username = updateUserDto.UserName;
-            }
-
-            user.Account.Password = PasswordHasher.Hash(updateUserDto.Password);
-            user.Firstname = updateUserDto.FirstName;
-            user.Lastname = updateUserDto.LastName;
-            user.Addresses[0].State = updateUserDto.AddressState;
-            user.Addresses[0].Street = updateUserDto.AddressStreet;
-            user.Addresses[0].City = updateUserDto.AddressCity;
-            user.Addresses[0].Zip = updateUserDto.AddressZip;
-            user.Emails[0].EmailAddress = updateUserDto.EmailAddress;
-            user.Phones[0].PhoneNumber = updateUserDto.PhoneNumber;
-
-            _unitOfWork.Users.Upsert(user);
-            await _unitOfWork.CompleteAsync();
-            return new GenericHttpResponse<UpdatedUserDto>(false, null, _mapper.Map<UpdatedUserDto>(user));
-        }
-
         public async Task<GenericHttpResponse<UpdatedUserDto>> PutUser(int userId, PutUserDto putUserDto)
         {
             var user = await _unitOfWork.Users
