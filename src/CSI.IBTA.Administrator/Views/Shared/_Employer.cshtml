@@ -5,7 +5,8 @@
 }
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.Entities
-@model PaginatedList<Employer>
+@using CSI.IBTA.Shared.DTOs
+@model PaginatedList<EmployerDto>
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
