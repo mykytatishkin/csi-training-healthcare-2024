@@ -1,34 +1,40 @@
-﻿using CSI.IBTA.Administrator.Interfaces;
+﻿using CSI.IBTA.Administrator.Filters;
+using CSI.IBTA.Administrator.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
-        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUserServiceClient _userServiceClient;
 
-        public HomeController(IJwtTokenService jwtTokenService)
+        public HomeController(IUserServiceClient userServiceClient)
         {
-            _jwtTokenService = jwtTokenService;
+            _userServiceClient = userServiceClient;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string nameFilter, string codeFilter)
         {
-            var token = _jwtTokenService.GetCachedToken();
+            ViewData["CurrentNameFilter"] = nameFilter;
+            ViewData["CurrentCodeFilter"] = codeFilter;
 
-            if (token == null)
+            var employers = await _userServiceClient.GetEmployers();
+
+            if (employers != null) 
             {
-                return RedirectToAction("Login", "Auth");
+                if (!String.IsNullOrEmpty(nameFilter))
+                {
+                    employers = employers.Where(s => s.Name.Contains(nameFilter)).ToList();
+                }
+                if (!String.IsNullOrEmpty(codeFilter))
+                {
+                    employers = employers.Where(s => s.Code.Contains(codeFilter)).ToList();
+                }
             }
 
-            bool isTokenValid = _jwtTokenService.IsTokenValid(token);
-
-            if (!isTokenValid)
-            {
-                return RedirectToAction("Logout", "Auth");
-            }
-
-            return View();
+            return View(employers);
         }
+
     }
 }

@@ -7,6 +7,7 @@
         public string Lastname { get; set; } = null!;
         public int AccountId { get; set; }
         public Employer? Employer { get; set; }
+        public int EmployerId { get; set; }
         public Account Account { get; set; } = null!;
         public IList<Address> Addresses { get; set; } = new List<Address>();
         public IList<Email> Emails { get; set; } = new List<Email>();

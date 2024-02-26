@@ -20,13 +20,13 @@ namespace CSI.IBTA.AuthService.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<GenericResponse<LoginResponse>> Login(LoginRequest request)
+        public async Task<GenericHttpResponse<LoginResponse>> Login(LoginRequest request)
         {
             var result = await _unitOfWork.Accounts.Find(a => a.Username == request.Username);
 
             if (!result.Any())
             {
-                return new GenericResponse<LoginResponse>(true, Errors.InvalidCredentials, null);
+                return new GenericHttpResponse<LoginResponse>(true, HttpErrors.InvalidCredentials, null);
             }
 
             var account = result.Single();
@@ -35,12 +35,12 @@ namespace CSI.IBTA.AuthService.Services
 
             if (isPasswordCorrect == false)
             {
-                return new GenericResponse<LoginResponse>(true, Errors.InvalidCredentials, null);
+                return new GenericHttpResponse<LoginResponse>(true, HttpErrors.InvalidCredentials, null);
             }
 
             var token = _jwtTokenGenerator.GenerateToken(account.Id, account.Role.ToString());
 
-            return new GenericResponse<LoginResponse>(false, null, new LoginResponse(token));
+            return new GenericHttpResponse<LoginResponse>(false, null, new LoginResponse(token));
         }
     }
 }
