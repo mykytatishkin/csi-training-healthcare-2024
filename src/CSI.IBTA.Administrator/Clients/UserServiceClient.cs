@@ -99,6 +99,54 @@ namespace CSI.IBTA.Administrator.Clients
             }
         }
 
+        public async Task<TaskResult<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId)
+        {
+            var token = _jwtTokenService.GetCachedToken();
+            if (token == null) return (new TaskResult<EmployerDto?>() { Value = null, Description = "Token not found" });
+
+            var defaultErrorMessage = "Failed to create a new employer";
+            var formData = new MultipartFormDataContent()
+            {
+                { new StringContent(dto.Name), nameof(dto.Name) },
+                { new StringContent(dto.Code), nameof(dto.Code) },
+                { new StringContent(dto.Email), nameof(dto.Email) },
+                { new StringContent(dto.Street), nameof(dto.Street) },
+                { new StringContent(dto.City), nameof(dto.City) },
+                { new StringContent(dto.State), nameof(dto.State) },
+                { new StringContent(dto.ZipCode), nameof(dto.ZipCode) },
+                { new StringContent(dto.Phone), nameof(dto.Phone) }
+            };
+
+            using (var stream = new MemoryStream())
+            {
+                if (dto.NewLogoFile != null)
+                {
+                    await dto.NewLogoFile.CopyToAsync(stream);
+                    stream.Position = 0;
+                    formData.Add(new StreamContent(stream), nameof(dto.NewLogoFile), dto.NewLogoFile.FileName);
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.PutAsync($"{UserApiEndpoints.Employer}/{employerId}", formData);
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    return new TaskResult<EmployerDto?>() { Value = null, Description = "Invalid credentials" };
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorJson = await response.Content.ReadAsStringAsync();
+                    var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
+                    var errorMessage = error?.title ?? response.ReasonPhrase ?? defaultErrorMessage;
+                    return new TaskResult<EmployerDto?>() { Value = null, Description = errorMessage };
+                }
+
+                var employerJson = await response.Content.ReadAsStringAsync();
+                var employer = JsonConvert.DeserializeObject<EmployerDto>(employerJson);
+
+                return new TaskResult<EmployerDto?>() { Value = employer, Description = "Employer was created successfully" };
+            }
+        }
+
         public async Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id)
         {
             string? token = _jwtTokenService.GetCachedToken();

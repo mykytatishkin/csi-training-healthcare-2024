@@ -2,8 +2,9 @@
 
 namespace CSI.IBTA.Administrator.Models
 {
-    public class CreateEmployerViewModel
+    public class EmployerFormViewModel
     {
+        public int? Id { get; set; }
         [Required]
         public string Name { get; set; }
 
@@ -29,6 +30,7 @@ namespace CSI.IBTA.Administrator.Models
         [Required]
         public string Phone { get; set; }
 
-        public IFormFile? Logo { get; set; }
+        public string? EncodedLogo { get; set; }
+        public IFormFile? NewLogo { get; set; }
     }
 }

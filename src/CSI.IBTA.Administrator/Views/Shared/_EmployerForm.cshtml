@@ -1,6 +1,6 @@
 ﻿@{
 }
-@model CreateEmployerViewModel;
+@model EmployerFormViewModel;
 
 <!DOCTYPE html>
     <head>
@@ -14,66 +14,66 @@
     <div class="nav-buttons">
         <button onclick="hideCreateEmployerForm()" id="selectDifferentEmployerButton" class="btn btn-primary">Select a different employer</button>
     </div>
-
     <div id="employerForm" class="form">
         <h4>Employer Administration</h4>
-        <div class="logo-preview">
-            <img id="imagePreview" src="#" alt="Logo Preview">
-        </div>
+            <div class="logo-preview">
+                <img id="imagePreview" src="data:image/png;base64,@Model.EncodedLogo">
+            </div>
         <form id="employer-form" EncType="multipart/form-data">
+            @Html.HiddenFor(m => m.Id)
             <span class="border-label">Profile</span>
             <div class="form-columns">
                 <div class="form-column">
                     <div class="form-row">
                         <label for="Name">Name:*</label>
-                         <input type="text" name="Name" id="Name" required />
+                         <input type="text" name="Name" id="Name" required value="@Model.Name" />
                     </div>
                     <div class="form-row">
                         <label for="Code">Code:*</label>
-                         <input type="text" name="Code" id="Code" required />
+                        <input type="text" name="Code" id="Code" required value="@Model.Code" />
                     </div>
                     <div class="form-row">
                         <label for="Email">Email:*</label>
-                        <input type="email" name="Email" id="Email" required />
+                        <input type="email" name="Email" id="Email" required value="@Model.Email" />
                     </div>
                 </div>
                 <div class="form-column">
                     <div class="form-row">
                         <label for="Street">Street:*</label>
-                        <input type="text" name="Street" id="Street" required />
+                        <input type="text" name="Street" id="Street" required value="@Model.Street" />
                     </div>
                     <div class="form-row">
                         <label for="City">City:*</label>
-                        <input type="text" name="City" id="City" required />
+                        <input type="text" name="City" id="City" required value="@Model.City" />
                     </div>
                     <div class="form-row">
                         <label for="State">State:*</label>
-                        <input type="text" name="State" id="State" required />
+                        <input type="text" name="State" id="State" required value="@Model.State" />
                     </div>
                     <div class="form-row">
                         <label for="ZipCode">Zip Code:*</label>
-                         <input type="text" name="ZipCode" id="ZipCode" required />
+                         <input type="text" name="ZipCode" id="ZipCode" required value="@Model.ZipCode" />
                     </div>
                     <div class="form-row">
                          <label for="Phone">Phone:*</label>
-                         <input type="text" name="Phone" id="Phone" required />
+                         <input type="text" name="Phone" id="Phone" required value="@Model.Phone" />
                     </div>
                 </div>
             </div>
             <span class="border-label">Logo</span>
             <div class="form-logo">
                 <div class="logo-preview">
-                    <img id="imagePreview2" src="#">
+                     <img id="imagePreview2" src="#" >
                 </div>
                 <div class="logo-name-display" id="fileNameDisplay"></div>
-                <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('Logo').click();" />
-                <input type="file" name="Logo" style="display:none;" onchange="previewImage(event); updateFileName(event);" accept="image/*" id="Logo" />
+                <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('NewLogo').click();" />
+                    <input type="file" name="NewLogo" style="display:none;" onchange="previewImage(event); updateFileName(event);" accept="image/*" id="NewLogo" />
             </div>
             </form>
             <div class="form-buttons">
                 <div id="employer-form-errors" class="form-errors text-danger"></div>
                  <button onclick="hideCreateEmployerForm()" class="btn btn-outline-primary">Cancel</button>
-                 <button type="button" onclick="handleEmployerFormSubmit()" class="btn btn-primary">Submit</button>
+                 <button id = "employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>

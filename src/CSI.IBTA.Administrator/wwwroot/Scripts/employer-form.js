@@ -1,0 +1,132 @@
+﻿function handleCreateEmployerFormSubmit() {
+    var form = document.getElementById('employer-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+    fetch('/Employer', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        if (data.value == null) {
+        var errors = document.getElementById('employer-form-errors');
+        errors.textContent = data.description;
+    }
+    else {
+        showEmployerDetails(data.value.id);
+    }
+
+    })
+    .catch(function (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+function updateFileName(event) {
+    const input = event.target;
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+
+    if (input.files && input.files[0]) {
+        const fileName = input.files[0].name;
+        fileNameDisplay.textContent = fileName;
+    } else {
+        fileNameDisplay.textContent = "";
+    }
+}
+function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+        var base64String = reader.result;
+        let preview = document.getElementById('imagePreview');
+        preview.src = base64String; 
+
+        let preview2 = document.getElementById('imagePreview2');
+        preview2.src = base64String; 
+
+        preview.style.display = "block";
+        preview2.style.display = "block";
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+function showEmployerCreateForm() {
+    fetch(`/Employer/CreateEmployerForm`)
+    .then(function (response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(function (data) {
+        let form = document.getElementById('control-employer');
+        form.innerHTML = data;
+        let btn = document.getElementById("employer-form-submit-btn");
+        btn.addEventListener("click", handleCreateEmployerFormSubmit);
+        $("#control-employer").show();
+        $("#table-employer").hide();
+    })
+    .catch(function (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+function showEmployerUpdateForm(employerId) {
+    fetch(`/Employer/UpdateEmployerForm?employerId=${employerId}`)
+    .then(function (response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(function (data) {
+        let form = document.getElementById('control-employer');
+        form.innerHTML = data;
+        let btn = document.getElementById("employer-form-submit-btn");
+        btn.addEventListener("click", handleUpdateEmployerFormSubmit);
+        let preview = document.getElementById('imagePreview');
+        preview.style.display = "block";
+
+        $("#control-employer").show();
+        $("#table-employer").hide();
+    })
+    .catch(function (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+function handleUpdateEmployerFormSubmit() {
+    var form = document.getElementById('employer-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+    fetch('/Employer', {
+        method: 'PUT',
+        body: formData,
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        if (data.value == null) {
+            var errors = document.getElementById('employer-form-errors');
+            errors.textContent = data.description;
+        }
+        else {
+            showEmployerDetails(data.value.id);
+        }
+    })
+    .catch(function (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}

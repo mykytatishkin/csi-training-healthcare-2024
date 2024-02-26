@@ -8,6 +8,7 @@ namespace CSI.IBTA.Administrator.Interfaces
     {
         Task<IQueryable<Employer>?> GetEmployers();
         Task<TaskResult<EmployerDto?>> CreateEmployer(CreateEmployerDto dto);
+        Task<TaskResult<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId);
         Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id);
     }
 }
