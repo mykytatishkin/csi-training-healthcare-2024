@@ -3,7 +3,6 @@ using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Services;
 using CSI.IBTA.AuthService.Authentication;
 using Microsoft.Extensions.Options;
-using System.Reflection;
 
 namespace CSI.IBTA.Administrator
 {
@@ -19,12 +18,12 @@ namespace CSI.IBTA.Administrator
 
             services.AddLogging();
             services.AddHttpContextAccessor();
+            services.AddTransient<AuthorizedHttpClient>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IUserServiceClient, UserServiceClient>();
+            services.AddScoped<IEmployerUserClient, EmployerUserClient>();
+            services.AddScoped<IEmployerClient, EmployerClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
-            services.AddHttpClient<IEmployerUserClient, EmployerUserClient>();
-            services.AddHttpClient<IUserServiceClient, UserServiceClient>();
-            services.AddHttpClient<IEmployerClient, EmployerClient>();
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }
     }

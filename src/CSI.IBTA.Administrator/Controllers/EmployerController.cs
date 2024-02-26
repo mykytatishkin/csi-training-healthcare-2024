@@ -1,28 +1,27 @@
 ﻿using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
 using Microsoft.AspNetCore.Mvc;
+using CSI.IBTA.Administrator.Filters;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     [Route("Employer")]
     public class EmployerController : Controller
     {
         private readonly IEmployerClient _employerClient;
         private readonly IEmployerUserClient _employerUserClient;
         private readonly IUserServiceClient _userServiceClient;
-        private readonly IJwtTokenService _jwtTokenService;
 
         public EmployerController(
             IEmployerClient employerClient,
             IEmployerUserClient employerUserClient,
-            IJwtTokenService jwtTokenService,
             IUserServiceClient userServiceClient)
         {
             _employerClient = employerClient;
             _employerUserClient = employerUserClient;
-            _jwtTokenService = jwtTokenService;
             _userServiceClient = userServiceClient;
         }
 
@@ -32,7 +31,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             if (response.Error != null)
             {
-                throw new Exception("Failed to retrieve employer");
+                return Problem(title: "Failed to retrieve employer");
             }
 
             return PartialView("_EmployerAdministration", response.Result);
@@ -51,48 +50,16 @@ namespace CSI.IBTA.Administrator.Controllers
 
             if (response.Error != null || response.Result == null)
             {
-                throw new Exception("Failed to retrieve employer users");
+                return Problem(title: "Failed to retrieve employer users");
             }
 
             var viewModel = new UserManagementViewModel
             {
                 EmployerId = employerId,
-                EmployerUsers = response.Result,
-                CreateEmployerUserVM = new EmployerUserViewModel()
+                EmployerUsers = response.Result
             };
 
             return PartialView("_EmployerAdministrationUserManagement", viewModel);
-        }
-
-        [HttpPost("User")]
-        public async Task<IActionResult> CreateUser(int employerId, UserManagementViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                //return PartialView("_EmployerAdministrationUserManagement", model);
-                return RedirectToAction("Index", "Home");
-            }
-
-            var command = new CreateUserDto(
-                model.CreateEmployerUserVM.Username,
-                model.CreateEmployerUserVM.Password,
-                model.CreateEmployerUserVM.Firstname,
-                model.CreateEmployerUserVM.Lastname,
-                Role.EmployerAdmin,
-                employerId,
-                "",
-                model.CreateEmployerUserVM.Email,
-                "", "", "", "");
-
-            var response = await _employerUserClient.CreateEmployerUser(command);
-
-            if (response.Error != null)
-            {
-                ModelState.AddModelError("", response.Error.Title);
-            }
-
-            //return PartialView("_EmployerAdministrationUserManagement", model);
-            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet("CreateUser")]
@@ -114,7 +81,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             if (response.Error != null || response.Result == null)
             {
-                throw new Exception("Failed to retrieve user");
+                return Problem(title: "Failed to retrieve user");
             }
 
             var viewModel = new EmployerUserViewModel
@@ -136,8 +103,7 @@ namespace CSI.IBTA.Administrator.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //return PartialView("_EmployerAdministrationUserManagement", model);
-                return RedirectToAction("Index", "Home");
+                return Problem(title: "Model is not valid");
             }
 
             var command = new CreateUserDto(
@@ -156,10 +122,10 @@ namespace CSI.IBTA.Administrator.Controllers
             if (response.Error != null)
             {
                 ModelState.AddModelError("", response.Error.Title);
+                return Problem(title: response.Error.Title);
             }
 
-            //return PartialView("_EmployerAdministrationUserManagement", model);
-            return RedirectToAction("Index", "Home");
+            return Ok();
         }
 
         [HttpPost("UpdateUser")]
@@ -167,14 +133,13 @@ namespace CSI.IBTA.Administrator.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //return PartialView("_EmployerAdministrationUserManagement", model);
-                return RedirectToAction("Index", "Home");
+                return Problem(title: "Model is not valid");
             }
 
             if (model.UserId == null)
             {
                 ModelState.AddModelError("", "Something went wrong... Try refreshing");
-                return PartialView("_EmployerCreateUserSection", model);
+                return BadRequest();
             }
 
             var command = new PutUserDto(
@@ -191,10 +156,10 @@ namespace CSI.IBTA.Administrator.Controllers
             if (response.Error != null)
             {
                 ModelState.AddModelError("", response.Error.Title);
+                return Problem(title: response.Error.Title);
             }
 
-            //return PartialView("_EmployerAdministrationUserManagement", model);
-            return RedirectToAction("Index", "Home");
+            return Ok();
         }
 
         [HttpGet("AllSettings")]

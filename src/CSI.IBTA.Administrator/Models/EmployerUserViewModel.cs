@@ -17,8 +17,6 @@ namespace CSI.IBTA.Administrator.Models
         [Required]
         public string Username { get; set; } = null!;
         [Required]
-        [MinLength(6)]
-        [MaxLength(20)]
         public string Password { get; set; } = null!;
     }
 }

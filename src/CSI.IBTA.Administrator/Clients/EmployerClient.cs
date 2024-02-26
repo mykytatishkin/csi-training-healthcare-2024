@@ -1,7 +1,6 @@
 ﻿using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DTOs.Errors;
-using System.Net.Http.Headers;
 using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 
@@ -9,56 +8,21 @@ namespace CSI.IBTA.Administrator.Clients
 {
     internal class EmployerClient : IEmployerClient
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<EmployerClient> _logger;
-        private readonly IJwtTokenService _jwtTokenService;
+        private readonly AuthorizedHttpClient _httpClient;
 
-        public EmployerClient(
-            IHttpContextAccessor httpContextAccessor,
-            ILogger<EmployerClient> logger,
-            HttpClient httpClient,
-            IConfiguration configuration,
-            IJwtTokenService jwtTokenService)
+        public EmployerClient(AuthorizedHttpClient httpClient)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
             _httpClient = httpClient;
-
-            var userServiceApiUrl = configuration.GetValue<string>("UserServiceApiUrl");
-            if (string.IsNullOrEmpty(userServiceApiUrl))
-            {
-                _logger.LogError("UserServiceApiUrl is missing in appsettings.json");
-                throw new InvalidOperationException("UserServiceApiUrl is missing in appsettings.json");
-            }
-            _httpClient.BaseAddress = new Uri(userServiceApiUrl);
-            _jwtTokenService = jwtTokenService;
+            _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
         public async Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id)
         {
-            if (_httpContextAccessor.HttpContext == null)
-            {
-                _logger.LogError("HttpContext is null");
-                return new GenericInternalResponse<EmployerDto>(true, InternalErrors.BaseInternalError, null);
-            }
-
-            string? token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return new GenericInternalResponse<EmployerDto>(true, InternalErrors.InvalidToken, null);
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
             string requestUrl = string.Format(UserServiceApiEndpoints.Employer, id);
             var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
             {
-                var error = response.ReasonPhrase != null ?
-                    new InternalError(response.ReasonPhrase) :
-                    InternalErrors.BaseInternalError;
+                var error = InternalErrors.GenericError;
                 return new GenericInternalResponse<EmployerDto>(true, error, null);
             }
 

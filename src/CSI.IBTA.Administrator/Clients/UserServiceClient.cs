@@ -1,53 +1,27 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Text;
-using CSI.IBTA.Administrator.Constants;
-using CSI.IBTA.Administrator.Endpoints;
+﻿using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
-using CSI.IBTA.Shared.DTOs.Login;
 using CSI.IBTA.Shared.Entities;
-using CSI.IBTA.Shared.Types;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace CSI.IBTA.Administrator.Clients
 {
     internal class UserServiceClient : IUserServiceClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<AuthClient> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IJwtTokenService _jwtTokenService;
+        private readonly ILogger<UserServiceClient> _logger;
+        private readonly AuthorizedHttpClient _httpClient;
 
-        public UserServiceClient(HttpClient httpClient, IJwtTokenService jwtTokenService, ILogger<AuthClient> logger, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserServiceClient(AuthorizedHttpClient httpClient, ILogger<UserServiceClient> logger)
         {
-            _logger = logger;
             _httpClient = httpClient;
-            _jwtTokenService = jwtTokenService;
-            var userServiceApiUrl = configuration.GetValue<string>("UserServiceApiUrl");
-            if (string.IsNullOrEmpty(userServiceApiUrl))
-            {
-                _logger.LogError("UserServiceApiUrl is missing in appsettings.json");
-                throw new InvalidOperationException("AuthServiceApiUrl is missing in appsettings.json");
-            }
-            _httpClient.BaseAddress = new Uri(userServiceApiUrl);
-            _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
+            _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
 
-        public async Task<List<Employer>?> GetEmployers(string token)
+        public async Task<List<Employer>?> GetEmployers()
         {
-            if (_httpContextAccessor.HttpContext == null)
-            {
-                _logger.LogError("HttpContext is null");
-                return null;
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Employers);
 
             if (!response.IsSuccessStatusCode)
@@ -64,28 +38,13 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericInternalResponse<UserDto>> GetUser(int userId)
         {
-            if (_httpContextAccessor.HttpContext == null)
-            {
-                _logger.LogError("HttpContext is null");
-                return new GenericInternalResponse<UserDto>(true, InternalErrors.BaseInternalError, null);
-            }
-
-            string? token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return new GenericInternalResponse<UserDto>(true, InternalErrors.InvalidToken, null);
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);
             var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return new GenericInternalResponse<UserDto>(true, InternalErrors.BaseInternalError, null);
+                return new GenericInternalResponse<UserDto>(true, InternalErrors.GenericError, null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();

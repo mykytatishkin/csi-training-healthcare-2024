@@ -17,7 +17,12 @@ namespace CSI.IBTA.Administrator.Clients
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthClient(HttpClient httpClient, IJwtTokenService jwtTokenService, ILogger<AuthClient> logger, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthClient(
+            HttpClient httpClient,
+            IJwtTokenService jwtTokenService,
+            ILogger<AuthClient> logger,
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _httpClient = httpClient;

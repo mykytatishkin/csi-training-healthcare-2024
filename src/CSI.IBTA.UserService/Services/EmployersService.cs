@@ -1,11 +1,11 @@
-﻿using CSI.IBTA.DataLayer.Interfaces;
+﻿using AutoMapper;
+using CSI.IBTA.DataLayer.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -15,8 +15,9 @@ namespace CSI.IBTA.UserService.Services
         private readonly IFileService _fileService;
         private readonly List<(string key, bool value)> _defaultSettings;
         private readonly ILogger<EmployersService> _logger;
+        private readonly IMapper _mapper;
 
-        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUnitOfWork unitOfWork, IFileService fileService)
+        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUnitOfWork unitOfWork, IFileService fileService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
@@ -35,6 +36,7 @@ namespace CSI.IBTA.UserService.Services
                 }
                 _defaultSettings.Add((setting.Key, val));
             }
+            _mapper = mapper;
         }
 
         public async Task<GenericHttpResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto)
@@ -78,7 +80,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericHttpResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
-            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, _mapper.Map<EmployerDto>(e));
         }
 
         public async Task<GenericHttpResponse<EmployerDto>> UpdateEmployer(int employerId, UpdateEmployerDto dto)
@@ -117,14 +119,14 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericHttpResponse<EmployerDto>(true, new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
-            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, _mapper.Map<EmployerDto>(e));
         }
 
         public async Task<GenericHttpResponse<bool>> DeleteEmployer(int employerId)
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericHttpResponse<bool>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), false);
+            if (e == null) return new GenericHttpResponse<bool>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), false);
 
             var success = await _unitOfWork.Employers.Delete(e.Id);
 
@@ -139,61 +141,29 @@ namespace CSI.IBTA.UserService.Services
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Emplyer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericHttpResponse<EmployerDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
-            return new GenericHttpResponse<EmployerDto>(false, null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            return new GenericHttpResponse<EmployerDto>(false, null, _mapper.Map<EmployerDto>(e));
         }
 
-        public async Task<GenericHttpResponse<EmployerDto[]>> GetAll()
+        public async Task<GenericHttpResponse<IEnumerable<EmployerDto>>> GetAll()
         {
             var res = await _unitOfWork.Employers.All();
 
-            if (res == null) return new GenericHttpResponse<EmployerDto[]>(true, new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
+            if (res == null) return new GenericHttpResponse<IEnumerable<EmployerDto>>(true, new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
 
-            return new GenericHttpResponse<EmployerDto[]>(false, null, res.Select(e => new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo)).ToArray());
+            return new GenericHttpResponse<IEnumerable<EmployerDto>>(false, null, res.Select(_mapper.Map<EmployerDto>));
         }
 
         public async Task<GenericHttpResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId)
         {
-            var response = await _unitOfWork.Users.Find(u => u.EmployerId == employerId);
+            var response = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Emails)
+                .Where(u => u.EmployerId == employerId)
+                .ToListAsync();
 
-            if (response == null)
-            {
-                var error = new HttpError("Server failed to fetch employer users", HttpStatusCode.InternalServerError);
-                return new GenericHttpResponse<IEnumerable<UserDto>>(true, error, null);
-            }
-
-            var userDtos = new List<UserDto>();
-            foreach (User user in response)
-            {
-                var userAccount = await _unitOfWork.Accounts.GetById(user.AccountId);
-
-                if (userAccount == null)
-                {
-                    var error = new HttpError("Server failed to fetch employer user's account", HttpStatusCode.InternalServerError);
-                    return new GenericHttpResponse<IEnumerable<UserDto>>(true, error, null);
-                }
-
-                var userEmail = await _unitOfWork.Emails.GetById(user.Id);
-
-                if (userEmail == null)
-                {
-                    var error = new HttpError("Server failed to fetch employer user's email", HttpStatusCode.InternalServerError);
-                    return new GenericHttpResponse<IEnumerable<UserDto>>(true, error, null);
-                }
-
-                var userDto = new UserDto(
-                    user.Id,
-                    userAccount.Role,
-                    userAccount.Username,
-                    user.Firstname,
-                    user.Lastname,
-                    user.AccountId,
-                    user.EmployerId,
-                    userEmail.EmailAddress);
-
-                userDtos.Add(userDto);
-            }
+            var userDtos = response.Select(_mapper.Map<UserDto>);
 
             return new GenericHttpResponse<IEnumerable<UserDto>>(false, null, userDtos);
         }

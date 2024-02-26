@@ -74,38 +74,6 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpPatch("{userId}")]
-        [Authorize]
-        public async Task<IActionResult> UpdateUser(int userId, UpdateUserDto updateUserDto)
-        {
-            var getResponse = await _userService.GetUser(userId);
-            if (getResponse.Error != null)
-            {
-                return Problem(
-                    title: getResponse.Error!.Title,
-                    statusCode: (int)getResponse.Error.StatusCode
-                );
-            }
-            var authUserId = (HttpContext.User).FindFirstValue(ClaimTypes.NameIdentifier);
-            if (authUserId == null || (int.Parse(authUserId) != getResponse.Result.AccountId
-                && !IsNextSuperiorRole(HttpContext.User, getResponse.Result.Role)))
-            {
-                return Unauthorized("User is unauthorized");
-            }
-
-            var response = await _userService.UpdateUser(userId, updateUserDto);
-
-            if (response.Error != null)
-            {
-                return Problem(
-                    title: response.Error!.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
-            }
-
-            return Ok(response.Result);
-        }
-
         [HttpPut("{userId}")]
         // Later we can have policy based authorization which will handle checking
         // if user is owner of the resource
