@@ -24,7 +24,6 @@ namespace CSI.IBTA.UserService.Services
 
             if (!correctFormat) return (null, "File is in incorrect format");
 
-
             using (var memoryStream = new MemoryStream())
             {
                 image.CopyTo(memoryStream);
