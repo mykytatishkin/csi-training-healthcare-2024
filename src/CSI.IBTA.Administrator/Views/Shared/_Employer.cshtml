@@ -73,6 +73,8 @@
                 {
                     if (i > 0)
                     {
+                        if(i >= Model.PageIndex - 4)
+                        {
                         <a asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
                            asp-route-pageNumber="@(i)"
@@ -80,12 +82,13 @@
                            class="btn btn-default @prevDisabled">
                             @i
                         </a>
+                        }
                     }
                 }
                 <span style="color:dodgerblue">@Model.PageIndex</span>
                 @for(int i = Model.PageIndex; i < Model.TotalPages; i++)
                 {
-                    if(1 + i <= Model.TotalPages) {
+                    if(i + 1 <= Model.TotalPages && i + 1 <= Model.PageIndex + 4) {
                         <a asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
                            asp-route-pageNumber="@(i + 1)"
