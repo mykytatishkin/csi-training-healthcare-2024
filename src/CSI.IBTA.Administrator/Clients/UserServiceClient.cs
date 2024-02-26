@@ -55,7 +55,8 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId)
         {
-            var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Settings + "/" + employerId);
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -72,7 +73,8 @@ namespace CSI.IBTA.Administrator.Clients
         public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
         {
             var content = JsonContent.Create(SettingsDtos);
-            var response = await _httpClient.PatchAsync(UserServiceApiEndpoints.Settings + "/" + employerId, content);
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.PatchAsync(requestUrl, content);
 
             if (!response.IsSuccessStatusCode)
             {
