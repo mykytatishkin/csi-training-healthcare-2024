@@ -69,19 +69,17 @@
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
-                @if(Model.PageIndex > 1 )
+                @for (int i = 0 - 1; i < Model.PageIndex; i++)
                 {
-                    int i = Model.TotalPages;
-                    while(i > Model.PageIndex)
+                    if (i > 0)
                     {
                         <a asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
-                           asp-route-pageNumber="@(i - 2)"
+                           asp-route-pageNumber="@(i)"
                            asp-route-currentFilter="@ViewData["CurrentFilter"]"
                            class="btn btn-default @prevDisabled">
-                            @Convert.ToInt32(i - 2)
+                            @i
                         </a>
-                        i--;
                     }
                 }
                 <span style="color:dodgerblue">@Model.PageIndex</span>
