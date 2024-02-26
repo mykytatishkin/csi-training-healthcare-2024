@@ -144,7 +144,7 @@ function saveSettings(employerId) {
                 throw new Error('Network response was not ok');
             }
 
-            showEmployerSettings(employerId);
+            showEmployerAdministration(employerId);
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);

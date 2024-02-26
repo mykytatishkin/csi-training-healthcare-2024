@@ -4,34 +4,27 @@
     <table class="table">
         @Html.HiddenFor(m => m.EmployerId)
         @Html.HiddenFor(m => m.ActionName)
-        <thead>
-        <tr>
-            <th>
-                Condition
-            </th>
-            <th>
-                State
-            </th>
-        </tr>
-        </thead>
         <tbody>
-            @for(int i = 0; i < @Model.EmployerSettings.Count; i++)
+            @for (int i = 0; i < Model.EmployerSettings.Count; i++)
             {
-                @Html.HiddenFor(m => m.EmployerSettings[i].Condition)
+                switch (i)
+                {
+                    case 0:
+                        <tr><td colspan="2"><legend>Employer data management</legend></td></tr>
+                        break;
+                    case 1:
+                        <tr><td colspan="2"><legend>Consumer data management</legend></td></tr>
+                        break;
+                }
+
                 <tr>
-                    @{
-                        var item = Model.EmployerSettings[i];
-                    }
                     <td>
-                        @Html.DisplayFor(modelItem => item.Condition)
+                        @Html.HiddenFor(m => m.EmployerSettings[i].Condition)
+                        @Html.DisplayFor(m => m.EmployerSettings[i].Condition)
                     </td>
                     <td>
-                        @{
-                            var firstEnabled = item.State ? "Checked" : "";
-                            var secondEnabled = !item.State ? "Checked" : "";
-                        }
-                            @Html.RadioButtonFor(m => m.EmployerSettings[i].State, true)
-                            @Html.RadioButtonFor(m => m.EmployerSettings[i].State, false)
+                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, true) Allow
+                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, false) Prevent
                     </td>
                 </tr>
             }
@@ -45,9 +38,9 @@
                 </td>
             </tr>
         }
-        <tr>
-            <td><button class="align-left custom-button" onclick="saveSettings(@Model.EmployerId)" type="button">Submit</button></td>
-        </tr>
+
         </tbody>
     </table>
 </form>
+<button class="align-left custom-button" onclick="showEmployerAdministration(@Model.EmployerId)">Cancel</button>
+<button class="align-left custom-button" onclick="saveSettings(@Model.EmployerId)" type="button">Submit</button>
