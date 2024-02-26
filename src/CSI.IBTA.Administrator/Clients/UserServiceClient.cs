@@ -55,11 +55,6 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId)
         {
-            var token = _jwtTokenService.GetCachedToken();
-            if (token == null) return null;
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Settings + "/" + employerId);
 
             if (!response.IsSuccessStatusCode)
@@ -76,11 +71,6 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
         {
-            var token = _jwtTokenService.GetCachedToken();
-            if (token == null) return null;
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             var content = JsonContent.Create(SettingsDtos);
             var response = await _httpClient.PatchAsync(UserServiceApiEndpoints.Settings + "/" + employerId, content);
 
