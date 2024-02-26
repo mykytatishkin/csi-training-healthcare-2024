@@ -217,9 +217,9 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPatch("AllSettings")]
-        public async Task<IActionResult> AllSettings(int employerId, EmployerSettingsViewModel model)
+        public async Task<IActionResult> AllSettings(EmployerSettingsViewModel model)
         {
-            var response = await _userServiceClient.UpdateEmployerSettings(employerId, model.EmployerSettings);
+            var response = await _userServiceClient.UpdateEmployerSettings(model.EmployerId, model.EmployerSettings);
 
             if (response == null)
             {
@@ -228,7 +228,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var viewModel = new EmployerSettingsViewModel
             {
-                EmployerId = employerId,
+                EmployerId = model.EmployerId,
                 EmployerSettings = response.ToList()
             };
 

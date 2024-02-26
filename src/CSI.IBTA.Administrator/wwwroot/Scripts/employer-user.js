@@ -128,14 +128,14 @@ function saveUserData() {
         });
 }
 
-function saveSettings(employerId) {
+function saveSettings() {
     var form = document.getElementById('employer-settings-form');
     if (form.checkValidity() == false) {
         form.reportValidity();
         return;
     }
     var formData = new FormData(form);
-    fetch('/Employer/AllSettings?employerId=' + employerId, {
+    fetch('/Employer/AllSettings?employerId=' + formData.get('EmployerId'), {
         method: 'PATCH',
         body: formData,
     })
@@ -144,7 +144,7 @@ function saveSettings(employerId) {
                 throw new Error('Network response was not ok');
             }
 
-            showEmployerAdministration(employerId);
+            showEmployerAdministration(formData.get('EmployerId'));
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
