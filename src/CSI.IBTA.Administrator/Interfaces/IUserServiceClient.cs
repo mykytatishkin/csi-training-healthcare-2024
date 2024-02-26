@@ -12,6 +12,6 @@ namespace CSI.IBTA.Administrator.Interfaces
 
         Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId);
 
-        Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, EmployerSettingsViewModel model);
+        Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? model);
     }
 }

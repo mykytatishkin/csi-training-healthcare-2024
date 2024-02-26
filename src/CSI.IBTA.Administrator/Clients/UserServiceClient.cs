@@ -115,25 +115,14 @@ namespace CSI.IBTA.Administrator.Clients
             return employersSettings;
         }
 
-        public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, EmployerSettingsViewModel model)
+        public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
         {
             var token = _jwtTokenService.GetCachedToken();
             if (token == null) return null;
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var list = new[] { new { condition = model.EmployerSettings[0].Condition
-                , state = model.EmployerSettings[0].State } }.ToList();
-            for (int i = 1; i < model.EmployerSettings.Count; i++)
-            {
-                list.Add(new
-                {
-                    condition = model.EmployerSettings[i].Condition
-                ,
-                    state = model.EmployerSettings[i].State
-                });
-            }
-            var content = JsonContent.Create(list);
+            var content = JsonContent.Create(SettingsDtos);
             var response = await _httpClient.PatchAsync(UserServiceApiEndpoints.Settings + "/" + employerId, content);
 
             if (!response.IsSuccessStatusCode)
