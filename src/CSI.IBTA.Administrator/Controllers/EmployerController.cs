@@ -161,5 +161,43 @@ namespace CSI.IBTA.Administrator.Controllers
 
             return Ok();
         }
+
+        [HttpGet("AllSettings")]
+        public async Task<IActionResult> AllSettings(int employerId)
+        {
+            var response = await _userServiceClient.GetEmployerSettings(employerId);
+
+            if (response == null)
+            {
+                throw new Exception("Failed to retrieve employer users");
+            }
+
+            var viewModel = new EmployerSettingsViewModel
+            {
+                EmployerId = employerId,
+                EmployerSettings = response.ToList()
+            };
+
+            return PartialView("_EmployerSettings", viewModel);
+        }
+
+        [HttpPatch("AllSettings")]
+        public async Task<IActionResult> AllSettings(EmployerSettingsViewModel model)
+        {
+            var response = await _userServiceClient.UpdateEmployerSettings(model.EmployerId, model.EmployerSettings);
+
+            if (response == null)
+            {
+                throw new Exception("Failed to retrieve employer settings");
+            }
+
+            var viewModel = new EmployerSettingsViewModel
+            {
+                EmployerId = model.EmployerId,
+                EmployerSettings = response.ToList()
+            };
+
+            return PartialView("_EmployerSettings", viewModel);
+        }
     }
 }

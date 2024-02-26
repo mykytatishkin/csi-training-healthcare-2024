@@ -1,5 +1,6 @@
 ﻿using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
@@ -50,6 +51,41 @@ namespace CSI.IBTA.Administrator.Clients
             var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
 
             return new GenericInternalResponse<UserDto>(false, null, user);
+        }
+
+        public async Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId)
+        {
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
+        }
+
+        public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
+        {
+            var content = JsonContent.Create(SettingsDtos);
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.PatchAsync(requestUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
         }
     }
 }
