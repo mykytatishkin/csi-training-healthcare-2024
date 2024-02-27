@@ -86,7 +86,7 @@
                         }
                     }
                 }
-                <span style="color:dodgerblue">@Model.PageIndex</span>
+                <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
                 @for(int i = Model.PageIndex; i < Model.TotalPages; i++)
                 {
                     if(i + 1 <= Model.TotalPages && i + 1 <= Model.PageIndex + 4) {

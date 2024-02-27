@@ -10,12 +10,12 @@
         <link rel="stylesheet" href="~/css/employer-form.css">
     </head>
 <body>
-<div>
+<div class="form-main-container">
     <div class="nav-buttons">
+         <h4 style="margin-right: auto;">Employer Administration</h4>
         <button onclick="hideCreateEmployerForm()" id="selectDifferentEmployerButton" class="btn btn-primary">Select a different employer</button>
     </div>
     <div id="employerForm" class="form">
-        <h4>Employer Administration</h4>
             <div class="logo-preview">
                 <img id="imagePreview" src="data:image/png;base64,@Model.EncodedLogo" onerror="this.style.display='none';">
             </div>
