@@ -13,6 +13,7 @@ namespace CSI.IBTA.Shared.Entities
         public string ClaimNumber { get; set; } = null!;
         public DateTime DateOfService { get; set; }
         public int PlanId { get; set; }
+        public Plan Plan { get; set; } = null!;
         public decimal Amount { get; set; }
         public string Status { get; set; } = null!;
     }

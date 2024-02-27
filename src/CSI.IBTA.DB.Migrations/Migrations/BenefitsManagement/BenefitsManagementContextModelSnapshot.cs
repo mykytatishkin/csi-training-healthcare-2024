@@ -54,7 +54,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasIndex("PlanId");
 
-                    b.ToTable("Claim");
+                    b.ToTable("Claim", (string)null);
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Enrollment", b =>
@@ -78,7 +78,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasIndex("PlanId");
 
-                    b.ToTable("Enrollment");
+                    b.ToTable("Enrollment", (string)null);
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Package", b =>
@@ -105,7 +105,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasKey("Id");
 
-                    b.ToTable("Package");
+                    b.ToTable("Package", (string)null);
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Plan", b =>
@@ -138,7 +138,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("Plan");
+                    b.ToTable("Plan", (string)null);
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.PlanType", b =>
@@ -155,7 +155,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasKey("Id");
 
-                    b.ToTable("PlanType");
+                    b.ToTable("PlanType", (string)null);
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Claim", b =>
