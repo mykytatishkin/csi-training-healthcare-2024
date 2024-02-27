@@ -125,6 +125,16 @@ function handleUpdateEmployerFormSubmit() {
     });
 }
 
+function handleCancel(employerId)
+{
+    if (employerId == undefined) {
+        hideCreateEmployerForm();
+    }
+    else {
+        showEmployerDetails(employerId);
+    }
+}
+
 function hideCreateEmployerForm() {
     $("#control-employer").hide();
     $("#table-employer").show();
