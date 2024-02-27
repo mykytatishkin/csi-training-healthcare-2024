@@ -26,7 +26,7 @@ namespace CSI.IBTA.AuthService.Services
 
             if (!result.Any())
             {
-                return new GenericResponse<LoginResponse>(true, Errors.InvalidCredentials, null);
+                return new GenericResponse<LoginResponse>(Errors.InvalidCredentials, null);
             }
 
             var account = result.Single();
@@ -35,12 +35,12 @@ namespace CSI.IBTA.AuthService.Services
 
             if (isPasswordCorrect == false)
             {
-                return new GenericResponse<LoginResponse>(true, Errors.InvalidCredentials, null);
+                return new GenericResponse<LoginResponse>(Errors.InvalidCredentials, null);
             }
 
             var token = _jwtTokenGenerator.GenerateToken(account.Id, account.Role.ToString());
 
-            return new GenericResponse<LoginResponse>(false, null, new LoginResponse(token));
+            return new GenericResponse<LoginResponse>(null, new LoginResponse(token));
         }
     }
 }

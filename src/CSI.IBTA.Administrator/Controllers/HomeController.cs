@@ -1,6 +1,5 @@
 ﻿using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DataStructures;
-using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,9 +31,10 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentNameFilter"] = nameFilter;
             ViewData["CurrentCodeFilter"] = codeFilter;
 
-            var employers = await _userServiceClient.GetEmployers();
-            if (employers != null) 
+            var res = await _userServiceClient.GetEmployers();
+            if (res.Result != null) 
             {
+                var employers = res.Result;
                 if (!String.IsNullOrEmpty(nameFilter))
                 {
                     employers = employers.Where(s => s.Name.Contains(nameFilter));
@@ -43,11 +43,10 @@ namespace CSI.IBTA.Administrator.Controllers
                 {
                     employers = employers.Where(s => s.Code.Equals(codeFilter));
                 }
+                ViewData["Page"] = "Home";
+                return (View(new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
             }
-
-
-            ViewData["Page"] = "Home";
-            return (View( new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
+            return (View(new PaginatedList<EmployerDto>(new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8))); //todo handle errors
         }
     }
 }

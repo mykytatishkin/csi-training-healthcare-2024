@@ -41,7 +41,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpGet("UpdateEmployerForm")]
-        public async Task<ActionResult> UpdateEmployerForm(int employerId)
+        public async Task<IActionResult> UpdateEmployerForm(int employerId)
         {
             var response = await _userServiceClient.GetEmployerById(employerId);
 

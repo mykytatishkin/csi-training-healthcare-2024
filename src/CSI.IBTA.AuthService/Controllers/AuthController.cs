@@ -20,7 +20,7 @@ namespace CSI.IBTA.AuthService.Controllers
         {
             var response = await _authenticationService.Login(request);
 
-            if (response.HasError)
+            if (response.Error != null)
             {
                 return Problem(
                     title: response.Error!.Title,

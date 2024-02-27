@@ -15,12 +15,12 @@
         return response.json();
     })
     .then(function (data) {
-        if (data.value == null) {
+        if (data.result == null) {
         var errors = document.getElementById('employer-form-errors');
-        errors.textContent = data.description;
+        errors.textContent = data.error.title;
     }
     else {
-        showEmployerDetails(data.value.id);
+        showEmployerDetails(data.result.id);
     }
 
     })
@@ -112,12 +112,12 @@ function handleUpdateEmployerFormSubmit() {
         return response.json();
     })
     .then(function (data) {
-        if (data.value == null) {
+        if (data.result == null) {
             var errors = document.getElementById('employer-form-errors');
-            errors.textContent = data.description;
+            errors.textContent = data.error.title;
         }
         else {
-            showEmployerDetails(data.value.id);
+            showEmployerDetails(data.result.id);
         }
     })
     .catch(function (error) {

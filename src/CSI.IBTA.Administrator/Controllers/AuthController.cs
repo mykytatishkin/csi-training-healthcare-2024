@@ -31,9 +31,9 @@ namespace CSI.IBTA.Administrator.Controllers
             }
 
             var response = await _client.Authenticate(model.ToDto());
-            if (!response.Success)
+            if (!response.Result)
             {
-                ModelState.AddModelError("", response.Description);
+                ModelState.AddModelError("", response.Error.Title);
                 return View("Index");
             }
 
