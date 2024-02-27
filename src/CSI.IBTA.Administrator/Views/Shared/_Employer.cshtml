@@ -70,36 +70,26 @@
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
-                @for (int i = 0 - 1; i < Model.PageIndex; i++)
-                {
-                    if (i > 0)
+                @{
+                    var lastPage = Math.Min(Model.PageIndex + 7, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - 9);
+                    for (int i = firstPage; i <= lastPage; i++)
                     {
-                        if(i >= Model.PageIndex - 4)
+                        if (i == Model.PageIndex || Model.PageIndex == 0)
                         {
-                        <a asp-action="Index"
-                           asp-route-sortOrder="@ViewData["CurrentSort"]"
-                           asp-route-pageNumber="@(i)"
-                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                           class="btn btn-default @prevDisabled">
-                            @i
-                        </a>
+                            <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
+                        }
+                        else{
+                            <a asp-action="Index"
+                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                               asp-route-pageNumber="@(i)"
+                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                               class="btn btn-default">
+                                @i
+                            </a>
                         }
                     }
                 }
-                <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
-                @for(int i = Model.PageIndex; i < Model.TotalPages; i++)
-                {
-                    if(i + 1 <= Model.TotalPages && i + 1 <= Model.PageIndex + 4) {
-                        <a asp-action="Index"
-                           asp-route-sortOrder="@ViewData["CurrentSort"]"
-                           asp-route-pageNumber="@(i + 1)"
-                           asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                           class="btn btn-default @nextDisabled">
-                            @Convert.ToInt32(i + 1)
-                        </a>
-                    }
-                }
-
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["CurrentSort"]"
                    asp-route-pageNumber="@(Model.PageIndex + 1)"
