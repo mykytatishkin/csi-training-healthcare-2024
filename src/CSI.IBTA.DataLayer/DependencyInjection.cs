@@ -8,21 +8,31 @@ namespace CSI.IBTA.DataLayer
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDataLayer(
+        public static IServiceCollection AddUserUnitOfWork(
             this IServiceCollection services,
-            string connectionString1, string connectionString2)
+            string connectionString)
         {
             services.AddDbContext<UserManagementContext>(options =>
                 options.UseSqlServer(
-                    connectionString1,
-                    b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
-            services.AddDbContext<BenefitsManagementContext>(options =>
-                options.UseSqlServer(
-                    connectionString2,
+                    connectionString,
                     b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();            
+            services.AddScoped<IUserUnitOfWork, UserUnitOfWork>();            
             
+            return services;
+        }
+
+        public static IServiceCollection AddBenefitsUnitOfWork(
+            this IServiceCollection services,
+            string connectionString)
+        {
+            services.AddDbContext<BenefitsManagementContext>(options =>
+                options.UseSqlServer(
+                    connectionString,
+                    b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
+
+            services.AddScoped<IBenefitsUnitOfWork, BenefitsUnitOfWork>();
+
             return services;
         }
     }

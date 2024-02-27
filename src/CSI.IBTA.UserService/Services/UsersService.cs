@@ -12,10 +12,10 @@ namespace CSI.IBTA.UserService.Services
 {
     internal class UsersService : IUsersService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UsersService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UsersService(IUserUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

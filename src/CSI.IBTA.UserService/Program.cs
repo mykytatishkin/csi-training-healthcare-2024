@@ -14,13 +14,11 @@ namespace CSI.IBTA.UserService
             builder.Services.AddSwaggerGen();
             builder.Services.AddLogging();
 
-            var connectionString1 = builder.Configuration.GetConnectionString("UserDBConnection")
-                ?? throw new Exception("Connection string is null");
-            var connectionString2 = builder.Configuration.GetConnectionString("BenefitsDBConnection")
+            var connectionString = builder.Configuration.GetConnectionString("UserDBConnection")
                 ?? throw new Exception("Connection string is null");
 
             builder.Services.AddUserService(builder.Configuration);
-            builder.Services.AddDataLayer(connectionString1, connectionString2);
+            builder.Services.AddUserUnitOfWork(connectionString);
 
             var app = builder.Build();
 

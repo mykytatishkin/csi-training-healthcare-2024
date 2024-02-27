@@ -52,6 +52,8 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PlanId");
+
                     b.ToTable("Claim");
                 });
 
@@ -73,6 +75,8 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
 
                     b.ToTable("Enrollment");
                 });
@@ -130,6 +134,10 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PackageId");
+
+                    b.HasIndex("TypeId");
+
                     b.ToTable("Plan");
                 });
 
@@ -148,6 +156,39 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.HasKey("Id");
 
                     b.ToTable("PlanType");
+                });
+
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Claim", b =>
+                {
+                    b.HasOne("CSI.IBTA.Shared.Entities.Plan", null)
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Enrollment", b =>
+                {
+                    b.HasOne("CSI.IBTA.Shared.Entities.Plan", null)
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Plan", b =>
+                {
+                    b.HasOne("CSI.IBTA.Shared.Entities.Package", null)
+                        .WithMany()
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CSI.IBTA.Shared.Entities.PlanType", null)
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
