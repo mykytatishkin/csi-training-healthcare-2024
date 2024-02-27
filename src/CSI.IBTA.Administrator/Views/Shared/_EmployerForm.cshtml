@@ -17,7 +17,7 @@
     <div id="employerForm" class="form">
         <h4>Employer Administration</h4>
             <div class="logo-preview">
-                <img id="imagePreview" src="data:image/png;base64,@Model.EncodedLogo">
+                <img id="imagePreview" src="data:image/png;base64,@Model.EncodedLogo" onerror="this.style.display='none';">
             </div>
         <form id="employer-form" EncType="multipart/form-data">
             @Html.HiddenFor(m => m.Id)
