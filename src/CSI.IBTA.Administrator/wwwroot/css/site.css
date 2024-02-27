@@ -53,6 +53,19 @@ body {
         color: var(--button-primary-color);
     }
 
+.nav-label {
+    display: display-block;
+    padding: 6px;
+    background-color: var(--container-background-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 .left {
     position: absolute;
     left: 1px;
