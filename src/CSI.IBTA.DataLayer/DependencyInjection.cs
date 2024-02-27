@@ -10,13 +10,17 @@ namespace CSI.IBTA.DataLayer
     {
         public static IServiceCollection AddDataLayer(
             this IServiceCollection services,
-            string connectionString)
+            string connectionString1, string connectionString2)
         {
             services.AddDbContext<UserManagementContext>(options =>
                 options.UseSqlServer(
-                    connectionString,
+                    connectionString1,
                     b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
-            
+            services.AddDbContext<BenefitsManagementContext>(options =>
+                options.UseSqlServer(
+                    connectionString2,
+                    b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();            
             
             return services;

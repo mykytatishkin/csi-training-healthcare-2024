@@ -12,6 +12,11 @@ namespace CSI.IBTA.DataLayer.Interfaces
         IGenericRepository<Phone> Phones { get; }
         IGenericRepository<EmployerUser> EmployerUsers { get; }
         IGenericRepository<Settings> Settings { get; }
+        IGenericRepository<Claim> Claims { get; }
+        IGenericRepository<Enrollment> Enrollments { get; }
+        IGenericRepository<Package> Packages { get; }
+        IGenericRepository<Plan> Plans { get; }
+        IGenericRepository<PlanType> PlanTypes { get; }
 
         Task CompleteAsync();
     }

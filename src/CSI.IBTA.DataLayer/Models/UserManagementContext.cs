@@ -13,6 +13,11 @@ public partial class UserManagementContext : DbContext
     public DbSet<Address> Addresses { get; set; }
     public DbSet<EmployerUser> EmployerUsers { get; set; }
     public DbSet<Settings> Settings { get; set; }
+    public DbSet<Claim> Claims { get; set; }
+    public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<Package> Packages { get; set; }
+    public DbSet<Plan> Plans { get; set; }
+    public DbSet<PlanType> PlanTypes { get; set; }
 
     public UserManagementContext(DbContextOptions<UserManagementContext> options)
         : base(options)

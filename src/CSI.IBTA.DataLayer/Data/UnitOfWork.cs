@@ -19,20 +19,30 @@ namespace CSI.IBTA.DataLayer.Data
         public IGenericRepository<Employer> Employers { get; private set; }
         public IGenericRepository<EmployerUser> EmployerUsers { get; private set; }
         public IGenericRepository<Settings> Settings { get; private set; }
+        public IGenericRepository<Claim> Claims { get; private set; }
+        public IGenericRepository<Enrollment> Enrollments { get; private set; }
+        public IGenericRepository<Package> Packages { get; private set; }
+        public IGenericRepository<Plan> Plans { get; private set; }
+        public IGenericRepository<PlanType> PlanTypes { get; private set; }
 
-        public UnitOfWork(UserManagementContext context, ILoggerFactory loggerFactory)
+        public UnitOfWork(UserManagementContext userContext, BenefitsManagementContext benefitsContext, ILoggerFactory loggerFactory)
         {
-            _context = context;
+            _context = userContext;
             _logger = loggerFactory.CreateLogger("logs");
 
-            Accounts = new GenericRepository<Account>(context, _logger);
-            Users = new GenericRepository<User>(context, _logger);
-            Employers = new GenericRepository<Employer>(context, _logger);
-            Emails = new GenericRepository<Email>(context, _logger);
-            Phones = new GenericRepository<Phone>(context, _logger);
-            Addresses = new GenericRepository<Address>(context, _logger);
-            EmployerUsers = new GenericRepository<EmployerUser>(context, _logger);
-            Settings = new GenericRepository<Settings>(context, _logger);
+            Accounts = new GenericRepository<Account>(userContext, _logger);
+            Users = new GenericRepository<User>(userContext, _logger);
+            Employers = new GenericRepository<Employer>(userContext, _logger);
+            Emails = new GenericRepository<Email>(userContext, _logger);
+            Phones = new GenericRepository<Phone>(userContext, _logger);
+            Addresses = new GenericRepository<Address>(userContext, _logger);
+            EmployerUsers = new GenericRepository<EmployerUser>(userContext, _logger);
+            Settings = new GenericRepository<Settings>(userContext, _logger);
+            Claims = new GenericRepository<Claim>(benefitsContext, _logger);
+            Enrollments = new GenericRepository<Enrollment>(benefitsContext, _logger);
+            Packages = new GenericRepository<Package>(benefitsContext, _logger);
+            Plans = new GenericRepository<Plan>(benefitsContext, _logger);
+            PlanTypes = new GenericRepository<PlanType>(benefitsContext, _logger);
         }
 
         public async Task CompleteAsync()
