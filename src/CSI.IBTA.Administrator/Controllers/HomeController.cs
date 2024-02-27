@@ -45,7 +45,9 @@ namespace CSI.IBTA.Administrator.Controllers
                 }
             }
 
-            return(View( new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
+
+            ViewData["Page"] = "Home";
+            return (View( new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
         }
     }
 }
