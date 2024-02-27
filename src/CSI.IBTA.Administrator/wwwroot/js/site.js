@@ -15,16 +15,29 @@ function showControl(id, name) {
     a.textContent = name;
 }
 
-function showCreateEmployerForm() {
-    $("#table-employer").hide();
-    $("#control-employer").show();
-}
-
-function hideCreateEmployerForm() {
-    $("#control-employer").hide();
-    $("#table-employer").show();
-}
-
 function a(id) {
     alert(id)
+}
+
+function fetchRoute(route, callbackSuccess, callbackFailure) {
+    fetch(route)
+        .then(function (response) {
+            if (!response.ok) {
+                callbackFailure?.(response.status);
+                throw new Error("Response was not ok");
+            }
+
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
+
+            return response.text();
+        })
+        .then(function (data) {
+            callbackSuccess?.(data);
+        })
+        .catch(function (error) {
+            console.error("Fetch request failed: " + error)
+        });
 }

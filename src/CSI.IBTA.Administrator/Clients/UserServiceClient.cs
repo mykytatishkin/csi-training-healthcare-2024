@@ -5,7 +5,6 @@ using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Types;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
-using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.Types;
 using Newtonsoft.Json;
 

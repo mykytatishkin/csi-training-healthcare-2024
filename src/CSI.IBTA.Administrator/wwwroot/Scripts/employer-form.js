@@ -56,36 +56,26 @@ function previewImage(event) {
     reader.readAsDataURL(event.target.files[0]);
 }
 
-function showEmployerCreateForm() {
-    fetch(`/Employer/CreateEmployerForm`)
-    .then(function (response) {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.text();
-    })
-    .then(function (data) {
+function showEmployerCreateForm(employerId) {
+    function onSuccess(data) {
         let form = document.getElementById('control-employer');
         form.innerHTML = data;
         let btn = document.getElementById("employer-form-submit-btn");
         btn.addEventListener("click", handleCreateEmployerFormSubmit);
         $("#control-employer").show();
         $("#table-employer").hide();
-    })
-    .catch(function (error) {
-        console.error('There was a problem with the fetch operation:', error);
-    });
+    }
+
+    function onFailure(statusCode) {
+        console.error('There was a problem with the fetch operation:', statusCode);
+    }
+
+    route = `/Employer/CreateEmployerForm`;
+    fetchRoute(route, onSuccess, onFailure);
 }
 
 function showEmployerUpdateForm(employerId) {
-    fetch(`/Employer/UpdateEmployerForm?employerId=${employerId}`)
-    .then(function (response) {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.text();
-    })
-    .then(function (data) {
+    function onSuccess(data) {
         let form = document.getElementById('control-employer');
         form.innerHTML = data;
         let btn = document.getElementById("employer-form-submit-btn");
@@ -95,10 +85,14 @@ function showEmployerUpdateForm(employerId) {
 
         $("#control-employer").show();
         $("#table-employer").hide();
-    })
-    .catch(function (error) {
-        console.error('There was a problem with the fetch operation:', error);
-    });
+    }
+
+    function onFailure(statusCode) {
+        console.error('There was a problem with the fetch operation:', statusCode);
+    }
+
+    route = `/Employer/UpdateEmployerForm?employerId=${employerId}`;
+    fetchRoute(route, onSuccess, onFailure);
 }
 
 function handleUpdateEmployerFormSubmit() {
@@ -129,4 +123,9 @@ function handleUpdateEmployerFormSubmit() {
     .catch(function (error) {
         console.error('There was a problem with the fetch operation:', error);
     });
+}
+
+function hideCreateEmployerForm() {
+    $("#control-employer").hide();
+    $("#table-employer").show();
 }
