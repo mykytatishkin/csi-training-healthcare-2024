@@ -1,0 +1,112 @@
+﻿@using CSI.IBTA.Shared.Entities
+@model Package;
+
+<head>
+    <link rel="stylesheet" href="~/css/insurance-packages.css">
+</head>
+<body>
+    <div id="create-insurance-package">
+        <form asp-controller="Employer" asp-action="Random" method="post" id="insurance-package-create-form">
+            <div class="section general-section">
+                <div class="align-left">
+                    <span class="border-label">General</span>
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="text-align-right">Package Name:* </td>
+                            <td colspan="3"><input id="package-name-input" asp-for="Name" type="text" required /></td>
+                        </tr>
+                        <tr>
+                            <td class="text-align-right">Plan Year Start Date:* </td>
+                            <td class="align-left"><input asp-for="PlanStart" type="date" value="@DateTime.UtcNow.Date.ToString("yyyy-MM-dd")" required /></td>
+                            <td class="text-align-right" id="payroll-frequency-dropdown">Payroll Frequency:* </td>
+                            <td class="align-left">
+                                <select asp-for="PayrollFrequency" required>
+                                    <option>Weekly</option>
+                                    <option>Monthly</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-align-right">Plan Year End Date:* </td>
+                            <td class="align-left"><input asp-for="PlanEnd" type="date" value="@DateTime.UtcNow.AddYears(1).Date.ToString("yyyy-MM-dd")" required /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section plans-section">
+                <div class="align-left">
+                    <span class="border-label">Plans</span>
+                </div>
+                <div class="align-left add-plans-row">
+                    <select asp-for="PayrollFrequency" required>
+                        <option>Medical</option>
+                        <option>Dental</option>
+                    </select>
+                    <button class="custom-button">Add</button>
+                </div>
+                <table id="package-plans">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Contributions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*                     @foreach (var user in Model.EmployerUsers!)
+                        {
+                        <tr class="hoverable-row" data-userId="@user.Id" onclick="onEmployerUserRowClick(this)">
+                        <td>
+                        @Html.DisplayFor(modelItem => user.FirstName) @Html.DisplayFor(modelItem => user.LastName)
+                        </td>
+                        <td>
+                        @Html.DisplayFor(modelItem => user.UserName)
+                        </td>
+                        <td>
+                        @Html.DisplayFor(modelItem => user.EmailAddress)
+                        </td>
+                        </tr>
+                        } *@
+                        <tr>
+                            <td>
+                                General Medical Insurance
+                            </td>
+                            <td>
+                                Medical
+                            </td>
+                            <td>
+                                2000$
+                            </td>
+                            <td>
+                                <button class="custom-button secondary">Update</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                General Medical Insurance
+                            </td>
+                            <td>
+                                Medical
+                            </td>
+                            <td>
+                                2000$
+                            </td>
+                            <td>
+                                <button class="custom-button secondary">Update</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="align-left action-buttons">
+                <button class="custom-button">Submit</button>
+                <button class="custom-button secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</body>
