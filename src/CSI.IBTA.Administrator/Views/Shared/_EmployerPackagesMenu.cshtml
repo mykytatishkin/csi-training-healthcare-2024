@@ -1,0 +1,43 @@
+﻿﻿@using CSI.IBTA.Shared.DTOs
+@model List<EmployerPackageDto>
+
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="~/css/employer-plans.css">
+</head>
+<body>
+    <div class="main-container">
+        <span class="border-label">Plan Years</span>
+        <div class="row">
+            <div class="table-data">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Package Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
