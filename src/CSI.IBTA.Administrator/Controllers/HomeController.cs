@@ -1,6 +1,5 @@
 ﻿using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DataStructures;
-using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 

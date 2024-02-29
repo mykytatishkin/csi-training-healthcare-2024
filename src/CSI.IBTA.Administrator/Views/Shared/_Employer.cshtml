@@ -6,6 +6,7 @@
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.Entities
 @using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Administrator.Constants
 @model PaginatedList<EmployerDto>
 
 @{
@@ -71,8 +72,9 @@
                     Previous
                 </a>
                 @{
-                    var lastPage = Math.Min(Model.PageIndex + 7, Model.TotalPages);
-                    var firstPage = Math.Max(1, lastPage - 9);
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.PageIndex + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
                     for (int i = firstPage; i <= lastPage; i++)
                     {
                         if (i == Model.PageIndex || Model.PageIndex == 0)
