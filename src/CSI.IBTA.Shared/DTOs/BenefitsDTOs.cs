@@ -1,5 +1,7 @@
 ﻿namespace CSI.IBTA.Shared.DTOs
 {
-    public record PlanDto(int Id, string PlanTypeName, decimal Contribution, int PackageId);
-    public record CreatePlanDto(decimal Contribution, string Status, int PackageId, int PlanTypeId, int EmployeeId);
+    public record PlanTypeDto(int Id, string Name);
+    public record PlanDto(int Id, string Name, PlanTypeDto PlanType, decimal Contribution, int PackageId);
+    public record CreatePlanDto(string Name, decimal Contribution, int PackageId, int PlanTypeId);
+    public record UpdatePlanDto(string Name, decimal Contribution, int PlanTypeId);
 }

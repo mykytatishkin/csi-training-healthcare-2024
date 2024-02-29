@@ -27,7 +27,10 @@
             </tr>
 
             <tr><td colspan="2"><legend>Contributions</legend></td></tr>
-
+            <tr>
+                <td class="text-align-right">Contribution:* </td>
+                <td class="align-left"><input asp-for="Contribution" type="number" step=".01" required /></td>
+            </tr>
         @if (!ViewData.ModelState.IsValid)
         {
             <tr>
@@ -38,9 +41,10 @@
             </tr>
         }
 
-        <td>
-            <input type="submit" value="Submit" />
-        </td>
+            <tr>
+                <td></td>
+                <td><button class="align-left custom-button" onclick="savePlanData()" type="button">Save</button></td>
+            </tr>
         </tbody>
     </table>
 </form>

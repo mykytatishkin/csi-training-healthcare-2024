@@ -1,9 +1,7 @@
 ﻿using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace CSI.IBTA.BenefitsService.Controllers
 {
@@ -19,7 +17,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAllPlans()
         {
             var response = await _benefitsService.GetAllPlans();
@@ -35,25 +33,42 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
-        //[HttpGet("{userId}")]
-        //[Authorize]
-        //public async Task<IActionResult> GetUser(int userId)
-        //{
-        //    var response = await _benefitsService.GetUser(userId);
+        [HttpGet("{planId}")]
+        [Authorize]
+        public async Task<IActionResult> GetPlan(int planId)
+        {
+            var response = await _benefitsService.GetPlan(planId);
 
-        //    if (response.Error != null)
-        //    {
-        //        return Problem(
-        //            title: response.Error!.Title,
-        //            statusCode: (int)response.Error.StatusCode
-        //        );
-        //    }
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
 
-        //    return Ok(response.Result);
-        //}
+            return Ok(response.Result);
+        }
+
+        [HttpGet("Plans")]
+        [Authorize]
+        public async Task<IActionResult> GetPlanTypes()
+        {
+            var response = await _benefitsService.GetPlanTypes();
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> CreatePlan(CreatePlanDto createPlanDto)
         {
             var response = await _benefitsService.CreatePlan(createPlanDto);
@@ -69,62 +84,21 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
-        //[HttpPut("{userId}")]
-        //// Later we can have policy based authorization which will handle checking
-        //// if user is owner of the resource
-        //[Authorize(Roles = nameof(Role.Administrator))]
-        //public async Task<IActionResult> PutUser(int userId, PutUserDto putUserDto)
-        //{
-        //    var getResponse = await _benefitsService.GetUser(userId);
-        //    if (getResponse.Error != null)
-        //    {
-        //        return Problem(
-        //            title: getResponse.Error!.Title,
-        //            statusCode: (int)getResponse.Error.StatusCode
-        //        );
-        //    }
+        [HttpPatch("{planId}")]
+        [Authorize]
+        public async Task<IActionResult> UpdatePlan(int planId, UpdatePlanDto updatePlanDto)
+        {
+            var response = await _benefitsService.UpdatePlan(planId, updatePlanDto);
 
-        //    var response = await _benefitsService.PutUser(userId, putUserDto);
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
 
-        //    if (response.Error != null)
-        //    {
-        //        return Problem(
-        //            title: response.Error!.Title,
-        //            statusCode: (int)response.Error.StatusCode
-        //        );
-        //    }
-
-        //    return Ok(response.Result);
-        //}
-
-        //[HttpDelete("{userId}")]
-        //[Authorize]
-        //public async Task<IActionResult> DeleteUser(int userId)
-        //{
-        //    var getResponse = await _benefitsService.GetUser(userId);
-        //    if (getResponse.Error != null)
-        //    {
-        //        return Problem(
-        //            title: getResponse.Error!.Title,
-        //            statusCode: (int)getResponse.Error.StatusCode
-        //        );
-        //    }
-        //    if (!IsNextSuperiorRole(HttpContext.User, getResponse.Result.Role))
-        //    {
-        //        return Unauthorized("User is unauthorized");
-        //    }
-
-        //    var response = await _benefitsService.DeleteUser(userId);
-
-        //    if (response.Error != null)
-        //    {
-        //        return Problem(
-        //            title: response.Error!.Title,
-        //            statusCode: (int)response.Error.StatusCode
-        //        );
-        //    }
-
-        //    return NoContent();
-        //}
+            return Ok(response.Result);
+        }
     }
 }

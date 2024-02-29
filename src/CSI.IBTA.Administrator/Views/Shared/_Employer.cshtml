@@ -87,13 +87,14 @@
             });
     }
 
-    function showInsurancePlan(employerId) {
+    function showInsurancePlan(employerId, planId) {
         function onSuccess(data) {
             document.getElementById('employer-partial-action').innerHTML = data;
         }
         function onFailure(error) {
             console.error('There was a problem with the fetch operation:', error);
         }
+        route = '/Benefits/UpdatePlan?employerId=' + employerId + '&planId=' + planId;
         route = '/Benefits/CreatePlan?employerId=' + employerId;
         fetchRoute(route, onSuccess, null);
     }

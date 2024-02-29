@@ -19,9 +19,22 @@ namespace CSI.IBTA.Administrator.Clients
             DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
+        public string GetBaseAddress(string urlConfigurationString)
+        {
+            var apiUrl = _configuration.GetValue<string>(urlConfigurationString);
+
+            if (string.IsNullOrEmpty(apiUrl))
+            {
+                _logger.LogError("API URL \"{urlConfigurationString}\" is missing in appsettings.json", urlConfigurationString);
+                throw new InvalidOperationException($"API URL \"{urlConfigurationString}\" is missing in appsettings.json");
+            }
+
+            return apiUrl;
+        }
+
         public void SetBaseAddress(string urlConfigurationString)
         {
-            var apiUrl = _configuration.GetValue<string>("UserServiceApiUrl");
+            var apiUrl = _configuration.GetValue<string>(urlConfigurationString);
 
             if (string.IsNullOrEmpty(apiUrl))
             {
