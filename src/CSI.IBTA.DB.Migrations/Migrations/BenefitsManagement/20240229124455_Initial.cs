@@ -18,9 +18,11 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PlanStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PlanEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PayrollFrequency = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PlanStart = table.Column<DateOnly>(type: "date", nullable: false),
+                    PlanEnd = table.Column<DateOnly>(type: "date", nullable: false),
+                    PayrollFrequency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Initialized = table.Column<DateOnly>(type: "date", nullable: true),
+                    EmployerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,9 +48,8 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TypeId = table.Column<int>(type: "int", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Contribution = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PackageId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -77,7 +78,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
                     ClaimNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfService = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateOfService = table.Column<DateOnly>(type: "date", nullable: false),
                     PlanId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)

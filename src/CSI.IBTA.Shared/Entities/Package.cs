@@ -10,8 +10,18 @@ namespace CSI.IBTA.Shared.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public DateTime PlanStart { get; set; }
-        public DateTime PlanEnd { get; set; }
+        public DateOnly PlanStart { get; set; }
+        public DateOnly PlanEnd { get; set; }
+        public bool IsActive 
+        { 
+            get 
+            {
+                var now = DateOnly.FromDateTime(DateTime.UtcNow);
+                return now > PlanStart && now < PlanEnd; 
+            }
+        }
         public string PayrollFrequency { get; set; } = null!;
+        public DateOnly? Initialized { get; set; }
+        public int EmployerId { get; set; }
     }
 }
