@@ -11,13 +11,13 @@ namespace CSI.IBTA.UserService.Services
 {
     internal class EmployersService : IEmployersService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserUnitOfWork _unitOfWork;
         private readonly IFileService _fileService;
         private readonly List<(string key, bool value)> _defaultSettings;
         private readonly ILogger<EmployersService> _logger;
         private readonly IMapper _mapper;
 
-        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUnitOfWork unitOfWork, IFileService fileService, IMapper mapper)
+        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUserUnitOfWork unitOfWork, IFileService fileService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
