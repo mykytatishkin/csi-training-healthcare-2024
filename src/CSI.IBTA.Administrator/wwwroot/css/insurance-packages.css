@@ -74,6 +74,15 @@
     text-align: right;
 }
 
+.text-align-left {
+    text-align: left;
+}
+
+.info-label {
+    margin-top: 16px;
+    margin-bottom: 4px;
+}
+
 .text-danger {
     margin-top: 5px;
     color: var(--text-danger-color);
