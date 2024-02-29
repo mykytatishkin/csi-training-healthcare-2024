@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CSI.IBTA.DataLayer.Data
 {
-    public class UnitOfWork : IUnitOfWork, IDisposable
+    public class UserUnitOfWork : IUserUnitOfWork, IDisposable
     {
         private readonly UserManagementContext _context;
         private readonly ILogger _logger;
@@ -20,7 +20,7 @@ namespace CSI.IBTA.DataLayer.Data
         public IGenericRepository<EmployerUser> EmployerUsers { get; private set; }
         public IGenericRepository<Settings> Settings { get; private set; }
 
-        public UnitOfWork(UserManagementContext context, ILoggerFactory loggerFactory)
+        public UserUnitOfWork(UserManagementContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
             _logger = loggerFactory.CreateLogger("logs");
