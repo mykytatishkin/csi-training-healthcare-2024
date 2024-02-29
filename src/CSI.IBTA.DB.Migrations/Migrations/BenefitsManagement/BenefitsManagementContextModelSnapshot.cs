@@ -37,8 +37,8 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateOfService")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("DateOfService")
+                        .HasColumnType("date");
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
@@ -54,7 +54,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasIndex("PlanId");
 
-                    b.ToTable("Claim", (string)null);
+                    b.ToTable("Claim");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Enrollment", b =>
@@ -78,7 +78,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasIndex("PlanId");
 
-                    b.ToTable("Enrollment", (string)null);
+                    b.ToTable("Enrollment");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Package", b =>
@@ -89,6 +89,12 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("Initialized")
+                        .HasColumnType("date");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -97,15 +103,15 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("PlanEnd")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("PlanEnd")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("PlanStart")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("PlanStart")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Package", (string)null);
+                    b.ToTable("Package");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Plan", b =>
@@ -119,15 +125,12 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.Property<decimal>("Contribution")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PackageId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
@@ -138,7 +141,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("Plan", (string)null);
+                    b.ToTable("Plan");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.PlanType", b =>
@@ -155,40 +158,48 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.HasKey("Id");
 
-                    b.ToTable("PlanType", (string)null);
+                    b.ToTable("PlanType");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Claim", b =>
                 {
-                    b.HasOne("CSI.IBTA.Shared.Entities.Plan", null)
+                    b.HasOne("CSI.IBTA.Shared.Entities.Plan", "Plan")
                         .WithMany()
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Enrollment", b =>
                 {
-                    b.HasOne("CSI.IBTA.Shared.Entities.Plan", null)
+                    b.HasOne("CSI.IBTA.Shared.Entities.Plan", "Plan")
                         .WithMany()
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Plan", b =>
                 {
-                    b.HasOne("CSI.IBTA.Shared.Entities.Package", null)
+                    b.HasOne("CSI.IBTA.Shared.Entities.Package", "Package")
                         .WithMany()
                         .HasForeignKey("PackageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CSI.IBTA.Shared.Entities.PlanType", null)
+                    b.HasOne("CSI.IBTA.Shared.Entities.PlanType", "PlanType")
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Package");
+
+                    b.Navigation("PlanType");
                 });
 #pragma warning restore 612, 618
         }
