@@ -1,6 +1,6 @@
 using CSI.IBTA.DataLayer;
 
-namespace CSI.IBTA.UserService
+namespace CSI.IBTA.BenefitsService
 {
     public class Program
     {
@@ -9,19 +9,18 @@ namespace CSI.IBTA.UserService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
             builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddLogging();
 
-            var connectionString = builder.Configuration.GetConnectionString("UserDBConnection")
-                ?? throw new Exception("Connection string is null");
-            var connectionString2 = builder.Configuration.GetConnectionString("BenefitsDBConnection")
+            var connectionString = builder.Configuration.GetConnectionString("BenefitsDBConnection")
                 ?? throw new Exception("Connection string is null");
 
-            builder.Services.AddUserService(builder.Configuration);
-            builder.Services.AddUserUnitOfWork(connectionString);
-            builder.Services.AddBenefitsUnitOfWork(connectionString2);
+            builder.Services.AddBenefitsService(builder.Configuration);
+            builder.Services.AddBenefitsUnitOfWork(connectionString);
 
             var app = builder.Build();
 
@@ -34,8 +33,9 @@ namespace CSI.IBTA.UserService
 
             app.UseHttpsRedirection();
 
-            app.UseAuthentication();
             app.UseAuthorization();
+
+
             app.MapControllers();
 
             app.Run();
