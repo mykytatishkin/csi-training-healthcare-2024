@@ -1,0 +1,45 @@
+﻿@model EmployerSettingsViewModel
+
+<form asp-controller="Employer" asp-action="AllSettings" method="post" id="employer-settings-form">
+    <table class="table">
+        @Html.HiddenFor(m => m.EmployerId)
+        <tbody>
+            @for (int i = 0; i < Model.EmployerSettings.Count; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        <tr><td colspan="2"><legend>Employer data management</legend></td></tr>
+                        break;
+                    case 1:
+                        <tr><td colspan="2"><legend>Consumer data management</legend></td></tr>
+                        break;
+                }
+
+                <tr>
+                    <td>
+                        @Html.HiddenFor(m => m.EmployerSettings[i].Condition)
+                        @Html.DisplayFor(m => m.EmployerSettings[i].Condition)
+                    </td>
+                    <td>
+                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, true) Allow
+                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, false) Prevent
+                    </td>
+                </tr>
+            }
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <tr>
+                <td></td>
+                <td>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                </td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+</form>
+<button class="align-left custom-button" onclick="showEmployerAdministration(@Model.EmployerId)">Cancel</button>
+<button class="align-left custom-button" onclick="saveSettings()" type="button">Submit</button>

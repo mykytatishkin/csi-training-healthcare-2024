@@ -1,4 +1,4 @@
-﻿@*
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -17,12 +17,12 @@
 <div id="table-employer" class="container">
     <div class="row">
         <div class="col-sm-8">
-
         </div>
         <div class="col-sm-4">
             <button class="btn btn-primary" onclick="showEmployerCreateForm()">Add New Employer</button>
         </div>
     </div>
+
 
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
@@ -39,10 +39,10 @@
             </div>
         </form>
     </div>
-    <br/>
+    <br />
     <div class="row">
         <div class="table-data">
-            <table class="table table-striped">
+            <table class="table table-striped" id="employer-table">
                 <thead>
                     <tr>
                         <th>Employer Name</th>
@@ -54,6 +54,7 @@
                     {
                         <tr>
                             <td>
+                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
                                 <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
                             </td>
                             <td>
@@ -110,3 +111,35 @@
 <script type="text/javascript" src="~/Scripts/employer-form.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
 
+
+<div id="control-employer" style="display: none;" />
+
+<script type="text/javascript">
+    function showEmployerDetails(employerId) {
+        function onSuccess(data) {
+            document.getElementById('control-employer').innerHTML = data;
+            $("#table-employer").hide();
+            $("#control-employer").show();
+        }
+
+        fetchRoute('/Employer?employerId=' + employerId, onSuccess, null);
+    }
+
+    function showEmployerSettings(employerId) {
+        fetch('/Employer/AllSettings?employerId=' + employerId)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('employer-partial-action').innerHTML = data;
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+<script type="text/javascript" src="~/Scripts/employer-user.js"></script>

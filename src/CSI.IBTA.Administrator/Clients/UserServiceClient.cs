@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Headers;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
@@ -6,38 +6,27 @@ using CSI.IBTA.Administrator.Types;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Types;
+using CSI.IBTA.Administrator.Models;
+using CSI.IBTA.Shared.Entities;
 using Newtonsoft.Json;
 
 namespace CSI.IBTA.Administrator.Clients
 {
     internal class UserServiceClient : IUserServiceClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<AuthClient> _logger;
-        private readonly IJwtTokenService _jwtTokenService;
+        private readonly ILogger<UserServiceClient> _logger;
+        private readonly AuthorizedHttpClient _httpClient;
 
-        public UserServiceClient(HttpClient httpClient, IJwtTokenService jwtTokenService, ILogger<AuthClient> logger, IConfiguration configuration)
+        public UserServiceClient(AuthorizedHttpClient httpClient, ILogger<UserServiceClient> logger)
         {
-            _logger = logger;
             _httpClient = httpClient;
-            var userServiceApiUrl = configuration.GetValue<string>("UserServiceApiUrl");
-            if (string.IsNullOrEmpty(userServiceApiUrl))
-            {
-                _logger.LogError("UserServiceApiUrl is missing in appsettings.json");
-                throw new InvalidOperationException("AuthServiceApiUrl is missing in appsettings.json");
-            }
-            _httpClient.BaseAddress = new Uri(userServiceApiUrl);
-            _jwtTokenService = jwtTokenService;
+            _logger = logger;
+            _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
 
-        public async Task<IQueryable<EmployerDto>?> GetEmployers()
+        public async Task<List<Employer>?> GetEmployers()
         {
-            var token = _jwtTokenService.GetCachedToken();
-            if (token == null) return null;
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _httpClient.GetAsync(UserApiEndpoints.Employer);
+            var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Employers);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -173,6 +162,58 @@ namespace CSI.IBTA.Administrator.Clients
             var employer = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
 
             return new GenericInternalResponse<EmployerDto>(false, null, employer);
+        }
+
+        public async Task<GenericInternalResponse<UserDto>> GetUser(int userId)
+        {
+            string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericInternalResponse<UserDto>(true, InternalErrors.GenericError, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
+
+            return new GenericInternalResponse<UserDto>(false, null, user);
+        }
+
+        public async Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId)
+        {
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
+        }
+
+        public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
+        {
+            var content = JsonContent.Create(SettingsDtos);
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.PatchAsync(requestUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
         }
     }
 

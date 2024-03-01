@@ -1,10 +1,10 @@
-﻿using CSI.IBTA.Administrator.Interfaces;
-using CSI.IBTA.Shared.DataStructures;
-using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Administrator.Filters;
+using CSI.IBTA.Administrator.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
@@ -32,21 +32,20 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentCodeFilter"] = codeFilter;
 
             var employers = await _userServiceClient.GetEmployers();
+
             if (employers != null) 
             {
                 if (!String.IsNullOrEmpty(nameFilter))
                 {
-                    employers = employers.Where(s => s.Name.Contains(nameFilter));
+                    employers = employers.Where(s => s.Name.Contains(nameFilter)).ToList();
                 }
                 if (!String.IsNullOrEmpty(codeFilter))
                 {
-                    employers = employers.Where(s => s.Code.Equals(codeFilter));
+                    employers = employers.Where(s => s.Code.Contains(codeFilter)).ToList();
                 }
             }
 
-
-            ViewData["Page"] = "Home";
-            return (View( new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
+            return View(employers);
         }
     }
 }
