@@ -6,30 +6,30 @@ using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.UserService.Interfaces;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 
 namespace CSI.IBTA.UserService.Services
 {
     internal class UsersService : IUsersService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public UsersService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UsersService( 
+            IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
-        public async Task<GenericResponse<IEnumerable<UserDto>>> GetAllUsers()
+        public async Task<GenericResponse<UserDto[]>> GetAllUsers()
         {
-            var users = await _unitOfWork.Users
+            var userList = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
-                .ToListAsync();
-
-            var userDtos = users.Select(_mapper.Map<UserDto>);
-            return new GenericResponse<IEnumerable<UserDto>>(false, null, userDtos);
+                .Select(user => new UserDto(user.Id, user.Account.Role, user.Account.Username, 
+                user.Firstname, user.Lastname, user.Account.Id,
+                user.Employer == null ? null : user.Employer.Id))
+                .ToArrayAsync();
+            
+            return new GenericResponse<UserDto[]>(false, null, userList);
         }
 
         public async Task<GenericResponse<UserDto>> GetUserByAccountId(int accountId)
@@ -38,13 +38,16 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
                 .FirstOrDefaultAsync(a => a.Account.Id == accountId);
-
+            
             if (user == null)
             {
                 return new GenericResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
+            return new GenericResponse<UserDto>(false, null,
+                new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname, 
+                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
+                );
         }
 
         public async Task<GenericResponse<UserDto>> GetUser(int userId)
@@ -59,13 +62,16 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
+            return new GenericResponse<UserDto>(false, null,
+                new UserDto(user.Id, user.Account.Role, user.Account.Username, user.Firstname, user.Lastname,
+                user.Account.Id, user.Employer == null ? -1 : user.Employer.Id)
+                );
         }
 
         public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
         {
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);
-
+            
             if (existingAccount.Any())
             {
                 return new GenericResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
@@ -113,8 +119,7 @@ namespace CSI.IBTA.UserService.Services
                 if (employer == null)
                 {
                     return new GenericResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
-                }
-                else
+                } else
                 {
                     newUser.Employer = employer;
                 }
@@ -122,7 +127,12 @@ namespace CSI.IBTA.UserService.Services
 
             await _unitOfWork.Users.Add(newUser);
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<NewUserDto>(false, null, _mapper.Map<NewUserDto>(newUser));
+            return new GenericResponse<NewUserDto>(false, null,
+                new NewUserDto(newUser.Id, newUser.Account.Username, newUser.Account.Password
+                , newUser.Firstname, newUser.Lastname, newUser.Account.Id, newUser.Employer == null ? null : newUser.Employer.Id, newUser.Account.Role
+                , newUser.Phones[0].PhoneNumber, newUser.Emails[0].EmailAddress
+                , newUser.Addresses[0].State, newUser.Addresses[0].Street, newUser.Addresses[0].City, newUser.Addresses[0].Zip)
+            );
         }
 
         public async Task<GenericResponse<UpdatedUserDto>> UpdateUser(int userId, UpdateUserDto updateUserDto)
@@ -138,6 +148,7 @@ namespace CSI.IBTA.UserService.Services
             {
                 return new GenericResponse<UpdatedUserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
+
 
             if (updateUserDto.UserName != null)
             {
@@ -161,7 +172,12 @@ namespace CSI.IBTA.UserService.Services
 
             _unitOfWork.Users.Upsert(user);
             await _unitOfWork.CompleteAsync();
-            return new GenericResponse<UpdatedUserDto>(false, null, _mapper.Map<UpdatedUserDto>(user));
+            return new GenericResponse<UpdatedUserDto>(false, null,
+                new UpdatedUserDto(user.Id, user.Account.Username, user.Account.Password
+                , user.Firstname, user.Lastname, user.Account.Id, user.Account.Role
+                , user.Phones[0].PhoneNumber, user.Emails[0].EmailAddress
+                , user.Addresses[0].State, user.Addresses[0].Street, user.Addresses[0].City, user.Addresses[0].Zip)
+                );
         }
 
         public async Task<GenericResponse<bool>> DeleteUser(int userId)
