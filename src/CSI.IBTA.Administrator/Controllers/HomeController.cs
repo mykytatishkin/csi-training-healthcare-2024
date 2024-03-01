@@ -1,6 +1,7 @@
 ﻿using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DataStructures;
 using CSI.IBTA.Shared.DTOs;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
@@ -46,9 +47,10 @@ namespace CSI.IBTA.Administrator.Controllers
                 ViewData["Page"] = "Home";
                 return (View(new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
             }
+            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
+                return RedirectToAction("Index", "Auth");
 
-
-            return StatusCode(403); ; // if bad resoponse, 403 error
+            return View("Index");
         }
     }
 }
