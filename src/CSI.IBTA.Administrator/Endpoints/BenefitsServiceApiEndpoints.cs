@@ -2,6 +2,6 @@
 {
     public static class BenefitsServiceApiEndpoints
     {
-        public const string InsurancePackages = "v1/Insurance";
+        public const string InsurancePackages = "v1/InsurancePackage";
     }
 }

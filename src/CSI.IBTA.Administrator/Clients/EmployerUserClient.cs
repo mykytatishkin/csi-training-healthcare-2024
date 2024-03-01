@@ -5,6 +5,7 @@ using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 using System.Text;
 using System.Net;
+using System.Net.Http;
 
 namespace CSI.IBTA.Administrator.Clients
 {

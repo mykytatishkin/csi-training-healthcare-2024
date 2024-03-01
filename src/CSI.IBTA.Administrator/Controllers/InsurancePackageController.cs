@@ -5,30 +5,48 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
-    [Route("Insurance")]
-    public class InsuranceController : Controller
+    [Route("InsurancePackage")]
+    public class InsurancePackageController : Controller
     {
         private readonly IInsurancePackageClient _packageClient;
-        
-        public InsuranceController(IInsurancePackageClient packageClient)
+
+        public InsurancePackageController(IInsurancePackageClient packageClient)
         {
             _packageClient = packageClient;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int employerId)
         {
-            return PartialView("InsurancePackages/_CreateInsurancePackage");
+            var viewModel = new InsurancePackageCreationViewModel
+            {
+                EmployerId = employerId
+            };
+
+            return PartialView("InsurancePackages/_CreateInsurancePackage", viewModel);
         }
 
-        [HttpPost("CreateInsurancePackage")]
+        [HttpPost]
         public async Task<IActionResult> CreateInsurancePackage(InsurancePackageCreationViewModel viewModel)
         {
+            List<CreatePlanDto> planDtos = [];
+
+            if (viewModel.Plans != null)
+            {
+                planDtos = viewModel.Plans
+                    .Select(p => new CreatePlanDto(
+                        p.Name,
+                        p.TypeId,
+                        p.Contribution))
+                    .ToList();
+            }
+
             var command = new CreateInsurancePackageDto(
                 viewModel.Package.Name,
                 viewModel.Package.PlanStart,
                 viewModel.Package.PlanEnd,
                 viewModel.Package.PayrollFrequency,
-                viewModel.Plans ?? []);
+                viewModel.EmployerId,
+                planDtos);
 
             var response = await _packageClient.CreateInsurancePackage(command);
 

@@ -1,7 +1,8 @@
-﻿using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.Entities;
+﻿using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
+using CSI.IBTA.Shared.DTOs;
 
 namespace CSI.IBTA.BenefitsService.Controllers
 {
@@ -9,11 +10,18 @@ namespace CSI.IBTA.BenefitsService.Controllers
     [ApiController]
     public class InsurancePackageController : Controller
     {
+        private readonly IInsurancePackageService _insurancePackageService;
+
+        public InsurancePackageController(IInsurancePackageService insurancePackageService)
+        {
+            _insurancePackageService = insurancePackageService;
+        }
+
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
-        public async Task<IActionResult> CreateEmployer(CreateInsurancePackageDto dto)
+        public async Task<IActionResult> CreateInsurancePackage(CreateInsurancePackageDto dto)
         {
-            var response = await _employerService.CreateEmployer(dto);
+            var response = await _insurancePackageService.CreateInsurancePackage(dto);
 
             if (response.Error != null)
             {

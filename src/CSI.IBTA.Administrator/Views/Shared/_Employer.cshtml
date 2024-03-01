@@ -87,8 +87,8 @@
             });
     }
 
-    function createInsurancePackage() {
-        fetch('/Insurance')
+    function createInsurancePackage(employerId) {
+        fetch('/InsurancePackage?employerId=' + employerId)
             .then(function (response) {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

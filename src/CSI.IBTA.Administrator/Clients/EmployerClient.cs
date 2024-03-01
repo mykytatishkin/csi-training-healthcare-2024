@@ -3,6 +3,7 @@ using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -15,6 +16,7 @@ namespace CSI.IBTA.Administrator.Clients
             _httpClient = httpClient;
             _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
+
         public async Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id)
         {
             string requestUrl = string.Format(UserServiceApiEndpoints.Employer, id);

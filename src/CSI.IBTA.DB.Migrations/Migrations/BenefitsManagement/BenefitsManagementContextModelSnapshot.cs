@@ -17,7 +17,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -99,15 +99,14 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PayrollFrequency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PayrollFrequency")
+                        .HasColumnType("int");
 
-                    b.Property<DateOnly>("PlanEnd")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("PlanEnd")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("PlanStart")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("PlanStart")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

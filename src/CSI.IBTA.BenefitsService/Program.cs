@@ -1,3 +1,4 @@
+using CSI.IBTA.DataLayer;
 
 namespace CSI.IBTA.BenefitsService
 {
@@ -7,16 +8,18 @@ namespace CSI.IBTA.BenefitsService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            var connectionString = builder.Configuration.GetConnectionString("BenefitsDBConnection")
+                ?? throw new Exception("Connection string is null");
+
+            builder.Services.AddBenefitsService(builder.Configuration);
+            builder.Services.AddBenefitsUnitOfWork(connectionString);
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -24,12 +27,8 @@ namespace CSI.IBTA.BenefitsService
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

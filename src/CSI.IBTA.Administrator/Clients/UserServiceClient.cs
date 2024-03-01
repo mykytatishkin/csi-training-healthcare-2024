@@ -5,6 +5,7 @@ using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -16,8 +17,8 @@ namespace CSI.IBTA.Administrator.Clients
         public UserServiceClient(AuthorizedHttpClient httpClient, ILogger<UserServiceClient> logger)
         {
             _httpClient = httpClient;
-            _logger = logger;
             _httpClient.SetBaseAddress("UserServiceApiUrl");
+            _logger = logger;
         }
 
         public async Task<List<Employer>?> GetEmployers()

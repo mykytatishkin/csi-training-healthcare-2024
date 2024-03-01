@@ -7,6 +7,7 @@
 <body>
     <div id="create-insurance-package">
         <form asp-controller="Employer" asp-action="Random" method="post" id="insurance-package-create-form">
+            @Html.HiddenFor(model => model.EmployerId);
             <div class="section general-section">
                 <div class="align-left">
                     <span class="border-label">General</span>
@@ -23,8 +24,8 @@
                             <td class="text-align-right" id="payroll-frequency-dropdown">Payroll Frequency:* </td>
                             <td class="align-left">
                                 <select asp-for="Package.PayrollFrequency" required>
-                                    <option>Weekly</option>
-                                    <option>Monthly</option>
+                                    <option value="@PayrollFrequency.Weekly">@nameof(PayrollFrequency.Weekly)</option>
+                                    <option value="@PayrollFrequency.Monthly">@nameof(PayrollFrequency.Monthly)</option>
                                 </select>
                             </td>
                         </tr>
@@ -86,7 +87,7 @@
                 <button type="button" class="custom-button secondary">Cancel</button>
             </div>
 
-            <p class="text-align-left info-label text-danger">Error</p>
+            <p class="text-align-left info-label text-danger" id="create-insurance-package-errors"></p>
         </form>
     </div>
 </body>

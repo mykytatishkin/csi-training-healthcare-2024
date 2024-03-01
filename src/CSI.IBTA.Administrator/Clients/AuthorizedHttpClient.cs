@@ -9,7 +9,10 @@ namespace CSI.IBTA.Administrator.Clients
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthorizedHttpClient> _logger;
 
-        public AuthorizedHttpClient(IJwtTokenService jwtTokenService, IConfiguration configuration, ILogger<AuthorizedHttpClient> logger)
+        public AuthorizedHttpClient(
+            IJwtTokenService jwtTokenService,
+            IConfiguration configuration,
+            ILogger<AuthorizedHttpClient> logger)
         {
             _jwtTokenService = jwtTokenService;
             _configuration = configuration;
@@ -21,7 +24,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public void SetBaseAddress(string urlConfigurationString)
         {
-            var apiUrl = _configuration.GetValue<string>("UserServiceApiUrl");
+            var apiUrl = _configuration.GetValue<string>(urlConfigurationString);
 
             if (string.IsNullOrEmpty(apiUrl))
             {
