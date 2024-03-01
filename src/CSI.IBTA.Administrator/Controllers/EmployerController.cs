@@ -79,18 +79,13 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpGet("Users")]
         public async Task<IActionResult> Users(int employerId)
         {
-            var response = await _employerUserClient.GetEmployerUsers(employerId);
-
-            if (response.Error != null || response.Result == null)
-            {
-                return Problem(title: "Failed to retrieve employer users");
+            return PartialView("_EmployerForm", new EmployerFormViewModel());
             }
 
-            var viewModel = new UserManagementViewModel
+        [HttpGet("UpdateEmployerForm")]
+        public async Task<ActionResult> UpdateEmployerForm(int employerId)
             {
-                EmployerId = employerId,
-                EmployerUsers = response.Result
-            };
+            var response = await _userServiceClient.GetEmployerById(employerId);
 
             return PartialView("_EmployerAdministrationUserManagement", viewModel);
         }
