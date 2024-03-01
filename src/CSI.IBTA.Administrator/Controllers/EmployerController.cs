@@ -82,14 +82,6 @@ namespace CSI.IBTA.Administrator.Controllers
             return PartialView("_EmployerForm", new EmployerFormViewModel());
             }
 
-        [HttpGet("UpdateEmployerForm")]
-        public async Task<ActionResult> UpdateEmployerForm(int employerId)
-            {
-            var response = await _userServiceClient.GetEmployerById(employerId);
-
-            return PartialView("_EmployerAdministrationUserManagement", viewModel);
-        }
-
         [HttpGet("CreateUser")]
         public IActionResult CreateUser(int employerId)
         {

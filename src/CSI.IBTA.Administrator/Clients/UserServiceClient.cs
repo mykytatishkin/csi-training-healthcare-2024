@@ -43,6 +43,58 @@ namespace CSI.IBTA.Administrator.Clients
             return new GenericHttpResponse<IQueryable<EmployerDto>?>(false ,null, employers);
         }
 
+        public async Task<GenericInternalResponse<UserDto>> GetUser(int userId)
+        {
+            string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericInternalResponse<UserDto>(true, InternalErrors.GenericError, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
+
+            return new GenericInternalResponse<UserDto>(false, null, user);
+        }
+
+        public async Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId)
+        {
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
+        }
+
+        public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
+        {
+            var content = JsonContent.Create(SettingsDtos);
+            string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
+            var response = await _httpClient.PatchAsync(requestUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+
+            return employersSettings;
+        }
+
         public async Task<TaskResult<EmployerDto?>> CreateEmployer(CreateEmployerDto dto)
         {
             var defaultErrorMessage = "Failed to create a new employer";
