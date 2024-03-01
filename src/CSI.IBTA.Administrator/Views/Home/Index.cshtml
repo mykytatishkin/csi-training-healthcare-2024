@@ -7,36 +7,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="~/css/logout.css">
+    <link rel="stylesheet" href="~/css/employer.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/global.css" asp-append-version=" true" />
     <title>Welcome</title>
 </head>
-<body>    
-    <div class="text-center">
+<body>
+    <div>
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <div class="Logo">
-                        <img style="height: 100px" src="https://cdn4.iconfinder.com/data/icons/finance-and-business-set2/32/fin32px079-512.png" alt="">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
                     <div class="partial">
-                        <div class="control">
-                            <button class="left partial-btn">Employer</button>
-                            <button class="right partial-btn">Claims</button>
-                        </div>
                         <div class="panel">
                             <div class="control">
                                 <button class="left partial-btn active" onclick="showEmployer()">Employer</button>
                                 <button class="right partial-btn" onclick="showClaims()">Claims</button>
                             </div>
                             <div id="employer-content">
-                                <partial name="_Employer" />
+                                @Html.Partial("_Employer")
                             </div>
                             <div id="claims-content" style="display: none;">
-                                <partial name="_Claims" />
+                                @Html.Partial("_Claims")
                             </div>
                         </div>
                     </div>
@@ -44,7 +34,6 @@
             </div>
         </div>
     </div>
-
     <script>
         function showEmployer() {
             $("#employer-content").show();
@@ -62,4 +51,3 @@
     </script>
 </body>
 </html>
-

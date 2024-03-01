@@ -1,9 +1,10 @@
-﻿using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Administrator.Filters;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Administrator.Extensions;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -43,24 +44,43 @@ namespace CSI.IBTA.Administrator.Controllers
             return PartialView("_EmployerAdministrationMenu", employerId);
         }
 
-        [HttpGet("Users")]
-        public async Task<IActionResult> Users(int employerId)
+        [HttpGet("CreateEmployerForm")]
+        public IActionResult CreateEmployerForm()
         {
-            var response = await _employerUserClient.GetEmployerUsers(employerId);
+            return PartialView("_EmployerForm", new EmployerFormViewModel());
+        }
+
+        [HttpGet("UpdateEmployerForm")]
+        public async Task<ActionResult> UpdateEmployerForm(int employerId)
+        {
+            var response = await _userServiceClient.GetEmployerById(employerId);
 
             if (response.Error != null || response.Result == null)
             {
-                return Problem(title: "Failed to retrieve employer users");
+                throw new Exception("Failed to retrieve employer");
             }
 
-            var viewModel = new UserManagementViewModel
-            {
-                EmployerId = employerId,
-                EmployerUsers = response.Result
-            };
-
-            return PartialView("_EmployerAdministrationUserManagement", viewModel);
+            return PartialView("_EmployerForm", response.Result.ToFormViewModel());
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddEmployer(EmployerFormViewModel model)
+        {
+            var res = await _userServiceClient.CreateEmployer(model.ToCreateEmployerDto());
+            return Json(res);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateEmployer(EmployerFormViewModel model)
+        {
+            var res = await _userServiceClient.UpdateEmployer(model.ToUpdateEmployerDto(), model.Id ?? 0);
+            return Json(res);
+        }
+        [HttpGet("Users")]
+        public async Task<IActionResult> Users(int employerId)
+        {
+            return PartialView("_EmployerForm", new EmployerFormViewModel());
+            }
 
         [HttpGet("CreateUser")]
         public IActionResult CreateUser(int employerId)
@@ -201,3 +221,4 @@ namespace CSI.IBTA.Administrator.Controllers
         }
     }
 }
+       

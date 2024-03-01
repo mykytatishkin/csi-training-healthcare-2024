@@ -1,4 +1,9 @@
+using CSI.IBTA.UserService.Interfaces;
+using CSI.IBTA.UserService.Services;
 using CSI.IBTA.DataLayer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CSI.IBTA.UserService
 {

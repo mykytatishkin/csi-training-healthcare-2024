@@ -1,4 +1,17 @@
-﻿function fetchRoute(route, callbackSuccess, callbackFailure) {
+﻿function showTable() {
+    $("#table-employer").show();
+    $("#control-employer").hide();
+}
+
+function showControl(id, name) {
+    console.log("ShowControl(" + id + "," + name + ")")
+    $("#table-employer").hide();
+    $("#control-employer").show();
+    let a = document.getElementById("employer-id");
+    a.textContent = name;
+}
+
+function fetchRoute(route, callbackSuccess, callbackFailure) {
     fetch(route)
         .then(function (response) {
             if (!response.ok) {

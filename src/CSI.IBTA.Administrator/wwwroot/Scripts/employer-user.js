@@ -83,6 +83,7 @@ function selectEmployerUserRow(element) {
     selectedUserRowElement = element;
     updateButton.removeAttribute('hidden');
 }
+}
 
 function deselectEmployerUserRow() {
     if (selectedUserRowElement != null) {
@@ -100,32 +101,10 @@ function hideUserSection() {
 }
 
 function showCreateUserSection(employerId) {
-    if (userOperation == "create") {
-        document.getElementById('user-create-section').innerHTML = null;
-        userOperation = "";
-        return;
-    }
-
-    function onSuccess(data) {
-        document.getElementById('user-create-section').innerHTML = data;
-        userOperation = "create";
-    }
-
-    function onFailure(statusCode) {
-        showError("employer-user-management-errors", "There was an error, try again");
-    }
-
-    route = '/Employer/CreateUser?employerId=' + employerId
-    fetchRoute(route, onSuccess, onFailure);
-}
-
-function showUpdateUserSection(employerId) {
-    function onSuccess(data) {
-        document.getElementById('user-create-section').innerHTML = data;
-        userOperation = "update";
-    }
-
-    function onFailure(statusCode) {
+    fetch('/Employer/CreateUser?employerId=' + employerId)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
         showError("employer-user-management-errors", "There was an error, try again");
     }
 

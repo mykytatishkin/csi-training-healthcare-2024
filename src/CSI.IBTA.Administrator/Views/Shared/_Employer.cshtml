@@ -1,14 +1,28 @@
-﻿@using CSI.IBTA.Shared.Entities
-@model List<Employer>
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using CSI.IBTA.Shared.DataStructures
+@using CSI.IBTA.Shared.Entities
+@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Administrator.Constants
+@model PaginatedList<EmployerDto>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
 
 <div id="table-employer" class="container">
     <div class="row">
         <div class="col-sm-8">
         </div>
         <div class="col-sm-4">
-            <button class="btn btn-primary">Add New Employer</button>
+            <button class="btn btn-primary" onclick="showEmployerCreateForm()">Add New Employer</button>
         </div>
     </div>
+
 
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
@@ -40,7 +54,7 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) - @Html.DisplayFor(modelItem => item.Code)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -50,14 +64,53 @@
                 </tbody>
             </table>
             <div style="text-align:right" class="pages">
-                <button class="btn btn-primary btn-small">Prev</button>
-                <span>0</span>
-                <button class="btn btn-primary btn-small">Next</button>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @prevDisabled">
+                    Previous
+                </a>
+                @{
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.PageIndex + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                    for (int i = firstPage; i <= lastPage; i++)
+                    {
+                        if (i == Model.PageIndex || Model.PageIndex == 0)
+                        {
+                            <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
+                        }
+                        else{
+                            <a asp-action="Index"
+                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                               asp-route-pageNumber="@(i)"
+                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                               class="btn btn-default">
+                                @i
+                            </a>
+                        }
+                    }
+                }
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @nextDisabled">
+                    Next
+                </a>
+                <div class="test">
             </div>
-
+            </div>
         </div>
     </div>
 </div>
+<div id="control-employer" />
+<script type="text/javascript" src="~/Scripts/employer.js"></script>
+<script type="text/javascript" src="~/Scripts/employer-form.js"></script>
+<script type="text/javascript" src="~/Scripts/employer-user.js"></script>
+
+
 <div id="control-employer" style="display: none;" />
 
 <script type="text/javascript">

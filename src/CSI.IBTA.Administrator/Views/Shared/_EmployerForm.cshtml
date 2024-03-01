@@ -1,0 +1,80 @@
+﻿@{
+}
+@model EmployerFormViewModel;
+
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome</title>
+        <link rel="stylesheet" href="~/css/employer-form.css">
+    </head>
+<body>
+<div class="form-main-container">
+    <div class="nav-buttons">
+         <h4 style="margin-right: auto;">Employer Administration</h4>
+        <button onclick="hideCreateEmployerForm()" id="selectDifferentEmployerButton" class="btn btn-primary">Select a different employer</button>
+    </div>
+    <div id="employerForm" class="form">
+            <div class="logo-preview">
+                <img id="imagePreview" src="data:image/png;base64,@Model.EncodedLogo" onerror="this.style.display='none';">
+            </div>
+        <form id="employer-form" EncType="multipart/form-data">
+            @Html.HiddenFor(m => m.Id)
+            <span class="border-label">Profile</span>
+            <div class="form-columns">
+                <div class="form-column">
+                    <div class="form-row">
+                        <label for="Name">Name:*</label>
+                         <input type="text" name="Name" id="Name" required value="@Model.Name" />
+                    </div>
+                    <div class="form-row">
+                        <label for="Code">Code:*</label>
+                        <input type="text" name="Code" id="Code" required value="@Model.Code" />
+                    </div>
+                    <div class="form-row">
+                        <label for="Email">Email:*</label>
+                        <input type="email" name="Email" id="Email" required value="@Model.Email" />
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-row">
+                        <label for="Street">Street:*</label>
+                        <input type="text" name="Street" id="Street" required value="@Model.Street" />
+                    </div>
+                    <div class="form-row">
+                        <label for="City">City:*</label>
+                        <input type="text" name="City" id="City" required value="@Model.City" />
+                    </div>
+                    <div class="form-row">
+                        <label for="State">State:*</label>
+                        <input type="text" name="State" id="State" required value="@Model.State" />
+                    </div>
+                    <div class="form-row">
+                        <label for="ZipCode">Zip Code:*</label>
+                         <input type="text" name="ZipCode" id="ZipCode" required value="@Model.ZipCode" />
+                    </div>
+                    <div class="form-row">
+                         <label for="Phone">Phone:*</label>
+                         <input type="text" name="Phone" id="Phone" required value="@Model.Phone" />
+                    </div>
+                </div>
+            </div>
+            <span class="border-label">Logo</span>
+            <div class="form-logo">
+                <div class="logo-preview">
+                     <img id="imagePreview2" src="#" >
+                </div>
+                <div class="logo-name-display" id="fileNameDisplay"></div>
+                <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('NewLogo').click();" />
+                <input type="file" name="NewLogo" style="display:none;" onchange="previewImage(event); updateFileName(event);" accept="image/*" id="NewLogo" />
+            </div>
+            </form>
+            <div class="form-buttons">
+                <div id="employer-form-errors" class="form-errors text-danger"></div>
+                <button onclick="handleCancel(@Model.Id)" class="btn btn-outline-primary">Cancel</button>
+                <button id = "employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</body>

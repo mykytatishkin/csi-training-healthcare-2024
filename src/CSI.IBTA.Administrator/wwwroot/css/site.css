@@ -32,10 +32,11 @@ body {
     align-items: center;
     position: relative;
     top: -30px;
+    padding-bottom: 1.5em
 }
 
 .partial-btn {
-    display: inline-block;
+    display: display-block;
     padding: 6px;
     background-color: var(--container-background-color);
     border: none;
@@ -43,11 +44,27 @@ body {
     cursor: pointer;
     font-size: 20px;
     margin-top: 20px;
+
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
     .partial-btn:hover {
         color: var(--button-primary-color);
     }
+
+.nav-label {
+    display: display-block;
+    padding: 6px;
+    background-color: var(--container-background-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
 
 .left {
     position: absolute;
