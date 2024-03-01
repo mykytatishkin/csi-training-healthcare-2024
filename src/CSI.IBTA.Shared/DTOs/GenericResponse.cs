@@ -2,5 +2,5 @@
 
 namespace CSI.IBTA.Shared.DTOs
 {
-    public record GenericResponse<T>(bool HasError, HttpError? Error, T? Result);
+    public record GenericResponse<T>(HttpError? Error, T? Result);
 }

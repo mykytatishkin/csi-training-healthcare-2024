@@ -29,7 +29,7 @@ namespace CSI.IBTA.UserService
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new Exception("Connection string is null");
 
-            builder.Services.AddDataLayer(connectionString);
+            builder.Services.AddUserUnitOfWork(connectionString);
 
             builder.Services.AddAuthentication(options =>
             {

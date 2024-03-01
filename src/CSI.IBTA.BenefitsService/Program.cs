@@ -1,6 +1,6 @@
 using CSI.IBTA.DataLayer;
 
-namespace CSI.IBTA.AuthService
+namespace CSI.IBTA.BenefitsService
 {
     public class Program
     {
@@ -12,15 +12,14 @@ namespace CSI.IBTA.AuthService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+            var connectionString = builder.Configuration.GetConnectionString("BenefitsDBConnection")
                 ?? throw new Exception("Connection string is null");
-            
-            builder.Services.AddAuthService(builder.Configuration);
-            builder.Services.AddUserUnitOfWork(connectionString);
+
+            builder.Services.AddBenefitsService(builder.Configuration);
+            builder.Services.AddBenefitsUnitOfWork(connectionString);
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
