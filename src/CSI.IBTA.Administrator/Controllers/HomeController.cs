@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
