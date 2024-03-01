@@ -35,11 +35,11 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpGet("{accountId}")]
+        [HttpGet("{userId}")]
         [Authorize]
-        public async Task<IActionResult> GetUser(int accountId)
+        public async Task<IActionResult> GetUser(int userId)
         {
-            var response = await _userService.GetUserByAccountId(accountId);
+            var response = await _userService.GetUser(userId);
 
             if (response.Error != null)
             {
@@ -74,9 +74,11 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpPatch("{userId}")]
-        [Authorize]
-        public async Task<IActionResult> UpdateUser(int userId, UpdateUserDto updateUserDto)
+        [HttpPut("{userId}")]
+        // Later we can have policy based authorization which will handle checking
+        // if user is owner of the resource
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> PutUser(int userId, PutUserDto putUserDto)
         {
             var getResponse = await _userService.GetUser(userId);
             if (getResponse.Error != null)
@@ -86,14 +88,8 @@ namespace CSI.IBTA.UserService.Controllers
                     statusCode: (int)getResponse.Error.StatusCode
                 );
             }
-            var authUserId = (HttpContext.User).FindFirstValue(ClaimTypes.NameIdentifier);
-            if (authUserId == null || (int.Parse(authUserId) != getResponse.Result.AccountId
-                && !IsNextSuperiorRole(HttpContext.User, getResponse.Result.Role)))
-            {
-                return Unauthorized("User is unauthorized");
-            }
 
-            var response = await _userService.UpdateUser(userId, updateUserDto);
+            var response = await _userService.PutUser(userId, putUserDto);
 
             if (response.Error != null)
             {

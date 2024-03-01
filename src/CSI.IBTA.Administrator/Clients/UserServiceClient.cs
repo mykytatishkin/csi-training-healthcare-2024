@@ -18,13 +18,36 @@ namespace CSI.IBTA.Administrator.Clients
 
         public UserServiceClient(HttpClient httpClient, IJwtTokenService jwtTokenService, ILogger<AuthClient> logger, IConfiguration configuration)
         {
-            _logger = logger;
             _httpClient = httpClient;
-            var userServiceApiUrl = configuration.GetValue<string>("UserServiceApiUrl");
-            if (string.IsNullOrEmpty(userServiceApiUrl))
+            _logger = logger;
+            _httpClient.SetBaseAddress("UserServiceApiUrl");
+        }
+
+        public async Task<List<Employer>?> GetEmployers()
+        {
+            var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Employers);
+
+            if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError("UserServiceApiUrl is missing in appsettings.json");
-                throw new InvalidOperationException("AuthServiceApiUrl is missing in appsettings.json");
+                _logger.LogError("Request unsuccessful");
+                return null;
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employersList = JsonConvert.DeserializeObject<List<Employer>>(responseContent);
+
+            return employersList;
+        }
+
+        public async Task<GenericInternalResponse<UserDto>> GetUser(int userId)
+        {
+            string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericInternalResponse<UserDto>(true, InternalErrors.GenericError, null);
             }
             _httpClient.BaseAddress = new Uri(userServiceApiUrl);
             _jwtTokenService = jwtTokenService;

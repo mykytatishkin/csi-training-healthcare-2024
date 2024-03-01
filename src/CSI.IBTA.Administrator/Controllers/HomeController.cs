@@ -1,10 +1,12 @@
-﻿using CSI.IBTA.Administrator.Interfaces;
+﻿using CSI.IBTA.Administrator.Filters;
+using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DataStructures;
 using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
