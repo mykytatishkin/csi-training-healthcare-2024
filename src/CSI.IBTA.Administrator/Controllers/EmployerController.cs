@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Administrator.Filters;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Administrator.Extensions;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -75,8 +76,6 @@ namespace CSI.IBTA.Administrator.Controllers
             var res = await _userServiceClient.UpdateEmployer(model.ToUpdateEmployerDto(), model.Id ?? 0);
             return Json(res);
         }
-    }
-}
         [HttpGet("Users")]
         public async Task<IActionResult> Users(int employerId)
         {
@@ -235,3 +234,4 @@ namespace CSI.IBTA.Administrator.Controllers
         }
     }
 }
+       

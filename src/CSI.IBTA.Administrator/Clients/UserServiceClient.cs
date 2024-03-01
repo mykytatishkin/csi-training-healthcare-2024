@@ -9,6 +9,7 @@ using CSI.IBTA.Shared.Types;
 using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.Entities;
 using Newtonsoft.Json;
+using CSI.IBTA.Administrator.Services;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -24,26 +25,25 @@ namespace CSI.IBTA.Administrator.Clients
             _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
 
-        public async Task<List<Employer>?> GetEmployers()
+        public async Task<GenericHttpResponse<IQueryable<EmployerDto>?>> GetEmployers()
         {
-            var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Employers);
+
+            var response = await _httpClient.GetAsync(UserApiEndpoints.Employer);
 
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return null;
+                var errorMessage = response.ReasonPhrase ?? "Something went wrong";
+                return new GenericHttpResponse<IQueryable<EmployerDto>?>(true, new HttpError(errorMessage, response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var employers= JsonConvert.DeserializeObject<List<EmployerDto>>(responseContent).AsQueryable();
-            return employers;
+            var employers = JsonConvert.DeserializeObject<List<EmployerDto>>(responseContent).AsQueryable();
+            return new GenericHttpResponse<IQueryable<EmployerDto>?>(false ,null, employers);
         }
 
         public async Task<TaskResult<EmployerDto?>> CreateEmployer(CreateEmployerDto dto)
         {
-            var token = _jwtTokenService.GetCachedToken();
-            if (token == null) return (new TaskResult<EmployerDto?>() { Value = null, Description = "Token not found" });
-
             var defaultErrorMessage = "Failed to create a new employer";
             var formData = new MultipartFormDataContent()
             {
@@ -66,7 +66,6 @@ namespace CSI.IBTA.Administrator.Clients
                     formData.Add(new StreamContent(stream), nameof(dto.LogoFile), dto.LogoFile.FileName);
                 }
 
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await _httpClient.PostAsync(UserApiEndpoints.Employer, formData);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -89,9 +88,6 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<TaskResult<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId)
         {
-            var token = _jwtTokenService.GetCachedToken();
-            if (token == null) return (new TaskResult<EmployerDto?>() { Value = null, Description = "Token not found" });
-
             var defaultErrorMessage = "Failed to create a new employer";
             var formData = new MultipartFormDataContent()
             {
@@ -114,7 +110,6 @@ namespace CSI.IBTA.Administrator.Clients
                     formData.Add(new StreamContent(stream), nameof(dto.NewLogoFile), dto.NewLogoFile.FileName);
                 }
 
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await _httpClient.PutAsync($"{UserApiEndpoints.Employer}/{employerId}", formData);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -137,16 +132,6 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id)
         {
-            string? token = _jwtTokenService.GetCachedToken();
-
-            if (token == null)
-            {
-                return new GenericInternalResponse<EmployerDto>(true, InternalErrors.InvalidToken, null);
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = 
-                new AuthenticationHeaderValue("Bearer", token);
-
             string requestUrl = $"{UserApiEndpoints.Employer}/{id}";
             var response = await _httpClient.GetAsync(requestUrl);
 

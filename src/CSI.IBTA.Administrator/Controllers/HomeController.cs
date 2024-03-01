@@ -1,10 +1,11 @@
-using CSI.IBTA.Administrator.Filters;
 using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Shared.DataStructures;
+using CSI.IBTA.Shared.DTOs;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
-    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
@@ -15,7 +16,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         public async Task<IActionResult> Index(
-            string? nameFilter, 
+            string? nameFilter,
             string? codeFilter,
             string? currentNameFilter,
             string? currentCodeFilter,
@@ -31,21 +32,25 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentNameFilter"] = nameFilter;
             ViewData["CurrentCodeFilter"] = codeFilter;
 
-            var employers = await _userServiceClient.GetEmployers();
-
-            if (employers != null) 
+            var res = await _userServiceClient.GetEmployers();
+            if (res.Result != null)
             {
+                var employers = res.Result;
                 if (!String.IsNullOrEmpty(nameFilter))
                 {
-                    employers = employers.Where(s => s.Name.Contains(nameFilter)).ToList();
+                    employers = employers.Where(s => s.Name.Contains(nameFilter));
                 }
                 if (!String.IsNullOrEmpty(codeFilter))
                 {
-                    employers = employers.Where(s => s.Code.Contains(codeFilter)).ToList();
+                    employers = employers.Where(s => s.Code.Equals(codeFilter));
                 }
+                ViewData["Page"] = "Home";
+                return (View(new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
             }
+            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
+                return RedirectToAction("Index", "Auth");
 
-            return View(employers);
+            return View("Index");
         }
     }
 }

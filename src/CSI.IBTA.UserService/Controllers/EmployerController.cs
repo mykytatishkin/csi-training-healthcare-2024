@@ -169,56 +169,5 @@ namespace CSI.IBTA.UserService.Controllers
 
             return Ok(employerUsersResponse.Result);
         }
-
-        [HttpGet("settings/{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
-        public async Task<IActionResult> GetEmployerSetting(int employerId, string condition)
-        {
-            var response = await _employerService.GetEmployerSettingValue(employerId, condition);
-
-            if (response.Error != null)
-            {
-                return Problem(
-                    title: response.Error.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
-            }
-
-            return Ok(response.Result);
-        }
-
-        [HttpGet("allsettings/{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
-        public async Task<IActionResult> GetAllEmployerSettings(int employerId)
-        {
-            var response = await _employerService.GetAllEmployerSettings(employerId);
-
-            if (response.Error != null)
-            {
-                return Problem(
-                    title: response.Error.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
-            }
-
-            return Ok(response.Result);
-        }
-
-        [HttpPatch("allsettings/{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
-        public async Task<IActionResult> UpdateAllEmployerSettings(int employerId, SettingsDto[] SettingsDtos)
-        {
-            var response = await _employerService.UpdateEmployerSettings(employerId, SettingsDtos);
-
-            if (response.Error != null)
-            {
-                return Problem(
-                    title: response.Error.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
-            }
-
-            return Ok(response.Result);
-        }
     }
 }
