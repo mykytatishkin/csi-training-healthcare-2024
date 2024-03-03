@@ -101,8 +101,19 @@
             .catch(function (error) {
                 console.error('There was a problem with the fetch operation:', error);
             });
+    function showInsurancePlan(employerId, planId) {
+        function onSuccess(data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        }
+        function onFailure(error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        route = '/Benefits/UpdatePlan?employerId=' + employerId + '&planId=' + planId;
+        route = '/Benefits/CreatePlan?employerId=' + employerId;
+        fetchRoute(route, onSuccess, null);
     }
 </script>
 
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
 <script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
+<script type="text/javascript" src="~/Scripts/benefits.js"></script>

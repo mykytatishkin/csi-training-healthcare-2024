@@ -2,6 +2,7 @@
 using CSI.IBTA.BenefitsService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 
 namespace CSI.IBTA.BenefitsService
@@ -10,8 +11,9 @@ namespace CSI.IBTA.BenefitsService
         public static IServiceCollection AddBenefitsService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IInsurancePackageService, InsurancePackageService>();
+            services.AddScoped<IBenefitsService, BenefitsManagementService>();
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddAuth(configuration);
-
             return services;
         }
 

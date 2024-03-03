@@ -102,11 +102,11 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.Property<int>("PayrollFrequency")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("PlanEnd")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("PlanEnd")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("PlanStart")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("PlanStart")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
