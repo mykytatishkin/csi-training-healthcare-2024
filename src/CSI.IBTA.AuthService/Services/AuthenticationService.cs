@@ -20,7 +20,7 @@ namespace CSI.IBTA.AuthService.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<GenericResponse<LoginResponse>> Login(LoginRequest request)
+        public async Task<GenericHttpResponse<LoginResponse>> Login(LoginRequest request)
         {
             var result = await _unitOfWork.Accounts.Find(a => a.Username == request.Username);
 

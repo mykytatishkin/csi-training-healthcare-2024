@@ -1,4 +1,9 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace CSI.IBTA.Shared.Entities
 {
     public class Package
@@ -8,13 +13,13 @@ namespace CSI.IBTA.Shared.Entities
         public DateTime PlanStart { get; set; }
         public DateTime PlanEnd { get; set; }
         public bool IsRemoved { get; set; } = false;
-        public bool IsActive
-        {
-            get
+        public bool IsActive 
+        { 
+            get 
             {
                 if (Initialized == null) return false;
                 var now = DateTime.UtcNow;
-                return now > PlanStart && now < PlanEnd;
+                return now > PlanStart && now < PlanEnd; 
             }
         }
         public string Status

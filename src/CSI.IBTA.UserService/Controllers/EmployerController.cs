@@ -152,5 +152,22 @@ namespace CSI.IBTA.UserService.Controllers
 
             return Ok(response.Result);
         }
+
+        [HttpGet("{employerId}/Users")]
+        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        public async Task<IActionResult> GetEmployerUsers(int employerId)
+        {
+            var employerUsersResponse = await _employerService.GetEmployerUsers(employerId);
+
+            if (employerUsersResponse.Error != null)
+            {
+                return Problem(
+                    title: employerUsersResponse.Error.Title,
+                    statusCode: (int)employerUsersResponse.Error.StatusCode
+                );
+            }
+
+            return Ok(employerUsersResponse.Result);
+        }
     }
 }

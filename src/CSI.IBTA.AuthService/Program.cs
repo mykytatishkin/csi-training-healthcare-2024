@@ -12,9 +12,9 @@ namespace CSI.IBTA.AuthService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+            var connectionString = builder.Configuration.GetConnectionString("UserDBConnection")
                 ?? throw new Exception("Connection string is null");
-            
+
             builder.Services.AddAuthService(builder.Configuration);
             builder.Services.AddUserUnitOfWork(connectionString);
 

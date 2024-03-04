@@ -18,10 +18,13 @@ namespace CSI.IBTA.Administrator
 
             services.AddLogging();
             services.AddHttpContextAccessor();
+            services.AddTransient<AuthorizedHttpClient>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IUserServiceClient, UserServiceClient>();
+            services.AddScoped<IEmployerUserClient, EmployerUserClient>();
+            services.AddScoped<IEmployerClient, EmployerClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
-            services.AddHttpClient<IBenefitsServiceClient, BenefitsServiceClient>();
-            services.AddHttpClient<IUserServiceClient, UserServiceClient>();
+            services.AddScoped<IBenefitsServiceClient, BenefitsServiceClient>();
             return services;
         }
     }
