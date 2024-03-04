@@ -13,6 +13,8 @@
         <span class="border-label">Plan Years</span>
         <div class="row">
             <div class="table-data">
+            @if (Model.Any())
+            {
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -37,6 +39,11 @@
                         }
                     </tbody>
                 </table>
+            }
+            else
+            {
+                <div>This employer does not have any insurance packages.</div>
+            }
             </div>
         </div>
     </div>
