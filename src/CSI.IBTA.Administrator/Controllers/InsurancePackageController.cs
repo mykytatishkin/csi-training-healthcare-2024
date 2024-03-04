@@ -35,8 +35,8 @@ namespace CSI.IBTA.Administrator.Controllers
                 planDtos = viewModel.Plans
                     .Select(p => new CreatePlanDto(
                         p.Name,
-                        p.TypeId,
-                        p.Contribution))
+                        p.Contribution,
+                        p.TypeId))
                     .ToList();
             }
 

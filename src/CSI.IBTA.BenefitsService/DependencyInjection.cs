@@ -11,7 +11,7 @@ namespace CSI.IBTA.BenefitsService
         public static IServiceCollection AddBenefitsService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IInsurancePackageService, InsurancePackageService>();
-            services.AddScoped<IBenefitsService, BenefitsManagementService>();
+            services.AddScoped<IInsurancePlanService, InsurancePlanService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddAuth(configuration);
             return services;

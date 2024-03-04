@@ -21,7 +21,6 @@ namespace CSI.IBTA.Shared.Entities
             }
         }
         public PayrollFrequency PayrollFrequency { get; set; }
-        public int PayrollFrequencyId { get; set; }
         public DateOnly? Initialized { get; set; }
         public int EmployerId { get; set; }
     }

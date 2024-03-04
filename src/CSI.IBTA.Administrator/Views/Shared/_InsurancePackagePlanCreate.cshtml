@@ -1,10 +1,10 @@
 ﻿@model InsurancePackagePlanViewModel
 
-<form asp-controller="Benefits" asp-action="@Model.ActionName" method="post" id="package-plan-create-form">
+<form asp-controller="InsurancePlans" asp-action="@Model.ActionName" method="post" id="package-plan-create-form">
     <table class="table">
         @Html.HiddenFor(m => m.PlanId)
         @Html.HiddenFor(m => m.ActionName)
-        @Html.HiddenFor(m => m.PackageId)
+        @Html.HiddenFor(m => m.Package)
         @Html.HiddenFor(m => m.EmployerId)
         @Html.HiddenFor(m => m.AvailablePlanTypes)
         <tbody>

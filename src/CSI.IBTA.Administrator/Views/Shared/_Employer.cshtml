@@ -1,5 +1,7 @@
 ﻿@using CSI.IBTA.Shared.Entities
+@using CSI.IBTA.Administrator.Models
 @model List<Employer>
+
 
 <div id="table-employer" class="container">
     <div class="row">
@@ -59,6 +61,9 @@
     </div>
 </div>
 <div id="control-employer" style="display: none;" />
+<script type="text/javascript" src="~/Scripts/employer-user.js"></script>
+<script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
+<script type="text/javascript" src="~/Scripts/benefits.js"></script>
 
 <script type="text/javascript">
     function showEmployerDetails(employerId) {
@@ -101,6 +106,8 @@
             .catch(function (error) {
                 console.error('There was a problem with the fetch operation:', error);
             });
+    }
+
     function showInsurancePlan(employerId, planId) {
         function onSuccess(data) {
             document.getElementById('employer-partial-action').innerHTML = data;
@@ -108,12 +115,38 @@
         function onFailure(error) {
             console.error('There was a problem with the fetch operation:', error);
         }
-        route = '/Benefits/UpdatePlan?employerId=' + employerId + '&planId=' + planId;
-        route = '/Benefits/CreatePlan?employerId=' + employerId;
+        route = '/InsurancePlans/UpdatePlan?employerId=' + employerId + '&planId=' + planId;
+        route = '/InsurancePlans/CreatePlan?employerId=' + employerId;
         fetchRoute(route, onSuccess, null);
+    }
+
+    function showAddPlanForm() {
+        var form = document.getElementById('insurance-package-create-form');
+        var formData = new FormData(form);
+        fetch(`/InsurancePlans/OpenAddPlanToListForm`, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(function (response) {
+                if (!response.ok) {
+                    callbackFailure?.(response.status);
+                    throw new Error("Response was not ok");
+                }
+
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                }
+
+                return response.text();
+            })
+            .then(function (data) {
+                document.getElementById('employer-partial-action').innerHTML = data;
+            })
+            .catch(function (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                showError("employer-user-management-errors", error);
+            });
     }
 </script>
 
-<script type="text/javascript" src="~/Scripts/employer-user.js"></script>
-<script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
-<script type="text/javascript" src="~/Scripts/benefits.js"></script>

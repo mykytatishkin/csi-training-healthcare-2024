@@ -9,12 +9,12 @@ using AutoMapper;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
-    internal class BenefitsManagementService : IBenefitsService
+    internal class InsurancePlanService : IInsurancePlanService
     {
         private readonly IBenefitsUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public BenefitsManagementService(IBenefitsUnitOfWork unitOfWork, IMapper mapper)
+        public InsurancePlanService(IBenefitsUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -61,7 +61,7 @@ namespace CSI.IBTA.BenefitsService.Services
         }
 
 
-        public async Task<GenericHttpResponse<PlanDto>> CreatePlan(CreatePlanDto createPlanDto)
+        public async Task<GenericHttpResponse<PlanDto>> CreatePlan(int packageId, CreatePlanDto createPlanDto)
         {
             var planType = await _unitOfWork.PlanTypes.GetById(createPlanDto.PlanTypeId);
             if (planType == null)
@@ -69,7 +69,7 @@ namespace CSI.IBTA.BenefitsService.Services
                 return new GenericHttpResponse<PlanDto>(true, new HttpError("Plan type not found", HttpStatusCode.NotFound), null);
             }
 
-            var package = await _unitOfWork.Packages.GetById(createPlanDto.PackageId);
+            var package = await _unitOfWork.Packages.GetById(packageId);
             if (package == null)
             {
                 return new GenericHttpResponse<PlanDto>(true, new HttpError("Package not found", HttpStatusCode.NotFound), null);

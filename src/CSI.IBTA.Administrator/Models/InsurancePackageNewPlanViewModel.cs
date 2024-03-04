@@ -2,12 +2,10 @@
 
 namespace CSI.IBTA.Administrator.Models
 {
-    public class InsurancePackagePlanViewModel
+    public class InsurancePackageNewPlanViewModel
     {
-        public string ActionName { get; set; } = null!;
-        public int? PlanId { get; set; }
+        public InsurancePackageCreationViewModel PackageModel { get; set; } = null!;
         public int EmployerId { get; set; }
-        public Package? Package { get; set; }
         public string Name { get; set; } = null!;
         public decimal Contribution { get; set; }
         public int PlanTypeId { get; set; }

@@ -8,18 +8,67 @@ using CSI.IBTA.Shared.DTOs;
 namespace CSI.IBTA.Administrator.Controllers
 {
     [TypeFilter(typeof(AuthenticationFilter))]
-    [Route("Benefits")]
-    public class BenefitsController : Controller
+    [Route("InsurancePlans")]
+    public class InsurancePlanController : Controller
     {
         private readonly IBenefitsClient _benefitsClient;
         private readonly IEmployerClient _employerClient;
 
-        public BenefitsController(
+        public InsurancePlanController(
             IBenefitsClient benefitsClient,
             IEmployerClient employerClient)
         {
             _benefitsClient = benefitsClient;
             _employerClient = employerClient;
+        }
+
+        [HttpPost("OpenAddPlanToListForm")]
+        public async Task<IActionResult> OpenAddPlanToListForm(InsurancePackageCreationViewModel model)
+        {
+            var getPlanTypesResponse = await _benefitsClient.GetPlanTypes();
+            if (getPlanTypesResponse.Result == null)
+            {
+                return Problem(title: "Failed to retrieve plan types");
+            }
+            var PlanTypes = getPlanTypesResponse.Result;
+
+            InsurancePackageNewPlanViewModel planModel = new InsurancePackageNewPlanViewModel()
+            {
+                PackageModel = model,
+                EmployerId = model.EmployerId,
+                AvailablePlanTypes = PlanTypes.Select(x => new PlanType()
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList()
+            };
+            return PartialView("_InsurancePackagePlanAddToList", planModel);
+        }
+
+        [HttpPost("AddPlanToList")]
+        public async Task<IActionResult> AddPlanToList(InsurancePackageNewPlanViewModel model)
+        {
+            var getEmployerResponse = await _employerClient.GetEmployerById(model.EmployerId);
+            if (getEmployerResponse.Error != null)
+            {
+                return Problem(title: "Failed to retrieve employer");
+            }
+
+            var newPlan = new Plan()
+            {
+                Name = model.Name,
+                Package = model.PackageModel.Package,
+                TypeId = model.PlanTypeId,
+                PlanType = model.AvailablePlanTypes.FirstOrDefault(t => t.Id == model.PlanTypeId),
+                Contribution = model.Contribution
+            };
+
+            if (model.PackageModel.Plans == null)
+                model.PackageModel.Plans = new List<Plan>();
+
+            model.PackageModel.Plans.Add(newPlan);
+
+            return PartialView("InsurancePackages/_CreateInsurancePackage", model.PackageModel);
         }
 
         [HttpGet("CreatePlan")]
@@ -36,7 +85,7 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 ActionName = "CreatePlan",
                 EmployerId = employerId,
-                PackageId = 2,
+                Package = new Package(),
                 AvailablePlanTypes = PlanTypes.Select(x => new PlanType()
                 {
                     Id = x.Id,
@@ -55,7 +104,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 return Problem(title: "Failed to retrieve employer");
             }
 
-            var planDto = new CreatePlanDto(model.Name, model.Contribution, model.PackageId, model.PlanTypeId);
+            var planDto = new CreatePlanDto(model.Name, model.Contribution, model.PlanTypeId);
             var response = await _benefitsClient.CreatePlan(planDto);
             return PartialView("_EmployerAdministrationMenu", model.EmployerId);
         }
@@ -82,7 +131,6 @@ namespace CSI.IBTA.Administrator.Controllers
                 PlanId = plan.Id,
                 Name = plan.Name,
                 EmployerId = employerId,
-                PackageId = plan.PackageId,
                 PlanTypeId = plan.PlanType.Id,
                 Contribution = plan.Contribution,
                 AvailablePlanTypes = PlanTypes.Select(x => new PlanType()

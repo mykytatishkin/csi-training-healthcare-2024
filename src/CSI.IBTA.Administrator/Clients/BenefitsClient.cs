@@ -11,20 +11,17 @@ namespace CSI.IBTA.Administrator.Clients
     {
         private readonly ILogger<BenefitsClient> _logger;
         private readonly AuthorizedHttpClient _httpClient;
-        private string _userServiceBaseAddress;
-        private string _benefitsServiceBaseAddress;
 
         public BenefitsClient(AuthorizedHttpClient httpClient, ILogger<BenefitsClient> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
-            _userServiceBaseAddress = _httpClient.GetBaseAddress("UserServiceApiUrl");
-            _benefitsServiceBaseAddress = _httpClient.GetBaseAddress("BenefitsServiceApiUrl");
+            _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
         }
 
         public async Task<GenericInternalResponse<PlanDto>> GetPlan(int id)
         {
-            var response = await _httpClient.GetAsync($"{_benefitsServiceBaseAddress}{string.Format(BenefitsServiceApiEndpoints.Plan, id)}");
+            var response = await _httpClient.GetAsync(string.Format(BenefitsServiceApiEndpoints.Plan, id));
 
             if (!response.IsSuccessStatusCode)
             {
@@ -40,7 +37,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericInternalResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes()
         {
-            var response = await _httpClient.GetAsync($"{_benefitsServiceBaseAddress}{BenefitsServiceApiEndpoints.PlanTypes}");
+            var response = await _httpClient.GetAsync(BenefitsServiceApiEndpoints.PlanTypes);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
@@ -58,7 +55,7 @@ namespace CSI.IBTA.Administrator.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(planDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{_benefitsServiceBaseAddress}{BenefitsServiceApiEndpoints.Plans}", content);
+            var response = await _httpClient.PostAsync(BenefitsServiceApiEndpoints.Plans, content);
             if (!response.IsSuccessStatusCode)
             {
                 var error = InternalErrors.GenericError;
@@ -73,7 +70,7 @@ namespace CSI.IBTA.Administrator.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(planDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PatchAsync($"{_benefitsServiceBaseAddress}{string.Format(BenefitsServiceApiEndpoints.Plan, planId)}", content);
+            var response = await _httpClient.PatchAsync(string.Format(BenefitsServiceApiEndpoints.Plan, planId), content);
             if (!response.IsSuccessStatusCode)
             {
                 var error = InternalErrors.GenericError;

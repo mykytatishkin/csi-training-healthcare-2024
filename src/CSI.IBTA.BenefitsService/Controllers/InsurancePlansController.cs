@@ -7,11 +7,11 @@ namespace CSI.IBTA.BenefitsService.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class BenefitsController : Controller
+    public class InsurancePlansController : Controller
     {
-        private readonly IBenefitsService _benefitsService;
+        private readonly IInsurancePlanService _benefitsService;
 
-        public BenefitsController(IBenefitsService benefitsService)
+        public InsurancePlansController(IInsurancePlanService benefitsService)
         {
             _benefitsService = benefitsService;
         }
@@ -50,7 +50,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpGet("Plans")]
+        [HttpGet("PlanTypes")]
         [Authorize]
         public async Task<IActionResult> GetPlanTypes()
         {
@@ -69,9 +69,9 @@ namespace CSI.IBTA.BenefitsService.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreatePlan(CreatePlanDto createPlanDto)
+        public async Task<IActionResult> CreatePlan(int packageId,CreatePlanDto createPlanDto)
         {
-            var response = await _benefitsService.CreatePlan(createPlanDto);
+            var response = await _benefitsService.CreatePlan(packageId, createPlanDto);
 
             if (response.Error != null)
             {

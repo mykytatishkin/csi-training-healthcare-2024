@@ -14,7 +14,7 @@ function showCreatePlanSection(employerId, planId) {
         showError("employer-package-management-errors", "There was an error, try again");
     }
 
-    route = '/Benefits/CreatePlan?employerId=' + employerId + '&planId=' + planId
+    route = '/InsurancePlans/CreatePlan?employerId=' + employerId + '&planId=' + planId
     fetchRoute(route, onSuccess, onFailure);
 }
 
@@ -28,7 +28,7 @@ function savePlanData() {
 
     var formData = new FormData(form);
 
-    fetch(`/Benefits/${formData.get('ActionName')}?employerId=${formData.get('EmployerId')}&planId=${formData.get('PlanId') }`, {
+    fetch(`/InsurancePlans/${formData.get('ActionName')}?employerId=${formData.get('EmployerId')}&planId=${formData.get('PlanId') }`, {
         method: 'POST',
         body: formData,
     })
@@ -43,6 +43,45 @@ function savePlanData() {
         })
         .then(function (data) {
             showEmployerAdministration(formData.get('EmployerId'));
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", error);
+        });
+}
+
+function saveNewPlanData() {
+    var form = document.getElementById('package-plan-add-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+
+    for (var pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    fetch(`/InsurancePlans/AddPlanToList`, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) {
+            console.log("1")
+            if (!response.ok) {
+                console.log("1a")
+                console.log(response)
+                return response.json().then(function (json) {
+                    throw new Error(json.title);
+                });
+            }
+            console.log("1b")
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);

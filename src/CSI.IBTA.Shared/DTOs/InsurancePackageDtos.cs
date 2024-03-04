@@ -5,16 +5,16 @@ namespace CSI.IBTA.Shared.DTOs
     public record CreatedInsurancePackageDto(
         int Id,
         string Name,
-        DateTime PlanStart,
-        DateTime PlanEnd,
+        DateOnly PlanStart,
+        DateOnly PlanEnd,
         PayrollFrequency PayrollFrequency,
         int EmployerId,
         List<CreatedPlanDto> Plans);
 
     public record CreateInsurancePackageDto(
         string Name,
-        DateTime PlanStart,
-        DateTime PlanEnd,
+        DateOnly PlanStart,
+        DateOnly PlanEnd,
         PayrollFrequency PayrollFrequency,
         int EmployerId,
         List<CreatePlanDto> Plans);
