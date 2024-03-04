@@ -12,23 +12,17 @@ namespace CSI.IBTA.Administrator.Controllers
     [Route("Employer")]
     public class EmployerController : Controller
     {
-        private readonly IEmployerClient _employerClient;
-        private readonly IEmployerUserClient _employerUserClient;
         private readonly IUserServiceClient _userServiceClient;
 
         public EmployerController(
-            IEmployerClient employerClient,
-            IEmployerUserClient employerUserClient,
             IUserServiceClient userServiceClient)
         {
-            _employerClient = employerClient;
-            _employerUserClient = employerUserClient;
             _userServiceClient = userServiceClient;
         }
 
         public async Task<IActionResult> Index(int employerId)
         {
-            var response = await _employerClient.GetEmployerById(employerId);
+            var response = await _userServiceClient.GetEmployerById(employerId);
 
             if (response.Error != null)
             {
@@ -80,7 +74,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpGet("Users")]
         public async Task<IActionResult> Users(int employerId)
         {
-            var response = await _employerUserClient.GetEmployerUsers(employerId);
+            var response = await _userServiceClient.GetEmployerUsers(employerId);
 
             if (response.Error != null || response.Result == null)
             {
@@ -151,7 +145,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.Email,
                 "", "", "", "");
 
-            var response = await _employerUserClient.CreateEmployerUser(command);
+            var response = await _userServiceClient.CreateEmployerUser(command);
 
             if (response.Error != null)
             {
@@ -185,7 +179,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.Email,
                 "", "", "", "");
 
-            var response = await _employerUserClient.UpdateEmployerUser(command, model.UserId.Value);
+            var response = await _userServiceClient.UpdateEmployerUser(command, model.UserId.Value);
 
             if (response.Error != null)
             {

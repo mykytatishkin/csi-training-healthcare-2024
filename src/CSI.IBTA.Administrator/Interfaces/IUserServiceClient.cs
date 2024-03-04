@@ -11,5 +11,8 @@ namespace CSI.IBTA.Administrator.Interfaces
         Task<GenericResponse<EmployerDto?>> CreateEmployer(CreateEmployerDto dto);
         Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId);
         Task<GenericResponse<EmployerDto>> GetEmployerById(int id);
+        Task<GenericResponse<List<UserDto>>> GetEmployerUsers(int employerId);
+        Task<GenericResponse<bool?>> CreateEmployerUser(CreateUserDto command);
+        Task<GenericResponse<bool?>> UpdateEmployerUser(PutUserDto command, int accountId);
     }
 }
