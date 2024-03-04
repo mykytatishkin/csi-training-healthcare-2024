@@ -1,9 +1,5 @@
-﻿using CSI.IBTA.Administrator.Extensions;
-using CSI.IBTA.Administrator.Interfaces;
-using CSI.IBTA.Administrator.Models;
-using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Administrator.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -11,22 +7,23 @@ namespace CSI.IBTA.Administrator.Controllers
     public class BenefitsController : Controller
     {
        
-        private readonly IUserServiceClient _userServiceClient;
+        private readonly IBenefitsServiceClient _benefitsServiceClient;
 
-        public BenefitsController(IUserServiceClient userServiceClient)
+        public BenefitsController(IBenefitsServiceClient benefitsServiceClient)
         {
-            _userServiceClient = userServiceClient;
+            _benefitsServiceClient = benefitsServiceClient;
         }
 
         [HttpGet("InsurancePackages")]
-        public IActionResult AdministrationMenu(int employerId)
+        public async Task<IActionResult> AdministrationMenu(int employerId)
         {
-            var list = new List<InsurancePackageDto>()
+            var res = await _benefitsServiceClient.GetInsurancePackages(employerId);
+            if (res.Error != null || res.Result == null)
             {
-                new InsurancePackageDto(2,"ISSoft Package", "Not Initialized", true, false),
-                new InsurancePackageDto(3," Package", $"Initialized on {employerId}", false, true)
-            };
-            return PartialView("_EmployerPackagesMenu", list);
+                throw new Exception("Failed to retrieve employer");
+            }
+
+            return PartialView("_EmployerPackagesMenu", res.Result);
         }
     }
 }

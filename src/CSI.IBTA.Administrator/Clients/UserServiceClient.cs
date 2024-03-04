@@ -13,10 +13,10 @@ namespace CSI.IBTA.Administrator.Clients
     internal class UserServiceClient : IUserServiceClient
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<AuthClient> _logger;
+        private readonly ILogger<UserServiceClient> _logger;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public UserServiceClient(HttpClient httpClient, IJwtTokenService jwtTokenService, ILogger<AuthClient> logger, IConfiguration configuration)
+        public UserServiceClient(HttpClient httpClient, IJwtTokenService jwtTokenService, ILogger<UserServiceClient> logger, IConfiguration configuration)
         {
             _logger = logger;
             _httpClient = httpClient;
