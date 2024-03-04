@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.AuthService.Authentication;

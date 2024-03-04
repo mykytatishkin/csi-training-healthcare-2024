@@ -1,4 +1,4 @@
-﻿using CSI.IBTA.BenefitsService.Interfaces;
+using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +22,23 @@ namespace CSI.IBTA.BenefitsService.Controllers
         public async Task<IActionResult> CreateInsurancePackage(CreateInsurancePackageDto dto)
         {
             var response = await _insurancePackageService.CreateInsurancePackage(dto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+    
+        [HttpGet("{employerId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> GetInsurancePackages(int employerId)
+        {
+            var response = await _insurancePackageService.GetInsurancePackages(employerId);
 
             if (response.Error != null)
             {

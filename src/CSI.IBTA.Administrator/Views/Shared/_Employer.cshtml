@@ -1,6 +1,13 @@
-﻿@using CSI.IBTA.Shared.Entities
-@using CSI.IBTA.Administrator.Models
-@model List<Employer>
+@using CSI.IBTA.Shared.DataStructures
+@using CSI.IBTA.Shared.Entities
+@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Administrator.Constants
+@model PaginatedList<EmployerDto>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
 
 
 <div id="table-employer" class="container">
@@ -8,9 +15,10 @@
         <div class="col-sm-8">
         </div>
         <div class="col-sm-4">
-            <button class="btn btn-primary">Add New Employer</button>
+            <button class="btn btn-primary" onclick="showEmployerCreateForm()">Add New Employer</button>
         </div>
     </div>
+
 
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
@@ -42,7 +50,7 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) - @Html.DisplayFor(modelItem => item.Code)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -52,101 +60,49 @@
                 </tbody>
             </table>
             <div style="text-align:right" class="pages">
-                <button class="btn btn-primary btn-small">Prev</button>
-                <span>0</span>
-                <button class="btn btn-primary btn-small">Next</button>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @prevDisabled">
+                    Previous
+                </a>
+                @{
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.PageIndex + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                    for (int i = firstPage; i <= lastPage; i++)
+                    {
+                        if (i == Model.PageIndex || Model.PageIndex == 0)
+                        {
+                            <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
+                        }
+                        else{
+                            <a asp-action="Index"
+                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                               asp-route-pageNumber="@(i)"
+                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                               class="btn btn-default">
+                                @i
+                            </a>
+                        }
+                    }
+                }
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @nextDisabled">
+                    Next
+                </a>
+                <div class="test">
             </div>
-
+            </div>
         </div>
     </div>
 </div>
-<div id="control-employer" style="display: none;" />
+<div id="control-employer" />
+<script type="text/javascript" src="~/Scripts/employer.js"></script>
+<script type="text/javascript" src="~/Scripts/employer-form.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
-<script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
-<script type="text/javascript" src="~/Scripts/benefits.js"></script>
-
-<script type="text/javascript">
-    function showEmployerDetails(employerId) {
-        function onSuccess(data) {
-            document.getElementById('control-employer').innerHTML = data;
-            $("#table-employer").hide();
-            $("#control-employer").show();
-        }
-
-        fetchRoute('/Employer?employerId=' + employerId, onSuccess, null);
-    }
-
-    function showEmployerSettings(employerId) {
-        fetch('/Employer/AllSettings?employerId=' + employerId)
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(function (data) {
-                document.getElementById('employer-partial-action').innerHTML = data;
-            })
-            .catch(function (error) {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
-
-    function createInsurancePackage(employerId) {
-        fetch('/InsurancePackage?employerId=' + employerId)
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(function (data) {
-                document.getElementById('employer-partial-action').innerHTML = data;
-            })
-            .catch(function (error) {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
-
-    function showInsurancePlan(employerId, planId) {
-        function onSuccess(data) {
-            document.getElementById('employer-partial-action').innerHTML = data;
-        }
-        function onFailure(error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
-        route = '/InsurancePlans/UpdatePlan?employerId=' + employerId + '&planId=' + planId;
-        route = '/InsurancePlans/CreatePlan?employerId=' + employerId;
-        fetchRoute(route, onSuccess, null);
-    }
-
-    function showAddPlanForm() {
-        var form = document.getElementById('insurance-package-create-form');
-        var formData = new FormData(form);
-        fetch(`/InsurancePlans/OpenAddPlanToListForm`, {
-            method: 'POST',
-            body: formData,
-        })
-            .then(function (response) {
-                if (!response.ok) {
-                    callbackFailure?.(response.status);
-                    throw new Error("Response was not ok");
-                }
-
-                if (response.redirected) {
-                    window.location.href = response.url;
-                    return;
-                }
-
-                return response.text();
-            })
-            .then(function (data) {
-                document.getElementById('employer-partial-action').innerHTML = data;
-            })
-            .catch(function (error) {
-                console.error('There was a problem with the fetch operation:', error);
-                showError("employer-user-management-errors", error);
-            });
-    }
-</script>
-
+<script type="text/javascript" src="~/Scripts/employer-plans.js"></script>

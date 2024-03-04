@@ -1,20 +1,27 @@
-﻿using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Shared.DTOs
 {
+    public record InsurancePackageDto(
+        int Id, 
+        string Name,
+        string Status, 
+        bool CanBeModified, 
+        bool IsInitialized);
+
     public record CreatedInsurancePackageDto(
         int Id,
         string Name,
-        DateOnly PlanStart,
-        DateOnly PlanEnd,
+        DateTime PlanStart,
+        DateTime PlanEnd,
         PayrollFrequency PayrollFrequency,
         int EmployerId,
         List<CreatedPlanDto> Plans);
 
     public record CreateInsurancePackageDto(
         string Name,
-        DateOnly PlanStart,
-        DateOnly PlanEnd,
+        DateTime PlanStart,
+        DateTime PlanEnd,
         PayrollFrequency PayrollFrequency,
         int EmployerId,
         List<CreatePlanDto> Plans);

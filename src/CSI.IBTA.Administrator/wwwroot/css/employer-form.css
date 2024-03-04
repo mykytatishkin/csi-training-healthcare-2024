@@ -1,47 +1,67 @@
-﻿.form {
-    max-width: 1000px;
+﻿@import url('global.css');
+
+.form-main-container {
+    margin:20px;
+}
+
+.form {
     margin: 0 auto;
+    width:100%;
 }
 
 .form-columns {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    border: 1px solid #ccc;
+    border: 1px solid var(--form-border-color);
     border-radius: 8px;
     padding: 10px;
 }
 
 .form-logo {
-    border: 1px solid #ccc;
+    border: 1px solid var(--form-border-color);
     border-radius: 8px;
     padding: 15px;
+    padding-bottom:5px;
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
 }
 
-.form-logo img {
-    display: none;
+.logo-preview {
+    margin-bottom:10px;
+    max-height: 150px;
     width: 100%;
-    max-height: 120px;
-    margin-top: 5px;
-    margin-bottom: 15px;
+    display: flex;
+    justify-content: center
+}
+
+.logo-preview img {
+    object-fit: contain;
+    display:none;
+}
+
+.form-logo div {
+    margin-bottom: 10px;
 }
 
 .form-logo input {
     padding: 0px;
     height: 30px;
     width: 150px;
-    border-radius: 15px;
+    border-radius: 10px;
     margin-left: 10px;
+    margin-bottom:10px;
 }
 
 .logo-name-display {
-    border: 1px solid #ccc;
+    border: 1px solid var(--form-border-color);
     width: 450px;
-    height: 30px;
+    min-height:30px;
+    height: auto;
+    max-height: 60px;
+    overflow: auto; 
 }
 
 .form-column {
@@ -68,7 +88,7 @@
     position: relative;
     left: 25px;
     top: 12px;
-    background-color: white;
+    background-color: var(--container-background-color);
     padding: 0 10px;
 }
 
@@ -83,20 +103,21 @@
     padding: 0px;
     height: 30px;
     width: 120px;
-    border-radius: 15px;
+    border-radius: 10px;
 }
 
-.table-data {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.logo-admin {
-    width: 100%;
-}
-
-.employer-errors {
+.form-errors {
     display: flex;
     margin: 0 auto;
 }
+
+.nav-buttons {
+    margin-top:10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-buttons button {
+    border-radius: 7px;
+}
+   

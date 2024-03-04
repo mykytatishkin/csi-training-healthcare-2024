@@ -6,5 +6,6 @@ namespace CSI.IBTA.BenefitsService.Interfaces
     public interface IInsurancePackageService
     {
         Task<GenericResponse<CreatedInsurancePackageDto>> CreateInsurancePackage(CreateInsurancePackageDto dto);
+        Task<GenericHttpResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId);
     }
 }

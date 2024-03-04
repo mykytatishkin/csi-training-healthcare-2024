@@ -14,13 +14,20 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     plan.Name,
                     new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name),
                     plan.Contribution,
-                    plan.PackageId
-                    ));
+                    plan.PackageId));
+
             CreateMap<PlanType, PlanTypeDto>()
                 .ConstructUsing(planType => new PlanTypeDto(
                     planType.Id,
-                    planType.Name
-                    ));
+                    planType.Name));
+
+            CreateMap<Package, InsurancePackageDto>()
+                .ConstructUsing(x => new InsurancePackageDto(
+                    x.Id,
+                    x.Name,
+                    x.Status,
+                    x.Initialized == null,
+                    x.Initialized != null));
         }
     }
 }

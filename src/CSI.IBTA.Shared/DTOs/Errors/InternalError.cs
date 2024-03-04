@@ -1,4 +1,6 @@
-﻿namespace CSI.IBTA.Shared.DTOs.Errors
+
+
+namespace CSI.IBTA.Shared.DTOs.Errors
 {
     public record InternalError(string Title);
 }

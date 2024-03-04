@@ -1,4 +1,4 @@
-﻿@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.DTOs
 @model int
 
 <head>
@@ -10,7 +10,7 @@
             <div class="col">
                 <span>Employer Setup</span>
                 <div class="row-column">
-                    <a class="btn btn-primary">Manage Profile</a>
+                    <a onclick="showEmployerUpdateForm(@Model)" class="btn btn-primary">Manage Profile</a>
                 </div>
                 <div class="row-column">
                     <button onclick="showEmployerUsersManagement(@Model)" class="btn btn-primary">Manage Users</button>
@@ -22,7 +22,7 @@
             <div class="col">
                 <span>Plan Setup</span>
                 <div class="row-column">
-                    <button onclick="createInsurancePackage(@Model)" class="btn btn-primary">Manage Plans</button>
+                    <a onClick="showEmployerPackagePlans(@Model)" class="btn btn-primary">Manage Plans</a>
                 </div>
             </div>
         </div>
