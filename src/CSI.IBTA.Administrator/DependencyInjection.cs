@@ -24,6 +24,7 @@ namespace CSI.IBTA.Administrator
             services.AddScoped<IEmployerUserClient, EmployerUserClient>();
             services.AddScoped<IEmployerClient, EmployerClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
+            services.AddScoped<IBenefitsServiceClient, BenefitsServiceClient>();
             return services;
         }
     }

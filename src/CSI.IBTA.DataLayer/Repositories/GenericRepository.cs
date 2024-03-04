@@ -1,5 +1,4 @@
 ﻿using CSI.IBTA.DataLayer.Interfaces;
-using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;

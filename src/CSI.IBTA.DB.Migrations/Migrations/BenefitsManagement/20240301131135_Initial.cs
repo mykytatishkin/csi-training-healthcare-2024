@@ -18,9 +18,10 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PlanStart = table.Column<DateOnly>(type: "date", nullable: false),
-                    PlanEnd = table.Column<DateOnly>(type: "date", nullable: false),
-                    PayrollFrequency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlanStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PlanEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRemoved = table.Column<bool>(type: "bit", nullable: false),
+                    PayrollFrequency = table.Column<int>(type: "int", nullable: false),
                     Initialized = table.Column<DateOnly>(type: "date", nullable: true),
                     EmployerId = table.Column<int>(type: "int", nullable: false)
                 },

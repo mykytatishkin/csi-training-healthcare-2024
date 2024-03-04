@@ -109,36 +109,4 @@
 <script type="text/javascript" src="~/Scripts/employer.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-form.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
-
-
-<div id="control-employer" style="display: none;" />
-
-<script type="text/javascript">
-    function showEmployerDetails(employerId) {
-        function onSuccess(data) {
-            document.getElementById('control-employer').innerHTML = data;
-            $("#table-employer").hide();
-            $("#control-employer").show();
-        }
-
-        fetchRoute('/Employer?employerId=' + employerId, onSuccess, null);
-    }
-
-    function showEmployerSettings(employerId) {
-        fetch('/Employer/AllSettings?employerId=' + employerId)
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(function (data) {
-                document.getElementById('employer-partial-action').innerHTML = data;
-            })
-            .catch(function (error) {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
-</script>
-
-<script type="text/javascript" src="~/Scripts/employer-user.js"></script>
+<script type="text/javascript" src="~/Scripts/employer-plans.js"></script>

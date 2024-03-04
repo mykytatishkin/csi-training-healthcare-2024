@@ -95,3 +95,8 @@
 .logo-admin {
     width: 100%;
 }
+
+.employer-errors {
+    display: flex;
+    margin: 0 auto;
+}

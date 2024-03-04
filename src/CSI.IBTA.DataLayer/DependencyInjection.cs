@@ -17,8 +17,8 @@ namespace CSI.IBTA.DataLayer
                     connectionString,
                     b => b.MigrationsAssembly("CSI.IBTA.DB.Migrations")));
 
-            services.AddScoped<IUserUnitOfWork, UserUnitOfWork>();            
-            
+            services.AddScoped<IUserUnitOfWork, UserUnitOfWork>();
+
             return services;
         }
 
