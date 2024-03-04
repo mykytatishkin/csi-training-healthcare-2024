@@ -17,11 +17,11 @@ namespace CSI.IBTA.BenefitsService.Services
             _mapper = mapper;
         }
 
-        public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
+        public async Task<GenericHttpResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
         {
             var packages = await _benefitsUnitOfWork.Packages.Find(x => x.EmployerId == employerId && x.IsRemoved != true);
 
-            return new GenericResponse<List<InsurancePackageDto>>(null, packages.Select(_mapper.Map<InsurancePackageDto>).ToList());
+            return new GenericHttpResponse<List<InsurancePackageDto>>(false, null, packages.Select(_mapper.Map<InsurancePackageDto>).ToList());
         }
     }
 }

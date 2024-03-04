@@ -13,8 +13,8 @@
     fetchRoute(route, onSuccess, onFailure);
 }
 
-function showEmployerUsersManagement(employerId) {
-    fetch('/Employer/Users?employerId=' + employerId)
+function showEmployerSettings(employerId) {
+    fetch('/Employer/AllSettings?employerId=' + employerId)
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

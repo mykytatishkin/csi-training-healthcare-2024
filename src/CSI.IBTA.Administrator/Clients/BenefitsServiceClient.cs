@@ -28,10 +28,10 @@ namespace CSI.IBTA.Administrator.Clients
             _jwtTokenService = jwtTokenService;
         }
 
-        public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
+        public async Task<GenericHttpResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
         {
             var token = _jwtTokenService.GetCachedToken();
-            if (token == null) return new GenericResponse<List<InsurancePackageDto>>(new HttpError("Invalid credentials", HttpStatusCode.Unauthorized), null);
+            if (token == null) return new GenericHttpResponse<List<InsurancePackageDto>>(true, new HttpError("Invalid credentials", HttpStatusCode.Unauthorized), null);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -40,12 +40,12 @@ namespace CSI.IBTA.Administrator.Clients
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                 return new GenericResponse<List<InsurancePackageDto>>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching insurance packages", response.StatusCode), null);
+                 return new GenericHttpResponse<List<InsurancePackageDto>>(true, new HttpError(response.ReasonPhrase ?? "Error occurred while fetching insurance packages", response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var packages = JsonConvert.DeserializeObject<List<InsurancePackageDto>>(responseContent);
-            return new GenericResponse<List<InsurancePackageDto>>(null, packages);
+            return new GenericHttpResponse<List<InsurancePackageDto>>(false, null, packages);
         }
     }
 
