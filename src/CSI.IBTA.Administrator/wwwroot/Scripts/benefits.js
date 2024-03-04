@@ -60,19 +60,12 @@ function saveNewPlanData() {
 
     var formData = new FormData(form);
 
-    for (var pair of formData.entries()) {
-        console.log(pair[0] + ', ' + pair[1]);
-    }
-
     fetch(`/InsurancePlans/AddPlanToList`, {
         method: 'POST',
         body: formData,
     })
         .then(function (response) {
-            console.log("1")
             if (!response.ok) {
-                console.log("1a")
-                console.log(response)
                 return response.json().then(function (json) {
                     throw new Error(json.title);
                 });

@@ -58,7 +58,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 );
             }
 
-            return PartialView("InsurancePackages/_CreateInsurancePackage");
+            return Ok();
         }
     }
 }

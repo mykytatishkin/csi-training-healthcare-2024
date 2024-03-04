@@ -19,8 +19,4 @@
     <ProjectReference Include="..\CSI.IBTA.DataLayer\CSI.IBTA.DataLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\BenefitsManagement\" />
-  </ItemGroup>
-
 </Project>

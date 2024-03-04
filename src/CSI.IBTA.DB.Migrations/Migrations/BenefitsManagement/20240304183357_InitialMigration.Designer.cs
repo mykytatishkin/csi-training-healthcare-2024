@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 {
     [DbContext(typeof(BenefitsManagementContext))]
-    [Migration("20240303120744_Initial")]
-    partial class Initial
+    [Migration("20240304183357_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,9 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.Property<DateOnly?>("Initialized")
                         .HasColumnType("date");
 
+                    b.Property<bool>("IsRemoved")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -105,11 +108,11 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.Property<int>("PayrollFrequency")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("PlanEnd")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("PlanEnd")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("PlanStart")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("PlanStart")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
