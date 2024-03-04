@@ -23,7 +23,7 @@ namespace CSI.IBTA.Shared.Entities
             {
                 if (Initialized == null) return "Not Initialized";
                 var now = DateTime.UtcNow;
-                if (now > PlanEnd) return "Archived";
+                if (now > PlanEnd) return $"Archived on {PlanEnd.ToShortDateString()}";
 
                 return $"Initialized on {Initialized}";
             }
