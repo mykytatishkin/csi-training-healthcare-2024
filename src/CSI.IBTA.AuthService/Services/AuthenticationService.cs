@@ -1,20 +1,20 @@
-﻿using CSI.IBTA.Shared.DTOs.Errors;
-using CSI.IBTA.AuthService.Interfaces;
+﻿using CSI.IBTA.AuthService.Interfaces;
 using CSI.IBTA.DataLayer.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.Shared.DTOs.Login;
+using CSI.IBTA.Shared.DTOs.Errors;
 
 namespace CSI.IBTA.AuthService.Services
 {
     internal class AuthenticationService : IAuthenticationService
     {
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserUnitOfWork _unitOfWork;
 
         public AuthenticationService(
             IJwtTokenGenerator jwtTokenGenerator,
-            IUnitOfWork unitOfWork)
+            IUserUnitOfWork unitOfWork)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
             _unitOfWork = unitOfWork;
@@ -26,7 +26,7 @@ namespace CSI.IBTA.AuthService.Services
 
             if (!result.Any())
             {
-                return new GenericResponse<LoginResponse>(Errors.InvalidCredentials, null);
+                return new GenericResponse<LoginResponse>(HttpErrors.InvalidCredentials, null);
             }
 
             var account = result.Single();
@@ -35,7 +35,7 @@ namespace CSI.IBTA.AuthService.Services
 
             if (isPasswordCorrect == false)
             {
-                return new GenericResponse<LoginResponse>(Errors.InvalidCredentials, null);
+                return new GenericResponse<LoginResponse>(HttpErrors.InvalidCredentials, null);
             }
 
             var token = _jwtTokenGenerator.GenerateToken(account.Id, account.Role.ToString());

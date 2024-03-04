@@ -12,3 +12,19 @@
     route = `/Employer?employerId=${employerId}`;
     fetchRoute(route, onSuccess, onFailure);
 }
+
+function showEmployerSettings(employerId) {
+    fetch('/Employer/AllSettings?employerId=' + employerId)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}

@@ -120,8 +120,7 @@ div.text-danger ul {
 }
 
     .custom-button.secondary {
-        /*background-color: var(--button-secondary-color);*/
-        background-color: #6c757d;
+        background-color: var(--button-secondary-color);
     }
 
 .error-text {

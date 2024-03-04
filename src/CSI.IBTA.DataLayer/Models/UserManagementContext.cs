@@ -1,5 +1,6 @@
 ﻿using CSI.IBTA.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace CSI.IBTA.DataLayer.Models;
 
@@ -33,9 +34,9 @@ public partial class UserManagementContext : DbContext
             }
         );
         modelBuilder.Entity<Account>()
-        .HasOne(e => e.User)
-        .WithOne(e => e.Account)
-        .HasForeignKey<User>("AccountId");
+            .HasOne(e => e.User)
+            .WithOne(e => e.Account)
+            .HasForeignKey<User>("AccountId");
 
         modelBuilder.Entity<Employer>()
             .HasMany(x => x.Settings)

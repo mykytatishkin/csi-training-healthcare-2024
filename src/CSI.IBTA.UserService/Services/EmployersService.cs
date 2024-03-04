@@ -1,4 +1,5 @@
-﻿using CSI.IBTA.DataLayer.Interfaces;
+using AutoMapper;
+using CSI.IBTA.DataLayer.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
@@ -10,12 +11,13 @@ namespace CSI.IBTA.UserService.Services
 {
     internal class EmployersService : IEmployersService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserUnitOfWork _unitOfWork;
         private readonly IFileService _fileService;
         private readonly List<(string key, bool value)> _defaultSettings;
         private readonly ILogger<EmployersService> _logger;
+        private readonly IMapper _mapper;
 
-        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUnitOfWork unitOfWork, IFileService fileService)
+        public EmployersService(ILogger<EmployersService> logger, IConfiguration configuration, IUserUnitOfWork unitOfWork, IFileService fileService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
@@ -34,6 +36,7 @@ namespace CSI.IBTA.UserService.Services
                 }
                 _defaultSettings.Add((setting.Key, val));
             }
+            _mapper = mapper;
         }
 
         public async Task<GenericResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto)
@@ -57,7 +60,7 @@ namespace CSI.IBTA.UserService.Services
                 City = dto.City,
                 Zip = dto.ZipCode,
                 Settings = _defaultSettings.Select(x =>
-                    new Settings() 
+                    new Settings()
                     {
                         Condition = x.key,
                         State = x.value
@@ -143,13 +146,26 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<EmployerDto>(null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
         }
 
-        public async Task<GenericResponse<EmployerDto[]>> GetAll()
+        public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetAll()
         {
             var res = await _unitOfWork.Employers.All();
 
-            if (res == null) return new GenericResponse<EmployerDto[]>(new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
+            if (res == null) return new GenericResponse<IEnumerable<EmployerDto>>(new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
 
-            return new GenericResponse<EmployerDto[]>(null, res.Select(e => new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo)).ToArray());
+            return new GenericResponse<IEnumerable<EmployerDto>>(null, res.Select(_mapper.Map<EmployerDto>));
+        }
+
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId)
+        {
+            var response = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Emails)
+                .Where(u => u.EmployerId == employerId)
+                .ToListAsync();
+
+            var userDtos = response.Select(_mapper.Map<UserDto>);
+
+            return new GenericResponse<IEnumerable<UserDto>>(null, userDtos);
         }
 
         public async Task<GenericResponse<SettingsDto[]>> GetAllEmployerSettings(int employerId)
@@ -181,7 +197,6 @@ namespace CSI.IBTA.UserService.Services
 
         public async Task<GenericResponse<SettingsDto[]>> UpdateEmployerSettings(int employerId, SettingsDto[] SettingsDtos)
         {
-            
             var e = await _unitOfWork.Employers.Include(e => e.Settings)
                 .FirstOrDefaultAsync(s => s.Id == employerId);
             if (e == null) return new GenericResponse<SettingsDto[]>(new HttpError("Settings not found", HttpStatusCode.NotFound), null);

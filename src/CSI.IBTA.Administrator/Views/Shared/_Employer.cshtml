@@ -6,6 +6,7 @@
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.Entities
 @using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Administrator.Constants
 @model PaginatedList<EmployerDto>
 
 @{
@@ -16,12 +17,12 @@
 <div id="table-employer" class="container">
     <div class="row">
         <div class="col-sm-8">
-
         </div>
         <div class="col-sm-4">
             <button class="btn btn-primary" onclick="showEmployerCreateForm()">Add New Employer</button>
         </div>
     </div>
+
 
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
@@ -38,10 +39,10 @@
             </div>
         </form>
     </div>
-    <br/>
+    <br />
     <div class="row">
         <div class="table-data">
-            <table class="table table-striped">
+            <table class="table table-striped" id="employer-table">
                 <thead>
                     <tr>
                         <th>Employer Name</th>
@@ -53,7 +54,7 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) </a>
+                                <a onclick="showEmployerDetails(@item.Id)"> @Html.DisplayFor(modelItem => item.Name) - @Html.DisplayFor(modelItem => item.Code)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
@@ -71,8 +72,9 @@
                     Previous
                 </a>
                 @{
-                    var lastPage = Math.Min(Model.PageIndex + 7, Model.TotalPages);
-                    var firstPage = Math.Max(1, lastPage - 9);
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.PageIndex + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
                     for (int i = firstPage; i <= lastPage; i++)
                     {
                         if (i == Model.PageIndex || Model.PageIndex == 0)
@@ -107,4 +109,4 @@
 <script type="text/javascript" src="~/Scripts/employer.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-form.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
-
+<script type="text/javascript" src="~/Scripts/employer-plans.js"></script>

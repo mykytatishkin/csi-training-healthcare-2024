@@ -56,7 +56,7 @@ function previewImage(event) {
     reader.readAsDataURL(event.target.files[0]);
 }
 
-function showEmployerCreateForm(employerId) {
+function showEmployerCreateForm() {
     function onSuccess(data) {
         let form = document.getElementById('control-employer');
         form.innerHTML = data;

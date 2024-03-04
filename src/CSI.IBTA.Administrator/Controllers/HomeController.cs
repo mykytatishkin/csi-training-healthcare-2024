@@ -1,4 +1,5 @@
-﻿using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Filters;
+using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DataStructures;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
@@ -16,7 +18,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         public async Task<IActionResult> Index(
-            string? nameFilter, 
+            string? nameFilter,
             string? codeFilter,
             string? currentNameFilter,
             string? currentCodeFilter,
@@ -33,7 +35,7 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentCodeFilter"] = codeFilter;
 
             var res = await _userServiceClient.GetEmployers();
-            if (res.Result != null) 
+            if (res.Result != null)
             {
                 var employers = res.Result;
                 if (!String.IsNullOrEmpty(nameFilter))

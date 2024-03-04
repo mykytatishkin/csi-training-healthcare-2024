@@ -96,3 +96,8 @@
     height: 80px;
     margin-bottom: 1em;
 }
+
+.employer-errors {
+    display: flex;
+    margin: 0 auto;
+}
