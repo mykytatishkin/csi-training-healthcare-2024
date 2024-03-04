@@ -21,10 +21,10 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpGet("InsurancePackages")]
         public IActionResult AdministrationMenu(int employerId)
         {
-            var list = new List<EmployerPackageDto>()
+            var list = new List<InsurancePackageDto>()
             {
-                new EmployerPackageDto(2,"ISSoft Package", "Not Initialized", true),
-                new EmployerPackageDto(3," Package", $"Initialized on {employerId}", false)
+                new InsurancePackageDto(2,"ISSoft Package", "Not Initialized", true, false),
+                new InsurancePackageDto(3," Package", $"Initialized on {employerId}", false, true)
             };
             return PartialView("_EmployerPackagesMenu", list);
         }

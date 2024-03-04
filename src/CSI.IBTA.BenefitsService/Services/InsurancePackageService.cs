@@ -19,7 +19,7 @@ namespace CSI.IBTA.BenefitsService.Services
             var packages = await _benefitsUnitOfWork.Packages.Find(x => x.EmployerId == employerId && x.IsRemoved != true);
 
             return new GenericResponse<List<InsurancePackageDto>>(null, packages.Select(x => 
-               new InsurancePackageDto(x.Id, x.Name, x.Status, x.Initialized == null)).ToList());
+               new InsurancePackageDto(x.Id, x.Name, x.Status, x.Initialized == null, x.Initialized != null)).ToList());
         }
     }
 }
