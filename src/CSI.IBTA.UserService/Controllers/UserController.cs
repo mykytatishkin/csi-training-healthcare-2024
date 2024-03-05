@@ -80,15 +80,6 @@ namespace CSI.IBTA.UserService.Controllers
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> PutUser(int userId, PutUserDto putUserDto)
         {
-            var getResponse = await _userService.GetUser(userId);
-            if (getResponse.Error != null)
-            {
-                return Problem(
-                    title: getResponse.Error!.Title,
-                    statusCode: (int)getResponse.Error.StatusCode
-                );
-            }
-
             var response = await _userService.PutUser(userId, putUserDto);
 
             if (response.Error != null)

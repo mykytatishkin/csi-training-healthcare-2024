@@ -149,7 +149,7 @@ namespace CSI.IBTA.Administrator.Clients
                 { new StringContent(dto.ZipCode), nameof(dto.ZipCode) },
                 { new StringContent(dto.Phone), nameof(dto.Phone) }
             };
-
+            
             using (var stream = new MemoryStream())
             {
                 if (dto.NewLogoFile != null)
@@ -220,16 +220,17 @@ namespace CSI.IBTA.Administrator.Clients
 
             if (!response.IsSuccessStatusCode)
             {
-                var error = HttpErrors.GenericError;
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
 
-                switch (response.StatusCode)
+                if (responseError?.title != null)
                 {
-                    case HttpStatusCode.Conflict:
-                        error = new HttpError("User with this username already exists", HttpStatusCode.Conflict);
-                        break;
+                    var error = new HttpError(responseError.title, response.StatusCode);
+                    return new GenericResponse<bool?>(error, null);
                 }
 
-                return new GenericResponse<bool?>(error, null);
+                var defaultError = HttpErrors.GenericError;
+                return new GenericResponse<bool?>(defaultError, null);
             }
 
             return new GenericResponse<bool?>(null, true);
@@ -244,16 +245,17 @@ namespace CSI.IBTA.Administrator.Clients
 
             if (!response.IsSuccessStatusCode)
             {
-                var error = HttpErrors.GenericError;
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
 
-                switch (response.StatusCode)
+                if (responseError?.title != null)
                 {
-                    case HttpStatusCode.Conflict:
-                        error = new HttpError("User with this username already exists", HttpStatusCode.Conflict);
-                        break;
+                    var error = new HttpError(responseError.title, response.StatusCode);
+                    return new GenericResponse<bool?>(error, null);
                 }
 
-                return new GenericResponse<bool?>(error, null);
+                var defaultError = HttpErrors.GenericError;
+                return new GenericResponse<bool?>(defaultError, null);
             }
 
             return new GenericResponse<bool?>(null, true);
