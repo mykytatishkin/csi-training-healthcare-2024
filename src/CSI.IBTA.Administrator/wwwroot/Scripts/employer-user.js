@@ -184,8 +184,7 @@ function saveSettings() {
                 });
             }
 
-            showEmployerUsersManagement(formData.get('EmployerId'));
-            deselectEmployerUserRow();
+            showEmployerAdministration(formData.get('EmployerId'));
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
