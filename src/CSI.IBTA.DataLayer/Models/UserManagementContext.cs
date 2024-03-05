@@ -1,6 +1,5 @@
 ﻿using CSI.IBTA.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace CSI.IBTA.DataLayer.Models;
 
