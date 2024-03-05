@@ -1,17 +1,18 @@
-using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.Types;
 
 namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IUserServiceClient
     {
-        Task<GenericHttpResponse<IQueryable<EmployerDto>?>> GetEmployers();
-        Task<GenericInternalResponse<UserDto>> GetUser(int userId);
-        Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId);
-        Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? model);
-        Task<TaskResult<EmployerDto?>> CreateEmployer(CreateEmployerDto dto);
-        Task<TaskResult<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId);
-        Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id);
+        Task<GenericResponse<IQueryable<EmployerDto>?>> GetEmployers();
+        Task<GenericResponse<UserDto>> GetUser(int userId);
+        Task<GenericResponse<IQueryable<SettingsDto>?>> GetEmployerSettings(int employerId);
+        Task<GenericResponse<IQueryable<SettingsDto>?>> UpdateEmployerSettings(int employerId, List<SettingsDto>? model);
+        Task<GenericResponse<EmployerDto?>> CreateEmployer(CreateEmployerDto dto);
+        Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId);
+        Task<GenericResponse<EmployerDto>> GetEmployerById(int id);
+        Task<GenericResponse<List<UserDto>>> GetEmployerUsers(int employerId);
+        Task<GenericResponse<bool?>> CreateEmployerUser(CreateUserDto command);
+        Task<GenericResponse<bool?>> UpdateEmployerUser(PutUserDto command, int accountId);
     }
 }

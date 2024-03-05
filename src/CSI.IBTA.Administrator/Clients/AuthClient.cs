@@ -3,8 +3,9 @@ using System.Text;
 using CSI.IBTA.Administrator.Constants;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.DTOs.Login;
-using CSI.IBTA.Shared.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -37,24 +38,26 @@ namespace CSI.IBTA.Administrator.Clients
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<AuthenticationResult> Authenticate(LoginRequest request)
+        public async Task<GenericResponse<bool>> Authenticate(LoginRequest request)
         {
             var defaultErrorMessage = "An error occurred during authentication";
             if (_httpContextAccessor.HttpContext == null)
             {
                 _logger.LogError("HttpContext is null");
-                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+                var error = new HttpError(defaultErrorMessage, HttpStatusCode.InternalServerError);
+                return new GenericResponse<bool>(error, false);
             }
+
             var jsonBody = JsonConvert.SerializeObject(request);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(AuthServiceApiEndpoints.Auth, content);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
-                return new AuthenticationResult { Success = false, Description = "Invalid credentials" };
+                return new GenericResponse<bool>(new HttpError("Invalid credentials", HttpStatusCode.Unauthorized), false);
 
             if (!response.IsSuccessStatusCode)
-                return new AuthenticationResult { Success = false, Description = response.ReasonPhrase ?? defaultErrorMessage };
+                return new GenericResponse<bool>(new HttpError(response.ReasonPhrase ?? defaultErrorMessage, response.StatusCode), false);
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var jToken = JsonConvert.DeserializeObject<JToken>(responseContent);
@@ -62,7 +65,7 @@ namespace CSI.IBTA.Administrator.Clients
             if (jToken == null)
             {
                 _logger.LogError("Failed to extract JToken from response");
-                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+                return new GenericResponse<bool>(new HttpError(defaultErrorMessage, response.StatusCode), false);
             }
             
             var token = jToken["token"]?.Value<string>();
@@ -70,7 +73,7 @@ namespace CSI.IBTA.Administrator.Clients
             if (token == null)
             {
                 _logger.LogError("Response did not have a token");
-                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+                return new GenericResponse<bool>(new HttpError(defaultErrorMessage, response.StatusCode), false);
             }
             
             bool isTokenValid = _jwtTokenService.IsTokenValid(token);
@@ -78,16 +81,16 @@ namespace CSI.IBTA.Administrator.Clients
             if (!isTokenValid)
             {
                 _logger.LogWarning("Tampered token was used to login");
-                return new AuthenticationResult { Success = false, Description = defaultErrorMessage };
+                return new GenericResponse<bool>(new HttpError(defaultErrorMessage, response.StatusCode), false);
             }
 
             var isAdmin = _jwtTokenService.IsAdmin(token);
 
             if (!isAdmin)
-                return new AuthenticationResult { Success = false, Description = "Access to portal denied" };
+                return new GenericResponse<bool>(new HttpError("Response to the portal is denied", response.StatusCode), false);
 
             _httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.JwtTokenCookieName, token, _jwtTokenService.GetCookieOptions());
-            return new AuthenticationResult { Success = true, Description = "Authentication successful" };
+            return new GenericResponse<bool>(null, true);
         }
     }
 }

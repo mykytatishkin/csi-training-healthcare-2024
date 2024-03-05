@@ -1,10 +1,10 @@
-﻿using CSI.IBTA.Shared.DTOs.Login;
-using CSI.IBTA.Shared.Types;
+﻿using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.DTOs.Login;
 
 namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IAuthClient
     {
-        Task<AuthenticationResult> Authenticate(LoginRequest request);
+        Task<GenericResponse<bool>> Authenticate(LoginRequest request);
     }
 }

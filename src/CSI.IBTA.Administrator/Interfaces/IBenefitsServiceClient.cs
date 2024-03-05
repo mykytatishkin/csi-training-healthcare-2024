@@ -4,6 +4,6 @@ namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IBenefitsServiceClient
     {
-        Task<GenericHttpResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId);
+        Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId);
     }
 }
