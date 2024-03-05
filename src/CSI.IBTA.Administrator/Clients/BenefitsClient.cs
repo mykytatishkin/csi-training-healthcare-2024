@@ -19,66 +19,66 @@ namespace CSI.IBTA.Administrator.Clients
             _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
         }
 
-        public async Task<GenericInternalResponse<PlanDto>> GetPlan(int id)
+        public async Task<GenericResponse<PlanDto>> GetPlan(int id)
         {
             var response = await _httpClient.GetAsync(string.Format(BenefitsServiceApiEndpoints.Plan, id));
 
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return new GenericInternalResponse<PlanDto>(true, null, null);
+                return new GenericResponse<PlanDto>(null, null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var plan = JsonConvert.DeserializeObject<PlanDto>(responseContent);
 
-            return new GenericInternalResponse<PlanDto>(false, null, plan);
+            return new GenericResponse<PlanDto>( null, plan);
         }
 
-        public async Task<GenericInternalResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes()
+        public async Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes()
         {
             var response = await _httpClient.GetAsync(BenefitsServiceApiEndpoints.PlanTypes);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return new GenericInternalResponse<IEnumerable<PlanTypeDto>>(true, null, null);
+                return new GenericResponse<IEnumerable<PlanTypeDto>>(null, null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var plan = JsonConvert.DeserializeObject<IEnumerable<PlanTypeDto>>(responseContent);
 
-            return new GenericInternalResponse<IEnumerable<PlanTypeDto>>(false, null, plan);
+            return new GenericResponse<IEnumerable<PlanTypeDto>>(null, plan);
         }
 
 
-        public async Task<GenericInternalResponse<bool?>> CreatePlan(CreatePlanDto planDto)
+        public async Task<GenericResponse<bool?>> CreatePlan(CreatePlanDto planDto)
         {
             var jsonBody = JsonConvert.SerializeObject(planDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(BenefitsServiceApiEndpoints.Plans, content);
             if (!response.IsSuccessStatusCode)
             {
-                var error = InternalErrors.GenericError;
+                var error = HttpErrors.GenericError;
 
-                return new GenericInternalResponse<bool?>(true, error, null);
+                return new GenericResponse<bool?>(error, null);
             }
 
-            return new GenericInternalResponse<bool?>(false, null, true);
+            return new GenericResponse<bool?>(null, true);
         }
 
-        public async Task<GenericInternalResponse<bool?>> UpdatePlan(int planId, UpdatePlanDto planDto)
+        public async Task<GenericResponse<bool?>> UpdatePlan(int planId, UpdatePlanDto planDto)
         {
             var jsonBody = JsonConvert.SerializeObject(planDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PatchAsync(string.Format(BenefitsServiceApiEndpoints.Plan, planId), content);
             if (!response.IsSuccessStatusCode)
             {
-                var error = InternalErrors.GenericError;
+                var error = HttpErrors.GenericError;
 
-                return new GenericInternalResponse<bool?>(true, error, null);
+                return new GenericResponse<bool?>(error, null);
             }
 
-            return new GenericInternalResponse<bool?>(false, null, true);
+            return new GenericResponse<bool?>(null, true);
         }
     }
 }

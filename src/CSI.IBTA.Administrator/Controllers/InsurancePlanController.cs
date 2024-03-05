@@ -12,14 +12,14 @@ namespace CSI.IBTA.Administrator.Controllers
     public class InsurancePlanController : Controller
     {
         private readonly IBenefitsClient _benefitsClient;
-        private readonly IEmployerClient _employerClient;
+        private readonly IUserServiceClient _userClient;
 
         public InsurancePlanController(
             IBenefitsClient benefitsClient,
-            IEmployerClient employerClient)
+            IUserServiceClient userClient)
         {
             _benefitsClient = benefitsClient;
-            _employerClient = employerClient;
+            _userClient = userClient;
         }
 
         [HttpPost("OpenAddPlanToListForm")]
@@ -38,7 +38,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPost("AddPlanToList")]
         public async Task<IActionResult> AddPlanToList(InsurancePackageNewPlanViewModel model)
         {
-            var getEmployerResponse = await _employerClient.GetEmployerById(model.EmployerId);
+            var getEmployerResponse = await _userClient.GetEmployerById(model.EmployerId);
             if (getEmployerResponse.Error != null)
             {
                 return Problem(title: "Failed to retrieve employer");
@@ -88,7 +88,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPost("CreatePlan")]
         public async Task<IActionResult> CreatePlan(InsurancePackagePlanViewModel model)
         {
-            var getEmployerResponse = await _employerClient.GetEmployerById(model.EmployerId);
+            var getEmployerResponse = await _userClient.GetEmployerById(model.EmployerId);
             if (getEmployerResponse.Error != null)
             {
                 return Problem(title: "Failed to retrieve employer");
@@ -135,7 +135,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPost("UpdatePlan")]
         public async Task<IActionResult> UpdatePlan(InsurancePackagePlanViewModel model)
         {
-            var getEmployerResponse = await _employerClient.GetEmployerById(model.EmployerId);
+            var getEmployerResponse = await _userClient.GetEmployerById(model.EmployerId);
             if (getEmployerResponse.Error != null)
             {
                 return Problem(title: "Failed to retrieve employer");

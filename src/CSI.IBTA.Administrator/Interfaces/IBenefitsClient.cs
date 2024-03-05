@@ -1,13 +1,12 @@
-﻿using CSI.IBTA.Administrator.Models;
-using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.DTOs;
 
 namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IBenefitsClient
     {
-        Task<GenericInternalResponse<PlanDto>> GetPlan(int id);
-        Task<GenericInternalResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
-        Task<GenericInternalResponse<bool?>> CreatePlan(CreatePlanDto model);
-        Task<GenericInternalResponse<bool?>> UpdatePlan(int planId, UpdatePlanDto planDto);
+        Task<GenericResponse<PlanDto>> GetPlan(int id);
+        Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
+        Task<GenericResponse<bool?>> CreatePlan(CreatePlanDto model);
+        Task<GenericResponse<bool?>> UpdatePlan(int planId, UpdatePlanDto planDto);
     }
 }

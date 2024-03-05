@@ -1,11 +1,10 @@
-﻿using CSI.IBTA.Shared.DTOs.Errors;
-using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.DTOs;
 
 namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IInsurancePackageClient
     {
         Task<GenericResponse<bool?>> CreateInsurancePackage(CreateInsurancePackageDto command);
-        Task<GenericInternalResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
+        Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
     }
 }
