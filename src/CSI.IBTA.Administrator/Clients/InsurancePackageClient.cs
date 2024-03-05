@@ -40,5 +40,19 @@ namespace CSI.IBTA.Administrator.Clients
 
             return new GenericResponse<bool?>(null, true);
         }
+
+        public async Task<GenericInternalResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes()
+        {
+            var response = await _httpClient.GetAsync(BenefitsServiceApiEndpoints.PlanTypes);
+            if (!response.IsSuccessStatusCode)
+            {
+                return new GenericInternalResponse<IEnumerable<PlanTypeDto>>(true, null, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var plan = JsonConvert.DeserializeObject<IEnumerable<PlanTypeDto>>(responseContent);
+
+            return new GenericInternalResponse<IEnumerable<PlanTypeDto>>(false, null, plan);
+        }
     }
 }

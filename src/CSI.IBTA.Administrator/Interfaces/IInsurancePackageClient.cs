@@ -6,5 +6,6 @@ namespace CSI.IBTA.Administrator.Interfaces
     public interface IInsurancePackageClient
     {
         Task<GenericResponse<bool?>> CreateInsurancePackage(CreateInsurancePackageDto command);
+        Task<GenericInternalResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
     }
 }

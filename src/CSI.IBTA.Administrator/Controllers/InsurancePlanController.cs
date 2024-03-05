@@ -23,24 +23,14 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPost("OpenAddPlanToListForm")]
-        public async Task<IActionResult> OpenAddPlanToListForm(InsurancePackageCreationViewModel model)
+        public IActionResult OpenAddPlanToListForm(InsurancePackageCreationViewModel model)
         {
-            var getPlanTypesResponse = await _benefitsClient.GetPlanTypes();
-            if (getPlanTypesResponse.Result == null)
-            {
-                return Problem(title: "Failed to retrieve plan types");
-            }
-            var PlanTypes = getPlanTypesResponse.Result;
 
             InsurancePackageNewPlanViewModel planModel = new InsurancePackageNewPlanViewModel()
             {
                 PackageModel = model,
                 EmployerId = model.EmployerId,
-                AvailablePlanTypes = PlanTypes.Select(x => new PlanType()
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                }).ToList()
+                PlanType = model.AvailablePlanTypes.FirstOrDefault(t => t.Id == model.SelectedPlanTypeId),
             };
             return PartialView("_InsurancePackagePlanAddToList", planModel);
         }
@@ -58,8 +48,8 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 Name = model.Name,
                 Package = model.PackageModel.Package,
-                TypeId = model.PlanTypeId,
-                PlanType = model.AvailablePlanTypes.FirstOrDefault(t => t.Id == model.PlanTypeId),
+                TypeId = model.PlanType.Id,
+                PlanType = model.PlanType,
                 Contribution = model.Contribution
             };
 
