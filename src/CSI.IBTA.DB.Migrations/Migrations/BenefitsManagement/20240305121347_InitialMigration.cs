@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 {
     /// <inheritdoc />
@@ -114,6 +116,15 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         principalTable: "Plan",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "PlanType",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Medical" },
+                    { 2, "Dental" }
                 });
 
             migrationBuilder.CreateIndex(
