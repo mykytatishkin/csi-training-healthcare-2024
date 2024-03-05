@@ -35,18 +35,20 @@
                                     @Html.DisplayFor(modelItem => item.Status)
                                 </td>
                                 <td>
+                                    <div class="action-buttons">
                                         @if (item.CanBeModified)
                                         {
-                                            <button>Update</button>
+                                            <button class="btn btn-primary">Update</button>
                                         }
                                         @if (item.canBeRemoved)
                                         {
-                                            <button onclick="removePackage(@item.Id, @Model.employerId)">Remove</button>
+                                            <button class="btn btn-primary" onclick="removePackage(@item.Id, @Model.employerId)">Remove</button>
                                         }
                                         @if (item.IsInitialized == false)
                                         {
-                                            <button onclick="initializePackage(@item.Id, @Model.employerId)">Initialize</button>
+                                            <button class="btn btn-primary" onclick="initializePackage(@item.Id, @Model.employerId)">Initialize</button>
                                         }
+                                    </div>
                                 </td>
                             </tr>
                         }
