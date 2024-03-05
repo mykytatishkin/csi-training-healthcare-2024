@@ -5,12 +5,10 @@ using CSI.IBTA.Administrator.Services;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Types;
-using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
-using CSI.IBTA.Shared.Types;
-using CSI.IBTA.Administrator.Models;
-using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -26,7 +24,7 @@ namespace CSI.IBTA.Administrator.Clients
             _logger = logger;
         }
 
-        public async Task<GenericHttpResponse<IQueryable<EmployerDto>?>> GetEmployers()
+        public async Task<GenericResponse<IQueryable<EmployerDto>?>> GetEmployers()
         {
 
             var response = await _httpClient.GetAsync(UserApiEndpoints.Employer);
@@ -35,15 +33,15 @@ namespace CSI.IBTA.Administrator.Clients
             {
                 _logger.LogError("Request unsuccessful");
                 var errorMessage = response.ReasonPhrase ?? "Something went wrong";
-                return new GenericHttpResponse<IQueryable<EmployerDto>?>(true, new HttpError(errorMessage, response.StatusCode), null);
+                return new GenericResponse<IQueryable<EmployerDto>?>(new HttpError(errorMessage, response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var employers = JsonConvert.DeserializeObject<List<EmployerDto>>(responseContent).AsQueryable();
-            return new GenericHttpResponse<IQueryable<EmployerDto>?>(false ,null, employers);
+            return new GenericResponse<IQueryable<EmployerDto>?>(null, employers);
         }
 
-        public async Task<GenericInternalResponse<UserDto>> GetUser(int userId)
+        public async Task<GenericResponse<UserDto>> GetUser(int userId)
         {
             string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);
             var response = await _httpClient.GetAsync(requestUrl);
@@ -51,16 +49,16 @@ namespace CSI.IBTA.Administrator.Clients
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return new GenericInternalResponse<UserDto>(true, InternalErrors.GenericError, null);
+                return new GenericResponse<UserDto>(HttpErrors.GenericError, null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
 
-            return new GenericInternalResponse<UserDto>(false, null, user);
+            return new GenericResponse<UserDto>(null, user);
         }
 
-        public async Task<IQueryable<SettingsDto>?> GetEmployerSettings(int employerId)
+        public async Task<GenericResponse<IQueryable<SettingsDto>?>> GetEmployerSettings(int employerId)
         {
             string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
             var response = await _httpClient.GetAsync(requestUrl);
@@ -68,16 +66,16 @@ namespace CSI.IBTA.Administrator.Clients
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return null;
+                return new GenericResponse<IQueryable<SettingsDto>?>(new HttpError(response.ReasonPhrase, response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
 
-            return employersSettings;
+            return new GenericResponse<IQueryable<SettingsDto>?>(null, employersSettings);
         }
 
-        public async Task<IQueryable<SettingsDto>?> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
+        public async Task<GenericResponse<IQueryable<SettingsDto>?>> UpdateEmployerSettings(int employerId, List<SettingsDto>? SettingsDtos)
         {
             var content = JsonContent.Create(SettingsDtos);
             string requestUrl = string.Format(UserServiceApiEndpoints.Settings, employerId);
@@ -86,16 +84,17 @@ namespace CSI.IBTA.Administrator.Clients
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return null;
+                var errorMessage = response.ReasonPhrase ?? "Something went wrong";
+                return new GenericResponse<IQueryable<SettingsDto>?>(new HttpError(errorMessage, response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
 
-            return employersSettings;
+            return new GenericResponse<IQueryable<SettingsDto>?>(null, employersSettings);
         }
 
-        public async Task<TaskResult<EmployerDto?>> CreateEmployer(CreateEmployerDto dto)
+        public async Task<GenericResponse<EmployerDto?>> CreateEmployer(CreateEmployerDto dto)
         {
             var defaultErrorMessage = "Failed to create a new employer";
             var formData = new MultipartFormDataContent()
@@ -122,24 +121,24 @@ namespace CSI.IBTA.Administrator.Clients
                 var response = await _httpClient.PostAsync(UserApiEndpoints.Employer, formData);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    return new TaskResult<EmployerDto?>() { Value = null, Description = "Invalid credentials" };
+                    return new GenericResponse<EmployerDto?>(new HttpError("Invalid credentials", HttpStatusCode.Unauthorized), null);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorJson = await response.Content.ReadAsStringAsync();
                     var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
                     var errorMessage = error?.title ?? response.ReasonPhrase ?? defaultErrorMessage;
-                    return new TaskResult<EmployerDto?>() { Value = null, Description = errorMessage };
+                    return new GenericResponse<EmployerDto?>(new HttpError(errorMessage, response.StatusCode), null);
                 }
 
                 var employerJson = await response.Content.ReadAsStringAsync();
                 var employer = JsonConvert.DeserializeObject<EmployerDto>(employerJson);
 
-                return new TaskResult<EmployerDto?>() { Value = employer, Description = "Employer was created successfully" };
+                return new GenericResponse<EmployerDto?>(null, employer);
             }
         }
 
-        public async Task<TaskResult<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId)
+        public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId)
         {
             var defaultErrorMessage = "Failed to create a new employer";
             var formData = new MultipartFormDataContent()
@@ -166,40 +165,101 @@ namespace CSI.IBTA.Administrator.Clients
                 var response = await _httpClient.PutAsync($"{UserApiEndpoints.Employer}/{employerId}", formData);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    return new TaskResult<EmployerDto?>() { Value = null, Description = "Invalid credentials" };
+                    return new GenericResponse<EmployerDto?>(new HttpError("Invalid credentials", HttpStatusCode.Unauthorized), null);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorJson = await response.Content.ReadAsStringAsync();
                     var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
                     var errorMessage = error?.title ?? response.ReasonPhrase ?? defaultErrorMessage;
-                    return new TaskResult<EmployerDto?>() { Value = null, Description = errorMessage };
+                    return new GenericResponse<EmployerDto?>(new HttpError(errorMessage, response.StatusCode), null);
                 }
 
                 var employerJson = await response.Content.ReadAsStringAsync();
                 var employer = JsonConvert.DeserializeObject<EmployerDto>(employerJson);
 
-                return new TaskResult<EmployerDto?>() { Value = employer, Description = "Employer was created successfully" };
+                return new GenericResponse<EmployerDto?>(null, employer);
             }
         }
 
-        public async Task<GenericInternalResponse<EmployerDto>> GetEmployerById(int id)
+        public async Task<GenericResponse<EmployerDto>> GetEmployerById(int id)
         {
             string requestUrl = $"{UserApiEndpoints.Employer}/{id}";
             var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
             {
-                var error = response.ReasonPhrase != null ?
-                    new InternalError(response.ReasonPhrase) :
-                    InternalErrors.BaseInternalError;
-                return new GenericInternalResponse<EmployerDto>(true, error, null);
+                var error = new HttpError(response.ReasonPhrase ?? "Something went wrong", response.StatusCode);
+                return new GenericResponse<EmployerDto>(error, null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var employer = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
 
-            return new GenericInternalResponse<EmployerDto>(false, null, employer);
+            return new GenericResponse<EmployerDto>(null, employer);
+        }
+
+        public async Task<GenericResponse<List<UserDto>>> GetEmployerUsers(int employerId)
+        {
+            string requestUrl = string.Format(UserServiceApiEndpoints.EmployerUsers, employerId);
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new GenericResponse<List<UserDto>>(HttpErrors.GenericError, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employerUsers = JsonConvert.DeserializeObject<List<UserDto>>(responseContent);
+
+            return new GenericResponse<List<UserDto>>(null, employerUsers);
+        }
+
+        public async Task<GenericResponse<bool?>> CreateEmployerUser(CreateUserDto command)
+        {
+            var jsonBody = JsonConvert.SerializeObject(command);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(UserServiceApiEndpoints.Users, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = HttpErrors.GenericError;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Conflict:
+                        error = new HttpError("User with this username already exists", HttpStatusCode.Conflict);
+                        break;
+                }
+
+                return new GenericResponse<bool?>(error, null);
+            }
+
+            return new GenericResponse<bool?>(null, true);
+        }
+
+        public async Task<GenericResponse<bool?>> UpdateEmployerUser(PutUserDto command, int userId)
+        {
+            var jsonBody = JsonConvert.SerializeObject(command);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            string requestUrl = string.Format(UserServiceApiEndpoints.EmployerUser, userId);
+            var response = await _httpClient.PutAsync(requestUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = HttpErrors.GenericError;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Conflict:
+                        error = new HttpError("User with this username already exists", HttpStatusCode.Conflict);
+                        break;
+                }
+
+                return new GenericResponse<bool?>(error, null);
+            }
+
+            return new GenericResponse<bool?>(null, true);
         }
     }
 

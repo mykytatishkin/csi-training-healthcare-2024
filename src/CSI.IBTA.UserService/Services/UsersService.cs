@@ -21,7 +21,7 @@ namespace CSI.IBTA.UserService.Services
             _mapper = mapper;
         }
 
-        public async Task<GenericHttpResponse<IEnumerable<UserDto>>> GetAllUsers()
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetAllUsers()
         {
             var users = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -29,10 +29,10 @@ namespace CSI.IBTA.UserService.Services
                 .ToListAsync();
 
             var userDtos = users.Select(_mapper.Map<UserDto>);
-            return new GenericHttpResponse<IEnumerable<UserDto>>(false, null, userDtos);
+            return new GenericResponse<IEnumerable<UserDto>>(null, userDtos);
         }
 
-        public async Task<GenericHttpResponse<UserDto>> GetUserByAccountId(int accountId)
+        public async Task<GenericResponse<UserDto>> GetUserByAccountId(int accountId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -42,13 +42,13 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericHttpResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<UserDto>(new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericHttpResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
+            return new GenericResponse<UserDto>(null, _mapper.Map<UserDto>(user));
         }
 
-        public async Task<GenericHttpResponse<UserDto>> GetUser(int userId)
+        public async Task<GenericResponse<UserDto>> GetUser(int userId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -58,19 +58,19 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericHttpResponse<UserDto>(true, new HttpError("User not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<UserDto>(new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
-            return new GenericHttpResponse<UserDto>(false, null, _mapper.Map<UserDto>(user));
+            return new GenericResponse<UserDto>(null, _mapper.Map<UserDto>(user));
         }
 
-        public async Task<GenericHttpResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
+        public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
         {
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);
 
             if (existingAccount.Any())
             {
-                return new GenericHttpResponse<NewUserDto>(true, new HttpError("User already exists", HttpStatusCode.Conflict), null);
+                return new GenericResponse<NewUserDto>(new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
             }
 
             User newUser = new User()
@@ -114,9 +114,8 @@ namespace CSI.IBTA.UserService.Services
                 Employer? employer = await _unitOfWork.Employers.GetById((int)createUserDto.EmployerId);
                 if (employer == null)
                 {
-                    return new GenericHttpResponse<NewUserDto>(true, new HttpError("Employer not found", HttpStatusCode.NotFound), null);
-                }
-                else
+                    return new GenericResponse<NewUserDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+                } else
                 {
                     newUser.Employer = employer;
                 }
@@ -124,10 +123,10 @@ namespace CSI.IBTA.UserService.Services
 
             await _unitOfWork.Users.Add(newUser);
             await _unitOfWork.CompleteAsync();
-            return new GenericHttpResponse<NewUserDto>(false, null, _mapper.Map<NewUserDto>(newUser));
+            return new GenericResponse<NewUserDto>(null, _mapper.Map<NewUserDto>(newUser));
         }
 
-        public async Task<GenericHttpResponse<UpdatedUserDto>> PutUser(int userId, PutUserDto putUserDto)
+        public async Task<GenericResponse<UpdatedUserDto>> PutUser(int userId, PutUserDto putUserDto)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -138,9 +137,7 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericHttpResponse<UpdatedUserDto>(
-                    true, HttpErrors.ResourceNotFound, null
-                );
+                return new GenericResponse<UpdatedUserDto>(new HttpError("User not found", HttpStatusCode.NotFound), null);
             }
 
             var conflictingUser = await _unitOfWork.Accounts
@@ -148,9 +145,7 @@ namespace CSI.IBTA.UserService.Services
 
             if (conflictingUser.Any())
             {
-                return new GenericHttpResponse<UpdatedUserDto>(
-                    true, HttpErrors.Conflict, null
-                );
+                return new GenericResponse<UpdatedUserDto>(HttpErrors.Conflict, null);
             }
 
             user.Account.Username = putUserDto.UserName;
@@ -166,8 +161,7 @@ namespace CSI.IBTA.UserService.Services
 
             await _unitOfWork.CompleteAsync();
 
-            return new GenericHttpResponse<UpdatedUserDto>(
-                false,
+            return new GenericResponse<UpdatedUserDto>(
                 null,
                 new UpdatedUserDto(
                     user.Id,
@@ -187,8 +181,7 @@ namespace CSI.IBTA.UserService.Services
             );
         }
 
-
-        public async Task<GenericHttpResponse<bool>> DeleteUser(int userId)
+        public async Task<GenericResponse<bool>> DeleteUser(int userId)
         {
             var user = await _unitOfWork.Users
                 .Include(u => u.Account)
@@ -196,13 +189,13 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericHttpResponse<bool>(true, new HttpError("User not found", HttpStatusCode.NotFound), false);
+                return new GenericResponse<bool>(new HttpError("User not found", HttpStatusCode.NotFound), false);
             }
 
             await _unitOfWork.Accounts.Delete(user.Account.Id);
             await _unitOfWork.Users.Delete(user.Id);
             await _unitOfWork.CompleteAsync();
-            return new GenericHttpResponse<bool>(false, null, true);
+            return new GenericResponse<bool>(null, true);
         }
     }
 }

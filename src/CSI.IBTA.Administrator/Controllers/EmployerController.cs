@@ -12,23 +12,17 @@ namespace CSI.IBTA.Administrator.Controllers
     [Route("Employer")]
     public class EmployerController : Controller
     {
-        private readonly IEmployerClient _employerClient;
-        private readonly IEmployerUserClient _employerUserClient;
         private readonly IUserServiceClient _userServiceClient;
 
         public EmployerController(
-            IEmployerClient employerClient,
-            IEmployerUserClient employerUserClient,
             IUserServiceClient userServiceClient)
         {
-            _employerClient = employerClient;
-            _employerUserClient = employerUserClient;
             _userServiceClient = userServiceClient;
         }
 
         public async Task<IActionResult> Index(int employerId)
         {
-            var response = await _employerClient.GetEmployerById(employerId);
+            var response = await _userServiceClient.GetEmployerById(employerId);
 
             if (response.Error != null)
             {
@@ -51,7 +45,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpGet("UpdateEmployerForm")]
-        public async Task<ActionResult> UpdateEmployerForm(int employerId)
+        public async Task<IActionResult> UpdateEmployerForm(int employerId)
         {
             var response = await _userServiceClient.GetEmployerById(employerId);
 
@@ -80,7 +74,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpGet("Users")]
         public async Task<IActionResult> Users(int employerId)
         {
-            var response = await _employerUserClient.GetEmployerUsers(employerId);
+            var response = await _userServiceClient.GetEmployerUsers(employerId);
 
             if (response.Error != null || response.Result == null)
             {
@@ -151,7 +145,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.Email,
                 "", "", "", "");
 
-            var response = await _employerUserClient.CreateEmployerUser(command);
+            var response = await _userServiceClient.CreateEmployerUser(command);
 
             if (response.Error != null)
             {
@@ -185,7 +179,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.Email,
                 "", "", "", "");
 
-            var response = await _employerUserClient.UpdateEmployerUser(command, model.UserId.Value);
+            var response = await _userServiceClient.UpdateEmployerUser(command, model.UserId.Value);
 
             if (response.Error != null)
             {
@@ -201,7 +195,7 @@ namespace CSI.IBTA.Administrator.Controllers
         {
             var response = await _userServiceClient.GetEmployerSettings(employerId);
 
-            if (response == null)
+            if (response.Result == null)
             {
                 throw new Exception("Failed to retrieve employer users");
             }
@@ -209,7 +203,7 @@ namespace CSI.IBTA.Administrator.Controllers
             var viewModel = new EmployerSettingsViewModel
             {
                 EmployerId = employerId,
-                EmployerSettings = response.ToList()
+                EmployerSettings = response.Result.ToList()
             };
 
             return PartialView("_EmployerSettings", viewModel);
@@ -220,7 +214,7 @@ namespace CSI.IBTA.Administrator.Controllers
         {
             var response = await _userServiceClient.UpdateEmployerSettings(model.EmployerId, model.EmployerSettings);
 
-            if (response == null)
+            if (response.Result == null)
             {
                 throw new Exception("Failed to retrieve employer settings");
             }
@@ -228,7 +222,7 @@ namespace CSI.IBTA.Administrator.Controllers
             var viewModel = new EmployerSettingsViewModel
             {
                 EmployerId = model.EmployerId,
-                EmployerSettings = response.ToList()
+                EmployerSettings = response.Result.ToList()
             };
 
             return PartialView("_EmployerSettings", viewModel);
