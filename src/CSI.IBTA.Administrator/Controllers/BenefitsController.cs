@@ -19,7 +19,7 @@ namespace CSI.IBTA.Administrator.Controllers
         public async Task<IActionResult> InsurancePackages(int employerId)
         {
             var res = await _benefitsServiceClient.GetInsurancePackages(employerId);
-
+            
             if (res.Error != null || res.Result == null)
             {
                 throw new Exception("Failed to retrieve employer's packages");
