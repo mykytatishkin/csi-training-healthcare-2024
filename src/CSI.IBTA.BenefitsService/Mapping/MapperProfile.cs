@@ -26,8 +26,10 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Id,
                     x.Name,
                     x.Status,
-                    x.Initialized == null,
-                    x.Initialized != null));
+                    DateTime.UtcNow < x.PlanEnd,
+                    x.Initialized == null || DateTime.UtcNow > x.PlanEnd,
+                    x.Initialized != null)
+                );
         }
     }
 }

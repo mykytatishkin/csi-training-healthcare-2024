@@ -50,5 +50,39 @@ namespace CSI.IBTA.BenefitsService.Controllers
 
             return Ok(response.Result);
         }
+
+        [HttpPatch("{packageId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> InitializeInsurancePackage(int packageId)
+        {
+            var response = await _insurancePackageService.InitializeInsurancePackage(packageId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpDelete("{packageId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> RemoveInsurancePackage(int packageId)
+        {
+            var response = await _insurancePackageService.RemoveInsurancePackage(packageId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
     }
 }

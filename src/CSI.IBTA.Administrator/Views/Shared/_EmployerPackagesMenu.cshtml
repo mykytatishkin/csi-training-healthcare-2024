@@ -7,46 +7,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
     <link rel="stylesheet" href="~/css/employer-plans.css">
+    <script type="text/javascript" src="~/Scripts/employer-plans.js"></script>
 </head>
 <body>
     <div class="main-container">
         <span class="border-label">Plan Years</span>
         <div class="row">
             <div class="table-data">
-                <div class="new-plan-button">
-                    <button onclick="createInsurancePackage(@Model.EmployerId)" class="custom-button">Add New Plan Year</button>
-                </div>
-                @if (Model.InsurancePackages.Any())
-                {
-                    <table class="table table-striped">
-                        <thead>
+            <div class="new-plan-button">
+                <button onclick="createInsurancePackage(@Model.EmployerId)" class="custom-button">Add New Plan Year</button>
+            </div>
+            @if (Model.packages.Any())
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Package Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.packages)
+                        {
                             <tr>
-                                <th>Package Name</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        @if (item.CanBeModified)
+                                        {
+                                            <button class="btn btn-primary">Update</button>
+                                        }
+                                        @if (item.CanBeRemoved)
+                                        {
+                                            <button class="btn btn-primary" onclick="removePackage(@item.Id, @Model.employerId)">Remove</button>
+                                        }
+                                        @if (item.IsInitialized == false)
+                                        {
+                                            <button class="btn btn-primary" onclick="initializePackage(@item.Id, @Model.employerId)">Initialize</button>
+                                        }
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.InsurancePackages)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Status)
-                                    </td>
-                                    <td>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div>This employer does not have any insurance packages.</div>
-                }
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div>This employer does not have any insurance packages.</div>
+            }
+                <div id="employer-package-errors" class="form-errors text-danger"></div>
             </div>
         </div>
     </div>
