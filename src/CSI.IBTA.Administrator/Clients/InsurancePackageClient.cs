@@ -54,5 +54,19 @@ namespace CSI.IBTA.Administrator.Clients
 
             return new GenericResponse<IEnumerable<PlanTypeDto>>(null, plan);
         }
+
+        public async Task<GenericResponse<int?>> GetInsurancePackage(int insurancePackageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<GenericResponse<bool?>> UpdateInsurancePackage(CreateInsurancePackageDto command)
+        {
+            var jsonBody = JsonConvert.SerializeObject(command);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(BenefitsServiceApiEndpoints.InsurancePackages, content);
+
+            return new GenericResponse<bool?>(null, true);
+        }
     }
 }

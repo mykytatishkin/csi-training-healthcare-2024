@@ -73,5 +73,73 @@ namespace CSI.IBTA.Administrator.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateInsurancePackage(int employerId, int insurancePackageId)
+        {
+            var packageDetails = await _packageClient.GetInsurancePackage(insurancePackageId);
+
+            if (packageDetails.Error != null)
+            {
+                return Problem(
+                    title: packageDetails.Error.Title,
+                    statusCode: (int)packageDetails.Error.StatusCode
+                );
+            }
+
+            var getPlanTypesResponse = await _packageClient.GetPlanTypes();
+            if (getPlanTypesResponse.Result == null)
+            {
+                return Problem(title: "Failed to retrieve plan types");
+            }
+            var PlanTypes = getPlanTypesResponse.Result;
+
+            var viewModel = new InsurancePackageModificationViewModel
+            {
+                EmployerId = employerId,
+                AvailablePlanTypes = PlanTypes.Select(x => new PlanType()
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList()
+            };
+
+            return PartialView("InsurancePackages/_ModifyInsurancePackage", viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateInsurancePackage(InsurancePackageCreationViewModel viewModel)
+        {
+            List<CreatePlanDto> planDtos = [];
+
+            if (viewModel.Plans != null)
+            {
+                planDtos = viewModel.Plans
+                    .ConvertAll(p => new CreatePlanDto(
+                        p.Name,
+                        p.Contribution,
+                        p.TypeId));
+            }
+
+            var command = new CreateInsurancePackageDto(
+                viewModel.Package.Name,
+                viewModel.Package.PlanStart,
+                viewModel.Package.PlanEnd,
+                viewModel.Package.PayrollFrequency,
+                viewModel.EmployerId,
+                planDtos);
+
+            var response = await _packageClient.UpdateInsurancePackage(command);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok();
+        }
     }
 }
