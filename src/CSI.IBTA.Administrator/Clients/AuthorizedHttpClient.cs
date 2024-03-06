@@ -21,7 +21,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public void SetBaseAddress(string urlConfigurationString)
         {
-            var apiUrl = _configuration.GetValue<string>("UserServiceApiUrl");
+            var apiUrl = _configuration.GetValue<string>(urlConfigurationString);
 
             if (string.IsNullOrEmpty(apiUrl))
             {
