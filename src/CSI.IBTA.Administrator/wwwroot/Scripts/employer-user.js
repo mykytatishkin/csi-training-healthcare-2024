@@ -16,6 +16,7 @@
 function showEmployerUsersManagement(employerId) {
     function onSuccess(data) {
         document.getElementById('employer-partial-action').innerHTML = data;
+        showCreateUserSection(employerId);
     }
 
     function onFailure(statusCode) {
@@ -54,7 +55,6 @@ function setRandomPassword() {
 
 let selectedUserId = -1;
 let selectedUserRowElement = null;
-let userOperation = "";
 
 function onEmployerUserRowClick(element) {
     updateButton = document.getElementById('update-button');
@@ -64,10 +64,6 @@ function onEmployerUserRowClick(element) {
         deselectEmployerUserRow();
     } else {
         selectEmployerUserRow(element);
-    }
-
-    if (userOperation == "update") {
-        hideUserSection();
     }
 }
 
@@ -95,20 +91,9 @@ function deselectEmployerUserRow() {
     }
 }
 
-function hideUserSection() {
-    document.getElementById('user-create-section').innerHTML = null;
-}
-
 function showCreateUserSection(employerId) {
-    if (userOperation == "create") {
-        document.getElementById('user-create-section').innerHTML = null;
-        userOperation = "";
-        return;
-    }
-
     function onSuccess(data) {
         document.getElementById('user-create-section').innerHTML = data;
-        userOperation = "create";
     }
 
     function onFailure(statusCode) {
@@ -122,7 +107,6 @@ function showCreateUserSection(employerId) {
 function showUpdateUserSection(employerId) {
     function onSuccess(data) {
         document.getElementById('user-create-section').innerHTML = data;
-        userOperation = "update";
     }
 
     function onFailure(statusCode) {
