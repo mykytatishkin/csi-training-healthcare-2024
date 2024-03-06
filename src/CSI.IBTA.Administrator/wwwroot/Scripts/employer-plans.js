@@ -12,3 +12,36 @@ function showEmployerPackagePlans(employerId) {
     route = `/Benefits/InsurancePackages?employerId=${employerId}`;
     fetchRoute(route, onSuccess, onFailure);
 }
+
+function initializePackage(packageId, employerId) {
+    fetch(`/Benefits/InitializePackage?packageId=${packageId}&employerId=${employerId}`, {
+        method: 'PATCH'
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                showError("employer-package-errors", "Failed to initialize insurance package");
+                return;
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+
+}
+
+function removePackage(packageId, employerId) {
+    fetch(`/Benefits/RemovePackage?packageId=${packageId}&employerId=${employerId}`, {
+        method: 'DELETE'
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                showError("employer-package-errors", "Failed to remove insurance package");
+                return;
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+}

@@ -1,5 +1,5 @@
 ﻿﻿@using CSI.IBTA.Shared.DTOs
-@model List<InsurancePackageDto>
+@model (List<InsurancePackageDto> packages, int employerId)
 
 <!DOCTYPE html>
 <head>
@@ -7,13 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
     <link rel="stylesheet" href="~/css/employer-plans.css">
+    <script type="text/javascript" src="~/Scripts/employer-plans.js"></script>
 </head>
 <body>
     <div class="main-container">
         <span class="border-label">Plan Years</span>
         <div class="row">
             <div class="table-data">
-            @if (Model.Any())
+            @if (Model.packages.Any())
             {
                 <table class="table table-striped">
                     <thead>
@@ -24,7 +25,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.packages)
                         {
                             <tr>
                                 <td>
@@ -34,6 +35,20 @@
                                     @Html.DisplayFor(modelItem => item.Status)
                                 </td>
                                 <td>
+                                    <div class="action-buttons">
+                                        @if (item.CanBeModified)
+                                        {
+                                            <button class="btn btn-primary">Update</button>
+                                        }
+                                        @if (item.CanBeRemoved)
+                                        {
+                                            <button class="btn btn-primary" onclick="removePackage(@item.Id, @Model.employerId)">Remove</button>
+                                        }
+                                        @if (item.IsInitialized == false)
+                                        {
+                                            <button class="btn btn-primary" onclick="initializePackage(@item.Id, @Model.employerId)">Initialize</button>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -44,6 +59,7 @@
             {
                 <div>This employer does not have any insurance packages.</div>
             }
+                <div id="employer-package-errors" class="form-errors text-danger"></div>
             </div>
         </div>
     </div>
