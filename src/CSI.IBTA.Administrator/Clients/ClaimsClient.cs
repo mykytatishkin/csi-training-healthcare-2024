@@ -18,7 +18,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<IQueryable<ClaimDto>?>> GetClaims()
         {
-            var response = await _httpClient.GetAsync(BenefitsApiEndpoints.Claims);
+            var response = await _httpClient.GetAsync(BenefitsServiceApiEndpoints.Claims);
 
             if (!response.IsSuccessStatusCode)
             {
