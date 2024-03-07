@@ -9,7 +9,10 @@ namespace CSI.IBTA.Administrator.Clients
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthorizedHttpClient> _logger;
 
-        public AuthorizedHttpClient(IJwtTokenService jwtTokenService, IConfiguration configuration, ILogger<AuthorizedHttpClient> logger)
+        public AuthorizedHttpClient(
+            IJwtTokenService jwtTokenService,
+            IConfiguration configuration,
+            ILogger<AuthorizedHttpClient> logger)
         {
             _jwtTokenService = jwtTokenService;
             _configuration = configuration;
@@ -17,6 +20,19 @@ namespace CSI.IBTA.Administrator.Clients
 
             string token = _jwtTokenService.GetCachedToken() ?? string.Empty;
             DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        public string GetBaseAddress(string urlConfigurationString)
+        {
+            var apiUrl = _configuration.GetValue<string>(urlConfigurationString);
+
+            if (string.IsNullOrEmpty(apiUrl))
+            {
+                _logger.LogError("API URL \"{urlConfigurationString}\" is missing in appsettings.json", urlConfigurationString);
+                throw new InvalidOperationException($"API URL \"{urlConfigurationString}\" is missing in appsettings.json");
+            }
+
+            return apiUrl;
         }
 
         public void SetBaseAddress(string urlConfigurationString)

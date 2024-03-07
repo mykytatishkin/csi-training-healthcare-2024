@@ -1,0 +1,19 @@
+﻿.user-information-section {
+    border: solid 1px var(--form-border-color);
+    border-radius: 10px;
+    padding: 4px 0px 16px 20px;
+    margin-bottom: 28px;
+}
+
+.border-label {
+    position: relative;
+    background-color: var(--container-background-color);
+}
+
+#table-employer {
+    margin-top: 16px;
+}
+
+#claims-search-form p {
+    margin: 10px;
+}

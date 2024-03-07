@@ -87,7 +87,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 EmployerUsers = response.Result
             };
 
-            return PartialView("_EmployerAdministrationUserManagement", viewModel);
+            return PartialView("EmployerUserManagement/_EmployerAdministrationUserManagement", viewModel);
         }
 
         [HttpGet("CreateUser")]
@@ -99,7 +99,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 EmployerId = employerId
             };
 
-            return PartialView("_EmployerCreateUserSection", viewModel);
+            return PartialView("EmployerUserManagement/_EmployerCreateUserSection", viewModel);
         }
 
         [HttpGet("UpdateUser")]
@@ -123,7 +123,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 Username = response.Result.UserName
             };
 
-            return PartialView("_EmployerCreateUserSection", viewModel);
+            return PartialView("EmployerUserManagement/_EmployerCreateUserSection", viewModel);
         }
 
         [HttpPost("CreateUser")]

@@ -1,5 +1,5 @@
 ﻿﻿@using CSI.IBTA.Shared.DTOs
-@model (List<InsurancePackageDto> packages, int employerId)
+@model InsurancePackageViewModel
 
 <!DOCTYPE html>
 <head>
@@ -14,51 +14,54 @@
         <span class="border-label">Plan Years</span>
         <div class="row">
             <div class="table-data">
-            @if (Model.packages.Any())
-            {
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Package Name</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.packages)
-                        {
+                <div class="new-plan-button">
+                    <button onclick="createInsurancePackage(@Model.EmployerId)" class="custom-button">Add New Plan Year</button>
+                </div>
+                @if (Model.InsurancePackages.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
                             <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Status)
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        @if (item.CanBeModified)
-                                        {
-                                            <button class="btn btn-primary">Update</button>
-                                        }
-                                        @if (item.CanBeRemoved)
-                                        {
-                                            <button class="btn btn-primary" onclick="removePackage(@item.Id, @Model.employerId)">Remove</button>
-                                        }
-                                        @if (item.IsInitialized == false)
-                                        {
-                                            <button class="btn btn-primary" onclick="initializePackage(@item.Id, @Model.employerId)">Initialize</button>
-                                        }
-                                    </div>
-                                </td>
+                                <th>Package Name</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <div>This employer does not have any insurance packages.</div>
-            }
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.InsurancePackages)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Status)
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            @if (item.CanBeModified)
+                                            {
+                                                <button class="btn btn-primary">Update</button>
+                                            }
+                                            @if (item.CanBeRemoved)
+                                            {
+                                                <button class="btn btn-primary" onclick="removePackage(@item.Id, @Model.EmployerId)">Remove</button>
+                                            }
+                                            @if (item.IsInitialized == false)
+                                            {
+                                                <button class="btn btn-primary" onclick="initializePackage(@item.Id, @Model.EmployerId)">Initialize</button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div>This employer does not have any insurance packages.</div>
+                }
                 <div id="employer-package-errors" class="form-errors text-danger"></div>
             </div>
         </div>
