@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
+using System.Numerics;
 
 namespace CSI.IBTA.BenefitsService.Mapping
 {
@@ -28,6 +29,21 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Status,
                     x.Initialized == null,
                     x.Initialized != null));
+
+            CreateMap<Package, FullInsurancePackageDto>()
+                .ConstructUsing(x => new FullInsurancePackageDto(
+                    x.Id,
+                    x.Name,
+                    x.PlanStart,
+                    x.PlanEnd,
+                    x.PayrollFrequency,
+                    x.EmployerId,
+                    x.Plans.Select(plan => new PlanDto(
+                        plan.Id,
+                        plan.Name,
+                        new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name),
+                        plan.Contribution,
+                        plan.PackageId)).ToList()));
         }
     }
 }

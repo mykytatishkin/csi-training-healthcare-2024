@@ -5,6 +5,10 @@ using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
 using AutoMapper;
+using CSI.IBTA.DB.Migrations.Migrations;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using CSI.IBTA.DataLayer.Extentions;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -91,6 +95,32 @@ namespace CSI.IBTA.BenefitsService.Services
             var packages = await _benefitsUnitOfWork.Packages.Find(x => x.EmployerId == employerId && x.IsRemoved != true);
 
             return new GenericResponse<List<InsurancePackageDto>>(null, packages.Select(_mapper.Map<InsurancePackageDto>).ToList());
+        }
+
+        public async Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int packageId)
+        {
+            try
+            {
+                var plans = await _benefitsUnitOfWork.Plans.Include(x => x.PlanType)
+                    .Where(x => x.PackageId == packageId).ToListAsync();
+
+                var package = await _benefitsUnitOfWork.Packages.GetById(packageId);
+
+                package.Plans = plans;
+
+                if (plans == null)
+                {
+                    var error = new HttpError("Insurance package not found", HttpStatusCode.NotFound);
+                    return new GenericResponse<FullInsurancePackageDto>(error, null);
+                }
+
+                return new GenericResponse<FullInsurancePackageDto>(null, _mapper.Map<FullInsurancePackageDto>(package));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

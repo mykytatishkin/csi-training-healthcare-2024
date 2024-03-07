@@ -74,7 +74,7 @@ namespace CSI.IBTA.Administrator.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpGet("UpdateInsurancePackage")]
         public async Task<IActionResult> UpdateInsurancePackage(int employerId, int insurancePackageId)
         {
             var packageDetails = await _packageClient.GetInsurancePackage(insurancePackageId);
@@ -97,31 +97,30 @@ namespace CSI.IBTA.Administrator.Controllers
             var viewModel = new InsurancePackageModificationViewModel
             {
                 EmployerId = employerId,
-                AvailablePlanTypes = PlanTypes.Select(x => new PlanType()
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                }).ToList()
+                Package = packageDetails.Result,
+                Plans = packageDetails.Result.Plans,
+                AvailablePlanTypes = PlanTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList(),
             };
 
             return PartialView("InsurancePackages/_ModifyInsurancePackage", viewModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateInsurancePackage(InsurancePackageCreationViewModel viewModel)
+        [HttpPost("UpdateInsurancePackage")]
+        public async Task<IActionResult> UpdateInsurancePackage(InsurancePackageModificationViewModel viewModel)
         {
-            List<CreatePlanDto> planDtos = [];
+            List<UpdatePlanDto> planDtos = [];
 
             if (viewModel.Plans != null)
             {
                 planDtos = viewModel.Plans
-                    .ConvertAll(p => new CreatePlanDto(
+                    .Select(p => new UpdatePlanDto(
                         p.Name,
                         p.Contribution,
-                        p.TypeId));
+                        p.TypeId))
+                    .ToList();
             }
 
-            var command = new CreateInsurancePackageDto(
+            var command = new FullInsurancePackageDto(
                 viewModel.Package.Name,
                 viewModel.Package.PlanStart,
                 viewModel.Package.PlanEnd,

@@ -35,12 +35,12 @@ namespace CSI.IBTA.Administrator.Clients
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _httpClient.GetAsync($"{BenefitsApiEndpoints.InsurancePackage}/{employerId}");
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackagesByEmployer}/{employerId}");
 
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                 return new GenericResponse<List<InsurancePackageDto>>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching insurance packages", response.StatusCode), null);
+                return new GenericResponse<List<InsurancePackageDto>>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching insurance packages", response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -48,5 +48,4 @@ namespace CSI.IBTA.Administrator.Clients
             return new GenericResponse<List<InsurancePackageDto>>(null, packages);
         }
     }
-
 }

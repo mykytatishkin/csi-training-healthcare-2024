@@ -14,12 +14,10 @@ public partial class BenefitsManagementContext : DbContext
     public BenefitsManagementContext(DbContextOptions<BenefitsManagementContext> options)
         : base(options)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
         modelBuilder.Entity<Plan>()
             .HasOne(e => e.PlanType)
             .WithMany()
@@ -36,5 +34,10 @@ public partial class BenefitsManagementContext : DbContext
                 Name = "Dental",
             }
         );
+
+        modelBuilder.Entity<Package>()
+            .HasMany(x => x.Plans)
+            .WithOne(x => x.Package)
+            .IsRequired();
     }
 }

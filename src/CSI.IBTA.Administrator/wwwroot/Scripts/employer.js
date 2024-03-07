@@ -45,8 +45,8 @@ function createInsurancePackage(employerId) {
         });
 }
 
-function modifyInsurancePackage(insurancePackageId) {
-    fetch('/InsurancePackage/Modify?insurancePackageId=' + insurancePackageId)
+function modifyInsurancePackage(insurancePackageId, employerId) {
+    fetch('/InsurancePackage/UpdateInsurancePackage?employerId=' + employerId + '&insurancePackageId=' + insurancePackageId)
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

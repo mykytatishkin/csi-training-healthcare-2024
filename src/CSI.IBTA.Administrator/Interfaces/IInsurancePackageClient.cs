@@ -6,10 +6,10 @@ namespace CSI.IBTA.Administrator.Interfaces
     {
         Task<GenericResponse<bool?>> CreateInsurancePackage(CreateInsurancePackageDto command);
 
-        Task<GenericResponse<bool?>> UpdateInsurancePackage(CreateInsurancePackageDto command);
-
         Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
 
-        Task<GenericResponse<int?>> GetInsurancePackage(int insurancePackageId);
+        Task<GenericResponse<bool?>> UpdateInsurancePackage(FullInsurancePackageDto command);
+
+        Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int insurancePackageId);
     }
 }
