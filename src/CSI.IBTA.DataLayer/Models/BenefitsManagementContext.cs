@@ -19,23 +19,22 @@ public partial class BenefitsManagementContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Claim>()
-            .HasOne(e => e.Plan)
-            .WithMany()
-            .HasForeignKey(e => e.PlanId);
-
-        modelBuilder.Entity<Enrollment>()
-            .HasOne(e => e.Plan)
-            .WithMany()
-            .HasForeignKey(e => e.PlanId);
 
         modelBuilder.Entity<Plan>()
             .HasOne(e => e.PlanType)
             .WithMany()
             .HasForeignKey(e => e.TypeId);
-        modelBuilder.Entity<Plan>()
-            .HasOne(e => e.Package)
-            .WithMany()
-            .HasForeignKey(e => e.PackageId);
+        modelBuilder.Entity<PlanType>().HasData(
+            new PlanType
+            {
+                Id = 1,
+                Name = "Medical",
+            },
+            new PlanType
+            {
+                Id = 2,
+                Name = "Dental",
+            }
+        );
     }
 }

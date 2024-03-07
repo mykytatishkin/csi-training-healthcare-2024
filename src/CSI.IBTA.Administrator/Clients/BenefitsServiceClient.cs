@@ -20,7 +20,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
         {
-            var response = await _httpClient.GetAsync($"{BenefitsApiEndpoints.InsurancePackage}/{employerId}");
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{employerId}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -32,10 +32,10 @@ namespace CSI.IBTA.Administrator.Clients
             var packages = JsonConvert.DeserializeObject<List<InsurancePackageDto>>(responseContent);
             return new GenericResponse<List<InsurancePackageDto>>(null, packages);
         }
-
+        
         public async Task<GenericResponse<InsurancePackageDto>> InitializeInsurancePackage(int packageId)
         {
-            var response = await _httpClient.PatchAsync($"{BenefitsApiEndpoints.InsurancePackage}/{packageId}", null);
+            var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{packageId}", null);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -50,7 +50,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<bool>> RemoveInsurancePackage(int packageId)
         { 
-            var response = await _httpClient.DeleteAsync($"{BenefitsApiEndpoints.InsurancePackage}/{packageId}");
+            var response = await _httpClient.DeleteAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{packageId}");
 
             if (!response.IsSuccessStatusCode)
             {
