@@ -17,6 +17,15 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Initialized == null || DateTime.UtcNow > x.PlanEnd,
                     x.Initialized != null)
                 );
+
+            CreateMap<Claim, ClaimDetailsDto>()
+                .ConstructUsing(x => new ClaimDetailsDto(
+                    x.Id,
+                    x.ClaimNumber,
+                    x.DateOfService,
+                    x.Plan.Name,
+                    x.Amount)
+                );
         }
     }
 }
