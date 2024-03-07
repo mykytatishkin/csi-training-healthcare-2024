@@ -1,9 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@using CSI.IBTA.Shared.DataStructures
+﻿@using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.Entities
 @using CSI.IBTA.Shared.DTOs
 @using CSI.IBTA.Administrator.Constants
@@ -23,18 +18,17 @@
         </div>
     </div>
 
-
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
-        <form asp-action="Index" method="get">
+        <form asp-action="Employers" method="get" id="employer-search-form">
             <div class="form-actions no-color">
                 <p>
                     <label for="NameFilter">Employer Name:</label>
                     <input type="text" name="NameFilter" value="@ViewData["CurrentNameFilter"]" />
                     <label for="CodeFilter">Employer Code:</label>
                     <input type="text" name="CodeFilter" value="@ViewData["CurrentCodeFilter"]" />
-                    <input type="submit" value="Search" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-primary">Back to Full List</a>
+                    <input type="button" onclick="searchEmployers()" value="Search" class="btn btn-primary" />
+                    <input type="button" onclick="searchAllEmployers()" class="btn btn-primary" value="Back to Full List">
                 </p>
             </div>
         </form>
@@ -64,10 +58,7 @@
                 </tbody>
             </table>
             <div style="text-align:right" class="pages">
-                <a asp-action="Index"
-                   asp-route-sortOrder="@ViewData["CurrentSort"]"
-                   asp-route-pageNumber="@(Model.PageIndex - 1)"
-                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                <a onclick="getEmployersPage('', @(Model.PageIndex - 1), '')"
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
@@ -81,32 +72,23 @@
                         {
                             <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
                         }
-                        else{
-                            <a asp-action="Index"
-                               asp-route-sortOrder="@ViewData["CurrentSort"]"
-                               asp-route-pageNumber="@(i)"
-                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                        else
+                        {
+                            <a onclick="getEmployersPage('', @(i), '')"
                                class="btn btn-default">
                                 @i
                             </a>
                         }
                     }
                 }
-                <a asp-action="Index"
-                   asp-route-sortOrder="@ViewData["CurrentSort"]"
-                   asp-route-pageNumber="@(Model.PageIndex + 1)"
-                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                <a onclick="getEmployersPage('', @(Model.PageIndex + 1), '')"
                    class="btn btn-default @nextDisabled">
                     Next
                 </a>
                 <div class="test">
-            </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <div id="control-employer" />
-<script type="text/javascript" src="~/Scripts/employer.js"></script>
-<script type="text/javascript" src="~/Scripts/employer-form.js"></script>
-<script type="text/javascript" src="~/Scripts/employer-user.js"></script>
-<script type="text/javascript" src="~/Scripts/employer-plans.js"></script>

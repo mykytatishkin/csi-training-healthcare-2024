@@ -19,15 +19,16 @@
                     <div class="partial">
                         <div class="panel">
                             <div class="control">
-                                <button class="left partial-btn active" onclick="showEmployer()">Employer</button>
-                                <button class="right partial-btn" onclick="showClaims()">Claims</button>
+                                <button class="left partial-btn active" onclick="showEmployer2()">Employer</button>
+                                <button class="right partial-btn" onclick="showClaims2()">Claims</button>
                             </div>
-                            <div id="employer-content">
-                                @Html.Partial("_Employer")
+                            <div id="employer-content" style="display: none;">
+                                @* <partial name="_Employer" /> *@
                             </div>
                             <div id="claims-content" style="display: none;">
-                                @Html.Partial("_Claims")
+                                @* <partial name="_Claims" /> *@
                             </div>
+                            <div id="content"></div>
                         </div>
                     </div>
                 </div>
@@ -48,6 +49,113 @@
             $(".left.partial-btn").removeClass("active");
             $(".right.partial-btn").addClass("active");
         }
+
+        window.onload = function () {
+            console.log("working");
+            showEmployer2();
+        };
+        
+        function showEmployer2() {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+
+            route = '/Employers';
+            fetchRoute(route, onSuccess, null);
+        }
+
+        function searchEmployers() {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+            
+            var form = document.getElementById('employer-search-form');
+
+            if (form.checkValidity() == false) {
+                form.reportValidity();
+                return;
+            }
+
+            var formData = new FormData(form);
+
+            route = '/Employers?NameFilter=' + formData.get('NameFilter') + '&CodeFilter=' + formData.get('CodeFilter');
+            fetchRoute(route, onSuccess, null);
+        }
+
+        function searchAllEmployers() {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+
+            route = '/Employers';
+            fetchRoute(route, onSuccess, null);
+        }
+
+        function getEmployersPage(sort, page, filter) {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+
+            route = '/Employers?sortOrder=' + sort + '&pageNumber=' + page + '&currentFilter=' + filter;
+            console.log(route);
+            fetchRoute(route, onSuccess, null);
+        }
+
+
+
+
+
+        function showClaims2() {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+
+            route = '/Claims';
+            fetchRoute(route, onSuccess, null);
+        }
+
+        function searchClaims() {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+
+            var form = document.getElementById('employer-search-form');
+
+            if (form.checkValidity() == false) {
+                form.reportValidity();
+                return;
+            }
+
+            var formData = new FormData(form);
+
+            route = '/Claims?NumberFilter=' + formData.get('NumberFilter') + '&EmployerFilter=' + formData.get('EmployerFilter');
+            fetchRoute(route, onSuccess, null);
+        }
+
+        function searchAllClaims() {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+
+            route = '/Claims';
+            fetchRoute(route, onSuccess, null);
+        }
+
+        function getClaimsPage(sort, page, filter) {
+            function onSuccess(data) {
+                document.getElementById('content').innerHTML = data;
+            }
+
+            route = '/Claims?sortOrder=' + sort + '&pageNumber=' + page + '&currentFilter=' + filter;
+            console.log(route);
+            fetchRoute(route, onSuccess, null);
+        }
     </script>
+    <script type="text/javascript" src="~/Scripts/employer.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-form.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-plans.js"></script>
+    <script type="text/javascript" src="~/Scripts/benefits.js"></script>
+    <script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
 </body>
 </html>
