@@ -2,6 +2,7 @@
 {
     public interface IAuthorizedHttpClient
     {
+        string GetBaseAddress(string urlConfigurationString);
         void SetBaseAddress(string urlConfigurationString);
         Task<HttpResponseMessage> GetAsync(string url);
         Task<HttpResponseMessage> PostAsync(string url, HttpContent content);

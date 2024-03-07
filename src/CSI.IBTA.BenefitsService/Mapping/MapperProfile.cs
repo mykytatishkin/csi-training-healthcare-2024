@@ -8,6 +8,19 @@ namespace CSI.IBTA.BenefitsService.Mapping
     {
         public MapperProfile()
         {
+            CreateMap<Plan, PlanDto>()
+                .ConstructUsing(plan => new PlanDto(
+                    plan.Id,
+                    plan.Name,
+                    new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name),
+                    plan.Contribution,
+                    plan.PackageId));
+
+            CreateMap<PlanType, PlanTypeDto>()
+                .ConstructUsing(planType => new PlanTypeDto(
+                    planType.Id,
+                    planType.Name));
+
             CreateMap<Package, InsurancePackageDto>()
                 .ConstructUsing(x => new InsurancePackageDto(
                     x.Id,
@@ -15,8 +28,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Status,
                     DateTime.UtcNow < x.PlanEnd,
                     x.Initialized == null || DateTime.UtcNow > x.PlanEnd,
-                    x.Initialized != null)
-                );
+                    x.Initialized != null || DateTime.UtcNow > x.PlanEnd));
         }
     }
 }

@@ -7,13 +7,13 @@ using System.Text;
 
 namespace CSI.IBTA.BenefitsService
 {
-    public static class DependencyInjection
-    {
+    public static class DependencyInjection {
         public static IServiceCollection AddBenefitsService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IInsurancePackageService, InsurancePackageService>();
-            services.AddAuth(configuration);
+            services.AddScoped<IInsurancePlanService, InsurancePlanService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAuth(configuration);
             return services;
         }
 

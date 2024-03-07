@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 {
     [DbContext(typeof(BenefitsManagementContext))]
-    [Migration("20240301131135_Initial")]
-    partial class Initial
+    [Migration("20240305121347_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,6 +164,18 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.HasKey("Id");
 
                     b.ToTable("PlanType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Medical"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Dental"
+                        });
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Claim", b =>

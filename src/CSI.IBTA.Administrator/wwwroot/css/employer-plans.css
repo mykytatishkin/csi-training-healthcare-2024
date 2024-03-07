@@ -5,6 +5,23 @@
     width: 100%;
 }
 
+.new-plan-button {
+    display: flex;
+    flex-direction: column;
+}
+
+    .new-plan-button button {
+        align-self: flex-end;
+    }
+
+.custom-button {
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 4px 12px 4px 12px;
+    background-color: var(--button-primary-color);
+}
+
 .action-buttons {
     display: flex;
     justify-content: flex-start;

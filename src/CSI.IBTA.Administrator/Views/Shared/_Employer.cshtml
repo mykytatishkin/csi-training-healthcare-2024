@@ -1,8 +1,3 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.Entities
 @using CSI.IBTA.Shared.DTOs
@@ -14,6 +9,7 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
+
 <div id="table-employer" class="container">
     <div class="row">
         <div class="col-sm-8">
@@ -22,7 +18,7 @@
             <button class="btn btn-primary" onclick="showEmployerCreateForm()">Add New Employer</button>
         </div>
     </div>
-
+    
 
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
@@ -110,3 +106,5 @@
 <script type="text/javascript" src="~/Scripts/employer-form.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
 <script type="text/javascript" src="~/Scripts/employer-plans.js"></script>
+<script type="text/javascript" src="~/Scripts/benefits.js"></script>
+<script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>

@@ -161,41 +161,17 @@ function saveSettings() {
         method: 'PATCH',
         body: formData,
     })
-        .then(function (response) {
+        .then(async function (response) {
             if (!response.ok) {
                 return response.json().then(function (json) {
                     throw new Error(json.title);
                 });
             }
 
-            showEmployerUsersManagement(formData.get('EmployerId'));
-            deselectEmployerUserRow();
-        })
-        .catch(function (error) {
-            console.error('There was a problem with the fetch operation:', error);
-            showError("employer-user-management-errors", error);
-        });
-}
-
-function saveSettings() {
-    var form = document.getElementById('employer-settings-form');
-    if (form.checkValidity() == false) {
-        form.reportValidity();
-        return;
-    }
-    var formData = new FormData(form);
-    fetch('/Employer/AllSettings?employerId=' + formData.get('EmployerId'), {
-        method: 'PATCH',
-        body: formData,
-    })
-        .then(function (response) {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
             showEmployerAdministration(formData.get('EmployerId'));
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", error);
         });
 }
