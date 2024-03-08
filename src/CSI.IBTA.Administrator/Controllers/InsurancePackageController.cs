@@ -87,19 +87,18 @@ namespace CSI.IBTA.Administrator.Controllers
                 );
             }
 
-            var getPlanTypesResponse = await _packageClient.GetPlanTypes();
-            if (getPlanTypesResponse.Result == null)
+            var (_, planTypes) = await _packageClient.GetPlanTypes();
+            if (planTypes == null)
             {
                 return Problem(title: "Failed to retrieve plan types");
             }
-            var PlanTypes = getPlanTypesResponse.Result;
 
             var viewModel = new InsurancePackageModificationViewModel
             {
                 EmployerId = employerId,
                 Package = packageDetails.Result,
                 Plans = packageDetails.Result.Plans,
-                AvailablePlanTypes = PlanTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList(),
+                AvailablePlanTypes = planTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList()
             };
 
             return PartialView("InsurancePackages/_ModifyInsurancePackage", viewModel);
@@ -116,11 +115,12 @@ namespace CSI.IBTA.Administrator.Controllers
                     .Select(p => new UpdatePlanDto(
                         p.Name,
                         p.Contribution,
-                        p.TypeId))
+                        p.PlanType.Id))
                     .ToList();
             }
 
             var command = new FullInsurancePackageDto(
+                viewModel.Package.Id,
                 viewModel.Package.Name,
                 viewModel.Package.PlanStart,
                 viewModel.Package.PlanEnd,
@@ -133,9 +133,8 @@ namespace CSI.IBTA.Administrator.Controllers
             if (response.Error != null)
             {
                 return Problem(
-                    title: response.Error.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
             }
 
             return Ok();

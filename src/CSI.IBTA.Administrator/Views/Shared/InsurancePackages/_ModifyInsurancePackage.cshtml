@@ -14,7 +14,7 @@
                 @Html.HiddenFor(m => m.AvailablePlanTypes[i].Id)
                 @Html.HiddenFor(m => m.AvailablePlanTypes[i].Name)
             }
-            @if (Model != null && Model.Plans != null && Model.Plans.Count != 0)
+            @if (Model is {Plans: not null } && Model.Plans.Count != 0)
                 {@for (int i = 0; i < (@Model.Plans?.Count ?? 0); i++)
                 {
                     @Html.HiddenFor(m => m.Plans[i].Name)
@@ -34,7 +34,7 @@
                         </tr>
                         <tr>
                             <td class="text-align-right">Plan Year Start Date:* </td>
-                            <td class="align-left"><input asp-for="Package.PlanStart" type="date" value="@Model.Package.PlanStart required  /></td>
+                            <td class="align-left"><input asp-for="Package.PlanStart" type="date" value="@Model.Package.PlanStart:yyyy-MM-dd" required   /></td>
                             <td class="text-align-right" id="payroll-frequency-dropdown">Payroll Frequency:* </td>
                             <td class="align-left">
                                 <select asp-for="Package.PayrollFrequency" required>
@@ -45,7 +45,7 @@
                         </tr>
                         <tr>
                             <td class="text-align-right">Plan Year End Date:* </td>
-                            <td class="align-left"><input asp-for="Package.PlanEnd" type="date" value="@Model.Package.PlanEnd required  /></td>
+                            <td class="align-left"><input asp-for="Package.PlanEnd" type="date" value="@Model.Package.PlanEnd:yyyy-MM-dd" required   /></td>
                         </tr>
                     </tbody>
                 </table>
@@ -64,7 +64,7 @@
                     </select>
                     <button type="button" class="custom-button" onclick="showAddPlanForm()">Add Plan</button>
                 </div>
-                @if (Model != null && Model.Plans != null && Model.Plans.Count != 0)
+                @if (Model is {Plans: not null } && Model.Plans.Count != 0)
                 {
                     <table id="package-plans">
                         <thead>
