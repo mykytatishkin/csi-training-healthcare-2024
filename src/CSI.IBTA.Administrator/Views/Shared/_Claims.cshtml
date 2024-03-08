@@ -1,7 +1,7 @@
 ﻿@using CSI.IBTA.Administrator.Constants
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.DTOs
-@model PaginatedList<ClaimDto>
+@model PaginatedList<ViewClaimDto>
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
@@ -50,10 +50,10 @@
                                 <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a>
                             </td>
                             <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployeeId)</a>
+                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployeeName)</a>
                             </td>
                             <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployerId)</a>
+                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployerName)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.DateOfService)

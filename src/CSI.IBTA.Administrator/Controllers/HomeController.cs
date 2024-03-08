@@ -4,6 +4,7 @@ using CSI.IBTA.Shared.DataStructures;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
+using System.Linq;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -90,32 +91,79 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentNumberFilter"] = numberFilter;
             ViewData["CurrentEmployerFilter"] = employerFilter;
 
-            var res = await _claimsClient.GetClaims();
-            if (res.Result != null)
-            {
-                var claims = res.Result;
+            var claimsResponse = await _claimsClient.GetClaims();
 
-                if (!string.IsNullOrEmpty(numberFilter))
+            if (claimsResponse.Error != null || claimsResponse.Result == null)
+            {
+                if (claimsResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    claims = claims.Where(s => s.ClaimNumber.Contains(numberFilter));
-                }
-                if (!string.IsNullOrEmpty(employerFilter))
-                {
-                    claims = claims.Where(s => s.EmployerId.ToString().Equals(employerFilter));
+                    return RedirectToAction("Index", "Auth");
                 }
 
-                ViewData["Page"] = "Home";
-                var claimList = claims ?? new List<ClaimDto>().AsQueryable();
-                var paginatedList = new PaginatedList<ClaimDto>(claimList, pageNumber ?? 1, pageSize ?? 8);
-                return PartialView("_Claims", paginatedList);
+                return PartialView("_Claims");
             }
 
-            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
+            var claims = claimsResponse.Result;
+
+            var userIds = claims.Select(c => c.EmployeeId).ToList();
+            var usersResponse = await _userServiceClient.GetUsers(userIds);
+
+            if (usersResponse.Error != null || usersResponse.Result == null)
             {
-                return RedirectToAction("Index", "Auth");
+                if (usersResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Index", "Auth");
+                }
+
+                return PartialView("_Claims");
             }
 
-            return PartialView("_Claims");
+            var users = usersResponse.Result;
+
+            var employerIds = claims.Select(c => c.EmployerId).ToList();
+            var employersResponse = await _userServiceClient.GetEmployersByIds(employerIds);
+
+            if (employersResponse.Error != null || employersResponse.Result == null)
+            {
+                if (employersResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Index", "Auth");
+                }
+
+                return PartialView("_Claims");
+            }
+
+            var employers = employersResponse.Result;
+
+            var combinedClaims = claims.Select(c => new ViewClaimDto(
+                c.Id,
+                c.EmployeeId,
+                users.Where(u => u.Id == c.EmployeeId)
+                    .Select(u => $"{u.FirstName} {u.LastName}")
+                    .First(),
+                c.EmployerId,
+                employers.Where(e => e.Id == c.EmployerId)
+                    .Select(e => e.Name)
+                    .First(),
+                c.ClaimNumber,
+                c.DateOfService,
+                c.PlanTypeName,
+                c.Amount,
+                c.Status));
+
+            if (!string.IsNullOrEmpty(numberFilter))
+            {
+                combinedClaims = combinedClaims.Where(s => s.ClaimNumber.Contains(numberFilter));
+            }
+            if (!string.IsNullOrEmpty(employerFilter))
+            {
+                combinedClaims = combinedClaims.Where(s => s.EmployerId.ToString().Equals(employerFilter));
+            }
+
+            ViewData["Page"] = "Home";
+            var claimList = combinedClaims ?? new List<ViewClaimDto>().AsQueryable();
+            var paginatedList = new PaginatedList<ViewClaimDto>(claimList, pageNumber ?? 1, pageSize ?? 8);
+            return PartialView("_Claims", paginatedList);
         }
     }
 }
