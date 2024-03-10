@@ -1,7 +1,10 @@
 ﻿using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace CSI.IBTA.DataLayer.Repositories
 {

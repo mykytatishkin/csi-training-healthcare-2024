@@ -2,7 +2,9 @@
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
+using CSI.IBTA.Shared.Entities;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -16,6 +18,20 @@ namespace CSI.IBTA.Administrator.Clients
             _logger = logger;
             _httpClient = httpClient;
             _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
+        }
+
+        public async Task<GenericResponse<ClaimDto>> GetClaim(int claimId)
+        {
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Claim}/{claimId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<ClaimDto>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching claims", response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var claim = JsonConvert.DeserializeObject<ClaimDto>(responseContent);
+            return new GenericResponse<ClaimDto>(null, claim);
         }
 
         public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
@@ -32,7 +48,37 @@ namespace CSI.IBTA.Administrator.Clients
             var packages = JsonConvert.DeserializeObject<List<InsurancePackageDto>>(responseContent);
             return new GenericResponse<List<InsurancePackageDto>>(null, packages);
         }
-        
+
+        public async Task<GenericResponse<List<PlanIdAndNameDto>>> GetPlans()
+        {
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Plan}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<List<PlanIdAndNameDto>>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching plans", response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var plans = JsonConvert.DeserializeObject<List<PlanIdAndNameDto>>(responseContent);
+            return new GenericResponse<List<PlanIdAndNameDto>>(null, plans);
+        }
+
+        public async Task<GenericResponse<PlanIdAndNameDto>> GetPlan(int planId)
+        {
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Plan}/{planId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<PlanIdAndNameDto>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching plan", response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var plan = JsonConvert.DeserializeObject<PlanIdAndNameDto>(responseContent);
+            return new GenericResponse<PlanIdAndNameDto>(null, plan);
+        }
+
         public async Task<GenericResponse<InsurancePackageDto>> InitializeInsurancePackage(int packageId)
         {
             var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{packageId}", null);
@@ -59,6 +105,22 @@ namespace CSI.IBTA.Administrator.Clients
             }
 
             return new GenericResponse<bool>(null, true);
+        }
+
+        public async Task<GenericResponse<ClaimDto>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
+        {
+            var jsonBody = JsonConvert.SerializeObject(updateClaimDto);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.Claim}/{claimId}", content);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<ClaimDto>(new HttpError(response.ReasonPhrase ?? "Error occurred while updating claim", response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var claim = JsonConvert.DeserializeObject<ClaimDto>(responseContent);
+            return new GenericResponse<ClaimDto>(null, claim);
         }
     }
 

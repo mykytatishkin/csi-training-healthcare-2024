@@ -55,6 +55,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
                 .Include(u => u.Emails)
+                .Include(u => u.Phones)
                 .FirstOrDefaultAsync(a => a.Id == userId);
 
             if (user == null)
