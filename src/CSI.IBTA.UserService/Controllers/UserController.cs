@@ -52,6 +52,23 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpGet("~/api/v1/Users")]
+        [Authorize]
+        public async Task<IActionResult> GetUsers([FromQuery] List<int> userIds)
+        {
+            var response = await _userService.GetUsers(userIds);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)

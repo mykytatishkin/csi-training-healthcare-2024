@@ -34,6 +34,23 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpGet("~/api/v1/Employers")]
+        [Authorize(Roles = $"{nameof(Role.Administrator)}")]
+        public async Task<IActionResult> GetEmployer([FromQuery] List<int> employerIds)
+        {
+            var response = await _employerService.GetEmployers(employerIds);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> CreateEmployer([FromForm] CreateEmployerDto dto)

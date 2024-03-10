@@ -1,9 +1,10 @@
-using CSI.IBTA.Administrator.Filters;
 using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Administrator.Filters;
 using CSI.IBTA.Shared.DataStructures;
+using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
-using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -11,13 +12,21 @@ namespace CSI.IBTA.Administrator.Controllers
     public class HomeController : Controller
     {
         private readonly IUserServiceClient _userServiceClient;
+        private readonly IClaimsClient _claimsClient;
 
-        public HomeController(IUserServiceClient userServiceClient)
+        public HomeController(IUserServiceClient userServiceClient, IClaimsClient claimsClient)
         {
             _userServiceClient = userServiceClient;
+            _claimsClient = claimsClient;
         }
 
-        public async Task<IActionResult> Index(
+        public IActionResult Index()
+        {
+            return View("Index");
+        }
+
+        [HttpGet("Employers")]
+        public async Task<IActionResult> GetEmployers(
             string? nameFilter,
             string? codeFilter,
             string? currentNameFilter,
@@ -29,6 +38,7 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 pageNumber = 1;
             }
+
             nameFilter = nameFilter ?? currentNameFilter;
             codeFilter = codeFilter ?? currentCodeFilter;
             ViewData["CurrentNameFilter"] = nameFilter;
@@ -38,21 +48,122 @@ namespace CSI.IBTA.Administrator.Controllers
             if (res.Result != null)
             {
                 var employers = res.Result;
-                if (!String.IsNullOrEmpty(nameFilter))
+
+                if (!string.IsNullOrEmpty(nameFilter))
                 {
                     employers = employers.Where(s => s.Name.Contains(nameFilter));
                 }
-                if (!String.IsNullOrEmpty(codeFilter))
+                if (!string.IsNullOrEmpty(codeFilter))
                 {
                     employers = employers.Where(s => s.Code.Equals(codeFilter));
                 }
-                ViewData["Page"] = "Home";
-                return (View(new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
-            }
-            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
-                return RedirectToAction("Index", "Auth");
 
-            return View("Index");
+                ViewData["Page"] = "Home";
+                var employerList = employers ?? new List<EmployerDto>().AsQueryable();
+                var paginatedList = new PaginatedList<EmployerDto>(employerList, pageNumber ?? 1, pageSize ?? 8);
+                return PartialView("_Employer", paginatedList);
+            }
+
+            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("Index", "Auth");
+            }
+
+            return PartialView("_Employer");
+        }
+
+        [HttpGet("Claims")]
+        public async Task<IActionResult> GetClaims(
+            string? numberFilter,
+            string? employerFilter,
+            string? currentNumberFilter,
+            string? currentEmployerFilter,
+            int? pageNumber,
+            int? pageSize)
+        {
+            if (numberFilter != null || employerFilter != null)
+            {
+                pageNumber = 1;
+            }
+
+            numberFilter = numberFilter ?? currentNumberFilter;
+            employerFilter = employerFilter ?? currentEmployerFilter;
+            ViewData["CurrentNumberFilter"] = numberFilter;
+            ViewData["CurrentEmployerFilter"] = employerFilter;
+
+            var claimsResponse = await _claimsClient.GetClaims();
+
+            if (claimsResponse.Error != null || claimsResponse.Result == null)
+            {
+                if (claimsResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Index", "Auth");
+                }
+
+                return PartialView("_Claims");
+            }
+
+            var claims = claimsResponse.Result;
+
+            var userIds = claims.Select(c => c.EmployeeId).ToList();
+            var usersResponse = await _userServiceClient.GetUsers(userIds);
+
+            if (usersResponse.Error != null || usersResponse.Result == null)
+            {
+                if (usersResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Index", "Auth");
+                }
+
+                return PartialView("_Claims");
+            }
+
+            var users = usersResponse.Result;
+
+            var employerIds = claims.Select(c => c.EmployerId).ToList();
+            var employersResponse = await _userServiceClient.GetEmployersByIds(employerIds);
+
+            if (employersResponse.Error != null || employersResponse.Result == null)
+            {
+                if (employersResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Index", "Auth");
+                }
+
+                return PartialView("_Claims");
+            }
+
+            var employers = employersResponse.Result;
+
+            var combinedClaims = claims.Select(c => new ViewClaimDto(
+                c.Id,
+                c.EmployeeId,
+                users.Where(u => u.Id == c.EmployeeId)
+                    .Select(u => $"{u.FirstName} {u.LastName}")
+                    .First(),
+                c.EmployerId,
+                employers.Where(e => e.Id == c.EmployerId)
+                    .Select(e => e.Name)
+                    .First(),
+                c.ClaimNumber,
+                c.DateOfService,
+                c.PlanTypeName,
+                c.Amount,
+                c.Status));
+
+            if (!string.IsNullOrEmpty(numberFilter))
+            {
+                combinedClaims = combinedClaims.Where(s => s.ClaimNumber.Contains(numberFilter));
+            }
+            if (!string.IsNullOrEmpty(employerFilter))
+            {
+                combinedClaims = combinedClaims.Where(s => s.EmployerId.ToString().Equals(employerFilter));
+            }
+
+            ViewData["Page"] = "Home";
+            var claimList = combinedClaims ?? new List<ViewClaimDto>().AsQueryable();
+            var paginatedList = new PaginatedList<ViewClaimDto>(claimList, pageNumber ?? 1, pageSize ?? 8);
+            return PartialView("_Claims", paginatedList);
         }
     }
 }

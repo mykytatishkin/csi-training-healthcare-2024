@@ -20,15 +20,10 @@
                     <div class="partial">
                         <div class="panel">
                             <div class="control">
-                                <button class="left partial-btn active" onclick="showEmployer()">Employer</button>
+                                <button class="left partial-btn active" onclick="showEmployers()">Employer</button>
                                 <button class="right partial-btn" onclick="showClaims()">Claims</button>
                             </div>
-                            <div id="employer-content">
-                                @Html.Partial("_Claims")
-                            </div>
-                            <div id="claims-content" style="display: none;">
-                                @Html.Partial("_Claims")
-                            </div>
+                            <div id="content"></div>
                         </div>
                     </div>
                 </div>
@@ -36,19 +31,16 @@
         </div>
     </div>
     <script>
-        function showEmployer() {
-            $("#employer-content").show();
-            $("#claims-content").hide();
-            $(".left.partial-btn").addClass("active");
-            $(".right.partial-btn").removeClass("active");
-        }
-
-        function showClaims() {
-            $("#employer-content").hide();
-            $("#claims-content").show();
-            $(".left.partial-btn").removeClass("active");
-            $(".right.partial-btn").addClass("active");
-        }
+        window.onload = function () {
+            showEmployers();
+        };
     </script>
+    <script type="text/javascript" src="~/Scripts/index.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-form.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-plans.js"></script>
+    <script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
+    <script type="text/javascript" src="~/Scripts/benefits.js"></script>
 </body>
 </html>
