@@ -1,19 +1,18 @@
-@using CSI.IBTA.Shared.DTOs
+﻿@using CSI.IBTA.Shared.DTOs
 @model EmployerDto
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-8"></div>
-        <div class="col-sm-4">
-            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Choose different</a>
-        </div>
-        <span class="form-row label">Employer Administration for @Model.Name</span>
-        <div id="employer-form-errors" class="form-errors text-danger"></div>
-        <div id="employer-partial-action">
-            <div class="text-center">
-                <img class="logo-admin" id="imagePreview" src="data:image/png;base64,@Model.EncodedLogo" alt="logo">
+<body onload="getEncodedLogo()">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8"></div>
+            <div class="col-sm-4">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Choose different</a>
             </div>
-            @await Html.PartialAsync("_EmployerAdministrationMenu", Model.Id)
+            <span class="form-row label">Employer Administration for @Model.Name</span>
+            <div id="employer-form-errors" class="form-errors text-danger"></div>
+            <div id="employer-partial-action">
+                @await Html.PartialAsync("_EmployerAdministrationMenu", Model.Id)
+            </div>
         </div>
     </div>
-</div>
+</body>

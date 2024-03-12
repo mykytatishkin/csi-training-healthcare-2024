@@ -1,8 +1,11 @@
-﻿function showEmployerDetails(employerId) {
+﻿function showEmployerDetails(employerId, encodedLogo) {
     function onSuccess(data) {
         document.getElementById('control-employer').innerHTML = data;
         $("#table-employer").hide();
         $("#control-employer").show();
+
+        console.log("onSuccess()")
+        getEncodedLogo(encodedLogo);
     }
 
     function onFailure(statusCode) {
