@@ -1,6 +1,7 @@
 ﻿@using CSI.IBTA.Administrator.Constants
 @using CSI.IBTA.Administrator.Extensions
 @using CSI.IBTA.Shared.DataStructures
+@using CSI.IBTA.Shared.Entities
 @using CSI.IBTA.Shared.DTOs
 @model ClaimDetailsViewModel
 
@@ -55,5 +56,41 @@
         <span id="amount">
             @Model.Claim.Amount
         </span>
+    </div>
+</div>
+
+@if (Model.Claim.Status == ClaimStatus.Pending)
+{
+    <div class="claim-buttons">
+        <button class="btn btn-primary" onclick="showModal('approveModal')">Approve</button>
+        <button class="btn btn-primary" onclick="showModal('denyModal')">Deny</button>
+    </div>
+}
+
+<!-- Approve Modal -->
+<div id="approveModal" class="modal" onclick="closeModal('approveModal')">
+    <div class="modal-content" onclick="event.stopPropagation();">
+        <span class="close" onclick="closeModal('approveModal')">&times;</span>
+        <p>Are you sure you want to approve this claim?</p>
+        <div class="modal-buttons">
+            <div id="modal-form-errors" class="modal-errors text-danger"></div>
+            <button onClick="closeModal('approveModal')" class="btn btn-outline-primary">Cancel</button>
+            <button id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>
+
+<!-- Deny Modal -->
+<div id="denyModal" class="modal" onclick="closeModal('denyModal')">
+    <div class="modal-content" onclick="event.stopPropagation();">
+        <span class="close" onclick="closeModal('denyModal')">&times;</span>
+        <p>Are you sure you want to deny this claim?</p>
+        <label for="description">Reason for denial:</label>
+        <textarea id="description" name="description" required></textarea>
+        <div class="modal-buttons">
+            <div id="modal-form-errors" class="modal-errors text-danger"></div>
+            <button onClick="closeModal('denyModal')" class="btn btn-outline-primary">Cancel</button>
+            <button id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+        </div>
     </div>
 </div>

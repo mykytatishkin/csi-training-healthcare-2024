@@ -12,3 +12,13 @@ function showClaimDetails(claimId) {
     route = `/Claims/Details?claimId=${claimId}`;
     fetchRoute(route, onSuccess, onFailure);
 }
+
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "block";
+}
+
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "none";
+}
