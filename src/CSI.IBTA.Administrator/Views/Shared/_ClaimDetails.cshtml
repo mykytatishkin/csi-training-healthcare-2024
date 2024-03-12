@@ -3,6 +3,7 @@
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.Entities
 @using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Utils.Extensions
 @model ClaimDetailsViewModel
 
 <head>
@@ -36,7 +37,7 @@
     <div class="claim-details">
         <label for="dateOfService">Date of Service:</label>
         <span id="dateOfService">
-            @Model.Claim.DateOfService.ToAmericanDateFormat()
+            @Model.Claim.DateOfService.ToAmericanDateOnlyFormat()
         </span>
     </div>
     <div class="claim-details">
