@@ -53,6 +53,10 @@ body {
         color: var(--button-primary-color);
     }
 
+.view-btn {
+    margin-top: 30px;
+}
+
 .left {
     position: absolute;
     left: 1px;
