@@ -8,11 +8,14 @@
     <link rel="stylesheet" href="~/css/claim-details.css">
 </head>
 
-<div class="claim-number-container">
-    <label for="claim-number">Claim Number:</label>
-    <span id="claim-number">
-        @Model.Claim.ClaimNumber
-    </span>
+<div class="space-between-container">
+    <div class="claim-number-container">
+        <label for="claim-number">Claim Number:</label>
+        <span id="claim-number">
+            @Model.Claim.ClaimNumber
+        </span>
+    </div>
+    <button onclick="showClaims()" class="btn btn-primary">Return to list</button>
 </div>
 
 <span class="border-label">Detail</span>
