@@ -37,18 +37,10 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Plan.Package.EmployerId,
                     x.ClaimNumber,
                     x.DateOfService,
+                    x.Plan.Name,
                     x.Plan.PlanType.Name,
                     x.Amount,
-                    x.Status.ToString())
-                );
-
-            CreateMap<Claim, ClaimDetailsDto>()
-                .ConstructUsing(x => new ClaimDetailsDto(
-                    x.Id,
-                    x.ClaimNumber,
-                    x.DateOfService,
-                    x.Plan.Name,
-                    x.Amount)
+                    x.Status)
                 );
         }
     }

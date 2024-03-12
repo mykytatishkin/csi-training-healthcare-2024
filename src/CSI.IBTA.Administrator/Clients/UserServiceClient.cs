@@ -1,7 +1,4 @@
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using CSI.IBTA.Administrator.Services;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Types;
@@ -54,7 +51,7 @@ namespace CSI.IBTA.Administrator.Clients
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
-
+            Console.WriteLine(user);
             return new GenericResponse<UserDto>(null, user);
         }
 

@@ -73,5 +73,48 @@ namespace CSI.IBTA.Administrator.Controllers
 
             return Ok();
         }
+
+        [HttpGet("InsurancePackages")]
+        public async Task<IActionResult> InsurancePackages(int employerId)
+        {
+            var res = await _packageClient.GetInsurancePackages(employerId);
+
+            if (res.Error != null || res.Result == null)
+            {
+                throw new Exception("Failed to retrieve employer's packages");
+            }
+
+            var viewModel = new InsurancePackageViewModel
+            {
+                InsurancePackages = res.Result,
+                EmployerId = employerId
+            };
+
+            return PartialView("_EmployerPackagesMenu", viewModel);
+        }
+
+        [HttpPatch("InitializePackage")]
+        public async Task<IActionResult> InitializePackage(int employerId, int packageId)
+        {
+            var res = await _packageClient.InitializeInsurancePackage(packageId);
+            if (res.Error != null || res.Result == null)
+            {
+                throw new Exception("Failed to initialize insurance package");
+            }
+
+            return await InsurancePackages(employerId);
+        }
+
+        [HttpDelete("RemovePackage")]
+        public async Task<IActionResult> RemovePackage(int employerId, int packageId)
+        {
+            var res = await _packageClient.RemoveInsurancePackage(packageId);
+            if (res.Error != null || res.Result == false)
+            {
+                throw new Exception("Failed to remove insurance package");
+            }
+
+            return await InsurancePackages(employerId);
+        }
     }
 }

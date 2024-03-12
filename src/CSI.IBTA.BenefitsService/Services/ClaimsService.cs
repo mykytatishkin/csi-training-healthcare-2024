@@ -28,12 +28,17 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<List<ClaimDto>>(null, response.Select(_mapper.Map<ClaimDto>).ToList());
         }
 
-        public async Task<GenericResponse<ClaimDetailsDto>> GetClaimDetails(int claimId)
+        public async Task<GenericResponse<ClaimDto>> GetClaim(int claimId)
         {
-            var claim = await _benefitsUnitOfWork.Claims.Include(x => x.Plan).FirstOrDefaultAsync(x => x.Id == claimId);
-            if (claim == null) return new GenericResponse<ClaimDetailsDto>(HttpErrors.ResourceNotFound, null);
+            var claim = await _benefitsUnitOfWork.Claims
+                .Include(x => x.Plan)
+                .Include(x => x.Plan.PlanType)
+                .Include(c => c.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == claimId);
 
-            return new GenericResponse<ClaimDetailsDto>(null, _mapper.Map<ClaimDetailsDto>(claim));
+            if (claim == null) return new GenericResponse<ClaimDto>(HttpErrors.ResourceNotFound, null);
+
+            return new GenericResponse<ClaimDto>(null, _mapper.Map<ClaimDto>(claim));
         }
     }
 }

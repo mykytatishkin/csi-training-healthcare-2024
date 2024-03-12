@@ -2,7 +2,7 @@
 
 .border-label {
     position: relative;
-    left: 30px;
+    left: 35px;
     top: 21px;
     background-color: var(--container-background-color);
     padding: 0 10px;
@@ -36,7 +36,5 @@
 
 .claim-details label {
     width: 120px;
-    margin-left: 40px;
     margin-right: 10px;
-    text-align: right;
 }

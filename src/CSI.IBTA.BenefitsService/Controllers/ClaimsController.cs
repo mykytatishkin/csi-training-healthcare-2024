@@ -37,7 +37,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetClaim(int claimId)
         {
-            var response = await _claimsService.GetClaimDetails(claimId);
+            var response = await _claimsService.GetClaim(claimId);
 
             if (response.Error != null)
             {

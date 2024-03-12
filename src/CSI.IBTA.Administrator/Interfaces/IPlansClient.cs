@@ -2,7 +2,7 @@
 
 namespace CSI.IBTA.Administrator.Interfaces
 {
-    public interface IBenefitsClient
+    public interface IPlansClient
     {
         Task<GenericResponse<PlanDto>> GetPlan(int id);
         Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
