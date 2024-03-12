@@ -11,5 +11,6 @@ namespace CSI.IBTA.Shared.Entities
         public Plan Plan { get; set; } = null!;
         public decimal Amount { get; set; }
         public ClaimStatus Status { get; set; }
+        public string? RejectionReason { get; set; }
     }
 }
