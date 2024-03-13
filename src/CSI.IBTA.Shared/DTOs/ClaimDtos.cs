@@ -12,4 +12,6 @@ namespace CSI.IBTA.Shared.DTOs
         string PlanTypeName,
         decimal Amount,
         ClaimStatus Status);
+
+    public record DenyClaimDto(string RejectionReason);
 }

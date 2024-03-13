@@ -6,5 +6,7 @@ namespace CSI.IBTA.BenefitsService.Interfaces
     {
         Task<GenericResponse<List<ClaimDto>>> GetClaims();
         Task<GenericResponse<ClaimDto>> GetClaim(int claimId);
+        Task<GenericResponse<bool>> ApproveClaim(int claimId);
+        Task<GenericResponse<bool>> DenyClaim(int claimId, DenyClaimDto dto);
     }
 }
