@@ -49,7 +49,7 @@
     <div class="claim-details">
         <label for="status">Status:</label>
         <span id="status">
-            @Model.Claim.Status.ToString()
+            @($"{Model.Claim.Status} {(Model.Claim.Status == ClaimStatus.Denied ? $"({Model.Claim.RejectionReason})" : string.Empty)}")
         </span>
     </div>
     <div class="claim-details">

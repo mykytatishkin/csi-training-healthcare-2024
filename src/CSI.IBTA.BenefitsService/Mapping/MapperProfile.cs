@@ -40,7 +40,8 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Plan.Name,
                     x.Plan.PlanType.Name,
                     x.Amount,
-                    x.Status)
+                    x.Status,
+                    x.RejectionReason)
                 );
         }
     }
