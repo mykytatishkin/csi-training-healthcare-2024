@@ -1,4 +1,5 @@
 function showClaimDetails(claimId) {
+    console.log("aaa");
 
     function onSuccess(data) {
         console.log(document.getElementById('claims-view'));

@@ -65,7 +65,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
                 );
             }
 
-            return Ok(response.Result);
+            return NoContent();
         }
     }
 }

@@ -1,16 +1,32 @@
-function showEditClaim(claimId) {
-    function onSuccess(data) {
-        document.getElementById('control-claim').innerHTML = data;
-        $("#table-employer").hide();
-        $("#control-employer").show();
-    }
+function showEditClaim() {
+    var form = document.getElementById('claim-view-form');
+    var formData = new FormData(form);
+    route = `/Benefits/OpenEditClaim`;
+    fetch(route, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                callbackFailure?.(response.status);
+                throw new Error("Response was not ok");
+            }
 
-    function onFailure(statusCode) {
-        console.error('There was a problem with the fetch operation:', statusCode);
-    }
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
 
-    route = `/Benefits/EditClaim?claimId=${claimId}`;
-    fetchRoute(route, onSuccess, onFailure);
+            return response.text();
+        })
+        .then(function (data) {
+            console.log(document.getElementById('claims-view'));
+            document.getElementById('claims-view').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetchrr operation:', error);
+            showError("employer-user-management-errors", error);
+        });
 }
 
 function saveClaimData() {
@@ -20,7 +36,7 @@ function saveClaimData() {
         return;
     }
     var formData = new FormData(form);
-    fetch(`/Benefits/EditClaim?claimId=${formData.get('ClaimId')}`, {
+    fetch(`/Benefits/EditClaim?claimId=${formData.get('Claim.Id')}`, {
         method: 'PATCH',
         body: formData,
     })
@@ -34,10 +50,15 @@ function saveClaimData() {
             return response.text();
         })
         .then(function (data) {
-            document.getElementById('employer-partial-action').innerHTML = data;
+            document.getElementById('claims-view').innerHTML = data;
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
             showError("employer-user-management-errors", error);
         });
+}
+
+function handleEditClaimCancel(claimId) {
+    event.preventDefault();
+    showClaimDetails(claimId);
 }

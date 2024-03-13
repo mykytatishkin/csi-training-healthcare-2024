@@ -41,11 +41,16 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<ClaimDto>(null, _mapper.Map<ClaimDto>(claim));
         }
 
-        public async Task<GenericResponse<ClaimDto>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
+        public async Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
         {
-            var claim = await _benefitsUnitOfWork.Claims.GetById(claimId);
+            var claim = await _benefitsUnitOfWork.Claims
+                .Include(x => x.Plan)
+                .Include(x => x.Plan.PlanType)
+                .Include(c => c.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == claimId);
+
             if (claim == null)
-                return new GenericResponse<ClaimDto>(HttpErrors.ResourceNotFound, null);
+                return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
 
             claim.PlanId = updateClaimDto.PlanId;
             claim.DateOfService = updateClaimDto.DateOfService;
@@ -53,7 +58,7 @@ namespace CSI.IBTA.BenefitsService.Services
             _benefitsUnitOfWork.Claims.Upsert(claim);
             await _benefitsUnitOfWork.CompleteAsync();
 
-            return new GenericResponse<ClaimDto>(null, _mapper.Map<ClaimDto>(claim));
+            return new GenericResponse<bool>(null, true);
         }
     }
 }

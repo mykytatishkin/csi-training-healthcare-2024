@@ -6,6 +6,6 @@ namespace CSI.IBTA.BenefitsService.Interfaces
     {
         Task<GenericResponse<List<ClaimDto>>> GetClaims();
         Task<GenericResponse<ClaimDto>> GetClaim(int claimId);
-        Task<GenericResponse<ClaimDto>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto);
+        Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto);
     }
 }

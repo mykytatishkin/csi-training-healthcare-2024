@@ -85,6 +85,14 @@
     background-color: rgba(0,0,0,0.4);
 }
 
+.select-field-top {
+    padding-top: 8px;
+}
+
+.select-field-bottom {
+    padding-bottom: 8px;
+}
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;

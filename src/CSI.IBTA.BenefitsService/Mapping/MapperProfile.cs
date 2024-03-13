@@ -38,6 +38,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.PlanId,
                     x.ClaimNumber,
                     x.DateOfService,
+                    x.Plan.Name,
                     x.Plan.PlanType.Name,
                     x.Amount,
                     x.Status));

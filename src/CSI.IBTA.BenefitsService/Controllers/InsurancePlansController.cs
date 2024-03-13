@@ -17,7 +17,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAllPlans(int? customerId)
         {
             var response = await _benefitsService.GetAllPlans(customerId);

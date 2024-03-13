@@ -64,42 +64,33 @@ namespace CSI.IBTA.Administrator.Controllers
             return await InsurancePackages(employerId);
         }
 
-        [HttpGet("EditClaim")]
-        public async Task<IActionResult> EditClaim(int claimId)
+        [HttpPost("OpenEditClaim")]
+        public async Task<IActionResult> EditClaim(ClaimDetailsViewModel claimModel)
         {
-            var res = await _benefitsServiceClient.GetClaim(claimId);
-            if (res.Error != null || res.Result == null)
-            {
-                throw new Exception("Failed to retrieve insurance claim");
-            }
-
-            var user = await _userClient.GetUser(res.Result.EmployeeId);
-            if (res.Error != null || res.Result == null)
-            {
-                throw new Exception("Failed to retrieve claim user");
-            }
 
             //var getPlansResponse = await _benefitsServiceClient.GetPlans();
-            //if (getPlansResponse.Result == null)
-            //{
-            //    return Problem(title: "Failed to retrieve plans");
-            //}
-            var Plans = new List<PlanIdAndNameDto>();
-            Plans.Add(new PlanIdAndNameDto(1, 1.ToString()));
-            Plans.Add(new PlanIdAndNameDto(2, 2.ToString()));
+            
+            var getPlansResponse = await _benefitsServiceClient.GetPlans(claimModel.Consumer.Id);
+            if (getPlansResponse.Result == null)
+            {
+                return Problem(title: "Failed to retrieve plans");
+            }
+            var Plans = getPlansResponse.Result;
 
             //var plan = getPlansResponse.Result.FirstOrDefault(x => x.Id == res.Result.PlanId);
-            var plan = Plans.FirstOrDefault(x => x.Id == res.Result.PlanId);
-
+            //var plan = Plans.FirstOrDefault(x => x.Id == claimModel.Claim.PlanId);
             var model = new EditClaimViewModel()
             {
-                ClaimId = res.Result.Id,
-                ClaimNumber = res.Result.ClaimNumber,
-                DateOfService = res.Result.DateOfService,
-                Amount = res.Result.Amount,
-                Employee = new UserInfoDto(res.Result.EmployeeId, user.Result.FirstName, user.Result.LastName, user.Result.PhoneNumber),
-                PlanId = plan.Id,
-                Plan = plan,
+                Claim = new ClaimDto(claimModel.Claim.Id, claimModel.Claim.EmployeeId, 
+                claimModel.Claim.EmployerId, claimModel.Claim.PlanId, claimModel.Claim.ClaimNumber, 
+                claimModel.Claim.DateOfService, claimModel.Claim.PlanName, claimModel.Claim.PlanTypeName, 
+                claimModel.Claim.Amount, claimModel.Claim.Status),
+                Consumer = claimModel.Consumer,
+                //ClaimNumber = res.Result.ClaimNumber,
+                //DateOfService = res.Result.DateOfService,
+                //Amount = res.Result.Amount,
+                //Employee = new UserInfoDto(res.Result.EmployeeId, user.Result.FirstName, user.Result.LastName, user.Result.PhoneNumber),
+                //PlanId = plan.Id,
                 //AvailablePlans = getPlansResponse.Result.ToList()
                 AvailablePlans = Plans.ToList()
             };
@@ -107,22 +98,34 @@ namespace CSI.IBTA.Administrator.Controllers
             return PartialView("_ClaimEditMenu", model);
         }
         [HttpPatch("EditClaim")]
-        public async Task<IActionResult> EditClaim(EditClaimViewModel model)
+        public async Task<IActionResult> EditClaim(EditClaimViewModel claimModel)
         {
-            //var getPlanResponse = await _benefitsServiceClient.GetPlan(model.Plan.Id);
-            //if (getPlanResponse.Result == null)
-            //{
-            //    return Problem(title: "Failed to retrieve plan");
-            //}
+            var getPlanResponse = await _benefitsServiceClient.GetPlan(claimModel.Claim.PlanId);
+            if (getPlanResponse.Result == null)
+            {
+                return Problem(title: "Failed to retrieve plan");
+            }
+            var plan = getPlanResponse.Result;
 
-            var updateClaimDto = new UpdateClaimDto(model.DateOfService, model.PlanId, model.Amount);
-            var res = await _benefitsServiceClient.UpdateClaim(model.ClaimId, updateClaimDto);
+            claimModel.Claim = new ClaimDto(claimModel.Claim.Id, claimModel.Claim.EmployeeId,
+                claimModel.Claim.EmployerId, claimModel.Claim.PlanId, claimModel.Claim.ClaimNumber,
+                claimModel.Claim.DateOfService, plan.Name, plan.PlanType.Name,
+                claimModel.Claim.Amount, claimModel.Claim.Status);
+
+            var updateClaimDto = new UpdateClaimDto(claimModel.Claim.DateOfService, claimModel.Claim.PlanId, claimModel.Claim.Amount);
+            var res = await _benefitsServiceClient.UpdateClaim(claimModel.Claim.Id, updateClaimDto);
             if (res.Error != null || res.Result == null)
             {
                 throw new Exception("Failed to edit insurance claim");
             }
 
-            return PartialView("_claims");
+            var viewModel = new ClaimDetailsViewModel
+            {
+                Claim = claimModel.Claim,
+                Consumer = claimModel.Consumer
+            };
+
+            return PartialView("_ClaimDetails", viewModel);
         }
     }
 }
