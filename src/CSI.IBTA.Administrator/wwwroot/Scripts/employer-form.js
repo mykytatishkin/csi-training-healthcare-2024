@@ -85,6 +85,7 @@ function showEmployerUpdateForm(employerId) {
 
         $("#control-employer").show();
         $("#table-employer").hide();
+        $("#logo-employer").hide();
     }
 
     function onFailure(statusCode) {

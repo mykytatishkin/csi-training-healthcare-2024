@@ -14,6 +14,8 @@
 
     route = `/Employer?employerId=${employerId}`;
     fetchRoute(route, onSuccess, onFailure);
+    $("#logo-employer").show();
+
 }
 
 function showEmployerSettings(employerId) {
