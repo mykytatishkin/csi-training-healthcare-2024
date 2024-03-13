@@ -1,7 +1,8 @@
 ﻿@using CSI.IBTA.Administrator.Constants
+@using CSI.IBTA.Shared.Utils.Extensions
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.DTOs
-@model PaginatedList<ViewClaimDto>
+@model PaginatedList<ClaimDto>
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
@@ -11,95 +12,98 @@
 <head>
     <link rel="stylesheet" href="~/css/claims-home-page.css">
 </head>
-<div id="table-employer" class="container">
-    <span class="border-label" style="text-align:left">Search Criteria</span>
-    <div class="row form-columns">
-        <form asp-action="Claims" method="get" id="claims-search-form">
-            <div class="form-actions no-color">
-                <p>
-                    <label for="NumberFilter">Claim Number:</label>
-                    <input type="text" name="NumberFilter" value="@ViewData["CurrentNumberFilter"]" />
-                    <label for="EmployerFilter">Employer:</label>
-                    <input type="text" name="EmployerFilter" value="@ViewData["CurrentEmployerFilter"]" />
-                    <input type="button" onclick="searchClaims()" value="Search" class="btn btn-primary" />
-                    <input type="button" onclick="searchAllClaims()" class="btn btn-primary" value="Back to Full List">
-                </p>
-            </div>
-        </form>
-    </div>
-    <br />
-    <div class="row">
-        <div class="table-data">
-            <table class="table table-striped" id="claims-table">
-                <thead>
-                    <tr>
-                        <th>Claim Number</th>
-                        <th>Consumer</th>
-                        <th>Employer</th>
-                        <th>Date Of Service</th>
-                        <th>Plan</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+<div id="claims-view">
+    <div id="table-employer" class="container">
+        <span class="border-label" style="text-align:left">Search Criteria</span>
+        <div class="row form-columns">
+            <form asp-action="Claims" method="get" id="claims-search-form">
+                <div class="form-actions no-color">
+                    <p>
+                        <label for="NumberFilter">Claim Number:</label>
+                        <input type="text" name="NumberFilter" value="@ViewData["CurrentNumberFilter"]" />
+                        <label for="EmployerFilter">Employer:</label>
+                        <input type="text" name="EmployerFilter" value="@ViewData["CurrentEmployerFilter"]" />
+                        <input type="button" onclick="searchClaims()" value="Search" class="btn btn-primary" />
+                        <input type="button" onclick="searchAllClaims()" class="btn btn-primary" value="Back to Full List">
+                    </p>
+                </div>
+            </form>
+        </div>
+        <br />
+        <div class="row">
+            <div class="table-data">
+                <table class="table table-striped" id="claims-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a>
-                            </td>
-                            <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployeeName)</a>
-                            </td>
-                            <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployerName)</a>
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.DateOfService)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.PlanTypeName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Amount)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Status)
-                            </td>
+                            <th>Claim Number</th>
+                            <th>Consumer</th>
+                            <th>Employer</th>
+                            <th>Date Of Service</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Status</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-            <div style="text-align:right" class="pages">
-                <a onclick="getClaimsPage('', @(Model.PageIndex - 1), '')"
-                   class="btn btn-default @prevDisabled">
-                    Previous
-                </a>
-                @{
-                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.PageIndex + PaginationConstants.NextPages);
-                    var lastPage = Math.Min(nextPages, Model.TotalPages);
-                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
-                    for (int i = firstPage; i <= lastPage; i++)
-                    {
-                        if (i == Model.PageIndex || Model.PageIndex == 0)
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
                         {
-                            <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
+                            <tr>
+                                <td>
+                                    <a onclick="showClaimDetails(@item.Id)" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a>
+                                </td>
+                                <td>
+                                    <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployeeId)</a>
+                                </td>
+                                <td>
+                                    <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployerId)</a>
+                                </td>
+                                <td>
+                                    @item.DateOfService.ToAmericanDateOnlyFormat()
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PlanTypeName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Amount)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </td>
+                            </tr>
                         }
-                        else
+                    </tbody>
+                </table>
+                <div id="claim-list-errors" class="form-errors text-danger"></div>
+                <div style="text-align:right" class="pages">
+                    <a onclick="getClaimsPage('', @(Model.PageIndex - 1), '')"
+                       class="btn btn-default @prevDisabled">
+                        Previous
+                    </a>
+                    @{
+                        var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.PageIndex + PaginationConstants.NextPages);
+                        var lastPage = Math.Min(nextPages, Model.TotalPages);
+                        var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                        for (int i = firstPage; i <= lastPage; i++)
                         {
-                            <a onclick="getClaimsPage('', @(i), '')"
-                               class="btn btn-default">
-                                @i
-                            </a>
+                            if (i == Model.PageIndex || Model.PageIndex == 0)
+                            {
+                                <span style="color:var(--secondary-blue);">@Model.PageIndex</span>
+                            }
+                            else
+                            {
+                                <a onclick="getClaimsPage('', @(i), '')"
+                                   class="btn btn-default">
+                                    @i
+                                </a>
+                            }
                         }
                     }
-                }
-                <a onclick="getClaimsPage('', @(Model.PageIndex + 1), '')"
-                   class="btn btn-default @nextDisabled">
-                    Next
-                </a>
-                <div class="test">
+                    <a onclick="getClaimsPage('', @(Model.PageIndex + 1), '')"
+                       class="btn btn-default @nextDisabled">
+                        Next
+                    </a>
+                    <div class="test">
+                    </div>
                 </div>
             </div>
         </div>

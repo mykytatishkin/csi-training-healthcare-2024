@@ -9,12 +9,12 @@ function showEmployerPackagePlans(employerId) {
         showError("employer-administration-errors", "Server error");
     }
 
-    route = `/Benefits/InsurancePackages?employerId=${employerId}`;
+    route = `/InsurancePackage/InsurancePackages?employerId=${employerId}`;
     fetchRoute(route, onSuccess, onFailure);
 }
 
 function initializePackage(packageId, employerId) {
-    fetch(`/Benefits/InitializePackage?packageId=${packageId}&employerId=${employerId}`, {
+    fetch(`/InsurancePackage/InitializePackage?packageId=${packageId}&employerId=${employerId}`, {
         method: 'PATCH'
     })
         .then(function (response) {
@@ -31,7 +31,7 @@ function initializePackage(packageId, employerId) {
 }
 
 function removePackage(packageId, employerId) {
-    fetch(`/Benefits/RemovePackage?packageId=${packageId}&employerId=${employerId}`, {
+    fetch(`/InsurancePackage/RemovePackage?packageId=${packageId}&employerId=${employerId}`, {
         method: 'DELETE'
     })
         .then(function (response) {

@@ -30,10 +30,13 @@ namespace CSI.IBTA.BenefitsService.Services
 
         public async Task<GenericResponse<ClaimDto>> GetClaim(int claimId)
         {
-            var claim = await _benefitsUnitOfWork.Claims.GetById(claimId);
+            var claim = await _benefitsUnitOfWork.Claims
+                .Include(x => x.Plan)
+                .Include(x => x.Plan.PlanType)
+                .Include(c => c.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == claimId);
 
-            if (claim == null)
-                return new GenericResponse<ClaimDto>(HttpErrors.ResourceNotFound, null);
+            if (claim == null) return new GenericResponse<ClaimDto>(HttpErrors.ResourceNotFound, null);
 
             return new GenericResponse<ClaimDto>(null, _mapper.Map<ClaimDto>(claim));
         }

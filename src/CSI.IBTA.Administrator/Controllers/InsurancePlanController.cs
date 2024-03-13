@@ -11,14 +11,14 @@ namespace CSI.IBTA.Administrator.Controllers
     [Route("InsurancePlans")]
     public class InsurancePlanController : Controller
     {
-        private readonly IBenefitsClient _benefitsClient;
+        private readonly IPlansClient _plansClient;
         private readonly IUserServiceClient _userClient;
 
         public InsurancePlanController(
-            IBenefitsClient benefitsClient,
+            IPlansClient plansClient,
             IUserServiceClient userClient)
         {
-            _benefitsClient = benefitsClient;
+            _plansClient = plansClient;
             _userClient = userClient;
         }
 
@@ -64,7 +64,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpGet("CreatePlan")]
         public async Task<IActionResult> CreatePlan(int employerId)
         {
-            var getPlanTypesResponse = await _benefitsClient.GetPlanTypes();
+            var getPlanTypesResponse = await _plansClient.GetPlanTypes();
             if (getPlanTypesResponse.Result == null)
             {
                 return Problem(title: "Failed to retrieve plan types");
@@ -95,19 +95,19 @@ namespace CSI.IBTA.Administrator.Controllers
             }
 
             var planDto = new CreatePlanDto(model.Name, model.Contribution, model.PlanTypeId);
-            var response = await _benefitsClient.CreatePlan(planDto);
+            var response = await _plansClient.CreatePlan(planDto);
             return PartialView("_EmployerAdministrationMenu", model.EmployerId);
         }
 
         [HttpGet("UpdatePlan")]
         public async Task<IActionResult> UpdatePlan(int employerId, int planId)
         {
-            var response = await _benefitsClient.GetPlan(planId);
+            var response = await _plansClient.GetPlan(planId);
             if (response.Result == null)
             {
                 return Problem(title: "Failed to retrieve plan");
             }
-            var getPlanTypesResponse = await _benefitsClient.GetPlanTypes();
+            var getPlanTypesResponse = await _plansClient.GetPlanTypes();
             if (getPlanTypesResponse.Result == null)
             {
                 return Problem(title: "Failed to retrieve plan types");
@@ -142,7 +142,7 @@ namespace CSI.IBTA.Administrator.Controllers
             }
 
             var planDto = new UpdatePlanDto(model.Name, model.Contribution, model.PlanTypeId);
-            var response = await _benefitsClient.UpdatePlan((int)model.PlanId, planDto);
+            var response = await _plansClient.UpdatePlan((int)model.PlanId, planDto);
             return PartialView("_EmployerAdministrationMenu", model.EmployerId);
         }
     }

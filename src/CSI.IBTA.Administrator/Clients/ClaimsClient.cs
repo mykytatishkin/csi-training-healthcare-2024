@@ -27,8 +27,23 @@ namespace CSI.IBTA.Administrator.Clients
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var employers = JsonConvert.DeserializeObject<List<ClaimDto>>(responseContent).AsQueryable();
-            return new GenericResponse<IQueryable<ClaimDto>?>(null, employers);
+            var claims = JsonConvert.DeserializeObject<List<ClaimDto>>(responseContent).AsQueryable();
+            return new GenericResponse<IQueryable<ClaimDto>?>(null, claims);
+        }
+
+        public async Task<GenericResponse<ClaimDto?>> GetClaimDetails(int claimId)
+        {
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Claims}/{claimId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorMessage = response.ReasonPhrase ?? "Something went wrong";
+                return new GenericResponse<ClaimDto?>(new HttpError(errorMessage, response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var claim = JsonConvert.DeserializeObject<ClaimDto>(responseContent);
+            return new GenericResponse<ClaimDto?>(null, claim);
         }
     }
 }

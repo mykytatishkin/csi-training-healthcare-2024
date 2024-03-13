@@ -4,6 +4,7 @@ using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 {
     [DbContext(typeof(BenefitsManagementContext))]
-    partial class BenefitsManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240307152700_ClaimStatusEnum")]
+    partial class ClaimStatusEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +48,6 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.Property<int>("PlanId")
                         .HasColumnType("int");
-
-                    b.Property<string>("RejectionReason")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -163,18 +163,6 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.HasKey("Id");
 
                     b.ToTable("PlanType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Medical"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Dental"
-                        });
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Claim", b =>
