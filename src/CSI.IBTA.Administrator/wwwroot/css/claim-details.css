@@ -93,6 +93,10 @@
     padding-bottom: 8px;
 }
 
+.smaller-width-button {
+    width: 80px;
+}
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;

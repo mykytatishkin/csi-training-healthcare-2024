@@ -24,7 +24,7 @@ function showEditClaim() {
             document.getElementById('claims-view').innerHTML = data;
         })
         .catch(function (error) {
-            console.error('There was a problem with the fetchrr operation:', error);
+            console.error('There was a problem with the fetch operation:', error);
             showError("employer-user-management-errors", error);
         });
 }

@@ -53,7 +53,7 @@
         <div class="claim-details select-field-top select-field-bottom">
             <label for="dateOfService">Date of Service:</label>
             <span id="dateOfService">
-                <input asp-for="Claim.DateOfService" type="date" value="@Model.Claim.DateOfService.ToString("yyyy-MM-dd")" required />
+                <input asp-for="Claim.DateOfService" type="date" max="@DateTime.UtcNow.ToString("yyyy-MM-dd")" value="@Model.Claim.DateOfService.ToString("yyyy-MM-dd")" required />
             </span>
         </div>
         <div class="claim-details select-field-bottom">
@@ -83,57 +83,4 @@
         <button class="btn btn-primary" onclick="saveClaimData()" type="button">Save</button>
         <button onclick="handleEditClaimCancel(@Model.Claim.Id)" class="btn btn-primary">Cancel</button>
     </div>
-    @* <table class="table">
-        <tbody>
-            <tr>
-                <td class="text-align-right">Claim Number: </td>
-                <td class="align-left">@Model.Claim.ClaimNumber</td>
-            </tr>
-            <tr><td colspan="2"><legend>Details</legend></td></tr>
-            <tr>
-                <td class="text-align-right">Consumer: </td>
-                <td class="align-left">@Model.Consumer.FirstName @Model.Consumer.LastName</td>
-            </tr>
-            <tr>
-                <td class="text-align-right">Phone: </td>
-                <td class="align-left">@Model.Consumer.PhoneNumber</td>
-            </tr>
-            <tr>
-                <td class="text-align-right">Date of Service:* </td>
-                <td class="align-left"><input asp-for="Claim.DateOfService" type="date" value="@Model.Claim.DateOfService.ToString("yyyy-MM-dd")" required /></td>
-            </tr>
-            <tr>
-                <td class="text-align-right">Plan:* </td>
-                <td>
-                    <select asp-for="Claim.PlanId" selected="@Model.Claim.PlanId">
-                        @for (int i = 0; i < Model.AvailablePlans.Count; i++)
-                        {
-                            <option value="@Model.AvailablePlans[i].Id">@Model.AvailablePlans[i].Name</option>
-                        }
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="text-align-right">Amount:* </td>
-                <td class="align-left"><input asp-for="Claim.Amount" type="number" step=".01" required min="1" /></td>
-            </tr>
-            <tr>
-            </tr>
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <tr>
-                    <td></td>
-                    <td>
-                        <div asp-validation-summary="All" class="text-danger"></div>
-                    </td>
-                </tr>
-            }
-
-            <tr>
-                <td><button onclick="handleEditClaimCancel(@Model.Claim.Id)" class="btn btn-primary">Cancel</button></td>
-                <td><button class="btn btn-primary" onclick="saveClaimData()" type="button">Save</button></td>
-                
-            </tr>
-        </tbody>
-    </table> *@
 </form>

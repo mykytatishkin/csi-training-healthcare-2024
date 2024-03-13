@@ -84,7 +84,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 Claim = new ClaimDto(claimModel.Claim.Id, claimModel.Claim.EmployeeId, 
                 claimModel.Claim.EmployerId, claimModel.Claim.PlanId, claimModel.Claim.ClaimNumber, 
                 claimModel.Claim.DateOfService, claimModel.Claim.PlanName, claimModel.Claim.PlanTypeName, 
-                claimModel.Claim.Amount, claimModel.Claim.Status),
+                claimModel.Claim.Amount, claimModel.Claim.Status, claimModel.Claim.RejectionReason),
                 Consumer = claimModel.Consumer,
                 //ClaimNumber = res.Result.ClaimNumber,
                 //DateOfService = res.Result.DateOfService,
@@ -110,7 +110,7 @@ namespace CSI.IBTA.Administrator.Controllers
             claimModel.Claim = new ClaimDto(claimModel.Claim.Id, claimModel.Claim.EmployeeId,
                 claimModel.Claim.EmployerId, claimModel.Claim.PlanId, claimModel.Claim.ClaimNumber,
                 claimModel.Claim.DateOfService, plan.Name, plan.PlanType.Name,
-                claimModel.Claim.Amount, claimModel.Claim.Status);
+                claimModel.Claim.Amount, claimModel.Claim.Status, claimModel.Claim.RejectionReason);
 
             var updateClaimDto = new UpdateClaimDto(claimModel.Claim.DateOfService, claimModel.Claim.PlanId, claimModel.Claim.Amount);
             var res = await _benefitsServiceClient.UpdateClaim(claimModel.Claim.Id, updateClaimDto);

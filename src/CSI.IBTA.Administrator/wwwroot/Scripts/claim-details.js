@@ -12,16 +12,6 @@ function showClaimDetails(claimId) {
     fetchRoute(route, onSuccess, onFailure);
 }
 
-function showModal(modalId) {
-    var modal = document.getElementById(modalId);
-    modal.style.display = "block";
-}
-
-function closeModal(modalId) {
-    var modal = document.getElementById(modalId);
-    modal.style.display = "none";
-}
-
 function handleApproveClaim(claimId) {
     fetch(`/Claims/Approve/${claimId}`, {
         method: 'PATCH'
@@ -30,7 +20,6 @@ function handleApproveClaim(claimId) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data)
             if (data.result == false) {
                 var errors = document.getElementById('modal-form-errors');
                 errors.textContent = data.error.title;
@@ -48,7 +37,6 @@ function handleApproveClaim(claimId) {
 
 function handleDenyClaim(claimId) {
     var form = document.getElementById('deny-claim-form');
-
     if (form.checkValidity() == false) {
         form.reportValidity();
         return;
