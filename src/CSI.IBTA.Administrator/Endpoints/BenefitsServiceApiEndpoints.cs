@@ -9,5 +9,7 @@
         public const string PlanTypes = "v1/InsurancePlans/PlanTypes";
 
         public const string Claims = "v1/Claims";
+        public const string ApproveClaim = "v1/Claims/Approve";
+        public const string DenyClaim = "v1/Claims/Deny";
     }
 }

@@ -76,22 +76,24 @@
         <div class="modal-buttons">
             <div id="modal-form-errors" class="modal-errors text-danger"></div>
             <button onClick="closeModal('approveModal')" class="btn btn-outline-primary">Cancel</button>
-            <button id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+            <button onClick="handleApproveClaim(@Model.Claim.Id)" id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
         </div>
     </div>
 </div>
 
 <!-- Deny Modal -->
 <div id="denyModal" class="modal" onclick="closeModal('denyModal')">
-    <div class="modal-content" onclick="event.stopPropagation();">
-        <span class="close" onclick="closeModal('denyModal')">&times;</span>
-        <p>Are you sure you want to deny this claim?</p>
-        <label for="description">Reason for denial:</label>
-        <textarea id="description" name="description" required></textarea>
-        <div class="modal-buttons">
-            <div id="modal-form-errors" class="modal-errors text-danger"></div>
-            <button onClick="closeModal('denyModal')" class="btn btn-outline-primary">Cancel</button>
-            <button id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+    <form id="deny-claim-form">
+        <div class="modal-content" onclick="event.stopPropagation();">
+            <span class="close" onclick="closeModal('denyModal')">&times;</span>
+            <p>Are you sure you want to deny this claim?</p>
+            <label for="rejectionReason">Reason for denial:</label>
+            <textarea id="rejectionReason" name="rejectionReason" required></textarea>
+            <div class="modal-buttons">
+                <div id="modal-form-errors" class="modal-errors text-danger"></div>
+                <button onClick="closeModal('denyModal')" class="btn btn-outline-primary">Cancel</button>
+                <button onClick="handleDenyClaim(@Model.Claim.Id)" id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
