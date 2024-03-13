@@ -22,8 +22,8 @@
                     <div class="partial">
                         <div class="panel">
                             <div class="control">
-                                <button class="left btn btn-outline-primary view-btn" onclick="showEmployer()">Employer</button>
-                                <button class="right btn btn-outline-primary view-btn" onclick="showClaims()">Claims</button>
+                                <button id="employerBtn" class="left view-btn-active" onclick="showEmployer()">Employer</button>
+                                <button id="claimBtn" class="right view-btn" onclick="showClaims()">Claims</button>
                             </div>
                             <div id="employer-content">
                                 @Html.Partial("_Employer")
@@ -38,18 +38,23 @@
         </div>
     </div>
     <script>
+        document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
+        document.getElementById("claimBtn").setAttribute("class", "right view-btn");
+
         function showEmployer() {
             $("#employer-content").show();
             $("#claims-content").hide();
-            $(".left.partial-btn").addClass("active");
-            $(".right.partial-btn").removeClass("active");
+
+            document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
+            document.getElementById("claimBtn").setAttribute("class", "right view-btn");
         }
 
         function showClaims() {
             $("#employer-content").hide();
             $("#claims-content").show();
-            $(".left.partial-btn").removeClass("active");
-            $(".right.partial-btn").addClass("active");
+
+            document.getElementById("employerBtn").setAttribute("class", "left view-btn");
+            document.getElementById("claimBtn").setAttribute("class", "right view-btn-active");
         }
     </script>
 </body>

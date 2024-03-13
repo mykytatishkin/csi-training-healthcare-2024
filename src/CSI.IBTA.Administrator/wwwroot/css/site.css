@@ -1,3 +1,4 @@
+@import url('global.css');
 html {
   font-size: 14px;
 }
@@ -54,7 +55,19 @@ body {
     }
 
 .view-btn {
-    margin-top: 30px;
+    width: 50%;
+    background: var(--background-color);
+    border-radius: 10px 10px 0px 0px;
+    border: 1px solid var(--form-border-color);
+}
+
+.view-btn-active {
+    width: 50%;
+    background: var(--container-background-color);
+    border-radius: 10px 10px 0px 0px;
+    border-color: var(--form-border-color) var(--form-border-color) var(--container-background-color) var(--form-border-color);
+    border-style: solid;
+    border-width: 1px;
 }
 
 .left {
