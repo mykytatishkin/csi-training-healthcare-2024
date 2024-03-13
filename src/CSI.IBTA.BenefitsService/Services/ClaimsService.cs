@@ -4,6 +4,8 @@ using CSI.IBTA.Shared.DTOs;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using CSI.IBTA.Shared.DTOs.Errors;
+using CSI.IBTA.Shared.Entities;
+using System.Net;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -11,11 +13,13 @@ namespace CSI.IBTA.BenefitsService.Services
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
+        private readonly IUserBalanceService _userBalanceService;
 
-        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper)
+        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IUserBalanceService userBalanceService)
         {
             _benefitsUnitOfWork = benefitsUnitOfWork;
             _mapper = mapper;
+            _userBalanceService = userBalanceService;
         }
 
         public async Task<GenericResponse<List<ClaimDto>>> GetClaims()
@@ -55,6 +59,41 @@ namespace CSI.IBTA.BenefitsService.Services
             claim.PlanId = updateClaimDto.PlanId;
             claim.DateOfService = updateClaimDto.DateOfService;
             claim.Amount = updateClaimDto.Amount;
+            _benefitsUnitOfWork.Claims.Upsert(claim);
+            await _benefitsUnitOfWork.CompleteAsync();
+
+            return new GenericResponse<bool>(null, true);
+        }
+        public async Task<GenericResponse<bool>> ApproveClaim(int claimId)
+        {
+            var claim = await _benefitsUnitOfWork.Claims
+                .Include(x => x.Plan)
+                .FirstOrDefaultAsync(x => x.Id == claimId);
+
+            if (claim == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+
+            var res = await _userBalanceService.GetCurrentBalanceForPlan(claim.Plan.Id);
+            if (res.Error != null) return new GenericResponse<bool>(res.Error, false);
+
+            if (res.Result < claim.Amount)
+            {
+                return new GenericResponse<bool>(new HttpError("Consumer's balance is insufficient", HttpStatusCode.BadRequest), false);
+            }
+
+            claim.Status = ClaimStatus.Approved;
+            _benefitsUnitOfWork.Claims.Upsert(claim);
+            await _benefitsUnitOfWork.CompleteAsync();
+            return new GenericResponse<bool>(null, true);
+        }
+
+        public async Task<GenericResponse<bool>> DenyClaim(int claimId, DenyClaimDto dto)
+        {
+            var claim = await _benefitsUnitOfWork.Claims.GetById(claimId);
+
+            if (claim == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+            claim.Status = ClaimStatus.Denied;
+            claim.RejectionReason = dto.RejectionReason;
+
             _benefitsUnitOfWork.Claims.Upsert(claim);
             await _benefitsUnitOfWork.CompleteAsync();
 

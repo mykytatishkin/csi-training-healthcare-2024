@@ -13,6 +13,7 @@ namespace CSI.IBTA.BenefitsService
             services.AddScoped<IInsurancePackageService, InsurancePackageService>();
             services.AddScoped<IClaimsService, ClaimsService>();
             services.AddScoped<IInsurancePlanService, InsurancePlanService>();
+            services.AddTransient<IUserBalanceService, UserBalanceService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddAuth(configuration);
             return services;

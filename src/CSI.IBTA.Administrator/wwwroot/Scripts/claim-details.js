@@ -1,8 +1,6 @@
 function showClaimDetails(claimId) {
-    console.log("aaa");
 
     function onSuccess(data) {
-        console.log(document.getElementById('claims-view'));
         document.getElementById('claims-view').innerHTML = data;
     }
 
@@ -22,4 +20,60 @@ function showModal(modalId) {
 function closeModal(modalId) {
     var modal = document.getElementById(modalId);
     modal.style.display = "none";
+}
+
+function handleApproveClaim(claimId) {
+    fetch(`/Claims/Approve/${claimId}`, {
+        method: 'PATCH'
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data)
+            if (data.result == false) {
+                var errors = document.getElementById('modal-form-errors');
+                errors.textContent = data.error.title;
+            }
+            else {
+                closeModal('approveModal');
+                showClaims();
+            }
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the handleApproveClaim operation:', error);
+            showError("modal-form-errors", "Server failed to modify the claim, try again");
+        });
+}
+
+function handleDenyClaim(claimId) {
+    var form = document.getElementById('deny-claim-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+    fetch(`/Claims/Deny/${claimId}`, {
+        method: 'PATCH',
+        body: formData,
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            if (data.result == null) {
+                var errors = document.getElementById('employer-form-errors');
+                errors.textContent = data.error.title;
+            }
+            else {
+                closeModal('denyModal');
+                showClaims();
+            }
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the handleDenyClaim operation:', error);
+            showError("modal-form-errors", "Server failed to modify the claim, try again");
+        });
 }

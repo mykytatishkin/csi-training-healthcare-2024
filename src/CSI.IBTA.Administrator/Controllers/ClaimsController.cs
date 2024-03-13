@@ -1,5 +1,6 @@
 ﻿using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
+using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
@@ -41,5 +42,18 @@ namespace CSI.IBTA.Administrator.Controllers
             return PartialView("_ClaimDetails", viewModel);
         }
 
+        [HttpPatch("Approve/{claimId}")]
+        public async Task<IActionResult> ApproveClaim(int claimId)
+        {
+            var res = await _claimsClient.ApproveClaim(claimId);
+            return Json(res);
+        }
+
+        [HttpPatch("Deny/{claimId}")]
+        public async Task<IActionResult> DenyClaim(int claimId, DenyClaimDto dto)
+        {
+            var res = await _claimsClient.DenyClaim(claimId, dto);
+            return Json(res);
+        }
     }
 }
