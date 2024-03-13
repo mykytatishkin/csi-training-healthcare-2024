@@ -4,6 +4,7 @@
         int Id,
         int EmployeeId,
         int EmployerId,
+        int PlanId,
         string ClaimNumber,
         DateOnly DateOfService,
         string PlanTypeName,
@@ -21,4 +22,6 @@
         string PlanTypeName,
         decimal Amount,
         string Status);
+
+    public record UpdateClaimDto(DateOnly DateOfService, int PlanId, decimal Amount);
 }

@@ -17,8 +17,8 @@ namespace CSI.IBTA.UserService.Mapping
                     user.Lastname,
                     user.AccountId,
                     user.Employer != null ? user.Employer.Id : null,
-                    user.Emails[0].EmailAddress,
-                    user.Phones[0].PhoneNumber));
+                    user.Emails != null ? user.Emails[0].EmailAddress : "",
+                    user.Phones != null ? user.Phones[0].PhoneNumber  : ""));
 
             CreateMap<User, NewUserDto>()
                 .ConstructUsing(user => new NewUserDto(

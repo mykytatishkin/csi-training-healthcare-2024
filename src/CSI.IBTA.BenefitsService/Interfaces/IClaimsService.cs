@@ -5,5 +5,7 @@ namespace CSI.IBTA.BenefitsService.Interfaces
     public interface IClaimsService
     {
         Task<GenericResponse<List<ClaimDto>>> GetClaims();
+        Task<GenericResponse<ClaimDto>> GetClaim(int claimId);
+        Task<GenericResponse<ClaimDto>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto);
     }
 }

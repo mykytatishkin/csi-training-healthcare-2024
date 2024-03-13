@@ -39,6 +39,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
                 .Include(u => u.Emails)
+                .Include(u => u.Phones)
                 .FirstOrDefaultAsync(a => a.Account.Id == accountId);
 
             if (user == null)
@@ -72,6 +73,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
                 .Include(u => u.Emails)
+                .Include(u => u.Phones)
                 .Where(u => userIds.Contains(u.Id))
                 .ToListAsync();
 

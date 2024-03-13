@@ -22,7 +22,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<ClaimDto>> GetClaim(int claimId)
         {
-            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Claim}/{claimId}");
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Claims}/{claimId}");
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
@@ -111,7 +111,7 @@ namespace CSI.IBTA.Administrator.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(updateClaimDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.Claim}/{claimId}", content);
+            var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.Claims}/{claimId}", content);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
