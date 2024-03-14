@@ -8,7 +8,7 @@ using System.Net;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
-    public class UserBalanceService : IUserBalanceService
+    internal class UserBalanceService : IUserBalanceService
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
 
@@ -37,7 +37,7 @@ namespace CSI.IBTA.BenefitsService.Services
                 case PayrollFrequency.Weekly:
                     totalPeriods += (int)Math.Ceiling((package.PlanEnd - package.PlanStart).TotalDays / 7.0);
 
-                    periodsPassed += (int)Math.Ceiling((DateTime.Now - package.PlanStart).TotalDays / 7.0);
+                    periodsPassed += (int)Math.Ceiling((DateTime.UtcNow - package.PlanStart).TotalDays / 7.0);
                     break;
                 case PayrollFrequency.Monthly:
                     totalPeriods += (package.PlanEnd.Year - package.PlanStart.Year) * 12; //add years

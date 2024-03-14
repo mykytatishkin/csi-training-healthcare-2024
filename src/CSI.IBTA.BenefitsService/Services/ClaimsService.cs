@@ -9,7 +9,7 @@ using System.Net;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
-    public class ClaimsService : IClaimsService
+    internal class ClaimsService : IClaimsService
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
