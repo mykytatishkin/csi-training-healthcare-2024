@@ -4,6 +4,9 @@ using CSI.IBTA.Shared.DataStructures;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
+using System.Linq;
+using CSI.IBTA.Administrator.Models;
+using CSI.IBTA.Administrator.Constants;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -63,11 +66,6 @@ namespace CSI.IBTA.Administrator.Controllers
                 return PartialView("_Employer", paginatedList);
             }
 
-            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                return RedirectToAction("Index", "Auth");
-            }
-
             return PartialView("_Employer");
         }
 
@@ -75,10 +73,11 @@ namespace CSI.IBTA.Administrator.Controllers
         public async Task<IActionResult> GetClaims(
             string? numberFilter,
             string? employerFilter,
+            string? claimStatusFilter,
             string? currentNumberFilter,
             string? currentEmployerFilter,
-            int? pageNumber,
-            int? pageSize)
+            string? currentClaimStatusFilter,
+            int? pageNumber)
         {
             if (numberFilter != null || employerFilter != null)
             {
@@ -87,35 +86,72 @@ namespace CSI.IBTA.Administrator.Controllers
 
             numberFilter = numberFilter ?? currentNumberFilter;
             employerFilter = employerFilter ?? currentEmployerFilter;
+            claimStatusFilter = claimStatusFilter ?? currentClaimStatusFilter;
             ViewData["CurrentNumberFilter"] = numberFilter;
             ViewData["CurrentEmployerFilter"] = employerFilter;
+            ViewData["CurrentClaimStatusFilter"] = claimStatusFilter;
 
-            var res = await _claimsClient.GetClaims();
-            if (res.Result != null)
+            var claimsResponse = await _claimsClient.GetClaims(
+                pageNumber ?? 1, 
+                PaginationConstants.ClaimsPerPage, 
+                numberFilter ?? "", 
+                employerFilter ?? "", 
+                claimStatusFilter ?? "");
+
+            if (claimsResponse.Error != null || claimsResponse.Result == null)
             {
-                var claims = res.Result;
-
-                if (!string.IsNullOrEmpty(numberFilter))
-                {
-                    claims = claims.Where(s => s.ClaimNumber.Contains(numberFilter));
-                }
-                if (!string.IsNullOrEmpty(employerFilter))
-                {
-                    claims = claims.Where(s => s.EmployerId.ToString().Equals(employerFilter));
-                }
-
-                ViewData["Page"] = "Home";
-                var claimList = claims ?? new List<ClaimDto>().AsQueryable();
-                var paginatedList = new PaginatedList<ClaimDto>(claimList, pageNumber ?? 1, pageSize ?? 8);
-                return PartialView("_Claims", paginatedList);
+                return PartialView("_Claims");
             }
 
-            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
+            var claims = claimsResponse.Result.Claims;
+
+            var userIds = claims.Select(c => c.EmployeeId).Distinct().ToList();
+            var usersResponse = await _userServiceClient.GetUsers(userIds);
+
+            if (usersResponse.Error != null || usersResponse.Result == null)
             {
-                return RedirectToAction("Index", "Auth");
+                return PartialView("_Claims");
             }
 
-            return PartialView("_Claims");
+            var users = usersResponse.Result;
+
+            var employersResponse = await _userServiceClient.GetEmployers();
+
+            if (employersResponse.Error != null || employersResponse.Result == null)
+            {
+                return PartialView("_Claims");
+            }
+
+            var employers = employersResponse.Result;
+
+            var combinedClaims = claims.Select(c => new ViewClaimDto(
+                c.Id,
+                c.EmployeeId,
+                users.Where(u => u.Id == c.EmployeeId)
+                    .Select(u => $"{u.FirstName} {u.LastName}")
+                    .First(),
+                c.EmployerId,
+                employers.Where(e => e.Id == c.EmployerId)
+                    .Select(e => e.Name)
+                    .First(),
+                c.ClaimNumber,
+                c.DateOfService,
+                c.PlanTypeName,
+                c.Amount,
+                c.Status));
+
+            ViewData["Page"] = "Home";
+
+            var viewModel = new ClaimsSearchViewModel
+            {
+                Claims = combinedClaims,
+                Employers = employers,
+                Page = pageNumber ?? 1,
+                TotalCount = claimsResponse.Result.TotalCount,
+                TotalPages = claimsResponse.Result.TotalPages,
+            };
+
+            return PartialView("_Claims", viewModel);
         }
     }
 }

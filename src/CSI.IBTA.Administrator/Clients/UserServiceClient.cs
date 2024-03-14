@@ -1,4 +1,3 @@
-using System.Net;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Types;
@@ -6,6 +5,7 @@ using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 using System.Text;
+using System.Net;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -42,7 +42,7 @@ namespace CSI.IBTA.Administrator.Clients
         {
             string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);
             var response = await _httpClient.GetAsync(requestUrl);
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
@@ -51,8 +51,25 @@ namespace CSI.IBTA.Administrator.Clients
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
-            Console.WriteLine(user);
             return new GenericResponse<UserDto>(null, user);
+        }
+
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetUsers(List<int> userIds)
+        {
+            string queryParams = string.Join("&", userIds.Select(u => $"userIds={u}"));
+            string requestUrl = $"{UserServiceApiEndpoints.UsersByIds}?{queryParams}";
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<IEnumerable<UserDto>>(HttpErrors.GenericError, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var users = JsonConvert.DeserializeObject<IEnumerable<UserDto>>(responseContent);
+
+            return new GenericResponse<IEnumerable<UserDto>>(null, users);
         }
 
         public async Task<GenericResponse<IQueryable<SettingsDto>?>> GetEmployerSettings(int employerId)
@@ -149,7 +166,7 @@ namespace CSI.IBTA.Administrator.Clients
                 { new StringContent(dto.ZipCode), nameof(dto.ZipCode) },
                 { new StringContent(dto.Phone), nameof(dto.Phone) }
             };
-            
+
             using (var stream = new MemoryStream())
             {
                 if (dto.NewLogoFile != null)
@@ -194,6 +211,24 @@ namespace CSI.IBTA.Administrator.Clients
             var employer = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
 
             return new GenericResponse<EmployerDto>(null, employer);
+        }
+
+        public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetEmployersByIds(List<int> employerIds)
+        {
+            string queryParams = string.Join("&", employerIds.Select(u => $"employerIds={u}"));
+            string requestUrl = $"{UserServiceApiEndpoints.EmployersByIds}?{queryParams}";
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<IEnumerable<EmployerDto>>(HttpErrors.GenericError, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employers = JsonConvert.DeserializeObject<IEnumerable<EmployerDto>>(responseContent);
+
+            return new GenericResponse<IEnumerable<EmployerDto>>(null, employers);
         }
 
         public async Task<GenericResponse<List<UserDto>>> GetEmployerUsers(int employerId)

@@ -7,7 +7,6 @@ using CSI.IBTA.UserService.Interfaces;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using CSI.IBTA.DB.Migrations.Migrations;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -64,6 +63,19 @@ namespace CSI.IBTA.UserService.Services
             }
 
             return new GenericResponse<UserDto>(null, _mapper.Map<UserDto>(user));
+        }
+
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetUsers(List<int> userIds)
+        {
+            var users = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Employer)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
+                .Where(u => userIds.Contains(u.Id))
+                .ToListAsync();
+
+            return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));
         }
 
         public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)

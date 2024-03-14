@@ -1,10 +1,10 @@
 ﻿using CSI.IBTA.BenefitsService.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using CSI.IBTA.Shared.DTOs.Errors;
-using CSI.IBTA.Shared.Entities;
 using System.Net;
 
 namespace CSI.IBTA.BenefitsService.Services
@@ -22,14 +22,28 @@ namespace CSI.IBTA.BenefitsService.Services
             _userBalanceService = userBalanceService;
         }
 
-        public async Task<GenericResponse<List<ClaimDto>>> GetClaims()
+        public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "")
         {
-            var response = await _benefitsUnitOfWork.Claims
+            var filteredClaims = _benefitsUnitOfWork.Claims.GetSet()
                 .Include(c => c.Plan.Package)
                 .Include(c => c.Plan.PlanType)
+                .Where(c => claimNumber == "" || c.ClaimNumber.Contains(claimNumber))
+                .Where(c => employerId == "" || c.Plan.Package.EmployerId.ToString() == employerId)
+                .Where(c => claimStatus == "" || c.Status == Enum.Parse<ClaimStatus>(claimStatus));
+
+            var totalCount = filteredClaims.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var claims = await filteredClaims
+                .OrderBy(p => p.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
-            return new GenericResponse<List<ClaimDto>>(null, response.Select(_mapper.Map<ClaimDto>).ToList());
+            var claimDtos = claims.Select(_mapper.Map<ClaimDto>).ToList();
+
+            var response = new PagedClaimsResponse(claimDtos, page, pageSize, totalPages, totalCount);
+            return new GenericResponse<PagedClaimsResponse>(null, response);
         }
 
         public async Task<GenericResponse<ClaimDto>> GetClaim(int claimId)
