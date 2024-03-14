@@ -1,10 +1,9 @@
 ﻿using CSI.IBTA.BenefitsService.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -24,10 +23,10 @@ namespace CSI.IBTA.BenefitsService.Services
             var filteredClaims = _benefitsUnitOfWork.Claims.GetSet()
                 .Include(c => c.Plan.Package)
                 .Include(c => c.Plan.PlanType)
-                .Where(c => claimNumber != "" ? c.ClaimNumber.Contains(claimNumber) : true)
-                .Where(c => employerId != "" ? c.Plan.Package.EmployerId.ToString() == employerId : true)
-                .Where(c => claimStatus != "" ? c.Status == Enum.Parse<ClaimStatus>(claimStatus) : true);
-         
+                .Where(c => claimNumber == "" || c.ClaimNumber.Contains(claimNumber))
+                .Where(c => employerId == "" || c.Plan.Package.EmployerId.ToString() == employerId)
+                .Where(c => claimStatus == "" || c.Status == Enum.Parse<ClaimStatus>(claimStatus));
+
             var totalCount = filteredClaims.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
