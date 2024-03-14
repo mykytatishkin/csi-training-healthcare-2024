@@ -1,12 +1,11 @@
-﻿using CSI.IBTA.Shared.Entities;
+﻿using CSI.IBTA.Shared.DataStructures;
+using CSI.IBTA.Shared.DTOs;
 
 namespace CSI.IBTA.Administrator.Models
 {
     public class ClaimsSearchViewModel
     {
-        public IEnumerable<Claim> Claims { get; set; } = [];
-        public IEnumerable<Employer> Employers { get; set; } = [];
-        public string ClaimNumber { get; set; } = null!;
-        public int EmployerId { get; set; }
+        public PaginatedList<ViewClaimDto> Claims { get; set; } = null!;
+        public IEnumerable<EmployerDto> Employers { get; set; } = [];
     }
 }

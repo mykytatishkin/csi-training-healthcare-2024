@@ -10,6 +10,6 @@ namespace CSI.IBTA.Shared.Entities
         public int PlanId { get; set; }
         public Plan Plan { get; set; } = null!;
         public decimal Amount { get; set; }
-        public string Status { get; set; } = null!;
+        public ClaimStatus Status { get; set; }
     }
 }

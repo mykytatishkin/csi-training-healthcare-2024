@@ -1,4 +1,6 @@
-﻿namespace CSI.IBTA.Shared.DTOs
+﻿using CSI.IBTA.Shared.Entities;
+
+namespace CSI.IBTA.Shared.DTOs
 {
     public record ClaimDto(
         int Id,
@@ -8,7 +10,7 @@
         DateOnly DateOfService,
         string PlanTypeName,
         decimal Amount,
-        string Status);
+        ClaimStatus Status);
 
     public record ViewClaimDto(
         int Id,
@@ -20,5 +22,5 @@
         DateOnly DateOfService,
         string PlanTypeName,
         decimal Amount,
-        string Status);
+        ClaimStatus Status);
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
 using System.Linq;
+using CSI.IBTA.Administrator.Models;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -76,8 +77,10 @@ namespace CSI.IBTA.Administrator.Controllers
         public async Task<IActionResult> GetClaims(
             string? numberFilter,
             string? employerFilter,
+            string? claimStatusFilter,
             string? currentNumberFilter,
             string? currentEmployerFilter,
+            string? currentClaimStatusFilter,
             int? pageNumber,
             int? pageSize)
         {
@@ -88,18 +91,15 @@ namespace CSI.IBTA.Administrator.Controllers
 
             numberFilter = numberFilter ?? currentNumberFilter;
             employerFilter = employerFilter ?? currentEmployerFilter;
+            claimStatusFilter = claimStatusFilter ?? currentClaimStatusFilter;
             ViewData["CurrentNumberFilter"] = numberFilter;
             ViewData["CurrentEmployerFilter"] = employerFilter;
+            ViewData["CurrentClaimStatusFilter"] = claimStatusFilter;
 
             var claimsResponse = await _claimsClient.GetClaims();
 
             if (claimsResponse.Error != null || claimsResponse.Result == null)
             {
-                if (claimsResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    return RedirectToAction("Index", "Auth");
-                }
-
                 return PartialView("_Claims");
             }
 
@@ -110,26 +110,15 @@ namespace CSI.IBTA.Administrator.Controllers
 
             if (usersResponse.Error != null || usersResponse.Result == null)
             {
-                if (usersResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    return RedirectToAction("Index", "Auth");
-                }
-
                 return PartialView("_Claims");
             }
 
             var users = usersResponse.Result;
 
-            var employerIds = claims.Select(c => c.EmployerId).ToList();
-            var employersResponse = await _userServiceClient.GetEmployersByIds(employerIds);
+            var employersResponse = await _userServiceClient.GetEmployers();
 
             if (employersResponse.Error != null || employersResponse.Result == null)
             {
-                if (employersResponse.Error!.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    return RedirectToAction("Index", "Auth");
-                }
-
                 return PartialView("_Claims");
             }
 
@@ -155,15 +144,28 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 combinedClaims = combinedClaims.Where(s => s.ClaimNumber.Contains(numberFilter));
             }
+
             if (!string.IsNullOrEmpty(employerFilter))
             {
                 combinedClaims = combinedClaims.Where(s => s.EmployerId.ToString().Equals(employerFilter));
             }
 
+            if (!string.IsNullOrEmpty(claimStatusFilter))
+            {
+                combinedClaims = combinedClaims.Where(s => ((int)s.Status).ToString().Equals(claimStatusFilter));
+            }
+
             ViewData["Page"] = "Home";
             var claimList = combinedClaims ?? new List<ViewClaimDto>().AsQueryable();
             var paginatedList = new PaginatedList<ViewClaimDto>(claimList, pageNumber ?? 1, pageSize ?? 8);
-            return PartialView("_Claims", paginatedList);
+
+            var viewModel = new ClaimsSearchViewModel
+            {
+                Claims = paginatedList,
+                Employers = employers
+            };
+
+            return PartialView("_Claims", viewModel);
         }
     }
 }
