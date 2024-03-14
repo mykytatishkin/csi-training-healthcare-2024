@@ -96,7 +96,7 @@
                                 @Html.DisplayFor(modelItem => item.Amount)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Status)
+                                @item.Status.ToCustomString()
                             </td>
                         </tr>
                     }
