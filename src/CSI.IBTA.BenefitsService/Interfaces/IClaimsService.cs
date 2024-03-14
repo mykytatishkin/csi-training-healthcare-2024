@@ -4,6 +4,6 @@ namespace CSI.IBTA.BenefitsService.Interfaces
 {
     public interface IClaimsService
     {
-        Task<GenericResponse<List<ClaimDto>>> GetClaims();
+        Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "");
     }
 }

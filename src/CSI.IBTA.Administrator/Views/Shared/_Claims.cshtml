@@ -6,8 +6,8 @@
 @model ClaimsSearchViewModel
 
 @{
-    var prevDisabled = !Model.Claims.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.Claims.HasNextPage ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
 
     string GetFilter(string viewDataId)
     {
@@ -52,7 +52,7 @@
     </div>
     <div class="select-view-section">
         <p>Select view:</p>
-        <select onchange="getClaimsPage('', @(Model.Claims.PageIndex), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', this.value)">
+        <select onchange="getClaimsPage('', @(Model.Page), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', this.value)">
             <option value="" selected="@(GetFilter("CurrentClaimStatusFilter") == "")">All</option>
             <option value="@((int)ClaimStatus.PendingApproval)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.PendingApproval)">@ClaimStatus.PendingApproval.ToCustomString()</option>
             <option value="@((int)ClaimStatus.Approved)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.Approved)">@ClaimStatus.Approved.ToCustomString()</option>
@@ -103,30 +103,30 @@
                 </tbody>
             </table>
             <div style="text-align:right" class="pages">
-                <a onclick="getClaimsPage('', @(Model.Claims.PageIndex - 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
+                <a onclick="getClaimsPage('', @(Model.Page - 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
                 @{
-                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Claims.PageIndex + PaginationConstants.NextPages);
-                    var lastPage = Math.Min(nextPages, Model.Claims.TotalPages);
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
                     var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
                     for (int i = firstPage; i <= lastPage; i++)
                     {
-                        if (i == Model.Claims.PageIndex || Model.Claims.PageIndex == 0)
+                        if (i == Model.Page || Model.Page == 0)
                         {
-                            <span style="color:var(--secondary-blue);">@Model.Claims.PageIndex</span>
+                            <span style="color:var(--secondary-blue);">@Model.Page</span>
                         }
                         else
                         {
-                            <a onclick="getClaimsPage('', @(i), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter"))"
+                            <a onclick="getClaimsPage('', @(i), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
                                class="btn btn-default">
                                 @i
                             </a>
                         }
                     }
                 }
-                <a onclick="getClaimsPage('', @(Model.Claims.PageIndex + 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter"))"
+                <a onclick="getClaimsPage('', @(Model.Page + 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
                    class="btn btn-default @nextDisabled">
                     Next
                 </a>

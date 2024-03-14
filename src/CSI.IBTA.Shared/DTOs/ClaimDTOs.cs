@@ -12,6 +12,13 @@ namespace CSI.IBTA.Shared.DTOs
         decimal Amount,
         ClaimStatus Status);
 
+    public record PagedClaimsResponse(
+        List<ClaimDto> Claims,
+        int CurrentPage,
+        int PageSize,
+        int TotalPages,
+        int TotalCount);
+
     public record ViewClaimDto(
         int Id,
         int EmployeeId,

@@ -67,7 +67,6 @@ function searchClaims() {
     var formData = new FormData(form);
 
     route = '/Claims?NumberFilter=' + formData.get('NumberFilter') + '&EmployerFilter=' + formData.get('EmployerFilter') + "&ClaimStatusFilter=" + formData.get('ClaimStatusFilter');
-    console.log(route);
     fetchRoute(route, onSuccess, null);
 }
 
@@ -86,6 +85,5 @@ function getClaimsPage(sort, page, numberFilter, employerFilter, claimStatus) {
     }
 
     route = '/Claims?sortOrder=' + sort + '&pageNumber=' + page + '&currentNumberFilter=' + numberFilter + '&currentEmployerFilter=' + employerFilter + "&claimStatusFilter=" + claimStatus;
-    console.log(route);
     fetchRoute(route, onSuccess, null);
 }

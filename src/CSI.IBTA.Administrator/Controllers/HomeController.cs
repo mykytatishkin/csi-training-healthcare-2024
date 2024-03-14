@@ -6,6 +6,7 @@ using CSI.IBTA.Shared.DTOs;
 using System.Net;
 using System.Linq;
 using CSI.IBTA.Administrator.Models;
+using CSI.IBTA.Administrator.Constants;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -81,8 +82,7 @@ namespace CSI.IBTA.Administrator.Controllers
             string? currentNumberFilter,
             string? currentEmployerFilter,
             string? currentClaimStatusFilter,
-            int? pageNumber,
-            int? pageSize)
+            int? pageNumber)
         {
             if (numberFilter != null || employerFilter != null)
             {
@@ -96,14 +96,19 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentEmployerFilter"] = employerFilter;
             ViewData["CurrentClaimStatusFilter"] = claimStatusFilter;
 
-            var claimsResponse = await _claimsClient.GetClaims();
+            var claimsResponse = await _claimsClient.GetClaims(
+                pageNumber ?? 1, 
+                PaginationConstants.ClaimsPerPage, 
+                numberFilter ?? "", 
+                employerFilter ?? "", 
+                claimStatusFilter ?? "");
 
             if (claimsResponse.Error != null || claimsResponse.Result == null)
             {
                 return PartialView("_Claims");
             }
 
-            var claims = claimsResponse.Result;
+            var claims = claimsResponse.Result.Claims;
 
             var userIds = claims.Select(c => c.EmployeeId).ToList();
             var usersResponse = await _userServiceClient.GetUsers(userIds);
@@ -140,29 +145,15 @@ namespace CSI.IBTA.Administrator.Controllers
                 c.Amount,
                 c.Status));
 
-            if (!string.IsNullOrEmpty(numberFilter))
-            {
-                combinedClaims = combinedClaims.Where(s => s.ClaimNumber.Contains(numberFilter));
-            }
-
-            if (!string.IsNullOrEmpty(employerFilter))
-            {
-                combinedClaims = combinedClaims.Where(s => s.EmployerId.ToString().Equals(employerFilter));
-            }
-
-            if (!string.IsNullOrEmpty(claimStatusFilter))
-            {
-                combinedClaims = combinedClaims.Where(s => ((int)s.Status).ToString().Equals(claimStatusFilter));
-            }
-
             ViewData["Page"] = "Home";
-            var claimList = combinedClaims ?? new List<ViewClaimDto>().AsQueryable();
-            var paginatedList = new PaginatedList<ViewClaimDto>(claimList, pageNumber ?? 1, pageSize ?? 8);
 
             var viewModel = new ClaimsSearchViewModel
             {
-                Claims = paginatedList,
-                Employers = employers
+                Claims = combinedClaims,
+                Employers = employers,
+                Page = pageNumber ?? 1,
+                TotalCount = claimsResponse.Result.TotalCount,
+                TotalPages = claimsResponse.Result.TotalPages,
             };
 
             return PartialView("_Claims", viewModel);
