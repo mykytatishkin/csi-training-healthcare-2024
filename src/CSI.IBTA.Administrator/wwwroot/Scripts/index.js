@@ -87,3 +87,13 @@ function getClaimsPage(sort, page, numberFilter, employerFilter, claimStatus) {
     route = '/Claims?sortOrder=' + sort + '&pageNumber=' + page + '&currentNumberFilter=' + numberFilter + '&currentEmployerFilter=' + employerFilter + "&claimStatusFilter=" + claimStatus;
     fetchRoute(route, onSuccess, null);
 }
+
+function redirectToEmployersMenu(employerId) {
+    function onSuccess(data) {
+        document.getElementById('content').innerHTML = data;
+        showEmployerDetails(employerId);
+    }
+
+    route = '/Employers';
+    fetchRoute(route, onSuccess, null);
+}

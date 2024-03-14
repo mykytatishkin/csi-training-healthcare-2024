@@ -78,13 +78,13 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a>
+                                <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.ClaimNumber)</a>
                             </td>
                             <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployeeName)</a>
+                                <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployeeName)</a>
                             </td>
                             <td>
-                                <a onclick="" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.EmployerName)</a>
+                                <a onclick="redirectToEmployersMenu(@item.EmployerId)" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployerName)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.DateOfService)
