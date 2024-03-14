@@ -4,7 +4,7 @@ namespace CSI.IBTA.Administrator.Interfaces
 {
     public interface IUserServiceClient
     {
-        Task<GenericResponse<IQueryable<EmployerDto>?>> GetEmployers();
+        Task<GenericResponse<PagedEmployersResponse>> GetEmployers(int page, int pageSize, string nameFilter = "", string codeFilter = "");
         Task<GenericResponse<UserDto>> GetUser(int userId);
         Task<GenericResponse<IEnumerable<UserDto>>> GetUsers(List<int> userIds);
         Task<GenericResponse<IQueryable<SettingsDto>?>> GetEmployerSettings(int employerId);

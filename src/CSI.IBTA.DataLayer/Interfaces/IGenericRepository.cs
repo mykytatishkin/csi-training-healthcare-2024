@@ -9,6 +9,7 @@ namespace CSI.IBTA.DataLayer.Interfaces
         Task<bool> Add(T entity);
         Task<bool> Delete(int id);
         bool Upsert(T entity);
+        IQueryable<T> GetSet();
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
         IQueryable<T> Include(params Expression<Func<T, object>>[] includes);
     }

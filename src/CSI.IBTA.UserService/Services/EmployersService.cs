@@ -163,13 +163,26 @@ namespace CSI.IBTA.UserService.Services
                 e.Logo)));
         }
 
-        public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetAll()
+        public async Task<GenericResponse<PagedEmployersResponse>> GetAll(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
         {
-            var res = await _unitOfWork.Employers.All();
+            var filteredEmployers = _unitOfWork.Employers.GetSet()
+            .Where(e => (nameFilter == "" || e.Name.Contains(nameFilter))
+                && (codeFilter == "" || e.Code.Equals(codeFilter)));
 
-            if (res == null) return new GenericResponse<IEnumerable<EmployerDto>>(new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
+            var totalCount = filteredEmployers.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            return new GenericResponse<IEnumerable<EmployerDto>>(null, res.Select(_mapper.Map<EmployerDto>));
+            var employers = await filteredEmployers
+                .OrderBy(p => p.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var responseList = new PagedEmployersResponse(employers.Select(_mapper.Map<EmployerDto>).ToList(), page, pageSize, totalPages, totalCount);
+
+            if (employers == null) return new GenericResponse<PagedEmployersResponse>(new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
+
+            return new GenericResponse<PagedEmployersResponse>(null, responseList);
         }
 
         public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId)

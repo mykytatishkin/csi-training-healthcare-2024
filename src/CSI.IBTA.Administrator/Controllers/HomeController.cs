@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -44,29 +45,14 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentNameFilter"] = nameFilter;
             ViewData["CurrentCodeFilter"] = codeFilter;
 
-            var res = await _userServiceClient.GetEmployers();
+            var res = await _userServiceClient.GetEmployers(pageNumber ?? 1, pageSize ?? 8, nameFilter ?? "", codeFilter ?? "");
             if (res.Result != null)
             {
-                var employers = res.Result;
-
-                if (!string.IsNullOrEmpty(nameFilter))
-                {
-                    employers = employers.Where(s => s.Name.Contains(nameFilter));
-                }
-                if (!string.IsNullOrEmpty(codeFilter))
-                {
-                    employers = employers.Where(s => s.Code.Equals(codeFilter));
-                }
-
+                var employers = res.Result.Employers.AsQueryable();
                 ViewData["Page"] = "Home";
                 var employerList = employers ?? new List<EmployerDto>().AsQueryable();
-                var paginatedList = new PaginatedList<EmployerDto>(employerList, pageNumber ?? 1, pageSize ?? 8);
+                var paginatedList = new PaginatedList<EmployerDto>(employerList, pageNumber ?? 1, res.Result.TotalPages);
                 return PartialView("_Employer", paginatedList);
-            }
-
-            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                return RedirectToAction("Index", "Auth");
             }
 
             return PartialView("_Employer");
@@ -109,11 +95,6 @@ namespace CSI.IBTA.Administrator.Controllers
                 var claimList = claims ?? new List<ClaimDto>().AsQueryable();
                 var paginatedList = new PaginatedList<ClaimDto>(claimList, pageNumber ?? 1, pageSize ?? 8);
                 return PartialView("_Claims", paginatedList);
-            }
-
-            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                return RedirectToAction("Index", "Auth");
             }
 
             return PartialView("_Claims");

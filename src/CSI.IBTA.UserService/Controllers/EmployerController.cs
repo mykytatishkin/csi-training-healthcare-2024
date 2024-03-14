@@ -70,9 +70,9 @@ namespace CSI.IBTA.UserService.Controllers
 
         [HttpGet]
         [Authorize(Roles = nameof(Role.Administrator))]
-        public async Task<IActionResult> GelAllEmployers()
+        public async Task<IActionResult> GelAllEmployers(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
         {
-            var response = await _employerService.GetAll();
+            var response = await _employerService.GetAll(page, pageSize, nameFilter, codeFilter);
 
             if (response.Error != null)
             {

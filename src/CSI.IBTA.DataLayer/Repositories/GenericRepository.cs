@@ -73,5 +73,9 @@ namespace CSI.IBTA.DataLayer.Repositories
 
             return query;
         }
+        public IQueryable<T> GetSet()
+        {
+            return _dbSet;
+        }
     }
 }
