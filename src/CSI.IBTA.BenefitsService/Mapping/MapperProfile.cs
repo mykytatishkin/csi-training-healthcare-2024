@@ -21,14 +21,15 @@ namespace CSI.IBTA.BenefitsService.Mapping
                 .ConstructUsing(planType => new PlanTypeDto(
                     planType.Id,
                     planType.Name));
-
+                    
             CreateMap<Package, InsurancePackageDto>()
                 .ConstructUsing(x => new InsurancePackageDto(
                     x.Id,
                     x.Name,
                     x.Status,
-                    x.Initialized == null,
-                    x.Initialized != null));
+                    DateTime.UtcNow < x.PlanEnd,
+                    x.Initialized == null || DateTime.UtcNow > x.PlanEnd,
+                    x.Initialized != null || DateTime.UtcNow > x.PlanEnd));
 
             CreateMap<Package, FullInsurancePackageDto>()
                 .ConstructUsing(x => new FullInsurancePackageDto(
@@ -51,6 +52,18 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     plan.Name,
                     plan.Contribution,
                     new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name)));
+                    
+
+            CreateMap<Claim, ClaimDto>()
+                .ConstructUsing(x => new ClaimDto(
+                    x.Id,
+                    x.EmployeeId,
+                    x.Plan.Package.EmployerId,
+                    x.ClaimNumber,
+                    x.DateOfService,
+                    x.Plan.PlanType.Name,
+                    x.Amount,
+                    x.Status));
         }
     }
 }

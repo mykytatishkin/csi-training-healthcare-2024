@@ -7,6 +7,7 @@ using CSI.IBTA.UserService.Interfaces;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using CSI.IBTA.DB.Migrations.Migrations;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -64,13 +65,37 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<UserDto>(null, _mapper.Map<UserDto>(user));
         }
 
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetUsers(List<int> userIds)
+        {
+            var users = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Employer)
+                .Include(u => u.Emails)
+                .Where(u => userIds.Contains(u.Id))
+                .ToListAsync();
+
+            return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));
+        }
+
         public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
         {
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);
 
             if (existingAccount.Any())
             {
-                return new GenericResponse<NewUserDto>(new HttpError("User already exists", HttpStatusCode.UnprocessableEntity), null);
+                var error = new HttpError("User with this username already exists", HttpStatusCode.Conflict);
+                return new GenericResponse<NewUserDto>(error, null);
+            }
+
+            var conflictingEmail = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Where(u => u.Emails.First().EmailAddress == createUserDto.EmailAddress)
+                .ToListAsync();
+
+            if (conflictingEmail.Count != 0)
+            {
+                var error = new HttpError("User with this email already exists", HttpStatusCode.Conflict);
+                return new GenericResponse<NewUserDto>(error, null);
             }
 
             User newUser = new User()
@@ -137,15 +162,28 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericResponse<UpdatedUserDto>(new HttpError("User not found", HttpStatusCode.NotFound), null);
+                var error = new HttpError("User was not found", HttpStatusCode.NotFound);
+                return new GenericResponse<UpdatedUserDto>(error, null);
             }
 
-            var conflictingUser = await _unitOfWork.Accounts
+            var conflictingUsername = await _unitOfWork.Accounts
                 .Find(a => a.Username == putUserDto.UserName && a.Id != user.AccountId);
 
-            if (conflictingUser.Any())
+            if (conflictingUsername.Any())
             {
-                return new GenericResponse<UpdatedUserDto>(HttpErrors.Conflict, null);
+                var error = new HttpError("User with this username already exists", HttpStatusCode.Conflict);
+                return new GenericResponse<UpdatedUserDto>(error, null);
+            }
+
+            var conflictingEmail = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Where(u => u.Emails.First().EmailAddress == putUserDto.EmailAddress && u.Account.Id != user.AccountId)
+                .ToListAsync();
+            
+            if (conflictingEmail.Count != 0)
+            {
+                var error = new HttpError("User with this email already exists", HttpStatusCode.Conflict);
+                return new GenericResponse<UpdatedUserDto>(error, null);
             }
 
             user.Account.Username = putUserDto.UserName;

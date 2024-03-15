@@ -95,7 +95,7 @@ div.text-danger ul {
 .custom-button {
     border: none;
     border-radius: 5px;
-    color: white;
+    color: var(--button-primary-text-color);
     padding: 4px 12px 4px 12px;
     background-color: var(--button-primary-color);
 }

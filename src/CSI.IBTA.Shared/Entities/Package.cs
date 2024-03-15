@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace CSI.IBTA.Shared.Entities
 {
     public class Package
@@ -28,9 +23,9 @@ namespace CSI.IBTA.Shared.Entities
         {
             get
             {
-                if (Initialized == null) return "Not Initialized";
                 var now = DateTime.UtcNow;
                 if (now > PlanEnd) return $"Archived on {PlanEnd.ToShortDateString()}";
+                if (Initialized == null) return "Not Initialized";
 
                 return $"Initialized on {Initialized}";
             }
