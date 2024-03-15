@@ -17,30 +17,11 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                 table: "Claim",
                 type: "nvarchar(max)",
                 nullable: true);
-
-            migrationBuilder.InsertData(
-                table: "PlanType",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Medical" },
-                    { 2, "Dental" }
-                });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "PlanType",
-                keyColumn: "Id",
-                keyValue: 1);
-
-            migrationBuilder.DeleteData(
-                table: "PlanType",
-                keyColumn: "Id",
-                keyValue: 2);
-
             migrationBuilder.DropColumn(
                 name: "RejectionReason",
                 table: "Claim");

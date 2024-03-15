@@ -26,6 +26,8 @@ namespace CSI.IBTA.UserService.Services
             var users = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
                 .ToListAsync();
 
             var userDtos = users.Select(_mapper.Map<UserDto>);
@@ -38,6 +40,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
                 .Include(u => u.Emails)
+                .Include(u => u.Phones)
                 .FirstOrDefaultAsync(a => a.Account.Id == accountId);
 
             if (user == null)

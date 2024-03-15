@@ -177,6 +177,8 @@ namespace CSI.IBTA.UserService.Services
             var response = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Emails)
+                .Include(u => u.Phones)
+                .Include(u => u.Emails)
                 .Where(u => u.EmployerId == employerId)
                 .ToListAsync();
 
