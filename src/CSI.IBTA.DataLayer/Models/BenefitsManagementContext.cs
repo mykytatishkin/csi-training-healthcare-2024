@@ -7,6 +7,7 @@ public partial class BenefitsManagementContext : DbContext
 {
     public DbSet<Claim> Claim { get; set; }
     public DbSet<Enrollment> Enrollment { get; set; }
+    public DbSet<Transaction> Transaction { get; set; }
     public DbSet<Package> Package { get; set; }
     public DbSet<Plan> Plan { get; set; }
     public DbSet<PlanType> PlanType { get; set; }
