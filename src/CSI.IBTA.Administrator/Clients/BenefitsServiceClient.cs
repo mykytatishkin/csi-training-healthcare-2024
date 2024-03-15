@@ -20,7 +20,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
         {
-            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{employerId}");
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackagesByEmployer}/{employerId}");
 
             if (!response.IsSuccessStatusCode)
             {
