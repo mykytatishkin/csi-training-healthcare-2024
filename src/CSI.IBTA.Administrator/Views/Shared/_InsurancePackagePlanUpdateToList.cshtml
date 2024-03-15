@@ -10,7 +10,7 @@
         @Html.HiddenFor(m => m.PackageModel.Package.PlanEnd)
         @Html.HiddenFor(m => m.PackageModel.Package.EmployerId)
         @Html.HiddenFor(m => m.PackageModel.Package.PayrollFrequency)
-        @Html.HiddenFor(m => m.PackageModel.Plans)
+        @Html.HiddenFor(m => m.PlanType)
 
         @for (int i = 0; i < @Model.PackageModel.AvailablePlanTypes.Count; i++)
         {
@@ -23,7 +23,7 @@
             @Html.HiddenFor(m => m.PackageModel.Plans[i].Name)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].Contribution)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Id)
-            @Html.HiddenFor(m => m.PackageModel.Plans[i].Id)
+            @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Name)
         }
         @if (Model.PackageModel.Plans == null)
         {

@@ -91,7 +91,7 @@ namespace CSI.IBTA.Administrator.Controllers
                     model.Contribution,
                     model.PackageModel.Package.Id);
 
-                model.PackageModel.Plans = model.PackageModel.Package.Plans;
+                //model.PackageModel.Plans = model.PackageModel.Package.Plans;
                 model.PackageModel.Plans.Add(newPlan);
 
                 model.PackageModel = new InsurancePackageModificationViewModel()

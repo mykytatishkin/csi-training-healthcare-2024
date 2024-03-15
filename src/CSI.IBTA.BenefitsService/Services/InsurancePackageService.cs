@@ -164,6 +164,8 @@ namespace CSI.IBTA.BenefitsService.Services
                 {
                     existingPlan.Contribution = planDto.Contribution;
                     existingPlan.TypeId = planDto.PlanTypeId;
+                    existingPlan.Name = planDto.Name;
+                    existingPlan.PlanType = await _benefitsUnitOfWork.PlanTypes.GetById(planDto.PlanTypeId);
                 }
                 else
                 {
