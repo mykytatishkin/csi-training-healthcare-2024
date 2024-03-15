@@ -8,5 +8,9 @@ namespace CSI.IBTA.Administrator.Interfaces
         Task<GenericResponse<ClaimDto?>> GetClaimDetails(int claimId);
         Task<GenericResponse<bool>> ApproveClaim(int claimId);
         Task<GenericResponse<bool>> DenyClaim(int claimId, DenyClaimDto dto);
+        Task<GenericResponse<ClaimDto>> GetClaim(int claimId);
+        Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto);
+        Task<GenericResponse<List<PlanDto>>> GetPlans(int? userId = null);
+        Task<GenericResponse<PlanDto>> GetPlan(int planId);
     }
 }

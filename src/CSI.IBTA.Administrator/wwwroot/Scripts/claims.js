@@ -1,7 +1,7 @@
 function showEditClaim() {
     var form = document.getElementById('claim-view-form');
     var formData = new FormData(form);
-    route = `/Benefits/OpenEditClaim`;
+    route = `/Claims/OpenEditClaim`;
     fetch(route, {
         method: 'POST',
         body: formData,
@@ -36,7 +36,7 @@ function saveClaimData() {
         return;
     }
     var formData = new FormData(form);
-    fetch(`/Benefits/EditClaim?claimId=${formData.get('Claim.Id')}`, {
+    fetch(`/Claims/EditClaim?claimId=${formData.get('Claim.Id')}`, {
         method: 'PATCH',
         body: formData,
     })
