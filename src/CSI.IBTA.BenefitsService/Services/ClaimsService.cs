@@ -67,7 +67,7 @@ namespace CSI.IBTA.BenefitsService.Services
 
             if (claim == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
 
-            var res = await _userBalanceService.GetCurrentBalanceForPlan(claim.Enrollment.PlanId);
+            var res = await _userBalanceService.GetCurrentBalance(claim.Enrollment.Id);
             if (res.Error != null) return new GenericResponse<bool>(res.Error, false);
 
             if (res.Result < claim.Amount)

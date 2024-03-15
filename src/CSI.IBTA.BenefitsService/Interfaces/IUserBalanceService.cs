@@ -5,6 +5,6 @@ namespace CSI.IBTA.BenefitsService.Interfaces
 {
     public interface IUserBalanceService
     {
-        Task<GenericResponse<decimal>> GetCurrentBalanceForPlan(int planId);
+        Task<GenericResponse<decimal>> GetCurrentBalance(int enrollmentId);
     }
 }

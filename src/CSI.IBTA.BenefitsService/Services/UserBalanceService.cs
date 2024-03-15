@@ -17,19 +17,21 @@ namespace CSI.IBTA.BenefitsService.Services
             _benefitsUnitOfWork = benefitsUnitOfWork;
         }
 
-        public async Task<GenericResponse<decimal>> GetCurrentBalanceForPlan(int planId)
+        public async Task<GenericResponse<decimal>> GetCurrentBalance(int enrollmentId)
         {
-            var plan = await _benefitsUnitOfWork.Plans
-                .Include(c => c.Package)
-                .FirstOrDefaultAsync(x => x.Id == planId);
+            var enrollment = await _benefitsUnitOfWork.Enrollments
+                .Include(c => c.Plan)
+                .Include(c => c.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == enrollmentId);
 
-            if(plan == null) return new GenericResponse<decimal>(HttpErrors.ResourceNotFound, 0);
-            if(!plan.Package.IsActive) return new GenericResponse<decimal>(new HttpError("This plan is not active yet", HttpStatusCode.BadRequest), 0);
+            if(enrollment == null) return new GenericResponse<decimal>(HttpErrors.ResourceNotFound, 0);
 
-            var package = plan.Package;
+            var package = enrollment.Plan.Package;
+            if (!package.IsActive) return new GenericResponse<decimal>(new HttpError("This package is not active yet", HttpStatusCode.BadRequest), 0);
+
             var transactions = await _benefitsUnitOfWork.Transactions
                 .Include(x => x.Enrollment)
-                .Where(x => x.Enrollment.PlanId == planId)
+                .Where(x => x.Enrollment.Id == enrollmentId)
                 .ToListAsync();
 
             var balance = transactions.Sum(x => x.Type == TransactionType.Income ? x.Amount : - x.Amount);
