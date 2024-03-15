@@ -1,6 +1,4 @@
-﻿
-
-namespace CSI.IBTA.Shared.Entities
+﻿namespace CSI.IBTA.Shared.Entities
 {
     public class Enrollment
     {
