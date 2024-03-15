@@ -89,3 +89,32 @@ function showAddPlanForm() {
             showError("employer-user-management-errors", error);
         });
 }
+
+function showUpdatePlanForm() {
+    var form = document.getElementById('insurance-package-create-form');
+    var formData = new FormData(form);
+    fetch(`/InsurancePlans/OpenUpdatePlanToListForm`, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                callbackFailure?.(response.status);
+                throw new Error("Response was not ok");
+            }
+
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
+
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", error);
+        });
+}

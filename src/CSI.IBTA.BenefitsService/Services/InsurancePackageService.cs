@@ -23,7 +23,8 @@ namespace CSI.IBTA.BenefitsService.Services
             _mapper = mapper;
         }
 
-        public async Task<GenericResponse<CreatedInsurancePackageDto>> CreateInsurancePackage(CreateInsurancePackageDto dto)
+        public async Task<GenericResponse<CreatedInsurancePackageDto>> CreateInsurancePackage(
+            CreateInsurancePackageDto dto)
         {
             var existingPackage = await _benefitsUnitOfWork.Packages.Find(p => p.Name == dto.Name);
 
@@ -92,9 +93,11 @@ namespace CSI.IBTA.BenefitsService.Services
 
         public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
         {
-            var packages = await _benefitsUnitOfWork.Packages.Find(x => x.EmployerId == employerId && x.IsRemoved != true);
+            var packages =
+                await _benefitsUnitOfWork.Packages.Find(x => x.EmployerId == employerId && x.IsRemoved != true);
 
-            return new GenericResponse<List<InsurancePackageDto>>(null, packages.Select(_mapper.Map<InsurancePackageDto>).ToList());
+            return new GenericResponse<List<InsurancePackageDto>>(null,
+                packages.Select(_mapper.Map<InsurancePackageDto>).ToList());
         }
 
         public async Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int packageId)
@@ -114,13 +117,98 @@ namespace CSI.IBTA.BenefitsService.Services
                     return new GenericResponse<FullInsurancePackageDto>(error, null);
                 }
 
-                return new GenericResponse<FullInsurancePackageDto>(null, _mapper.Map<FullInsurancePackageDto>(package));
+                return new GenericResponse<FullInsurancePackageDto>(null,
+                    _mapper.Map<FullInsurancePackageDto>(package));
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public async Task<GenericResponse<FullInsurancePackageDto>> UpdateInsurancePackage(UpdateInsurancePackageDto dto,
+            int packageId)
+        {
+            var existingPackage = await _benefitsUnitOfWork.Packages.GetById(packageId);
+            if (existingPackage == null)
+            {
+                var error = new HttpError("Package not found", HttpStatusCode.NotFound);
+                return new(error, null);
+            }
+
+            var existingPlans = await _benefitsUnitOfWork.Plans.Find(x => x.PackageId == packageId);
+            existingPackage.Plans = (IList<Plan>)existingPlans;
+
+
+            bool samePlanNames = dto.Plans
+                .Select(p => p.Name)
+                .Distinct()
+                .Count() < dto.Plans.Count;
+            if (samePlanNames)
+            {
+                var error = new HttpError("Multiple plans cannot have same name", HttpStatusCode.Conflict);
+                return new(error, null);
+            }
+
+            existingPackage.EmployerId = dto.EmployerId;
+            existingPackage.PlanEnd = dto.PlanEnd;
+            existingPackage.Name = dto.Name;
+            existingPackage.PayrollFrequency = dto.PayrollFrequency;
+            existingPackage.PlanStart = dto.PlanStart;
+
+            foreach (var planDto in dto.Plans)
+            {
+                var existingPlan = existingPackage.Plans.FirstOrDefault(p => p.Name == planDto.Name);
+                if (existingPlan != null)
+                {
+                    existingPlan.Contribution = planDto.Contribution;
+                    existingPlan.TypeId = planDto.PlanTypeId;
+                }
+                else
+                {
+                    var newPlan = new Plan
+                    {
+                        PackageId = existingPackage.Id,
+                        Contribution = planDto.Contribution,
+                        Name = planDto.Name,
+                        TypeId = planDto.PlanTypeId,
+                        Package = existingPackage,
+                        PlanType = await _benefitsUnitOfWork.PlanTypes.GetById(planDto.PlanTypeId)
+                    };
+
+                    existingPackage.Plans.Add(newPlan);
+                }
+            }
+
+
+            _benefitsUnitOfWork.Packages.Upsert(existingPackage);
+
+            try
+            {
+                await _benefitsUnitOfWork.CompleteAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
+
+            var createdPlans = existingPackage.Plans
+                .Select(p => new CreatedPlanDto(p.Id, p.Name, p.TypeId, p.Contribution))
+                .ToList();
+
+            var createdPackage = new FullInsurancePackageDto(
+                existingPackage.Id,
+                existingPackage.Name,
+                existingPackage.PlanStart,
+                existingPackage.PlanEnd,
+                existingPackage.PayrollFrequency,
+                existingPackage.EmployerId,
+                createdPlans.ConvertAll(x => new PlanDto(x.Id, x.Name, new PlanTypeDto(x.PlanTypeId, ""), x.Contribution, x.Id)));
+
+            return new(null, createdPackage);
         }
     }
 }

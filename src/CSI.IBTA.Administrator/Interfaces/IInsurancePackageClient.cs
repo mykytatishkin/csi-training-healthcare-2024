@@ -1,4 +1,5 @@
 ﻿using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Interfaces
 {
@@ -8,7 +9,7 @@ namespace CSI.IBTA.Administrator.Interfaces
 
         Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
 
-        Task<GenericResponse<bool?>> UpdateInsurancePackage(FullInsurancePackageDto command);
+        Task<GenericResponse<bool?>> UpdateInsurancePackage(UpdateInsurancePackageDto command);
 
         Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int insurancePackageId);
     }

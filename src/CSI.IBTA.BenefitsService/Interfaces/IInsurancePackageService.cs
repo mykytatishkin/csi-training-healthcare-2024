@@ -10,5 +10,7 @@ namespace CSI.IBTA.BenefitsService.Interfaces
         Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId);
 
         Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int packageId);
+
+        Task<GenericResponse<FullInsurancePackageDto>> UpdateInsurancePackage(UpdateInsurancePackageDto dto, int packageId);
     }
 }

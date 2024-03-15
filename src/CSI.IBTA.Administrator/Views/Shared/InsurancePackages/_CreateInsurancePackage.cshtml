@@ -6,22 +6,24 @@
 </head>
 <body>
     <div id="create-insurance-package">
-        <form asp-controller="Employer" asp-action="Random" method="post" id="insurance-package-create-form">
+        <form id="insurance-package-create-form">
             @Html.HiddenFor(model => model.EmployerId)
+            @Html.HiddenFor(model => model.Package.Plans)
             @for (int i = 0; i < @Model.AvailablePlanTypes.Count; i++)
             {
                 @Html.HiddenFor(m => m.AvailablePlanTypes[i].Id)
                 @Html.HiddenFor(m => m.AvailablePlanTypes[i].Name)
             }
             @if (Model != null && Model.Plans != null && Model.Plans.Count != 0)
-                @for (int i = 0; i < (@Model.Plans?.Count ?? 0); i++)
+                {@for (int i = 0; i < (@Model.Plans?.Count ?? 0); i++)
                 {
                     @Html.HiddenFor(m => m.Plans[i].Name)
                     @Html.HiddenFor(m => m.Plans[i].Contribution)
-                    @Html.HiddenFor(m => m.Plans[i].TypeId)
                     @Html.HiddenFor(m => m.Plans[i].PlanType.Id)
                     @Html.HiddenFor(m => m.Plans[i].PlanType.Name)
-                }
+                }}
+
+
             <div class="section general-section">
                 <div class="align-left">
                     <span class="border-label">General</span>
@@ -68,28 +70,28 @@
                 {
                     <table id="package-plans">
                         <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Contributions</th>
-                                @* <th>Actions</th> *@
-                            </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Contributions</th>
+                            @* <th>Actions</th> *@
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach (var plan in Model.Plans!)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => plan.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => plan.PlanType.Name)
-                                    </td>
-                                    <td>
-                                        $@Html.DisplayFor(modelItem => plan.Contribution)
-                                    </td>
-                                </tr>
-                            }
+                        @foreach (var plan in Model.Plans!)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => plan.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => plan.PlanType.Name)
+                                </td>
+                                <td>
+                                    $@Html.DisplayFor(modelItem => plan.Contribution)
+                                </td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
                 }

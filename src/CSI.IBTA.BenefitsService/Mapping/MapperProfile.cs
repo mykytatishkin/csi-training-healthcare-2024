@@ -43,7 +43,14 @@ namespace CSI.IBTA.BenefitsService.Mapping
                         plan.Name,
                         new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name),
                         plan.Contribution,
-                        plan.PackageId)).ToList()));
+                        plan.PackageId)).ToList()))
+                    ;
+
+            CreateMap<Plan, UpdatePlanDto>()
+                .ConstructUsing(plan => new UpdatePlanDto(
+                    plan.Name,
+                    plan.Contribution,
+                    new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name)));
         }
     }
 }

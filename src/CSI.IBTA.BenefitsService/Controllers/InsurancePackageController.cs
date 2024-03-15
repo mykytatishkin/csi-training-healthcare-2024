@@ -67,5 +67,22 @@ namespace CSI.IBTA.BenefitsService.Controllers
 
             return Ok(response.Result);
         }
+
+        [HttpPut("{packageId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> UpdateInsurancePackage(UpdateInsurancePackageDto dto, int packageId)
+        {
+            var response = await _insurancePackageService.UpdateInsurancePackage(dto, packageId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
     }
 }

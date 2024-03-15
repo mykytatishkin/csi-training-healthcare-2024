@@ -26,7 +26,6 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<IQueryable<EmployerDto>?>> GetEmployers()
         {
-
             var response = await _httpClient.GetAsync(UserApiEndpoints.Employer);
 
             if (!response.IsSuccessStatusCode)
@@ -262,5 +261,4 @@ namespace CSI.IBTA.Administrator.Clients
             return new GenericResponse<bool?>(null, true);
         }
     }
-
 }

@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Shared\_InsurancePackagePlanUpdate.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -16,6 +20,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CSI.IBTA.Shared\CSI.IBTA.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Shared\_InsurancePackagePlanUpdate.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\_InsurancePackagePlanUpdate.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Shared\_InsurancePackagePlanUpdate.cshtml" />
   </ItemGroup>
 
 </Project>

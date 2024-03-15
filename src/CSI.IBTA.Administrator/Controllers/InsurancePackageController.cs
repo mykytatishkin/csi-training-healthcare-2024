@@ -3,6 +3,7 @@ using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -27,12 +28,10 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var viewModel = new InsurancePackageCreationViewModel
             {
+                Package = new CreateInsurancePackageDto("", DateTime.MinValue, DateTime.MinValue, PayrollFrequency.Weekly, 0, new List<CreatePlanDto>()),
                 EmployerId = employerId,
-                AvailablePlanTypes = PlanTypes.Select(x => new PlanType()
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                }).ToList()
+                AvailablePlanTypes = PlanTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList(),
+                Plans = new List<PlanDto>()
             };
 
             return PartialView("InsurancePackages/_CreateInsurancePackage", viewModel);
@@ -49,7 +48,7 @@ namespace CSI.IBTA.Administrator.Controllers
                     .Select(p => new CreatePlanDto(
                         p.Name,
                         p.Contribution,
-                        p.TypeId))
+                        p.PlanType.Id))
                     .ToList();
             }
 
@@ -82,9 +81,8 @@ namespace CSI.IBTA.Administrator.Controllers
             if (packageDetails.Error != null)
             {
                 return Problem(
-                    title: packageDetails.Error.Title,
-                    statusCode: (int)packageDetails.Error.StatusCode
-                );
+                    statusCode: (int)packageDetails.Error.StatusCode,
+                    title: packageDetails.Error.Title);
             }
 
             var (_, planTypes) = await _packageClient.GetPlanTypes();
@@ -104,37 +102,33 @@ namespace CSI.IBTA.Administrator.Controllers
             return PartialView("InsurancePackages/_ModifyInsurancePackage", viewModel);
         }
 
-        [HttpPost("UpdateInsurancePackage")]
+        [HttpPut("UpdateInsurancePackage")]
         public async Task<IActionResult> UpdateInsurancePackage(InsurancePackageModificationViewModel viewModel)
         {
-            List<UpdatePlanDto> planDtos = [];
-
-            if (viewModel.Plans != null)
+            try
             {
-                planDtos = viewModel.Plans
-                    .Select(p => new UpdatePlanDto(
+                var planDtos = viewModel.Plans?.Select(p => new UpdatePlanDto(
                         p.Name,
                         p.Contribution,
-                        p.PlanType.Id))
-                    .ToList();
+                        p.PlanType))
+                    .ToList() ?? new List<UpdatePlanDto>();
+
+                var command = new UpdateInsurancePackageDto(viewModel.Package.Id, viewModel.Package.Name, viewModel.Package.PlanStart, viewModel.Package.PlanEnd, viewModel.Package.PayrollFrequency, viewModel.EmployerId,
+                    planDtos.ConvertAll(x => new CreatePlanDto(x.Name, x.Contribution, x.PlanType.Id)));
+
+                var response = await _packageClient.UpdateInsurancePackage(command);
+
+                if (response.Error != null)
+                {
+                    return Problem(
+                        statusCode: (int)response.Error.StatusCode,
+                        title: response.Error.Title);
+                }
             }
-
-            var command = new FullInsurancePackageDto(
-                viewModel.Package.Id,
-                viewModel.Package.Name,
-                viewModel.Package.PlanStart,
-                viewModel.Package.PlanEnd,
-                viewModel.Package.PayrollFrequency,
-                viewModel.EmployerId,
-                planDtos);
-
-            var response = await _packageClient.UpdateInsurancePackage(command);
-
-            if (response.Error != null)
+            catch (Exception e)
             {
-                return Problem(
-                    statusCode: (int)response.Error.StatusCode,
-                    title: response.Error.Title);
+                Console.WriteLine(e);
+                throw;
             }
 
             return Ok();

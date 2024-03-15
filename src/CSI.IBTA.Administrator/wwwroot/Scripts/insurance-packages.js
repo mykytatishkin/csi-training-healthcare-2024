@@ -40,14 +40,18 @@
             showEmployerPackagePlans(employerId);
         })
         .catch(function (error) {
+            if (error.message.includes("Insurance package with this name already exists")) {
+                showError("create-insurance-package-errors", "An insurance package with this name already exists. Please choose a different name.");
+            } else {
+                showError("create-insurance-package-errors", error.message);
+            }
             console.error('There was a problem with the fetch operation:', error);
-            showError("create-insurance-package-errors", error);
         });
 }
 
 function submitPackageUpdate() {
     console.log('???');
-    var form = document.getElementById('insurance-package-update-form');
+    var form = document.getElementById('insurance-package-create-form');
 
     if (form.checkValidity() == false) {
         form.reportValidity();
@@ -69,7 +73,7 @@ function submitPackageUpdate() {
     var employerId = formData.get('EmployerId')
     console.log(employerId);
 
-    fetch('/InsurancePackage', {
+    fetch('/InsurancePackage/UpdateInsurancePackage', {
         method: 'PUT',
         body: formData,
     })
