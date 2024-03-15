@@ -25,10 +25,10 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "")
         {
             var filteredClaims = _benefitsUnitOfWork.Claims.GetSet()
-                .Include(c => c.Plan.Package)
-                .Include(c => c.Plan.PlanType)
+                .Include(c => c.Enrollment.Plan.Package)
+                .Include(c => c.Enrollment.Plan.PlanType)
                 .Where(c => claimNumber == "" || c.ClaimNumber.Contains(claimNumber))
-                .Where(c => employerId == "" || c.Plan.Package.EmployerId.ToString() == employerId)
+                .Where(c => employerId == "" || c.Enrollment.Plan.Package.EmployerId.ToString() == employerId)
                 .Where(c => claimStatus == "" || c.Status == Enum.Parse<ClaimStatus>(claimStatus));
 
             var totalCount = filteredClaims.Count();
@@ -49,9 +49,9 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<ClaimDto>> GetClaim(int claimId)
         {
             var claim = await _benefitsUnitOfWork.Claims
-                .Include(x => x.Plan)
-                .Include(x => x.Plan.PlanType)
-                .Include(c => c.Plan.Package)
+                .Include(x => x.Enrollment.Plan)
+                .Include(x => x.Enrollment.Plan.PlanType)
+                .Include(c => c.Enrollment.Plan.Package)
                 .FirstOrDefaultAsync(x => x.Id == claimId);
 
             if (claim == null) return new GenericResponse<ClaimDto>(HttpErrors.ResourceNotFound, null);
@@ -62,18 +62,28 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<bool>> ApproveClaim(int claimId)
         {
             var claim = await _benefitsUnitOfWork.Claims
-                .Include(x => x.Plan)
+                .Include(x => x.Enrollment)
                 .FirstOrDefaultAsync(x => x.Id == claimId);
 
             if (claim == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
 
-            var res = await _userBalanceService.GetCurrentBalanceForPlan(claim.Plan.Id);
+            var res = await _userBalanceService.GetCurrentBalanceForPlan(claim.Enrollment.PlanId);
             if (res.Error != null) return new GenericResponse<bool>(res.Error, false);
 
             if (res.Result < claim.Amount)
             {
                 return new GenericResponse<bool>(new HttpError("Consumer's balance is insufficient", HttpStatusCode.BadRequest), false);
             }
+
+            var transaction = new Transaction()
+            {
+                Amount = claim.Amount,
+                Type = TransactionType.Outcome,
+                DateTime = DateTime.UtcNow,
+                Enrollment = claim.Enrollment
+            };
+
+            await _benefitsUnitOfWork.Transactions.Add(transaction);
 
             claim.Status = ClaimStatus.Approved;
             _benefitsUnitOfWork.Claims.Upsert(claim);

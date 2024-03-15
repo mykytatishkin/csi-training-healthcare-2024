@@ -27,35 +27,13 @@ namespace CSI.IBTA.BenefitsService.Services
             if(!plan.Package.IsActive) return new GenericResponse<decimal>(new HttpError("This plan is not active yet", HttpStatusCode.BadRequest), 0);
 
             var package = plan.Package;
-            var negativeTransactions = await _benefitsUnitOfWork.Claims
-                .Find(x => x.PlanId == plan.Id && x.Status == ClaimStatus.Approved);
+            var transactions = await _benefitsUnitOfWork.Transactions
+                .Include(x => x.Enrollment)
+                .Where(x => x.Enrollment.PlanId == planId)
+                .ToListAsync();
 
-            var totalPeriods = 0;
-            int periodsPassed = 0;
-            switch (package.PayrollFrequency) 
-            {
-                case PayrollFrequency.Weekly:
-                    totalPeriods += (int)Math.Ceiling((package.PlanEnd - package.PlanStart).TotalDays / 7.0);
-
-                    periodsPassed += (int)Math.Ceiling((DateTime.UtcNow - package.PlanStart).TotalDays / 7.0);
-                    break;
-                case PayrollFrequency.Monthly:
-                    totalPeriods += (package.PlanEnd.Year - package.PlanStart.Year) * 12; //add years
-                    totalPeriods += package.PlanEnd.Month - package.PlanStart.Month; //add months
-                    totalPeriods += package.PlanEnd.Day >= package.PlanStart.Day ? 1 : 0; //check if there are month remains
-
-                    periodsPassed += (DateTime.UtcNow.Year - package.PlanStart.Year) * 12; //add years
-                    periodsPassed += DateTime.UtcNow.Month - package.PlanStart.Month; //add months
-                    periodsPassed += DateTime.UtcNow.Day >= package.PlanStart.Day ? 1 : 0; //check if there are month remains
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            decimal amountPerPeriod = plan.Contribution / totalPeriods;
-            var positiveSum = amountPerPeriod * periodsPassed;
-            var negativeSum = negativeTransactions.Sum(x => x.Amount);
-            return new GenericResponse<decimal>(null, positiveSum - negativeSum);
+            var balance = transactions.Sum(x => x.Type == TransactionType.Income ? x.Amount : - x.Amount);
+            return new GenericResponse<decimal>(null, balance);
         }
     }
 }

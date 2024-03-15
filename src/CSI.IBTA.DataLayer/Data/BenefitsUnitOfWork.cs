@@ -14,6 +14,7 @@ namespace CSI.IBTA.DataLayer.Data
         public IGenericRepository<Claim> Claims { get; private set; }
         public IGenericRepository<Enrollment> Enrollments { get; private set; }
         public IGenericRepository<Package> Packages { get; private set; }
+        public IGenericRepository<Transaction> Transactions { get; private set; }
         public IGenericRepository<Plan> Plans { get; private set; }
         public IGenericRepository<PlanType> PlanTypes { get; private set; }
 
@@ -27,6 +28,7 @@ namespace CSI.IBTA.DataLayer.Data
             Packages = new GenericRepository<Package>(context, _logger);
             Plans = new GenericRepository<Plan>(context, _logger);
             PlanTypes = new GenericRepository<PlanType>(context, _logger);
+            Transactions = new GenericRepository<Transaction>(context, _logger);
         }
 
         public async Task CompleteAsync()
