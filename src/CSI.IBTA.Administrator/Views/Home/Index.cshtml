@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/css/employer.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/global.css" asp-append-version=" true" />
+    <link rel="stylesheet" href="~/css/global.css" asp-append-version="true" />
     <title>Welcome</title>
 </head>
 <body>
@@ -22,14 +22,11 @@
                     <div class="partial">
                         <div class="panel">
                             <div class="control">
-                                <button id="employerBtn" class="left view-btn-active" onclick="showEmployer()">Employer</button>
-                                <button id="claimBtn" class="right view-btn" onclick="showClaims()">Claims</button>
+                                <button id="employerBtn" class="left view-btn-active" onclick="showPartial('Employer')">Employer</button>
+                                <button id="claimBtn" class="right view-btn" onclick="showPartial('Claims')">Claims</button>
                             </div>
-                            <div id="employer-content">
+                            <div id="partial-container">
                                 @Html.Partial("_Employer")
-                            </div>
-                            <div id="claims-content" style="display: none;">
-                                @Html.Partial("_Claims")
                             </div>
                         </div>
                     </div>
@@ -38,23 +35,19 @@
         </div>
     </div>
     <script>
-        document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
-        document.getElementById("claimBtn").setAttribute("class", "right view-btn");
-
-        function showEmployer() {
-            $("#employer-content").show();
-            $("#claims-content").hide();
-
-            document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
-            document.getElementById("claimBtn").setAttribute("class", "right view-btn");
-        }
-
-        function showClaims() {
-            $("#employer-content").hide();
-            $("#claims-content").show();
-
-            document.getElementById("employerBtn").setAttribute("class", "left view-btn");
-            document.getElementById("claimBtn").setAttribute("class", "right view-btn-active");
+        function showPartial(partialName) {
+            $.ajax({
+                url: '@Url.Action("GetPartial", "Home")',
+                type: 'GET',
+                data: { partialName: partialName },
+                success: function (result) {
+                    $('#partial-container').html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    alert('Error occurred while loading partial view. Please check the console for more details.');
+                }
+            });
         }
     </script>
 </body>
