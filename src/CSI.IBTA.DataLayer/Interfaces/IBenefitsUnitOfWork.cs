@@ -9,7 +9,7 @@ namespace CSI.IBTA.DataLayer.Interfaces
         IGenericRepository<Package> Packages { get; }
         IGenericRepository<Plan> Plans { get; }
         IGenericRepository<PlanType> PlanTypes { get; }
-
+        IGenericRepository<Transaction> Transactions { get; }
         Task CompleteAsync();
     }
 }

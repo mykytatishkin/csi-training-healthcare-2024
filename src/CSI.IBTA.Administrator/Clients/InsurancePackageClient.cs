@@ -11,11 +11,13 @@ namespace CSI.IBTA.Administrator.Clients
     internal class InsurancePackageClient : IInsurancePackageClient
     {
         private readonly AuthorizedHttpClient _httpClient;
+        private readonly ILogger<InsurancePackageClient> _logger;
 
-        public InsurancePackageClient(AuthorizedHttpClient httpClient)
+        public InsurancePackageClient(AuthorizedHttpClient httpClient, ILogger<InsurancePackageClient> logger)
         {
             _httpClient = httpClient;
             _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
+            _logger = logger;
         }
 
         public async Task<GenericResponse<bool?>> CreateInsurancePackage(CreateInsurancePackageDto command)
@@ -53,6 +55,49 @@ namespace CSI.IBTA.Administrator.Clients
             var plan = JsonConvert.DeserializeObject<IEnumerable<PlanTypeDto>>(responseContent);
 
             return new GenericResponse<IEnumerable<PlanTypeDto>>(null, plan);
+        }
+
+        public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
+        {
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{employerId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<List<InsurancePackageDto>>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching insurance packages", response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var packages = JsonConvert.DeserializeObject<List<InsurancePackageDto>>(responseContent);
+            return new GenericResponse<List<InsurancePackageDto>>(null, packages);
+        }
+
+        public async Task<GenericResponse<InsurancePackageDto>> InitializeInsurancePackage(int packageId)
+        {
+            var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{packageId}", null);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<InsurancePackageDto>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching insurance packages", response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var package = JsonConvert.DeserializeObject<InsurancePackageDto>(responseContent);
+            return new GenericResponse<InsurancePackageDto>(null, package);
+        }
+
+        public async Task<GenericResponse<bool>> RemoveInsurancePackage(int packageId)
+        {
+            var response = await _httpClient.DeleteAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{packageId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                return new GenericResponse<bool>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching insurance packages", response.StatusCode), false);
+            }
+
+            return new GenericResponse<bool>(null, true);
         }
     }
 }

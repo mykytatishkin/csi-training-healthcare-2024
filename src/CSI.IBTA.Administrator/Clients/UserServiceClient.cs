@@ -51,7 +51,6 @@ namespace CSI.IBTA.Administrator.Clients
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
-
             return new GenericResponse<UserDto>(null, user);
         }
 

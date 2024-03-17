@@ -66,11 +66,6 @@ namespace CSI.IBTA.Administrator.Controllers
                 return PartialView("_Employer", paginatedList);
             }
 
-            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                return RedirectToAction("Index", "Auth");
-            }
-
             return PartialView("_Employer");
         }
 
@@ -110,7 +105,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var claims = claimsResponse.Result.Claims;
 
-            var userIds = claims.Select(c => c.EmployeeId).ToList();
+            var userIds = claims.Select(c => c.EmployeeId).Distinct().ToList();
             var usersResponse = await _userServiceClient.GetUsers(userIds);
 
             if (usersResponse.Error != null || usersResponse.Result == null)

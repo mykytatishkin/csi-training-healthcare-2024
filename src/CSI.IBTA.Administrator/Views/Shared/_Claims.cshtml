@@ -1,4 +1,5 @@
 ﻿@using CSI.IBTA.Administrator.Constants
+@using CSI.IBTA.Shared.Utils.Extensions
 @using CSI.IBTA.Shared.DataStructures
 @using CSI.IBTA.Shared.DTOs
 @using CSI.IBTA.Shared.Entities
@@ -26,113 +27,116 @@
 <head>
     <link rel="stylesheet" href="~/css/claims-home-page.css">
 </head>
-<div id="table-employer" class="container">
-    <span class="border-label" style="text-align:left">Search Criteria</span>
-    <div class="row form-columns">
-        <form asp-action="Claims" method="get" id="claims-search-form">
-            <div class="form-actions no-color">
-                <p>
-                    <input type="hidden" name="ClaimStatusFilter" value="@ViewData["CurrentClaimStatusFilter"]" />
-                    <label for="NumberFilter">Claim Number:</label>
-                    <input type="text" name="NumberFilter" value="@ViewData["CurrentNumberFilter"]" />
-                    <label for="EmployerFilter">Employer:</label>
-                    <select name="EmployerFilter">
-                        <option value="" selected="@(GetFilter("CurrentEmployerFilter") == "")">Select employer</option>
+<div id="claims-view">
+    <div id="table-employer" class="container">
+        <span class="border-label" style="text-align:left">Search Criteria</span>
+        <div class="row form-columns">
+            <form asp-action="Claims" method="get" id="claims-search-form">
+                <div class="form-actions no-color">
+                    <p>
+                        <input type="hidden" name="ClaimStatusFilter" value="@ViewData["CurrentClaimStatusFilter"]" />
+                        <label for="NumberFilter">Claim Number:</label>
+                        <input type="text" name="NumberFilter" value="@ViewData["CurrentNumberFilter"]" />
+                        <label for="EmployerFilter">Employer:</label>
+                        <select name="EmployerFilter">
+                            <option value="" selected="@(GetFilter("CurrentEmployerFilter") == "")">Select employer</option>
 
-                        @foreach (EmployerDto employer in Model.Employers)
-                        {
-                            <option value="@employer.Id" selected="@IsOptionSelected("CurrentEmployerFilter", employer.Id)">@employer.Name</option>
-                        }
-                    </select>
-                    <input type="button" onclick="searchClaims()" value="Search" class="btn btn-primary" />
-                    <input type="button" onclick="searchAllClaims()" class="btn btn-primary" value="Back to Full List">
-                </p>
-            </div>
-        </form>
-    </div>
-    <div class="select-view-section">
-        <p>Select view:</p>
-        <select onchange="getClaimsPage('', @(Model.Page), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', this.value)">
-            <option value="" selected="@(GetFilter("CurrentClaimStatusFilter") == "")">All</option>
-            <option value="@((int)ClaimStatus.PendingApproval)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.PendingApproval)">@ClaimStatus.PendingApproval.ToCustomString()</option>
-            <option value="@((int)ClaimStatus.Approved)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.Approved)">@ClaimStatus.Approved.ToCustomString()</option>
-            <option value="@((int)ClaimStatus.Denied)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.Denied)">@ClaimStatus.Denied.ToCustomString()</option>
-        </select>
-    </div>
-    <div class="row">
-        <div class="table-data">
-            <table class="table table-striped" id="claims-table">
-                <thead>
-                    <tr>
-                        <th>Claim Number</th>
-                        <th>Consumer</th>
-                        <th>Employer</th>
-                        <th>Date Of Service</th>
-                        <th>Plan</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Claims)
-                    {
+                            @foreach (EmployerDto employer in Model.Employers)
+                            {
+                                <option value="@employer.Id" selected="@IsOptionSelected("CurrentEmployerFilter", employer.Id)">@employer.Name</option>
+                            }
+                        </select>
+                        <input type="button" onclick="searchClaims()" value="Search" class="btn btn-primary" />
+                        <input type="button" onclick="searchAllClaims()" class="btn btn-primary" value="Back to Full List">
+                    </p>
+                </div>
+            </form>
+        </div>
+        <div class="select-view-section">
+            <p>Select view:</p>
+            <select onchange="getClaimsPage('', @(Model.Page), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', this.value)">
+                <option value="" selected="@(GetFilter("CurrentClaimStatusFilter") == "")">All</option>
+                <option value="@((int)ClaimStatus.Pending)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.Pending)">@ClaimStatus.Pending.ToCustomString()</option>
+                <option value="@((int)ClaimStatus.Approved)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.Approved)">@ClaimStatus.Approved.ToCustomString()</option>
+                <option value="@((int)ClaimStatus.Denied)" selected="@IsOptionSelected("CurrentClaimStatusFilter", (int)ClaimStatus.Denied)">@ClaimStatus.Denied.ToCustomString()</option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="table-data">
+                <table class="table table-striped" id="claims-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.ClaimNumber)</a>
-                            </td>
-                            <td>
-                                <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployeeName)</a>
-                            </td>
-                            <td>
-                                <a onclick="redirectToEmployersMenu(@item.EmployerId)" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployerName)</a>
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.DateOfService)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.PlanTypeName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Amount)
-                            </td>
-                            <td>
-                                @item.Status.ToCustomString()
-                            </td>
+                            <th>Claim Number</th>
+                            <th>Consumer</th>
+                            <th>Employer</th>
+                            <th>Date Of Service</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Status</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-            <div style="text-align:right" class="pages">
-                <a onclick="getClaimsPage('', @(Model.Page - 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
-                   class="btn btn-default @prevDisabled">
-                    Previous
-                </a>
-                @{
-                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
-                    var lastPage = Math.Min(nextPages, Model.TotalPages);
-                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
-                    for (int i = firstPage; i <= lastPage; i++)
-                    {
-                        if (i == Model.Page || Model.Page == 0)
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Claims)
                         {
-                            <span style="color:var(--secondary-blue);">@Model.Page</span>
+                            <tr>
+                                <td>
+                                    <a onclick="showClaimDetails(@item.Id)" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a>
+                                </td>
+                                <td>
+                                    <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployeeName)</a>
+                                </td>
+                                <td>
+                                    <a onclick="redirectToEmployersMenu(@item.EmployerId)" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployerName)</a>
+                                </td>
+                                <td>
+                                    @item.DateOfService.ToAmericanDateOnlyFormat()
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PlanTypeName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Amount)
+                                </td>
+                                <td>
+                                    @item.Status.ToCustomString()
+                                </td>
+                            </tr>
                         }
-                        else
+                    </tbody>
+                </table>
+                 <div id="claim-list-errors" class="form-errors text-danger"></div>
+                <div style="text-align:right" class="pages">
+                    <a onclick="getClaimsPage('', @(Model.Page - 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
+                       class="btn btn-default @prevDisabled">
+                        Previous
+                    </a>
+                    @{
+                        var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
+                        var lastPage = Math.Min(nextPages, Model.TotalPages);
+                        var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                        for (int i = firstPage; i <= lastPage; i++)
                         {
-                            <a onclick="getClaimsPage('', @(i), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
-                               class="btn btn-default">
-                                @i
-                            </a>
+                            if (i == Model.Page || Model.Page == 0)
+                            {
+                                <span style="color:var(--secondary-blue);">@Model.Page</span>
+                            }
+                            else
+                            {
+                                <a onclick="getClaimsPage('', @(i), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
+                                   class="btn btn-default">
+                                    @i
+                                </a>
+                            }
                         }
                     }
-                }
-                <a onclick="getClaimsPage('', @(Model.Page + 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
-                   class="btn btn-default @nextDisabled">
-                    Next
-                </a>
-                <div class="test">
+                    <a onclick="getClaimsPage('', @(Model.Page + 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
+                       class="btn btn-default @nextDisabled">
+                        Next
+                    </a>
+                    <div class="test">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 </div>
+    </div>

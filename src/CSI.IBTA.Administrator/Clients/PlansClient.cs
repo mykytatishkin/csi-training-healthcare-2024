@@ -7,12 +7,12 @@ using System.Text;
 
 namespace CSI.IBTA.Administrator.Clients
 {
-    internal class BenefitsClient : IBenefitsClient
+    internal class PlansClient : IPlansClient
     {
-        private readonly ILogger<BenefitsClient> _logger;
+        private readonly ILogger<PlansClient> _logger;
         private readonly AuthorizedHttpClient _httpClient;
 
-        public BenefitsClient(AuthorizedHttpClient httpClient, ILogger<BenefitsClient> logger)
+        public PlansClient(AuthorizedHttpClient httpClient, ILogger<PlansClient> logger)
         {
             _httpClient = httpClient;
             _logger = logger;

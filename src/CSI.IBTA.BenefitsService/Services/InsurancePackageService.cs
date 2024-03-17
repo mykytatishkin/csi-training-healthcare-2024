@@ -5,11 +5,10 @@ using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using System.Net;
 using AutoMapper;
-using CSI.IBTA.Shared.DTOs.Errors;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
-    public class InsurancePackageService : IInsurancePackageService
+    internal class InsurancePackageService : IInsurancePackageService
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;

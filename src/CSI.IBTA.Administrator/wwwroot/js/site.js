@@ -11,6 +11,16 @@ function showControl(id, name) {
     a.textContent = name;
 }
 
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "block";
+}
+
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "none";
+}
+
 function fetchRoute(route, callbackSuccess, callbackFailure) {
     fetch(route)
         .then(function (response) {

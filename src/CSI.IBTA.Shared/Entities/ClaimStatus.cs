@@ -2,8 +2,8 @@
 {
     public enum ClaimStatus
     {
-        PendingApproval = 1,
-        Approved = 2,
-        Denied = 3
+        Pending,
+        Approved,
+        Denied
     }
 }
