@@ -165,22 +165,14 @@ namespace CSI.IBTA.UserService.Services
 
         public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetAll()
         {
-            var employers = await _unitOfWork.Employers.Find(e => employerIds.Contains(e.Id));
+            var res = await _unitOfWork.Employers.All();
 
-            return new(null, employers.Select(e => new EmployerDto(
-                e.Id,
-                e.Name,
-                e.Code,
-                e.Email,
-                e.Street,
-                e.City,
-                e.State,
-                e.Zip,
-                e.Phone,
-                e.Logo)));
+            if (res == null) return new GenericResponse<IEnumerable<EmployerDto>>(new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
+
+            return new GenericResponse<IEnumerable<EmployerDto>>(null, res.Select(_mapper.Map<EmployerDto>));
         }
 
-        public async Task<GenericResponse<PagedEmployersResponse>> GetAll(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
+        public async Task<GenericResponse<PagedEmployersResponse>> GetEmployersFiltered(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
         {
             var filteredEmployers = _unitOfWork.Employers.GetSet()
             .Where(e => (nameFilter == "" || e.Name.Contains(nameFilter))

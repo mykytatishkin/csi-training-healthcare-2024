@@ -6,6 +6,7 @@ namespace CSI.IBTA.Shared.DTOs
         int Id,
         int EmployeeId,
         int EmployerId,
+        int PlanId,
         string ClaimNumber,
         DateOnly DateOfService,
         string PlanName,

@@ -4,7 +4,8 @@ namespace CSI.IBTA.UserService.Interfaces
 {
     public interface IEmployersService
     {
-        public Task<GenericResponse<PagedEmployersResponse>> GetAll(int page, int pageSize, string nameFilter = "", string codeFilter = "");
+        public Task<GenericResponse<IEnumerable<EmployerDto>>> GetAll();
+        public Task<GenericResponse<PagedEmployersResponse>> GetEmployersFiltered(int page, int pageSize, string nameFilter = "", string codeFilter = "");
         public Task<GenericResponse<EmployerDto>> GetEmployer(int employerId);
         public Task<GenericResponse<IEnumerable<EmployerDto>>> GetEmployers(List<int> employerIds);
         public Task<GenericResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto);

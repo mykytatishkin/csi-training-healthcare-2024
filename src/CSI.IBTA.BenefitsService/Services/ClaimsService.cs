@@ -62,15 +62,23 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
         {
             var claim = await _benefitsUnitOfWork.Claims
-                .Include(x => x.Plan)
-                .Include(x => x.Plan.PlanType)
-                .Include(c => c.Plan.Package)
+                .Include(x => x.Enrollment)
+                .Include(x => x.Enrollment.Plan)
+                .Include(x => x.Enrollment.Plan.PlanType)
+                .Include(c => c.Enrollment.Plan.Package)
                 .FirstOrDefaultAsync(x => x.Id == claimId);
 
             if (claim == null)
                 return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
 
-            claim.PlanId = updateClaimDto.PlanId;
+            var enrollment = await _benefitsUnitOfWork.Enrollments
+                .Include(x => x.Plan)
+                .FirstOrDefaultAsync(x => x.EmployeeId == claim.Enrollment.EmployeeId && x.PlanId == updateClaimDto.PlanId);
+
+            if (enrollment == null)
+                return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+
+            claim.Enrollment = enrollment;
             claim.DateOfService = updateClaimDto.DateOfService;
             claim.Amount = updateClaimDto.Amount;
             _benefitsUnitOfWork.Claims.Upsert(claim);

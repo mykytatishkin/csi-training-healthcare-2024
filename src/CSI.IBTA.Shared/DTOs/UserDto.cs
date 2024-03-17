@@ -2,7 +2,6 @@
 
 namespace CSI.IBTA.Shared.DTOs
 {
-    //public record UserInfoDto(int Id, string FirstName, string LastName, string PhoneNumber);
     public record UserDto(int Id, Role Role, string UserName, string FirstName, string LastName, int AccountId, int? EmployerId, string EmailAddress, string PhoneNumber);
     public record NewUserDto(int Id, string UserName, string Password, string FirstName, string LastName, int AccountId, int? EmployerId, Role Role, string PhoneNumber, string EmailAddress, string AddressState, string AddressStreet, string AddressCity, string AddressZip);
     public record UpdatedUserDto(int Id, string UserName, string Password, string FirstName, string LastName, int AccountId, Role Role, string PhoneNumber, string EmailAddress, string AddressState, string AddressStreet, string AddressCity, string AddressZip);

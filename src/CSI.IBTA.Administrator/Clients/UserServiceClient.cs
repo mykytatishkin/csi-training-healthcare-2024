@@ -21,6 +21,22 @@ namespace CSI.IBTA.Administrator.Clients
             _logger = logger;
         }
 
+        public async Task<GenericResponse<IQueryable<EmployerDto>?>> GetEmployers()
+        {
+            var response = await _httpClient.GetAsync(UserServiceApiEndpoints.Employers);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Request unsuccessful");
+                var errorMessage = response.ReasonPhrase ?? "Something went wrong";
+                return new GenericResponse<IQueryable<EmployerDto>?>(new HttpError(errorMessage, response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employers = JsonConvert.DeserializeObject<List<EmployerDto>>(responseContent).AsQueryable();
+            return new GenericResponse<IQueryable<EmployerDto>?>(null, employers);
+        }
+
         public async Task<GenericResponse<PagedEmployersResponse>> GetEmployers(int page, int pageSize, string nameFilter = "", string codeFilter = "")
         {
 
