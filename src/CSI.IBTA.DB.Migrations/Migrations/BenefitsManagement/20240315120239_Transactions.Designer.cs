@@ -4,6 +4,7 @@ using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 {
     [DbContext(typeof(BenefitsManagementContext))]
-    partial class BenefitsManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240315120239_Transactions")]
+    partial class Transactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -40,18 +43,18 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.Property<DateOnly>("DateOfService")
                         .HasColumnType("date");
 
-                    b.Property<int>("EnrollmentId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("RejectionReason")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PlanId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnrollmentId");
+                    b.HasIndex("PlanId");
 
                     b.ToTable("Claim");
                 });
@@ -203,13 +206,13 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Claim", b =>
                 {
-                    b.HasOne("CSI.IBTA.Shared.Entities.Enrollment", "Enrollment")
+                    b.HasOne("CSI.IBTA.Shared.Entities.Plan", "Plan")
                         .WithMany()
-                        .HasForeignKey("EnrollmentId")
+                        .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Enrollment");
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Enrollment", b =>

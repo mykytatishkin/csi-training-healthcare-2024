@@ -4,6 +4,7 @@ using CSI.IBTA.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 {
     [DbContext(typeof(BenefitsManagementContext))]
-    partial class BenefitsManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240315132531_ClaimEnrollment")]
+    partial class ClaimEnrollment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

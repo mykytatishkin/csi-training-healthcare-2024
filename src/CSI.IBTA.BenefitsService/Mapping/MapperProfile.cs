@@ -33,13 +33,12 @@ namespace CSI.IBTA.BenefitsService.Mapping
             CreateMap<Claim, ClaimDto>()
                 .ConstructUsing(x => new ClaimDto(
                     x.Id,
-                    x.EmployeeId,
-                    x.Plan.Package.EmployerId,
-                    x.PlanId,
+                    x.Enrollment.EmployeeId,
+                    x.Enrollment.Plan.Package.EmployerId,
                     x.ClaimNumber,
                     x.DateOfService,
-                    x.Plan.Name,
-                    x.Plan.PlanType.Name,
+                    x.Enrollment.Plan.Name,
+                    x.Enrollment.Plan.PlanType.Name,
                     x.Amount,
                     x.Status,
                     x.RejectionReason)

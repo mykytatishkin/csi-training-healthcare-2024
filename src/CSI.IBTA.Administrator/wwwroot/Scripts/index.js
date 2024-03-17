@@ -73,7 +73,7 @@ function searchClaims() {
 
     var formData = new FormData(form);
 
-    route = '/Claims?NumberFilter=' + formData.get('NumberFilter') + '&EmployerFilter=' + formData.get('EmployerFilter');
+    route = '/Claims?NumberFilter=' + formData.get('NumberFilter') + '&EmployerFilter=' + formData.get('EmployerFilter') + "&ClaimStatusFilter=" + formData.get('ClaimStatusFilter');
     fetchRoute(route, onSuccess, null);
 }
 
@@ -86,12 +86,21 @@ function searchAllClaims() {
     fetchRoute(route, onSuccess, null);
 }
 
-function getClaimsPage(sort, page, filter) {
+function getClaimsPage(sort, page, numberFilter, employerFilter, claimStatus) {
     function onSuccess(data) {
         document.getElementById('content').innerHTML = data;
     }
 
-    route = '/Claims?sortOrder=' + sort + '&pageNumber=' + page + '&currentFilter=' + filter;
-    console.log(route);
+    route = '/Claims?sortOrder=' + sort + '&pageNumber=' + page + '&currentNumberFilter=' + numberFilter + '&currentEmployerFilter=' + employerFilter + "&claimStatusFilter=" + claimStatus;
+    fetchRoute(route, onSuccess, null);
+}
+
+function redirectToEmployersMenu(employerId) {
+    function onSuccess(data) {
+        document.getElementById('content').innerHTML = data;
+        showEmployerDetails(employerId);
+    }
+
+    route = '/Employers';
     fetchRoute(route, onSuccess, null);
 }

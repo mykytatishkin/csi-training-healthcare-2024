@@ -8,7 +8,7 @@ using AutoMapper;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
-    public class InsurancePackageService : IInsurancePackageService
+    internal class InsurancePackageService : IInsurancePackageService
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;

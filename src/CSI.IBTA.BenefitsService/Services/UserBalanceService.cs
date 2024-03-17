@@ -8,7 +8,7 @@ using System.Net;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
-    public class UserBalanceService : IUserBalanceService
+    internal class UserBalanceService : IUserBalanceService
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
 
@@ -17,45 +17,25 @@ namespace CSI.IBTA.BenefitsService.Services
             _benefitsUnitOfWork = benefitsUnitOfWork;
         }
 
-        public async Task<GenericResponse<decimal>> GetCurrentBalanceForPlan(int planId)
+        public async Task<GenericResponse<decimal>> GetCurrentBalance(int enrollmentId)
         {
-            var plan = await _benefitsUnitOfWork.Plans
-                .Include(c => c.Package)
-                .FirstOrDefaultAsync(x => x.Id == planId);
+            var enrollment = await _benefitsUnitOfWork.Enrollments
+                .Include(c => c.Plan)
+                .Include(c => c.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == enrollmentId);
 
-            if(plan == null) return new GenericResponse<decimal>(HttpErrors.ResourceNotFound, 0);
-            if(!plan.Package.IsActive) return new GenericResponse<decimal>(new HttpError("This plan is not active yet", HttpStatusCode.BadRequest), 0);
+            if(enrollment == null) return new GenericResponse<decimal>(HttpErrors.ResourceNotFound, 0);
 
-            var package = plan.Package;
-            var negativeTransactions = await _benefitsUnitOfWork.Claims
-                .Find(x => x.PlanId == plan.Id && x.Status == ClaimStatus.Approved);
+            var package = enrollment.Plan.Package;
+            if (!package.IsActive) return new GenericResponse<decimal>(new HttpError("This package is not active yet", HttpStatusCode.BadRequest), 0);
 
-            var totalPeriods = 0;
-            int periodsPassed = 0;
-            switch (package.PayrollFrequency) 
-            {
-                case PayrollFrequency.Weekly:
-                    totalPeriods += (int)Math.Ceiling((package.PlanEnd - package.PlanStart).TotalDays / 7.0);
+            var transactions = await _benefitsUnitOfWork.Transactions
+                .Include(x => x.Enrollment)
+                .Where(x => x.Enrollment.Id == enrollmentId)
+                .ToListAsync();
 
-                    periodsPassed += (int)Math.Ceiling((DateTime.Now - package.PlanStart).TotalDays / 7.0);
-                    break;
-                case PayrollFrequency.Monthly:
-                    totalPeriods += (package.PlanEnd.Year - package.PlanStart.Year) * 12; //add years
-                    totalPeriods += package.PlanEnd.Month - package.PlanStart.Month; //add months
-                    totalPeriods += package.PlanEnd.Day >= package.PlanStart.Day ? 1 : 0; //check if there are month remains
-
-                    periodsPassed += (DateTime.UtcNow.Year - package.PlanStart.Year) * 12; //add years
-                    periodsPassed += DateTime.UtcNow.Month - package.PlanStart.Month; //add months
-                    periodsPassed += DateTime.UtcNow.Day >= package.PlanStart.Day ? 1 : 0; //check if there are month remains
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            decimal amountPerPeriod = plan.Contribution / totalPeriods;
-            var positiveSum = amountPerPeriod * periodsPassed;
-            var negativeSum = negativeTransactions.Sum(x => x.Amount);
-            return new GenericResponse<decimal>(null, positiveSum - negativeSum);
+            var balance = transactions.Sum(x => x.Type == TransactionType.Income ? x.Amount : - x.Amount);
+            return new GenericResponse<decimal>(null, balance);
         }
     }
 }

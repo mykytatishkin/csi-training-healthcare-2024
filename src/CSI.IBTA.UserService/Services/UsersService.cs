@@ -7,7 +7,6 @@ using CSI.IBTA.UserService.Interfaces;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using CSI.IBTA.DB.Migrations.Migrations;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -27,6 +26,8 @@ namespace CSI.IBTA.UserService.Services
             var users = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
                 .ToListAsync();
 
             var userDtos = users.Select(_mapper.Map<UserDto>);

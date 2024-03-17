@@ -6,7 +6,6 @@ namespace CSI.IBTA.Shared.DTOs
         int Id,
         int EmployeeId,
         int EmployerId,
-        int PlanId,
         string ClaimNumber,
         DateOnly DateOfService,
         string PlanName,
@@ -16,6 +15,14 @@ namespace CSI.IBTA.Shared.DTOs
         string? RejectionReason);
 
     public record DenyClaimDto(string RejectionReason);
+
+    public record PagedClaimsResponse(
+        List<ClaimDto> Claims,
+        int CurrentPage,
+        int PageSize,
+        int TotalPages,
+        int TotalCount);
+
     public record ViewClaimDto(
         int Id,
         int EmployeeId,

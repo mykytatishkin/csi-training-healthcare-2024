@@ -1,4 +1,3 @@
-using System.Net;
 using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Types;
@@ -6,6 +5,7 @@ using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 using System.Text;
+using System.Net;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -52,7 +52,6 @@ namespace CSI.IBTA.Administrator.Clients
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
-            Console.WriteLine(user);
             return new GenericResponse<UserDto>(null, user);
         }
 
