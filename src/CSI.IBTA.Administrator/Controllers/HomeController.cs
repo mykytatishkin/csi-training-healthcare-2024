@@ -2,10 +2,8 @@ using CSI.IBTA.Administrator.Filters;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DataStructures;
 using CSI.IBTA.Shared.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -19,12 +17,6 @@ namespace CSI.IBTA.Administrator.Controllers
             _userServiceClient = userServiceClient;
         }
 
-        public PartialViewResult GetPartial(string partialName)
-        {
-            return PartialView($"_{partialName}");
-        }
-
-        // Replace your existing Index action method with the provided code
         public async Task<IActionResult> Index(
             string? nameFilter,
             string? codeFilter,
@@ -46,18 +38,18 @@ namespace CSI.IBTA.Administrator.Controllers
             if (res.Result != null)
             {
                 var employers = res.Result;
-                if (!string.IsNullOrEmpty(nameFilter))
+                if (!String.IsNullOrEmpty(nameFilter))
                 {
                     employers = employers.Where(s => s.Name.Contains(nameFilter));
                 }
-                if (!string.IsNullOrEmpty(codeFilter))
+                if (!String.IsNullOrEmpty(codeFilter))
                 {
                     employers = employers.Where(s => s.Code.Equals(codeFilter));
                 }
                 ViewData["Page"] = "Home";
-                return View(new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8));
+                return (View(new PaginatedList<EmployerDto>(employers ?? new List<EmployerDto>().AsQueryable(), pageNumber ?? 1, pageSize ?? 8)));
             }
-            if (res.Error != null && res.Error.StatusCode == HttpStatusCode.Unauthorized)
+            if (res.Error.StatusCode == HttpStatusCode.Unauthorized)
                 return RedirectToAction("Index", "Auth");
 
             return View("Index");
