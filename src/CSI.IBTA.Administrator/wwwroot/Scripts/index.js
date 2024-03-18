@@ -54,6 +54,7 @@ function showClaims() {
     document.getElementById("employerBtn").setAttribute("class", "left view-btn");
     document.getElementById("claimBtn").setAttribute("class", "right view-btn-active");
 
+    hideLogo();
     route = '/Claims';
     fetchRoute(route, onSuccess, null);
 }
