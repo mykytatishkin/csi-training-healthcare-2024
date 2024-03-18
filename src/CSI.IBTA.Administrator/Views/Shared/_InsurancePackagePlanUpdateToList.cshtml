@@ -31,7 +31,7 @@
         @if (Model.PackageModel.Plans == null)
         {
             @Html.HiddenFor(m => m.PackageModel.Plans)
-        })
+        }
 
         <tbody>
             <tr><td colspan="2"><legend>@Model.PackageModel.Package.Name</legend></td></tr>

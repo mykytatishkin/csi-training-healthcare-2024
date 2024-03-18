@@ -14,7 +14,7 @@ using CSI.IBTA.Shared.DTOs.Errors;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
-    public class InsurancePackageService : IInsurancePackageService
+    internal class InsurancePackageService : IInsurancePackageService
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
@@ -110,6 +110,12 @@ namespace CSI.IBTA.BenefitsService.Services
                     .Where(x => x.PackageId == packageId).ToListAsync();
 
                 var package = await _benefitsUnitOfWork.Packages.GetById(packageId);
+
+                if (package == null)
+                {
+                    var error = new HttpError("Insurance package not found", HttpStatusCode.NotFound);
+                    return new GenericResponse<FullInsurancePackageDto>(error, null);
+                }
 
                 package.Plans = plans;
 

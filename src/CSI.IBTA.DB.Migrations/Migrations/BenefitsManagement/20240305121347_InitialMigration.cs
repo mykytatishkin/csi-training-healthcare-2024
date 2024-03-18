@@ -117,7 +117,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
+            
             migrationBuilder.InsertData(
                 table: "PlanType",
                 columns: new[] { "Id", "Name" },
