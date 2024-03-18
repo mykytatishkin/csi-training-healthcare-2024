@@ -1,5 +1,8 @@
 ﻿@model InsurancePackagePlanViewModel
 
+<head>
+    <link rel="stylesheet" href="~/css/insurance-packages.css">
+</head>
 <form asp-controller="InsurancePlans" asp-action="@Model.ActionName" method="post" id="package-plan-create-form">
     <table class="table">
         @Html.HiddenFor(m => m.PlanId)

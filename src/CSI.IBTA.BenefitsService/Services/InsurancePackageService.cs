@@ -9,6 +9,7 @@ using CSI.IBTA.DB.Migrations.Migrations;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using CSI.IBTA.DataLayer.Extentions;
+
 using CSI.IBTA.Shared.DTOs.Errors;
 
 namespace CSI.IBTA.BenefitsService.Services
@@ -138,9 +139,16 @@ namespace CSI.IBTA.BenefitsService.Services
                 return new(error, null);
             }
 
+            var existingPackageWithSameName = await _benefitsUnitOfWork.Packages
+                .Find(p => p.Name == dto.Name && p.Id != packageId);
+            if (existingPackageWithSameName.Any())
+            {
+                var error = new HttpError("Other insurance package with this name already exists", HttpStatusCode.Conflict);
+                return new GenericResponse<FullInsurancePackageDto>(error, null);
+            }
+
             var existingPlans = await _benefitsUnitOfWork.Plans.Find(x => x.PackageId == packageId);
             existingPackage.Plans = (IList<Plan>)existingPlans;
-
 
             bool samePlanNames = dto.Plans
                 .Select(p => p.Name)
@@ -184,7 +192,6 @@ namespace CSI.IBTA.BenefitsService.Services
                 }
             }
 
-
             _benefitsUnitOfWork.Packages.Upsert(existingPackage);
 
             try
@@ -196,7 +203,6 @@ namespace CSI.IBTA.BenefitsService.Services
                 Console.WriteLine(e);
                 throw;
             }
-            
 
             var createdPlans = existingPackage.Plans
                 .Select(p => new CreatedPlanDto(p.Id, p.Name, p.TypeId, p.Contribution))
@@ -217,7 +223,7 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<InsurancePackageDto>> InitializeInsurancePackage(int packageId)
         {
             var package = await _benefitsUnitOfWork.Packages.GetById(packageId);
-            if(package == null) return new GenericResponse<InsurancePackageDto>(HttpErrors.ResourceNotFound, null);
+            if (package == null) return new GenericResponse<InsurancePackageDto>(HttpErrors.ResourceNotFound, null);
 
             package.Initialized = DateOnly.FromDateTime(DateTime.UtcNow);
             _benefitsUnitOfWork.Packages.Upsert(package);
