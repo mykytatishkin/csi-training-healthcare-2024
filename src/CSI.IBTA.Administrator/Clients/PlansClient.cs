@@ -19,20 +19,32 @@ namespace CSI.IBTA.Administrator.Clients
             _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
         }
 
-        public async Task<GenericResponse<PlanDto>> GetPlan(int id)
+        public async Task<GenericResponse<List<PlanDto>>> GetPlans(int? userId = null)
         {
-            var response = await _httpClient.GetAsync(string.Format(BenefitsServiceApiEndpoints.Plan, id));
+            var response = await _httpClient.GetAsync(String.Format(BenefitsServiceApiEndpoints.Plan, "?customerId=" + userId));
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError("Request unsuccessful");
-                return new GenericResponse<PlanDto>(null, null);
+                return new GenericResponse<List<PlanDto>>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching plans", response.StatusCode), null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var plans = JsonConvert.DeserializeObject<List<PlanDto>>(responseContent);
+            return new GenericResponse<List<PlanDto>>(null, plans);
+        }
+
+        public async Task<GenericResponse<PlanDto>> GetPlan(int planId)
+        {
+            var response = await _httpClient.GetAsync(String.Format(BenefitsServiceApiEndpoints.Plan, planId));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new GenericResponse<PlanDto>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching plan", response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var plan = JsonConvert.DeserializeObject<PlanDto>(responseContent);
-
-            return new GenericResponse<PlanDto>( null, plan);
+            return new GenericResponse<PlanDto>(null, plan);
         }
 
         public async Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes()

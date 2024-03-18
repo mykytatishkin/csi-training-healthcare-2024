@@ -1,3 +1,4 @@
+using CSI.IBTA.Administrator.Clients;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
@@ -10,17 +11,19 @@ namespace CSI.IBTA.Administrator.Controllers
     {
         private readonly IClaimsClient _claimsClient;
         private readonly IUserServiceClient _usersClient;
+        private readonly IPlansClient _plansClient;
 
-        public ClaimsController(IClaimsClient claimsClient, IUserServiceClient usersClient)
+        public ClaimsController(IClaimsClient claimsClient, IUserServiceClient usersClient, IPlansClient plansClient)
         {
             _claimsClient = claimsClient;
             _usersClient = usersClient;
+            _plansClient = plansClient;
         }
 
         [HttpGet("Details")]
         public async Task<IActionResult> ClaimDetails(int claimId)
         {
-            var claimsRes = await _claimsClient.GetClaimDetails(claimId);
+            var claimsRes = await _claimsClient.GetClaim(claimId);
 
             if (claimsRes.Result == null)
             {
@@ -59,7 +62,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPost("OpenEditClaim")]
         public async Task<IActionResult> EditClaim(ClaimDetailsViewModel claimModel)
         {
-            var getPlansResponse = await _claimsClient.GetPlans(claimModel.Consumer.Id);
+            var getPlansResponse = await _plansClient.GetPlans(claimModel.Consumer.Id);
             if (getPlansResponse.Result == null)
             {
                 return Problem(title: "Failed to retrieve plans");
@@ -68,10 +71,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var model = new EditClaimViewModel()
             {
-                Claim = new ClaimDto(claimModel.Claim.Id, claimModel.Claim.EmployeeId,
-                claimModel.Claim.EmployerId, claimModel.Claim.PlanId, claimModel.Claim.ClaimNumber,
-                claimModel.Claim.DateOfService, claimModel.Claim.PlanName, claimModel.Claim.PlanTypeName,
-                claimModel.Claim.Amount, claimModel.Claim.Status, claimModel.Claim.RejectionReason),
+                Claim = claimModel.Claim,
                 Consumer = claimModel.Consumer,
                 AvailablePlans = Plans.ToList()
             };
@@ -82,7 +82,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPatch("EditClaim")]
         public async Task<IActionResult> EditClaim(EditClaimViewModel claimModel)
         {
-            var getPlanResponse = await _claimsClient.GetPlan(claimModel.Claim.PlanId);
+            var getPlanResponse = await _plansClient.GetPlan(claimModel.Claim.PlanId);
             if (getPlanResponse.Result == null)
             {
                 return Problem(title: "Failed to retrieve plan");
