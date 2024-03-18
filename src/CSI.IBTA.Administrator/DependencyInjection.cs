@@ -22,7 +22,10 @@ namespace CSI.IBTA.Administrator
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IUserServiceClient, UserServiceClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
-            services.AddScoped<IBenefitsServiceClient, BenefitsServiceClient>();
+            services.AddScoped<IClaimsClient, ClaimsClient>();
+            services.AddScoped<IPlansClient, PlansClient>();
+            services.AddScoped<IInsurancePackageClient, InsurancePackageClient>();
+            
             return services;
         }
     }

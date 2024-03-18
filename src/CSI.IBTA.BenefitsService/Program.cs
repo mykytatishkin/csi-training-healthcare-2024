@@ -11,6 +11,7 @@ namespace CSI.IBTA.BenefitsService
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddLogging();
 
             var connectionString = builder.Configuration.GetConnectionString("BenefitsDBConnection")
                 ?? throw new Exception("Connection string is null");

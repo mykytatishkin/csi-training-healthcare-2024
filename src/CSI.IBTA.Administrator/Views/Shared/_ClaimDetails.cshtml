@@ -1,0 +1,99 @@
+﻿@using CSI.IBTA.Administrator.Constants
+@using CSI.IBTA.Administrator.Extensions
+@using CSI.IBTA.Shared.DataStructures
+@using CSI.IBTA.Shared.Entities
+@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Utils.Extensions
+@model ClaimDetailsViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/claim-details.css">
+</head>
+
+<div class="space-between-container">
+    <div class="claim-number-container">
+        <label for="claim-number">Claim Number:</label>
+        <span id="claim-number">
+            @Model.Claim.ClaimNumber
+        </span>
+    </div>
+    <button onclick="showClaims()" class="btn btn-primary">Return to list</button>
+</div>
+
+<span class="border-label">Detail</span>
+<div class="details-container">
+    <div class="claim-details">
+        <label for="consumer">Consumer:</label>
+        <span id="consumer">
+            @($"{Model.Consumer.FirstName} {Model.Consumer.LastName}")
+        </span>
+    </div>
+    <div class="claim-details">
+        <label for="consumer">Phone Number:</label>
+        <span id="phoneNumber">
+            @Model.Consumer.PhoneNumber
+        </span>
+    </div>
+    <div class="claim-details">
+        <label for="dateOfService">Date of Service:</label>
+        <span id="dateOfService">
+            @Model.Claim.DateOfService.ToAmericanDateOnlyFormat()
+        </span>
+    </div>
+    <div class="claim-details">
+        <label for="plan">Plan:</label>
+        <span id="plan">
+            @($"{Model.Claim.PlanName} ({Model.Claim.PlanTypeName})")
+        </span>
+    </div>
+    <div class="claim-details">
+        <label for="status">Status:</label>
+        <span id="status">
+            @($"{Model.Claim.Status} {(Model.Claim.Status == ClaimStatus.Denied ? $"({Model.Claim.RejectionReason})" : string.Empty)}")
+        </span>
+    </div>
+    <div class="claim-details">
+        <label for="amount">Amount, $:</label>
+        <span id="amount">
+            @Model.Claim.Amount
+        </span>
+    </div>
+</div>
+
+@if (Model.Claim.Status == ClaimStatus.Pending)
+{
+    <div class="claim-buttons">
+        <button class="btn btn-primary" onclick="showModal('approveModal')">Approve</button>
+        <button class="btn btn-primary" onclick="showModal('denyModal')">Deny</button>
+    </div>
+}
+
+<!-- Approve Modal -->
+<div id="approveModal" class="modal" onclick="closeModal('approveModal')">
+    <div class="modal-content" onclick="event.stopPropagation();">
+        <span class="close" onclick="closeModal('approveModal')">&times;</span>
+        <p>Are you sure you want to approve this claim?</p>
+        <div class="modal-buttons">
+            <div id="modal-form-errors" class="modal-errors text-danger"></div>
+            <button onClick="closeModal('approveModal')" class="btn btn-outline-primary">Cancel</button>
+            <button onClick="handleApproveClaim(@Model.Claim.Id)" id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>
+
+<!-- Deny Modal -->
+<div id="denyModal" class="modal" onclick="closeModal('denyModal')">
+    <form id="deny-claim-form">
+        <div class="modal-content" onclick="event.stopPropagation();">
+            <span class="close" onclick="closeModal('denyModal')">&times;</span>
+            <p>Are you sure you want to deny this claim?</p>
+            <label for="rejectionReason">Reason for denial:</label>
+            <textarea id="rejectionReason" name="rejectionReason" required></textarea>
+            <div class="modal-buttons">
+                <div id="modal-form-errors" class="modal-errors text-danger"></div>
+                <button onClick="closeModal('denyModal')" class="btn btn-outline-primary">Cancel</button>
+                <button onClick="handleDenyClaim(@Model.Claim.Id)" id="employer-form-submit-btn" type="button" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,109 @@
+﻿.section {
+    border: solid 1px var(--form-border-color);
+    border-radius: 10px;
+    padding: 4px 0px 16px 20px;
+}
+
+.general-section {
+    margin-bottom: 28px;
+}
+
+    .general-section table {
+        border-spacing: 4px;
+        border-collapse: separate;
+    }
+
+    .general-section #package-name-input {
+        width: 100%;
+    }
+
+    .general-section #payroll-frequency-dropdown {
+        padding-left: 20px;
+    }
+
+.plans-section {
+    margin-bottom: 20px;
+}
+
+    .plans-section th,
+    .plans-section td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .plans-section tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .plans-section thead {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .plans-section th {
+        font-weight: normal;
+    }
+
+    .plans-section #package-plans {
+        margin-top: 12px;
+        margin-bottom: 8px;
+    }
+
+.action-buttons button,
+.add-plans-row select {
+    margin-right: 8px;
+}
+
+.border-label {
+    position: relative;
+    top: -18px;
+    background-color: var(--container-background-color);
+}
+
+.align-left {
+    display: flex;
+    justify-content: start;
+}
+
+#create-insurance-package {
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.text-align-left {
+    text-align: left;
+}
+
+.info-label {
+    margin-top: 16px;
+    margin-bottom: 4px;
+}
+
+.text-danger {
+    margin-top: 5px;
+    color: var(--text-danger-color);
+}
+
+div.text-danger ul {
+    margin-bottom: 4px;
+}
+
+.custom-button {
+    border: none;
+    border-radius: 5px;
+    color: var(--button-primary-text-color);
+    padding: 4px 12px 4px 12px;
+    background-color: var(--button-primary-color);
+}
+
+    .custom-button.secondary {
+        background-color: var(--button-secondary-color);
+    }
+
+select {
+    padding: 0px 4px 0px 4px;
+}

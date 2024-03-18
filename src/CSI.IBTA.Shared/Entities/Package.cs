@@ -1,4 +1,6 @@
 ﻿
+using CSI.IBTA.Shared.Utils.Extensions;
+
 namespace CSI.IBTA.Shared.Entities
 {
     public class Package
@@ -21,11 +23,11 @@ namespace CSI.IBTA.Shared.Entities
         {
             get
             {
-                if (Initialized == null) return "Not Initialized";
                 var now = DateTime.UtcNow;
-                if (now > PlanEnd) return $"Archived on {PlanEnd.ToShortDateString()}";
+                if (now > PlanEnd) return $"Archived on {PlanEnd.ToAmericanDateOnlyFormat()}";
+                if (Initialized == null) return "Not Initialized";
 
-                return $"Initialized on {Initialized}";
+                return $"Initialized on {Initialized.ToAmericanDateOnlyFormat()}";
             }
         }
         public PayrollFrequency PayrollFrequency { get; set; }

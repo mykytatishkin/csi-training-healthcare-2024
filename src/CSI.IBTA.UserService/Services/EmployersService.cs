@@ -141,9 +141,26 @@ namespace CSI.IBTA.UserService.Services
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericResponse<EmployerDto>(new HttpError("Emplyer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericResponse<EmployerDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             return new GenericResponse<EmployerDto>(null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+        }
+
+        public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetEmployers(List<int> employerIds)
+        {
+            var employers = await _unitOfWork.Employers.Find(e => employerIds.Contains(e.Id));
+
+            return new(null, employers.Select(e => new EmployerDto(
+                e.Id,
+                e.Name,
+                e.Code,
+                e.Email,
+                e.Street,
+                e.City,
+                e.State,
+                e.Zip,
+                e.Phone,
+                e.Logo)));
         }
 
         public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetAll()
@@ -159,6 +176,8 @@ namespace CSI.IBTA.UserService.Services
         {
             var response = await _unitOfWork.Users
                 .Include(u => u.Account)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
                 .Include(u => u.Emails)
                 .Where(u => u.EmployerId == employerId)
                 .ToListAsync();

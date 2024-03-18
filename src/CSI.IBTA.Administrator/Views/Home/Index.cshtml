@@ -1,4 +1,5 @@
-﻿@{
+﻿@using CSI.IBTA.Administrator.Models
+@{
     ViewData["Title"] = "Administrator Portal";
 }
 
@@ -25,12 +26,7 @@
                                 <button id="employerBtn" class="left view-btn-active" onclick="showEmployer()">Employer</button>
                                 <button id="claimBtn" class="right view-btn" onclick="showClaims()">Claims</button>
                             </div>
-                            <div id="employer-content">
-                                @Html.Partial("_Employer")
-                            </div>
-                            <div id="claims-content" style="display: none;">
-                                @Html.Partial("_Claims")
-                            </div>
+                            <div id="content"></div>
                         </div>
                     </div>
                 </div>
@@ -38,24 +34,17 @@
         </div>
     </div>
     <script>
-        document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
-        document.getElementById("claimBtn").setAttribute("class", "right view-btn");
-
-        function showEmployer() {
-            $("#employer-content").show();
-            $("#claims-content").hide();
-
-            document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
-            document.getElementById("claimBtn").setAttribute("class", "right view-btn");
-        }
-
-        function showClaims() {
-            $("#employer-content").hide();
-            $("#claims-content").show();
-
-            document.getElementById("employerBtn").setAttribute("class", "left view-btn");
-            document.getElementById("claimBtn").setAttribute("class", "right view-btn-active");
-        }
+        window.onload = function () {
+            showEmployers();
+        };
     </script>
+    <script type="text/javascript" src="~/Scripts/index.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-form.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-user.js"></script>
+    <script type="text/javascript" src="~/Scripts/employer-plans.js"></script>
+    <script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
+    <script type="text/javascript" src="~/Scripts/benefits.js"></script>
+    <script type="text/javascript" src="~/Scripts/claim-details.js"></script>
 </body>
 </html>
