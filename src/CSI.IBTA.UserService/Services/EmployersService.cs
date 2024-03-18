@@ -189,8 +189,6 @@ namespace CSI.IBTA.UserService.Services
 
             var responseList = new PagedEmployersResponse(employers.Select(_mapper.Map<EmployerDto>).ToList(), page, pageSize, totalPages, totalCount);
 
-            if (employers == null) return new GenericResponse<PagedEmployersResponse>(new HttpError("Server failed to fetch employers", HttpStatusCode.InternalServerError), null);
-
             return new GenericResponse<PagedEmployersResponse>(null, responseList);
         }
 

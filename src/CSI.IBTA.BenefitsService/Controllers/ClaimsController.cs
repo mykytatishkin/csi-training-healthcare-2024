@@ -55,7 +55,9 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
         {
-            var response = await _claimsService.UpdateClaim(claimId, updateClaimDto);if (response.Error != null)
+            var response = await _claimsService.UpdateClaim(claimId, updateClaimDto);
+            
+            if (response.Error != null)
             {
                 return Problem(
                     title: response.Error.Title,

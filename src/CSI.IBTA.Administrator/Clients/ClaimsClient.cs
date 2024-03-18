@@ -21,11 +21,7 @@ namespace CSI.IBTA.Administrator.Clients
         public async Task<GenericResponse<ClaimDto?>> GetClaim(int claimId)
         {
             var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Claims}/{claimId}");
-            if (!response.IsSuccessStatusCode)
-            {
-                return new GenericResponse<ClaimDto?>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching claim", response.StatusCode), null);
-            }
-
+            response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var claim = JsonConvert.DeserializeObject<ClaimDto>(responseContent);
             return new GenericResponse<ClaimDto?>(null, claim);
@@ -33,16 +29,10 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
         {
-            //var jsonContent1 = JsonContent.Create(updateClaimDto.Claim);
-            //var jsonContent = JsonContent.Create(updateClaimDto);
             var jsonBody = JsonConvert.SerializeObject(updateClaimDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.Claims}/{claimId}", content);
-            if (!response.IsSuccessStatusCode)
-            {
-                return new GenericResponse<bool>(new HttpError(response.ReasonPhrase ?? "Error occurred while updating claim", response.StatusCode), false);
-            }
-
+            response.EnsureSuccessStatusCode();
             return new GenericResponse<bool>(null, true);
         }
 
@@ -50,24 +40,9 @@ namespace CSI.IBTA.Administrator.Clients
         public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "")
         {
             var requestUrl = string.Format(BenefitsServiceApiEndpoints.ClaimsList, page, pageSize, claimNumber, employerId, claimStatus);
-
             var response = await _httpClient.GetAsync(requestUrl);
             var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
-
-                if (responseError?.title != null)
-                {
-                    var error = new HttpError(responseError.title, response.StatusCode);
-                    return new GenericResponse<PagedClaimsResponse>(error, null);
-                }
-
-                var defaultError = HttpErrors.GenericError;
-                return new GenericResponse<PagedClaimsResponse>(defaultError, null);
-            }
-
+            response.EnsureSuccessStatusCode();
             var claims = JsonConvert.DeserializeObject<PagedClaimsResponse>(responseContent);
             return new GenericResponse<PagedClaimsResponse>(null, claims);
         }
@@ -75,15 +50,7 @@ namespace CSI.IBTA.Administrator.Clients
         public async Task<GenericResponse<bool>> ApproveClaim(int claimId)
         {
             var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.ApproveClaim}/{claimId}", null);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorJson = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
-                var errorMessage = error?.title ?? response.ReasonPhrase ?? "Something went wrong";
-                return new GenericResponse<bool>(new HttpError(errorMessage, response.StatusCode), false);
-            }
-
+            response.EnsureSuccessStatusCode();
             return new GenericResponse<bool>(null, true);
         }
 
@@ -92,15 +59,7 @@ namespace CSI.IBTA.Administrator.Clients
             var jsonBody = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.DenyClaim}/{claimId}", content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorJson = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
-                var errorMessage = error?.title ?? response.ReasonPhrase ?? "Something went wrong";
-                return new GenericResponse<bool>(new HttpError(errorMessage, response.StatusCode), false);
-            }
-
+            response.EnsureSuccessStatusCode();
             return new GenericResponse<bool>(null, true);
         }
     }

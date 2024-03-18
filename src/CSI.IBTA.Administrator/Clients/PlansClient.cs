@@ -22,12 +22,7 @@ namespace CSI.IBTA.Administrator.Clients
         public async Task<GenericResponse<List<PlanDto>>> GetPlans(int? userId = null)
         {
             var response = await _httpClient.GetAsync(String.Format(BenefitsServiceApiEndpoints.Plan, "?customerId=" + userId));
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return new GenericResponse<List<PlanDto>>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching plans", response.StatusCode), null);
-            }
-
+            response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var plans = JsonConvert.DeserializeObject<List<PlanDto>>(responseContent);
             return new GenericResponse<List<PlanDto>>(null, plans);
@@ -36,12 +31,7 @@ namespace CSI.IBTA.Administrator.Clients
         public async Task<GenericResponse<PlanDto>> GetPlan(int planId)
         {
             var response = await _httpClient.GetAsync(String.Format(BenefitsServiceApiEndpoints.Plan, planId));
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return new GenericResponse<PlanDto>(new HttpError(response.ReasonPhrase ?? "Error occurred while fetching plan", response.StatusCode), null);
-            }
-
+            response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var plan = JsonConvert.DeserializeObject<PlanDto>(responseContent);
             return new GenericResponse<PlanDto>(null, plan);
@@ -50,12 +40,7 @@ namespace CSI.IBTA.Administrator.Clients
         public async Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes()
         {
             var response = await _httpClient.GetAsync(BenefitsServiceApiEndpoints.PlanTypes);
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogError("Request unsuccessful");
-                return new GenericResponse<IEnumerable<PlanTypeDto>>(null, null);
-            }
-
+            response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var plan = JsonConvert.DeserializeObject<IEnumerable<PlanTypeDto>>(responseContent);
 
@@ -68,13 +53,7 @@ namespace CSI.IBTA.Administrator.Clients
             var jsonBody = JsonConvert.SerializeObject(planDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(BenefitsServiceApiEndpoints.Plans, content);
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = HttpErrors.GenericError;
-
-                return new GenericResponse<bool?>(error, null);
-            }
-
+            response.EnsureSuccessStatusCode();
             return new GenericResponse<bool?>(null, true);
         }
 
@@ -83,13 +62,7 @@ namespace CSI.IBTA.Administrator.Clients
             var jsonBody = JsonConvert.SerializeObject(planDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PatchAsync(string.Format(BenefitsServiceApiEndpoints.Plan, planId), content);
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = HttpErrors.GenericError;
-
-                return new GenericResponse<bool?>(error, null);
-            }
-
+            response.EnsureSuccessStatusCode();
             return new GenericResponse<bool?>(null, true);
         }
     }
