@@ -3,6 +3,9 @@
         document.getElementById('content').innerHTML = data;
     }
 
+    document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
+    document.getElementById("claimBtn").setAttribute("class", "right view-btn");
+
     route = '/Employers';
     fetchRoute(route, onSuccess, null);
 }
@@ -47,6 +50,9 @@ function showClaims() {
     function onSuccess(data) {
         document.getElementById('content').innerHTML = data;
     }
+
+    document.getElementById("employerBtn").setAttribute("class", "left view-btn");
+    document.getElementById("claimBtn").setAttribute("class", "right view-btn-active");
 
     route = '/Claims';
     fetchRoute(route, onSuccess, null);

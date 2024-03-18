@@ -5,7 +5,6 @@
         $("#control-employer").show();
 
         console.log("onSuccess()")
-        getEncodedLogo(encodedLogo);
     }
 
     function onFailure(statusCode) {
@@ -14,7 +13,9 @@
 
     route = `/Employer?employerId=${employerId}`;
     fetchRoute(route, onSuccess, onFailure);
-    $("#logo-employer").show();
+    getEncodedLogo(encodedLogo);
+    console.log("getEncodedLogo()")
+    console.log(encodedLogo)
 
 }
 

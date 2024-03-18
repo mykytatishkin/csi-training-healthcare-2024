@@ -14,7 +14,6 @@
 }
 
 function showEmployerUsersManagement(employerId) {
-    $("#logo-employer").hide();
     function onSuccess(data) {
         document.getElementById('employer-partial-action').innerHTML = data;
         showCreateUserSection(employerId);

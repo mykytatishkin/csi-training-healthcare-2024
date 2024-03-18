@@ -85,7 +85,7 @@ function showEmployerUpdateForm(employerId) {
 
         $("#control-employer").show();
         $("#table-employer").hide();
-        $("#logo-employer").hide();
+        hideLogo();
     }
 
     function onFailure(statusCode) {
@@ -126,13 +126,14 @@ function handleUpdateEmployerFormSubmit() {
     });
 }
 
-function handleCancel(employerId)
+function handleCancel(employerId, encodedLogo)
 {
     if (employerId == undefined) {
         hideCreateEmployerForm();
     }
     else {
-        showEmployerDetails(employerId);
+        showEmployerDetails(employerId, encodedLogo);
+        showLogo();
     }
 }
 
