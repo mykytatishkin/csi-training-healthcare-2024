@@ -1,4 +1,4 @@
-﻿@import url('global.css');
+@import url('global.css');
 
 .border-label {
     position: relative;
@@ -50,7 +50,7 @@
     justify-content: end;
 }
 
-    .select-view-section p {
-        margin: 0px;
-        margin-right: 8px;
-    }
+.select-view-section p {
+    margin: 0px;
+    margin-right: 8px;
+}

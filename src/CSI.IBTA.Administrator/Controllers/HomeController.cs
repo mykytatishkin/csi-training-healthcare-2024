@@ -46,23 +46,13 @@ namespace CSI.IBTA.Administrator.Controllers
             ViewData["CurrentNameFilter"] = nameFilter;
             ViewData["CurrentCodeFilter"] = codeFilter;
 
-            var res = await _userServiceClient.GetEmployers();
+            var res = await _userServiceClient.GetEmployers(pageNumber ?? 1, pageSize ?? 8, nameFilter ?? "", codeFilter ?? "");
             if (res.Result != null)
             {
-                var employers = res.Result;
-
-                if (!string.IsNullOrEmpty(nameFilter))
-                {
-                    employers = employers.Where(s => s.Name.Contains(nameFilter));
-                }
-                if (!string.IsNullOrEmpty(codeFilter))
-                {
-                    employers = employers.Where(s => s.Code.Equals(codeFilter));
-                }
-
+                var employers = res.Result.Employers.AsQueryable();
                 ViewData["Page"] = "Home";
                 var employerList = employers ?? new List<EmployerDto>().AsQueryable();
-                var paginatedList = new PaginatedList<EmployerDto>(employerList, pageNumber ?? 1, pageSize ?? 8);
+                var paginatedList = new PaginatedList<EmployerDto>(employerList, pageNumber ?? 1, res.Result.TotalPages);
                 return PartialView("_Employer", paginatedList);
             }
 
