@@ -1,8 +1,10 @@
-﻿function showEmployerDetails(employerId) {
+﻿function showEmployerDetails(employerId, encodedLogo) {
     function onSuccess(data) {
         document.getElementById('control-employer').innerHTML = data;
         $("#table-employer").hide();
         $("#control-employer").show();
+
+        console.log("onSuccess()")
     }
 
     function onFailure(statusCode) {
@@ -11,6 +13,10 @@
 
     route = `/Employer?employerId=${employerId}`;
     fetchRoute(route, onSuccess, onFailure);
+    getEncodedLogo(encodedLogo);
+    console.log("getEncodedLogo()")
+    console.log(encodedLogo)
+
 }
 
 function showEmployerSettings(employerId) {

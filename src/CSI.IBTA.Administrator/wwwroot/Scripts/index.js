@@ -3,6 +3,9 @@
         document.getElementById('content').innerHTML = data;
     }
 
+    document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
+    document.getElementById("claimBtn").setAttribute("class", "right view-btn");
+
     route = '/Employers';
     fetchRoute(route, onSuccess, null);
 }
@@ -55,6 +58,10 @@ function showClaims() {
         document.getElementById('content').innerHTML = data;
     }
 
+    document.getElementById("employerBtn").setAttribute("class", "left view-btn");
+    document.getElementById("claimBtn").setAttribute("class", "right view-btn-active");
+
+    hideLogo();
     route = '/Claims';
     fetchRoute(route, onSuccess, null);
 }

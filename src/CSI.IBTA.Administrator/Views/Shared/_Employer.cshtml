@@ -49,7 +49,7 @@
                     {
                         <tr>
                             <td>
-                                <a onclick="showEmployerDetails(@item.Id)" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.Name) - @Html.DisplayFor(modelItem => item.Code)</a>
+                                <a onclick="showEmployerDetails(@item.Id, '@item.EncodedLogo')" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.Name) - @Html.DisplayFor(modelItem => item.Code)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Code)
