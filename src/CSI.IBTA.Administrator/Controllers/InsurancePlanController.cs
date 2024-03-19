@@ -10,14 +10,11 @@ namespace CSI.IBTA.Administrator.Controllers
     [Route("InsurancePlans")]
     public class InsurancePlanController : Controller
     {
-        private readonly IPlansClient _plansClient;
         private readonly IUserServiceClient _userClient;
 
         public InsurancePlanController(
-            IPlansClient plansClient,
             IUserServiceClient userClient)
         {
-            _plansClient = plansClient;
             _userClient = userClient;
         }
 
@@ -31,7 +28,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 PlanType = model.AvailablePlanTypes.FirstOrDefault(t => t.Id == model.SelectedPlanTypeId),
             };
 
-            return PartialView("_InsurancePackagePlanAddToList", planModel);
+            return PartialView("InsurancePackages/_CreatePackagePlanForm", planModel);
         }
 
         [HttpPost("AddPlanToList")]
@@ -56,7 +53,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             model.PackageModel.Plans.Add(newPlan);
 
-            return PartialView("InsurancePackages/_CreateInsurancePackage", model.PackageModel);
+            return PartialView("InsurancePackages/_CreatePackage", model.PackageModel);
         }
 
         [HttpPut("UpdatePlan")]
@@ -76,7 +73,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.PackageModel.Plans.AddRange(model.PackageModel.Package.Plans.ConvertAll(x => new PlanDto(0, x.Name, new PlanTypeDto(x.PlanTypeId, "Medical"), x.Contribution, 0)));
             }
 
-            return PartialView("InsurancePackages/_CreateInsurancePackage", model.PackageModel);
+            return PartialView("InsurancePackages/_CreatePackage", model.PackageModel);
         }
 
         [HttpPost("OpenUpdatePlanForm")]
@@ -92,7 +89,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 Name = model.Plans[planIndex].Name,
             };
 
-            return PartialView("_InsurancePackagePlanAddToList", planModel);
+            return PartialView("InsurancePackages/_CreatePackagePlanForm", planModel);
         }
 
         [HttpPost("OpenUpdatePlanToListForm")]
@@ -104,7 +101,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 EmployerId = model.EmployerId,
                 PlanType = model.AvailablePlanTypes.FirstOrDefault(t => t.Id == model.SelectedPlanTypeId),
             };
-            return PartialView("_InsurancePackagePlanUpdateToList", planModel);
+            return PartialView("InsurancePackages/_ModifyPackagePlanForm", planModel);
         }
 
         [HttpPost("OpenUpdatePackageUpdatePlanForm")]
@@ -119,7 +116,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 Contribution = model.Plans[planIndex].Contribution,
                 Name = model.Plans[planIndex].Name,
             };
-            return PartialView("_InsurancePackagePlanUpdateToList", planModel);
+            return PartialView("InsurancePackages/_ModifyPackagePlanForm", planModel);
         }
 
         [HttpPost("UpdatePlanToList")]
@@ -151,7 +148,7 @@ namespace CSI.IBTA.Administrator.Controllers
                     AvailablePlanTypes = model.PackageModel.AvailablePlanTypes
                 };
 
-                return PartialView("InsurancePackages/_ModifyInsurancePackage", model.PackageModel);
+                return PartialView("InsurancePackages/_ModifyPackage", model.PackageModel);
             }
             catch (Exception e)
             {
@@ -184,90 +181,13 @@ namespace CSI.IBTA.Administrator.Controllers
                     AvailablePlanTypes = model.PackageModel.AvailablePlanTypes
                 };
 
-                return PartialView("InsurancePackages/_ModifyInsurancePackage", model.PackageModel);
+                return PartialView("InsurancePackages/_ModifyPackage", model.PackageModel);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 return Json(new { error = true, message = e.Message });
             }
-        }
-
-        [HttpGet("CreatePlan")]
-        public async Task<IActionResult> CreatePlan(int employerId, List<PlanDto> plans)
-        {
-            var getPlanTypesResponse = await _plansClient.GetPlanTypes();
-            if (getPlanTypesResponse.Result == null)
-            {
-                return Problem(title: "Failed to retrieve plan types");
-            }
-            var PlanTypes = getPlanTypesResponse.Result;
-
-            InsurancePackagePlanViewModel model = new InsurancePackagePlanViewModel()
-            {
-                ActionName = "CreatePlan",
-                EmployerId = employerId,
-                AvailablePlanTypes = PlanTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList(),
-                Plans = plans
-            };
-            return PartialView("_InsurancePackagePlanCreate", model);
-        }
-
-        [HttpPost("CreatePlan")]
-        public async Task<IActionResult> CreatePlan(InsurancePackagePlanViewModel model)
-        {
-            var getEmployerResponse = await _userClient.GetEmployerById(model.EmployerId);
-            if (getEmployerResponse.Error != null)
-            {
-                return Problem(title: "Failed to retrieve employer");
-            }
-
-            var planDto = new CreatePlanDto(model.Name, model.Contribution, model.PlanTypeId);
-            var response = await _plansClient.CreatePlan(planDto);
-            return PartialView("_EmployerAdministrationMenu", model.EmployerId);
-        }
-
-        [HttpGet("UpdatePlan")]
-        public async Task<IActionResult> UpdatePlan(int employerId, int planId)
-        {
-            var response = await _plansClient.GetPlan(planId);
-            if (response.Result == null)
-            {
-                return Problem(title: "Failed to retrieve plan");
-            }
-            var getPlanTypesResponse = await _plansClient.GetPlanTypes();
-            if (getPlanTypesResponse.Result == null)
-            {
-                return Problem(title: "Failed to retrieve plan types");
-            }
-            var plan = response.Result;
-            var PlanTypes = getPlanTypesResponse.Result;
-
-            InsurancePackagePlanViewModel model = new()
-            {
-                ActionName = "UpdatePlan",
-                PlanId = plan.Id,
-                Name = plan.Name,
-                EmployerId = employerId,
-                PlanTypeId = plan.PlanType.Id,
-                Contribution = plan.Contribution,
-                AvailablePlanTypes = PlanTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList()
-            };
-            return PartialView("_InsurancePackagePlanUpdate", model);
-        }
-
-        [HttpPost("UpdatePlan")]
-        public async Task<IActionResult> UpdatePlan(InsurancePackagePlanViewModel model)
-        {
-            var getEmployerResponse = await _userClient.GetEmployerById(model.EmployerId);
-            if (getEmployerResponse.Error != null)
-            {
-                return Problem(title: "Failed to retrieve employer");
-            }
-
-            var planDto = new UpdatePlanDto(model.Name, model.Contribution, new PlanTypeDto(model.PlanTypeId, ""));
-            var response = await _plansClient.UpdatePlan((int)model.PlanId, planDto);
-            return PartialView("_EmployerAdministrationMenu", model.EmployerId);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 Plans = new List<PlanDto>()
             };
 
-            return PartialView("InsurancePackages/_CreateInsurancePackage", viewModel);
+            return PartialView("InsurancePackages/_CreatePackage", viewModel);
         }
 
         [HttpPost]
@@ -99,7 +99,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 AvailablePlanTypes = planTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList()
             };
 
-            return PartialView("InsurancePackages/_ModifyInsurancePackage", viewModel);
+            return PartialView("InsurancePackages/_ModifyPackage", viewModel);
         }
 
         [HttpPut("UpdateInsurancePackage")]
