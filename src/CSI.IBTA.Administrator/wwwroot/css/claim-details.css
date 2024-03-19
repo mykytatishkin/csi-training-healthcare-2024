@@ -85,6 +85,18 @@
     background-color: rgba(0,0,0,0.4);
 }
 
+.select-field-top {
+    padding-top: 8px;
+}
+
+.select-field-bottom {
+    padding-bottom: 8px;
+}
+
+.smaller-width-button {
+    width: 80px;
+}
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;

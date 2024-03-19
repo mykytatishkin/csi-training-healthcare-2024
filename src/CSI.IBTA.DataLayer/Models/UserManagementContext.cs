@@ -41,6 +41,5 @@ public partial class UserManagementContext : DbContext
             .HasMany(x => x.Settings)
             .WithOne(x => x.Employer)
             .IsRequired();
-   
     }
 }

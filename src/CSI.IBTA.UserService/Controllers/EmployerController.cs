@@ -85,6 +85,23 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpGet("Filtered")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> GelEmployersFiltered(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
+        {
+            var response = await _employerService.GetEmployersFiltered(page, pageSize, nameFilter, codeFilter);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
         [HttpPut("{employerId}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> UpdateEmployer(int employerId, [FromForm] UpdateEmployerDto dto)

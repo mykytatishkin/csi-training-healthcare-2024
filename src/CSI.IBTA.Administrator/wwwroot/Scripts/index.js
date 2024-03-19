@@ -37,12 +37,19 @@ function searchAllEmployers() {
     fetchRoute(route, onSuccess, null);
 }
 
-function getEmployersPage(sort, page, filter) {
+function getEmployersPage(sort, page, currentNameFilter, currentCodeFilter) {
     function onSuccess(data) {
         document.getElementById('content').innerHTML = data;
     }
 
-    route = '/Employers?sortOrder=' + sort + '&pageNumber=' + page + '&currentFilter=' + filter;
+    routeParams = '?sortOrder=' + sort;
+    routeParams += '&pageNumber=' + page;
+    if (currentNameFilter != '')
+        routeParams += '&currentNameFilter=' + currentNameFilter;
+    if (currentCodeFilter != '')
+        routeParams += '&currentCodeFilter=' + currentCodeFilter;
+
+    route = '/Employers' + routeParams;
     fetchRoute(route, onSuccess, null);
 }
 

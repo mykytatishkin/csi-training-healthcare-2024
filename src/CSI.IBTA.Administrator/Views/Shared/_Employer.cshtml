@@ -59,7 +59,7 @@
                 </tbody>
             </table>
             <div style="text-align:right" class="pages">
-                <a onclick="getEmployersPage('', @(Model.PageIndex - 1), '')"
+                <a onclick="getEmployersPage('', @(Model.PageIndex - 1), '@ViewData["CurrentNameFilter"]', '@ViewData["CurrentCodeFilter"]')"
                    class="btn btn-default @prevDisabled">
                     Previous
                 </a>
@@ -75,14 +75,14 @@
                         }
                         else
                         {
-                            <a onclick="getEmployersPage('', @(i), '')"
+                            <a onclick="getEmployersPage('', @(i), '@ViewData["CurrentNameFilter"]', '@ViewData["CurrentCodeFilter"]')"
                                class="btn btn-default">
                                 @i
                             </a>
                         }
                     }
                 }
-                <a onclick="getEmployersPage('', @(Model.PageIndex + 1), '')"
+                <a onclick="getEmployersPage('', @(Model.PageIndex + 1), '@ViewData["CurrentNameFilter"]', '@ViewData["CurrentCodeFilter"]')"
                    class="btn btn-default @nextDisabled">
                     Next
                 </a>
