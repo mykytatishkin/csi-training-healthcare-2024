@@ -85,3 +85,68 @@ function submitPackageUpdate() {
             showError("create-insurance-package-errors", error);
         });
 }
+
+function createInsurancePackage(employerId) {
+    fetch('/InsurancePackage?employerId=' + employerId)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function modifyInsurancePackage(insurancePackageId, employerId) {
+    fetch('/InsurancePackage/UpdateInsurancePackage?employerId=' + employerId + '&insurancePackageId=' + insurancePackageId)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function initializePackage(packageId, employerId) {
+    fetch(`/InsurancePackage/InitializePackage?packageId=${packageId}&employerId=${employerId}`, {
+        method: 'PATCH'
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                showError("employer-package-errors", "Failed to initialize insurance package");
+                return;
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+
+}
+
+function removePackage(packageId, employerId) {
+    fetch(`/InsurancePackage/RemovePackage?packageId=${packageId}&employerId=${employerId}`, {
+        method: 'DELETE'
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                showError("employer-package-errors", "Failed to remove insurance package");
+                return;
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+}
