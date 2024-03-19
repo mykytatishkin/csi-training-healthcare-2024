@@ -78,6 +78,14 @@ namespace CSI.IBTA.BenefitsService.Services
             if (enrollment == null)
                 return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
 
+            var balance = await _userBalanceService.GetCurrentBalance(enrollment.Id);
+            if (balance.Error != null) return new GenericResponse<bool>(balance.Error, false);
+
+            if (balance.Result < updateClaimDto.Amount)
+            {
+                return new GenericResponse<bool>(new HttpError("Consumer's balance is insufficient to change enrollment", HttpStatusCode.BadRequest), false);
+            }
+
             claim.Enrollment = enrollment;
             claim.DateOfService = updateClaimDto.DateOfService;
             claim.Amount = updateClaimDto.Amount;

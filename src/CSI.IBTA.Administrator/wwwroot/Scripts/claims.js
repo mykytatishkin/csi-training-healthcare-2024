@@ -54,7 +54,7 @@ function saveClaimData() {
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
-            showError("employer-user-management-errors", error);
+            showError("edit-form-errors", "Failed to edit the claim");
         });
 }
 
