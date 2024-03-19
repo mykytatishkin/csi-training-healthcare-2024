@@ -2,6 +2,6 @@
 {
     public class WorkerConfigConstants
     {
-        public const int CHECK_INTERVAL_MS = 30000;
+        public const int CHECK_INTERVAL_MS = 1000 * 60 * 60;
     }
 }
