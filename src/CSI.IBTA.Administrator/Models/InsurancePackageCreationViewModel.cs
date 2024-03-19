@@ -1,5 +1,4 @@
 ﻿using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Models
 {
@@ -10,5 +9,6 @@ namespace CSI.IBTA.Administrator.Models
         public List<PlanDto> Plans { get; set; } = null!;
         public int SelectedPlanTypeId { get; set; }
         public IList<PlanTypeDto> AvailablePlanTypes { get; set; } = new List<PlanTypeDto>();
+        public PlanDto? SelectedPlan { get; set; }
     }
 }

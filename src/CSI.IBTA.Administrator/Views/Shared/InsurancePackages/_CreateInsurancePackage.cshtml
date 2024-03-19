@@ -1,4 +1,5 @@
 ﻿@using CSI.IBTA.Shared.Entities
+@using Newtonsoft.Json
 @model InsurancePackageCreationViewModel
 
 <head>
@@ -22,7 +23,6 @@
                     @Html.HiddenFor(m => m.Plans[i].PlanType.Id)
                     @Html.HiddenFor(m => m.Plans[i].PlanType.Name)
                 }}
-
 
             <div class="section general-section">
                 <div class="align-left">
@@ -74,7 +74,7 @@
                             <th>Name</th>
                             <th>Type</th>
                             <th>Contributions</th>
-                            @* <th>Actions</th> *@
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -89,6 +89,9 @@
                                 </td>
                                 <td>
                                     $@Html.DisplayFor(modelItem => plan.Contribution)
+                                </td>
+                                <td>
+                                     <button onclick="showUpdatePlanForm(@JsonConvert.SerializeObject(plan))">Update</button>
                                 </td>
                             </tr>
                         }

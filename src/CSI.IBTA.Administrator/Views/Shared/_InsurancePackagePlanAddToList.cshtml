@@ -20,7 +20,6 @@
         }
         @for (int i = 0; i < (@Model.PackageModel.Plans?.Count ?? 0); i++)
         {
-            Console.WriteLine(@Model.PackageModel.Plans.Count);
             @Html.HiddenFor(m => m.PackageModel.Plans[i].Name)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].Contribution)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Id)
@@ -29,8 +28,7 @@
         @if(Model.PackageModel.Plans == null)
         {
             @Html.HiddenFor(m => m.PackageModel.Plans)
-        })
-
+        }
         <tbody>
             <tr><td colspan="2"><legend>@Model.PackageModel.Package.Name</legend></td></tr>
 
@@ -50,7 +48,7 @@
             <tr><td colspan="2"><legend>Contributions</legend></td></tr>
             <tr>
                 <td class="text-align-right">Contribution:* </td>
-                <td class="align-left"><input asp-for="Contribution" type="number" step=".01" required min="1" /></td>
+                <td class="align-left"><input asp-for="Contribution" value="@Model.Contribution.ToString().Replace(',', '.')" type="number" step=".01" required min="1" /></td>
             </tr>
             <tr>
                 <td></td>

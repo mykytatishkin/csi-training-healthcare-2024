@@ -1,5 +1,4 @@
 ﻿using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Models
 {

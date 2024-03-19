@@ -61,6 +61,21 @@ namespace CSI.IBTA.Administrator.Controllers
             return PartialView("InsurancePackages/_CreateInsurancePackage", model.PackageModel);
         }
 
+        [HttpPost("OpenUpdatePlanForm")]
+        public async Task<IActionResult> OpenUpdatePlanForm(InsurancePackageCreationViewModel model)
+        {
+            InsurancePackageNewPlanViewModel planModel = new()
+            {
+                PackageModel = model,
+                EmployerId = model.EmployerId,
+                PlanType = model.SelectedPlan.PlanType,
+                Contribution = model.SelectedPlan.Contribution,
+                Name = model.SelectedPlan.PlanType.Name,
+            };
+
+            return PartialView("_InsurancePackagePlanAddToList", planModel);
+        }
+
         [HttpPost("OpenUpdatePlanToListForm")]
         public IActionResult OpenUpdatePlanToListForm(InsurancePackageModificationViewModel model)
         {
