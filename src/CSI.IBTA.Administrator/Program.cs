@@ -1,4 +1,5 @@
 ﻿using CSI.IBTA.Administrator;
+using CSI.IBTA.Administrator.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAdministratorPortal(builder.Configuration);
 
 var app = builder.Build();
+
+// Use your ErrorHandlingMiddleware
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -22,28 +26,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (Exception ex)
-    {
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An unexpected error occurred.");
-
-        var statusCode = context.Response.StatusCode;
-        if (statusCode == StatusCodes.Status500InternalServerError || statusCode == StatusCodes.Status404NotFound)
-        {
-            context.Response.Redirect("/Error/Index");
-            return;
-        }
-
-        throw;
-    }
-});
 
 app.MapControllerRoute(
     name: "default",
