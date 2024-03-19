@@ -1,5 +1,5 @@
 ﻿function submitPackageCreation() {
-    var form = document.getElementById('insurance-package-create-form');
+    var form = document.getElementById('insurance-package-form');
 
     if (form.checkValidity() == false) {
         form.reportValidity();
@@ -45,7 +45,7 @@
 }
 
 function submitPackageUpdate() {
-    var form = document.getElementById('insurance-package-create-form');
+    var form = document.getElementById('insurance-package-form');
 
     if (form.checkValidity() == false) {
         form.reportValidity();

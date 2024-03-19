@@ -13,6 +13,7 @@
         @Html.HiddenFor(m => m.PackageModel.Package.PlanEnd)
         @Html.HiddenFor(m => m.PackageModel.Package.EmployerId)
         @Html.HiddenFor(m => m.PackageModel.Package.PayrollFrequency)
+        @Html.HiddenFor(m => m.PackageModel.SelectedPlanIndex)
         @Html.HiddenFor(m => m.PlanType)
 
         @for (int i = 0; i < @Model.PackageModel.AvailablePlanTypes.Count; i++)
@@ -54,8 +55,7 @@
                 <td class="align-left"><input asp-for="Contribution" type="number" step=".01" required min="1" /></td>
             </tr>
             <tr>
-                <td></td>
-                <td><button class="align-left custom-button" onclick="saveNewUpdatePlanData()" type="button">Update</button></td>
+                <td><button id="plan-form-submit-btn" class="align-left custom-button" type="button">Update</button></td>
             </tr>
         </tbody>
     </table>

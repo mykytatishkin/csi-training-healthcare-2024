@@ -7,7 +7,7 @@
 </head>
 <body>
     <div id="create-insurance-package">
-        <form id="insurance-package-create-form">
+        <form id="insurance-package-form">
             @Html.HiddenFor(model => model.EmployerId)
             @Html.HiddenFor(model => model.Package.Plans)
             @for (int i = 0; i < @Model.AvailablePlanTypes.Count; i++)
@@ -78,23 +78,23 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var plan in Model.Plans!)
-                        {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => plan.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => plan.PlanType.Name)
-                                </td>
-                                <td>
-                                    $@Html.DisplayFor(modelItem => plan.Contribution)
-                                </td>
-                                <td>
-                                     <button onclick="showUpdatePlanForm(@JsonConvert.SerializeObject(plan))">Update</button>
-                                </td>
-                            </tr>
-                        }
+                            @foreach (var plan in Model.Plans!.Select((value, index) => new { Value = value, Index = index }))
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => plan.Value.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => plan.Value.PlanType.Name)
+                                    </td>
+                                    <td>
+                                        $@Html.DisplayFor(modelItem => plan.Value.Contribution)
+                                    </td>
+                                    <td>
+                                        <button onclick="showUpdatePlanForm(@plan.Index)">Update</button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 }

@@ -60,10 +60,6 @@ function saveNewPlanData() {
 
     var formData = new FormData(form);
 
-    for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-    }
-
     fetch(`/InsurancePlans/AddPlanToList`, {
         method: 'POST',
         body: formData,
@@ -74,7 +70,37 @@ function saveNewPlanData() {
                     throw new Error(json.title);
                 });
             }
-            console.log("1b")
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", error);
+        });
+}
+
+function updatePlanData() {
+    var form = document.getElementById('package-plan-add-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+
+    fetch(`/InsurancePlans/UpdatePlan`, {
+        method: 'PUT',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                return response.json().then(function (json) {
+                    throw new Error(json.title);
+                });
+            }
             return response.text();
         })
         .then(function (data) {
@@ -138,7 +164,37 @@ function saveNewUpdatePlanData() {
                     throw new Error(json.title);
                 });
             }
-            console.log("1b")
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", error);
+        });
+}
+
+function saveUpdatedPlanData() {
+    var form = document.getElementById('package-plan-add-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
+    var formData = new FormData(form);
+
+    fetch(`/InsurancePlans/UpdatePackageUpdatePlan`, {
+        method: 'PUT',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                return response.json().then(function (json) {
+                    throw new Error(json.title);
+                });
+            }
             return response.text();
         })
         .then(function (data) {
