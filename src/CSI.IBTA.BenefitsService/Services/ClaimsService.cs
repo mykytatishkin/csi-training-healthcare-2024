@@ -59,6 +59,42 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<ClaimDto>(null, _mapper.Map<ClaimDto>(claim));
         }
 
+        public async Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
+        {
+            var claim = await _benefitsUnitOfWork.Claims
+                .Include(x => x.Enrollment)
+                .Include(x => x.Enrollment.Plan)
+                .Include(x => x.Enrollment.Plan.PlanType)
+                .Include(c => c.Enrollment.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == claimId);
+
+            if (claim == null)
+                return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+
+            var enrollment = await _benefitsUnitOfWork.Enrollments
+                .Include(x => x.Plan)
+                .FirstOrDefaultAsync(x => x.EmployeeId == claim.Enrollment.EmployeeId && x.PlanId == updateClaimDto.PlanId);
+
+            if (enrollment == null)
+                return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+
+            var balance = await _userBalanceService.GetCurrentBalance(enrollment.Id);
+            if (balance.Error != null) return new GenericResponse<bool>(balance.Error, false);
+
+            if (balance.Result < updateClaimDto.Amount)
+            {
+                return new GenericResponse<bool>(new HttpError("Consumer's balance is insufficient to change enrollment", HttpStatusCode.BadRequest), false);
+            }
+
+            claim.Enrollment = enrollment;
+            claim.DateOfService = updateClaimDto.DateOfService;
+            claim.Amount = updateClaimDto.Amount;
+            _benefitsUnitOfWork.Claims.Upsert(claim);
+            await _benefitsUnitOfWork.CompleteAsync();
+
+            return new GenericResponse<bool>(null, true);
+        }
+        
         public async Task<GenericResponse<bool>> ApproveClaim(int claimId)
         {
             var claim = await _benefitsUnitOfWork.Claims

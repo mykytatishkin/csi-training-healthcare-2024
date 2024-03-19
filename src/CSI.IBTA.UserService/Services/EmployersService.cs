@@ -172,13 +172,32 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<IEnumerable<EmployerDto>>(null, res.Select(_mapper.Map<EmployerDto>));
         }
 
+        public async Task<GenericResponse<PagedEmployersResponse>> GetEmployersFiltered(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
+        {
+            var filteredEmployers = _unitOfWork.Employers.GetSet()
+            .Where(e => (nameFilter == "" || e.Name.Contains(nameFilter))
+                && (codeFilter == "" || e.Code.Equals(codeFilter)));
+
+            var totalCount = filteredEmployers.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var employers = await filteredEmployers
+                .OrderBy(p => p.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var responseList = new PagedEmployersResponse(employers.Select(_mapper.Map<EmployerDto>).ToList(), page, pageSize, totalPages, totalCount);
+
+            return new GenericResponse<PagedEmployersResponse>(null, responseList);
+        }
+
         public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId)
         {
             var response = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Emails)
                 .Include(u => u.Phones)
-                .Include(u => u.Emails)
                 .Where(u => u.EmployerId == employerId)
                 .ToListAsync();
 
