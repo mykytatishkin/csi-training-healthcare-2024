@@ -192,3 +192,54 @@ function showUpdatePackageUpdatePlanForm(planIndex) {
             showError("employer-user-management-errors", error);
         });
 }
+
+function handleCreatePackagePlanFormLeave() {
+    var form = document.getElementById('package-plan-add-form');
+    var formData = new FormData(form);
+
+    fetch(`/InsurancePlans/HandleCreatePackagePlanFormCancel`, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                return response.json().then(function (json) {
+                    throw new Error(json.title);
+                });
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", error);
+        });
+}
+
+function handleUpdatePackagePlanFormLeave() {
+    var form = document.getElementById('package-plan-add-form');
+    var formData = new FormData(form);
+
+    fetch(`/InsurancePlans/HandleUpdatePackagePlanFormCancel`, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                return response.json().then(function (json) {
+                    throw new Error(json.title);
+                });
+            }
+            return response.text();
+        })
+        .then(function (data) {
+            document.getElementById('employer-partial-action').innerHTML = data;
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            showError("employer-user-management-errors", error);
+        });
+}
+

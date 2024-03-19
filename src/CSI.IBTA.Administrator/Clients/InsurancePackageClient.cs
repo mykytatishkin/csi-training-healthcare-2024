@@ -71,12 +71,13 @@ namespace CSI.IBTA.Administrator.Clients
             return new GenericResponse<FullInsurancePackageDto>(null, package);
         }
 
-        public async Task<GenericResponse<bool?>> UpdateInsurancePackage(UpdateInsurancePackageDto command)
+        public async Task<GenericResponse<bool?>> UpdateInsurancePackage(UpdateInsurancePackageDto dto)
         {
-            var jsonBody = JsonConvert.SerializeObject(command);
+            var jsonBody = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{command.Id}", content);
+            var res = await _httpClient.PutAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{dto.Id}", content);
 
+            res.EnsureSuccessStatusCode();
             return new GenericResponse<bool?>(null, true);
         }
 

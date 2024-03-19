@@ -1,62 +1,65 @@
 ﻿@model InsurancePackageUpdatePlanViewModel
 
 <head>
-    <link rel="stylesheet" href="~/css/insurance-packages.css">
+    <link rel="stylesheet" href="~/css/insurance-package-plans.css">
 </head>
 <form id="package-plan-add-form">
-    <table class="table">
-        @Html.HiddenFor(m => m.EmployerId)
-        @Html.HiddenFor(m => m.PackageModel.EmployerId)
-        @Html.HiddenFor(m => m.PackageModel.Package.Id)
-        @Html.HiddenFor(m => m.PackageModel.Package.Name)
-        @Html.HiddenFor(m => m.PackageModel.Package.PlanStart)
-        @Html.HiddenFor(m => m.PackageModel.Package.PlanEnd)
-        @Html.HiddenFor(m => m.PackageModel.Package.EmployerId)
-        @Html.HiddenFor(m => m.PackageModel.Package.PayrollFrequency)
-        @Html.HiddenFor(m => m.PackageModel.SelectedPlanIndex)
-        @Html.HiddenFor(m => m.PlanType)
+    @Html.HiddenFor(m => m.EmployerId)
+    @Html.HiddenFor(m => m.PackageModel.EmployerId)
+    @Html.HiddenFor(m => m.PackageModel.Package.Id)
+    @Html.HiddenFor(m => m.PackageModel.Package.Name)
+    @Html.HiddenFor(m => m.PackageModel.Package.PlanStart)
+    @Html.HiddenFor(m => m.PackageModel.Package.PlanEnd)
+    @Html.HiddenFor(m => m.PackageModel.Package.EmployerId)
+    @Html.HiddenFor(m => m.PackageModel.Package.PayrollFrequency)
+    @Html.HiddenFor(m => m.PackageModel.SelectedPlanIndex)
+    @Html.HiddenFor(m => m.PlanType)
+    @Html.HiddenFor(m => m.PlanType.Id)
+    @Html.HiddenFor(m => m.PlanType.Name)
+    @Html.HiddenFor(m => m.PlanId)
 
-        @for (int i = 0; i < @Model.PackageModel.AvailablePlanTypes.Count; i++)
-        {
-            @Html.HiddenFor(m => m.PackageModel.AvailablePlanTypes[i].Id)
-            @Html.HiddenFor(m => m.PackageModel.AvailablePlanTypes[i].Name)
-        }
-        @for (int i = 0; i < (@Model.PackageModel.Plans?.Count ?? 0); i++)
-        {
-            @Html.HiddenFor(m => m.PackageModel.Plans[i].Name)
-            @Html.HiddenFor(m => m.PackageModel.Plans[i].Contribution)
-            @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Id)
-            @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Name)
-        }
-        @if (Model.PackageModel.Plans == null)
-        {
-            @Html.HiddenFor(m => m.PackageModel.Plans)
-        }
+    @for (int i = 0; i < @Model.PackageModel.AvailablePlanTypes.Count; i++)
+    {
+        @Html.HiddenFor(m => m.PackageModel.AvailablePlanTypes[i].Id)
+        @Html.HiddenFor(m => m.PackageModel.AvailablePlanTypes[i].Name)
+    }
+    @for (int i = 0; i < (@Model.PackageModel.Plans?.Count ?? 0); i++)
+    {
+        @Html.HiddenFor(m => m.PackageModel.Plans[i].Id)
+        @Html.HiddenFor(m => m.PackageModel.Plans[i].Name)
+        @Html.HiddenFor(m => m.PackageModel.Plans[i].Contribution)
+        @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Id)
+        @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Name)
+    }
+    @if (Model.PackageModel.Plans == null)
+    {
+        @Html.HiddenFor(m => m.PackageModel.Plans)
+    }
 
-        <tbody>
-            <tr><td colspan="2"><legend>@Model.PackageModel.Package.Name</legend></td></tr>
+    <span class="border-label">General</span>
+    <div class="general-container">
+        <div class="plan-general">
+            <label for="Name">Name* :</label>
+            <input type="text" name="Name" id="Name" required value="@Model.Name" />
+        </div>
+        <div class="plan-general">
+            <label for="Type">Type* :</label>
+            <span id="plan-type">
+                @Model.PlanType.Name
+            </span>
+        </div>
+    </div>
 
-            <tr>
-                <td class="text-align-right">Name:* </td>
-                <td class="align-left"><input asp-for="Name" type="text" required /></td>
-            </tr>
-            <tr>
-                <td class="text-align-right">Type: </td>
-                <td>
-                    @Html.HiddenFor(m => m.PlanType.Id)
-                    @Html.HiddenFor(m => m.PlanType.Name)
-                    @Model.PlanType.Name
-                </td>
-            </tr>
-
-            <tr><td colspan="2"><legend>Contributions</legend></td></tr>
-            <tr>
-                <td class="text-align-right">Contribution:* </td>
-                <td class="align-left"><input asp-for="Contribution" type="number" step=".01" required min="1" /></td>
-            </tr>
-            <tr>
-                <td><button id="plan-form-submit-btn" class="align-left custom-button" type="button">Update</button></td>
-            </tr>
-        </tbody>
-    </table>
+    <span class="border-label">Contributions</span>
+    <div class="general-container">
+        <div class="plan-contributions">
+            <label for="Contribution">Contributions : $:</label>
+            <input asp-for="Contribution" type="number" step=".01" required min="1" />
+        </div>
+    </div>
 </form>
+
+<div>
+    <button id="plan-form-submit-btn" class="align-left custom-button" type="button">Submit</button>
+    <button id="plan-form-submit-btn" class="custom-button secondary" onclick="handleCreatePackagePlanFormLeave()" type="button">Cancel</button>
+</div>

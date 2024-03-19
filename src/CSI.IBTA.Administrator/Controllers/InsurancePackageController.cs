@@ -105,30 +105,14 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPut("UpdateInsurancePackage")]
         public async Task<IActionResult> UpdateInsurancePackage(InsurancePackageModificationViewModel viewModel)
         {
-            try
+            var dto = new UpdateInsurancePackageDto(viewModel.Package.Id, viewModel.Package.Name, viewModel.Package.PlanStart, viewModel.Package.PlanEnd, viewModel.Package.PayrollFrequency, viewModel.EmployerId, viewModel.Plans);
+            var response = await _packageClient.UpdateInsurancePackage(dto);
+
+            if (response.Error != null)
             {
-                var planDtos = viewModel.Plans?.Select(p => new UpdatePlanDto(
-                        p.Name,
-                        p.Contribution,
-                        p.PlanType))
-                    .ToList() ?? new List<UpdatePlanDto>();
-
-                var command = new UpdateInsurancePackageDto(viewModel.Package.Id, viewModel.Package.Name, viewModel.Package.PlanStart, viewModel.Package.PlanEnd, viewModel.Package.PayrollFrequency, viewModel.EmployerId,
-                    planDtos.ConvertAll(x => new CreatePlanDto(x.Name, x.Contribution, x.PlanType.Id)));
-
-                var response = await _packageClient.UpdateInsurancePackage(command);
-
-                if (response.Error != null)
-                {
-                    return Problem(
-                        statusCode: (int)response.Error.StatusCode,
-                        title: response.Error.Title);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
             }
 
             return Ok();
