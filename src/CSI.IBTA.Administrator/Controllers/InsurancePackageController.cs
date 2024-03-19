@@ -3,7 +3,6 @@ using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -20,10 +19,12 @@ namespace CSI.IBTA.Administrator.Controllers
         public async Task<IActionResult> Index(int employerId)
         {
             var getPlanTypesResponse = await _packageClient.GetPlanTypes();
+
             if (getPlanTypesResponse.Result == null)
             {
                 return Problem(title: "Failed to retrieve plan types");
             }
+
             var PlanTypes = getPlanTypesResponse.Result;
 
             var viewModel = new InsurancePackageCreationViewModel

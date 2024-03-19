@@ -28,7 +28,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPost("AddPlanToList")]
-        public async Task<IActionResult> AddPlanToList(InsurancePackageNewPlanViewModel model)
+        public ActionResult AddPlanToList(InsurancePackageNewPlanViewModel model)
         {
             var newPlan = new PlanDto(0,
                 model.Name,
@@ -47,7 +47,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPut("UpdatePlan")]
-        public async Task<IActionResult> UpdatePlan(InsurancePackageNewPlanViewModel model)
+        public IActionResult UpdatePlan(InsurancePackageNewPlanViewModel model)
         {
             var plan = model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex];
             model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex] = new PlanDto(plan.Id, model.Name, model.PlanType, model.Contribution, plan.PackageId);
@@ -61,7 +61,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPost("OpenUpdatePlanForm")]
-        public async Task<IActionResult> OpenUpdatePlanForm(InsurancePackageCreationViewModel model)
+        public IActionResult OpenUpdatePlanForm(InsurancePackageCreationViewModel model)
         {
             var planIndex = model.SelectedPlanIndex;
             var planModel = new InsurancePackageNewPlanViewModel()
@@ -135,7 +135,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPost("UpdatePlanToList")]
-        public async Task<IActionResult> UpdatePlanToList(InsurancePackageUpdatePlanViewModel model)
+        public IActionResult UpdatePlanToList(InsurancePackageUpdatePlanViewModel model)
         {
             var newPlan = new PlanDto(
                 0,
@@ -159,7 +159,7 @@ namespace CSI.IBTA.Administrator.Controllers
         }
 
         [HttpPut("UpdatePackageUpdatePlan")]
-        public async Task<IActionResult> UpdatePackageUpdatePlan(InsurancePackageUpdatePlanViewModel model)
+        public IActionResult UpdatePackageUpdatePlan(InsurancePackageUpdatePlanViewModel model)
         {
             var plan = model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex];
             model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex] = new PlanDto(plan.Id, model.Name, model.PlanType, model.Contribution, plan.PackageId);
