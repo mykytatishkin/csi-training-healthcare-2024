@@ -1,4 +1,4 @@
-using CSI.IBTA.Administrator;
+﻿using CSI.IBTA.Administrator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Login/Error");
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -22,6 +22,28 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An unexpected error occurred.");
+
+        var statusCode = context.Response.StatusCode;
+        if (statusCode == StatusCodes.Status500InternalServerError || statusCode == StatusCodes.Status404NotFound)
+        {
+            context.Response.Redirect("/Error/Index");
+            return;
+        }
+
+        throw;
+    }
+});
 
 app.MapControllerRoute(
     name: "default",
