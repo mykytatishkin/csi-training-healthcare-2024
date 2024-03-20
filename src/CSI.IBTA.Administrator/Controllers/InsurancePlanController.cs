@@ -14,167 +14,56 @@ namespace CSI.IBTA.Administrator.Controllers
         {
         }
 
-        [HttpPost("OpenAddPlanToListForm")]
-        public IActionResult OpenAddPlanToListForm(InsurancePackageCreationViewModel model)
+        [HttpPost("OpenCreatePlanForm")]
+        public IActionResult OpenCreatePlanForm(InsurancePackageFormViewModel model)
         {
-            var planModel = new InsurancePackageNewPlanViewModel()
-            {
-                PackageModel = model,
-                EmployerId = model.EmployerId,
-                PlanType = model.AvailablePlanTypes.FirstOrDefault(t => t.Id == model.SelectedPlanTypeId),
-            };
-
-            return PartialView("InsurancePackages/_CreatePackagePlanForm", planModel);
-        }
-
-        [HttpPost("AddPlanToList")]
-        public ActionResult AddPlanToList(InsurancePackageNewPlanViewModel model)
-        {
-            var newPlan = new PlanDto(0,
-                model.Name,
-                new PlanTypeDto(model.PlanType.Id, model.PlanType.Name),
-                model.Contribution,
-                0);
-
-            if (model.PackageModel.Package.Plans != null && model.PackageModel.Package.Plans.Count != 0)
-            {
-                model.PackageModel.Plans.AddRange(model.PackageModel.Package.Plans.ConvertAll(x => new PlanDto(0, x.Name, new PlanTypeDto(x.PlanTypeId, ""), x.Contribution, 0)));
-            }
-
-            model.PackageModel.Plans.Add(newPlan);
-
-            return PartialView("InsurancePackages/_CreatePackage", model.PackageModel);
-        }
-
-        [HttpPut("UpdatePlan")]
-        public IActionResult UpdatePlan(InsurancePackageNewPlanViewModel model)
-        {
-            var plan = model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex];
-            model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex] = new PlanDto(plan.Id, model.Name, model.PlanType, model.Contribution, plan.PackageId);
-
-            if (model.PackageModel.Package.Plans != null && model.PackageModel.Package.Plans.Count != 0)
-            {
-                model.PackageModel.Plans.AddRange(model.PackageModel.Package.Plans.ConvertAll(x => new PlanDto(model.PlanId, x.Name, new PlanTypeDto(x.PlanTypeId, ""), x.Contribution, plan.PackageId)));
-            }
-
-            return PartialView("InsurancePackages/_CreatePackage", model.PackageModel);
+            model.PlanForm.PlanType = new PlanTypeDto(model.PlanForm.PlanType.Id, model.AvailablePlanTypes.First(x => x.Id == model.PlanForm.PlanType.Id).Name);
+            return PartialView("InsurancePackages/_PackagePlanForm", model);
         }
 
         [HttpPost("OpenUpdatePlanForm")]
-        public IActionResult OpenUpdatePlanForm(InsurancePackageCreationViewModel model)
+        public IActionResult OpenUpdatePlanForm(InsurancePackageFormViewModel model)
         {
-            var planIndex = model.SelectedPlanIndex;
-            var planModel = new InsurancePackageNewPlanViewModel()
-            {
-                PackageModel = model,
-                EmployerId = model.EmployerId,
-                PlanType = model.Plans[planIndex].PlanType,
-                Contribution = model.Plans[planIndex].Contribution,
-                Name = model.Plans[planIndex].Name,
-                PlanId = model.Plans[planIndex].Id
-            };
-
-            return PartialView("InsurancePackages/_CreatePackagePlanForm", planModel);
+            var plan = model.Package.Plans[model.PlanForm.SelectedPlanIndex ?? 0];
+            model.PlanForm.PlanType = new PlanTypeDto(model.PlanForm.PlanType.Id, model.AvailablePlanTypes.First(x => x.Id == model.PlanForm.PlanType.Id).Name);
+            model.PlanForm.Name = plan.Name;
+            model.PlanForm.Contribution = plan.Contribution;
+            model.PlanForm.PlanId = plan.Id;
+            return PartialView("InsurancePackages/_PackagePlanForm", model);
         }
 
-        [HttpPost("OpenUpdatePlanToListForm")]
-        public IActionResult OpenUpdatePlanToListForm(InsurancePackageModificationViewModel model)
-        {
-            var planModel = new InsurancePackageUpdatePlanViewModel()
-            {
-                PackageModel = model,
-                EmployerId = model.EmployerId,
-                PlanType = model.AvailablePlanTypes.FirstOrDefault(t => t.Id == model.SelectedPlanTypeId),
-            };
-            return PartialView("InsurancePackages/_ModifyPackagePlanForm", planModel);
-        }
-
-        [HttpPost("HandleCreatePackagePlanFormCancel")]
-        public IActionResult HandleCreatePackagePlanFormCancel(InsurancePackageNewPlanViewModel model)
-        {
-            var viewModel = new InsurancePackageCreationViewModel()
-            {
-                EmployerId = model.EmployerId,
-                Package = model.PackageModel.Package,
-                Plans = model.PackageModel.Plans,
-                AvailablePlanTypes = model.PackageModel.AvailablePlanTypes
-            };
-
-            return PartialView("InsurancePackages/_CreatePackage", viewModel);
-        }
-
-        [HttpPost("HandleUpdatePackagePlanFormCancel")]
-        public IActionResult HandleUpdatePackagePlanFormCancel(InsurancePackageUpdatePlanViewModel model)
-        {
-            model.PackageModel = new InsurancePackageModificationViewModel()
-            {
-                EmployerId = model.EmployerId,
-                Package = new FullInsurancePackageDto(model.PackageModel.Package.Id, model.PackageModel.Package.Name, model.PackageModel.Package.PlanStart, model.PackageModel.Package.PlanEnd, model.PackageModel.Package.PayrollFrequency, model.EmployerId, model.PackageModel.Plans.Select(x => new PlanDto(x.Id, x.Name, new PlanTypeDto(x.Id, x.Name), x.Contribution, x.PackageId)).ToList()),
-                Plans = model.PackageModel.Plans,
-                SelectedPlanTypeId = model.PackageModel.SelectedPlanTypeId,
-                AvailablePlanTypes = model.PackageModel.AvailablePlanTypes
-            };
-
-            return PartialView("InsurancePackages/_ModifyPackage", model.PackageModel);
-        }
-
-        [HttpPost("OpenUpdatePackageUpdatePlanForm")]
-        public IActionResult OpenUpdatePackageUpdatePlanForm(InsurancePackageModificationViewModel model)
-        {
-            var planIndex = model.SelectedPlanIndex;
-            var planModel = new InsurancePackageUpdatePlanViewModel()
-            {
-                PackageModel = model,
-                EmployerId = model.EmployerId,
-                PlanType = model.Plans[planIndex].PlanType,
-                Contribution = model.Plans[planIndex].Contribution,
-                Name = model.Plans[planIndex].Name,
-                PlanId = model.Plans[planIndex].Id
-            };
-            return PartialView("InsurancePackages/_ModifyPackagePlanForm", planModel);
-        }
-
-        [HttpPost("UpdatePlanToList")]
-        public IActionResult UpdatePlanToList(InsurancePackageUpdatePlanViewModel model)
+        [HttpPost]
+        public IActionResult CreatePlan(InsurancePackageFormViewModel model)
         {
             var newPlan = new PlanDto(
                 0,
-                model.Name,
-                model.PlanType,
-                model.Contribution,
-                model.PackageModel.Package.Id);
+                model.PlanForm.Name,
+                model.PlanForm.PlanType,
+                model.PlanForm.Contribution,
+                model.Package.Id);
 
-            model.PackageModel.Plans.Add(newPlan);
+            model.Package.Plans.Add(newPlan);
 
-            model.PackageModel = new InsurancePackageModificationViewModel()
-            {
-                EmployerId = model.EmployerId,
-                Package = new FullInsurancePackageDto(model.PackageModel.Package.Id, model.PackageModel.Package.Name, model.PackageModel.Package.PlanStart, model.PackageModel.Package.PlanEnd, model.PackageModel.Package.PayrollFrequency, model.EmployerId, model.PackageModel.Plans.Select(x => new PlanDto(x.Id, x.Name, new PlanTypeDto(x.Id, x.Name), x.Contribution, x.PackageId)).ToList()),
-                Plans = model.PackageModel.Plans,
-                SelectedPlanTypeId = model.PackageModel.SelectedPlanTypeId,
-                AvailablePlanTypes = model.PackageModel.AvailablePlanTypes
-            };
-
-            return PartialView("InsurancePackages/_ModifyPackage", model.PackageModel);
+            ModelState.Clear();
+            return PartialView("InsurancePackages/_PackageForm", model);
         }
 
-        [HttpPut("UpdatePackageUpdatePlan")]
-        public IActionResult UpdatePackageUpdatePlan(InsurancePackageUpdatePlanViewModel model)
+        [HttpPut]
+        public IActionResult UpsertPlan(InsurancePackageFormViewModel model)
         {
-            var plan = model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex];
-            model.PackageModel.Plans[model.PackageModel.SelectedPlanIndex] = new PlanDto(plan.Id, model.Name, model.PlanType, model.Contribution, plan.PackageId);
+            if (model.PlanForm.SelectedPlanIndex == null) return CreatePlan(model);
+            var index = (int) model.PlanForm.SelectedPlanIndex;
 
-            model.PackageModel = new InsurancePackageModificationViewModel()
-            {
-                EmployerId = model.EmployerId,
-                Package = new FullInsurancePackageDto(model.PackageModel.Package.Id, model.PackageModel.Package.Name, model.PackageModel.Package.PlanStart, model.PackageModel.Package.PlanEnd, model.PackageModel.Package.PayrollFrequency, model.EmployerId,
-                model.PackageModel.Plans.Select(x => new PlanDto(x.Id, x.Name, new PlanTypeDto(x.Id, x.Name), x.Contribution, x.PackageId)).ToList()),
-                Plans = model.PackageModel.Plans,
-                SelectedPlanTypeId = model.PackageModel.SelectedPlanTypeId,
-                AvailablePlanTypes = model.PackageModel.AvailablePlanTypes
-            };
+            var plan = model.Package.Plans[index];
+            model.Package.Plans[index] = new PlanDto(plan.Id, model.PlanForm.Name, model.PlanForm.PlanType, model.PlanForm.Contribution, plan.PackageId);
+            ModelState.Clear();
+            return PartialView("InsurancePackages/_PackageForm", model);
+        }
 
-            return PartialView("InsurancePackages/_ModifyPackage", model.PackageModel);
+        [HttpPost("HandlePackagePlanFormCancel")]
+        public IActionResult HandlePackagePlanFormCancel(InsurancePackageFormViewModel model)
+        {
+            return PartialView("InsurancePackages/_PackageForm", model);
         }
     }
 }

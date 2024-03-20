@@ -2,13 +2,11 @@
 
 namespace CSI.IBTA.Administrator.Models
 {
-    public class InsurancePackageModificationViewModel
+    public class InsurancePackageFormViewModel
     {
         public int EmployerId { get; set; }
         public FullInsurancePackageDto Package { get; set; } = null!;
-        public List<PlanDto> Plans { get; set; } = null!;
-        public int SelectedPlanTypeId { get; set; }
         public List<PlanTypeDto> AvailablePlanTypes { get; set; } = new List<PlanTypeDto>();
-        public int SelectedPlanIndex { get; set;  }
+        public InsurancePackagePlanFormViewModel PlanForm { get; set; }
     }
 }

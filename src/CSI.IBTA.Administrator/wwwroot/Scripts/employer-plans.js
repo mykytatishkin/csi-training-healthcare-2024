@@ -13,11 +13,11 @@ function showEmployerPackagePlans(employerId) {
     fetchRoute(route, onSuccess, onFailure);
 }
 
-function showAddPlanForm() {
+function showCreatePlanForm() {
+    event.preventDefault();
     var form = document.getElementById('insurance-package-form');
     var formData = new FormData(form);
-    event.preventDefault();
-    fetch(`/InsurancePlans/OpenAddPlanToListForm`, {
+    fetch(`/InsurancePlans/OpenCreatePlanForm`, {
         method: 'POST',
         body: formData,
     })
@@ -36,8 +36,6 @@ function showAddPlanForm() {
         })
         .then(function (data) {
             document.getElementById('employer-partial-action').innerHTML = data;
-            let btn = document.getElementById("plan-form-submit-btn");
-            btn.addEventListener("click", saveNewPlanData);
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
@@ -46,10 +44,10 @@ function showAddPlanForm() {
 }
 
 function showUpdatePlanForm(planIndex) {
+    event.preventDefault();
     var form = document.getElementById('insurance-package-form');
     var formData = new FormData(form);
-    event.preventDefault();
-    formData.append('SelectedPlanIndex', planIndex);
+    formData.append('PlanForm.SelectedPlanIndex', planIndex);
 
     fetch(`/InsurancePlans/OpenUpdatePlanForm`, {
         method: 'POST',
@@ -70,8 +68,6 @@ function showUpdatePlanForm(planIndex) {
         })
         .then(function (data) {
             document.getElementById('employer-partial-action').innerHTML = data;
-            let btn = document.getElementById("plan-form-submit-btn");
-            btn.addEventListener("click", updatePlanData);
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
@@ -79,77 +75,11 @@ function showUpdatePlanForm(planIndex) {
         });
 }
 
-function showUpdatePackageAddPlanForm() {
-    event.preventDefault();
-    var form = document.getElementById('insurance-package-form');
-    var formData = new FormData(form);
-    fetch(`/InsurancePlans/OpenUpdatePlanToListForm`, {
-        method: 'POST',
-        body: formData,
-    })
-        .then(function (response) {
-            if (!response.ok) {
-                callbackFailure?.(response.status);
-                throw new Error("Response was not ok");
-            }
-
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-
-            return response.text();
-        })
-        .then(function (data) {
-            document.getElementById('employer-partial-action').innerHTML = data;
-            let btn = document.getElementById("plan-form-submit-btn");
-            btn.addEventListener("click", saveNewUpdatePlanData);
-        })
-        .catch(function (error) {
-            console.error('There was a problem with the fetch operation:', error);
-            showError("employer-user-management-errors", error);
-        });
-}
-
-function showUpdatePackageUpdatePlanForm(planIndex) {
-    event.preventDefault();
-    var form = document.getElementById('insurance-package-form');
-    var formData = new FormData(form);
-    formData.append('SelectedPlanIndex', planIndex);
-
-    fetch(`/InsurancePlans/OpenUpdatePackageUpdatePlanForm`, {
-        method: 'POST',
-        body: formData,
-    })
-        .then(function (response) {
-            if (!response.ok) {
-                callbackFailure?.(response.status);
-                throw new Error("Response was not ok");
-            }
-
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-
-            return response.text();
-        })
-        .then(function (data) {
-            document.getElementById('employer-partial-action').innerHTML = data;
-            let btn = document.getElementById("plan-form-submit-btn");
-            btn.addEventListener("click", saveUpdatedPlanData);
-        })
-        .catch(function (error) {
-            console.error('There was a problem with the fetch operation:', error);
-            showError("employer-user-management-errors", error);
-        });
-}
-
-function handleCreatePackagePlanFormLeave() {
-    var form = document.getElementById('package-plan-add-form');
+function handlePackagePlanFormLeave() {
+    var form = document.getElementById('package-plan-form');
     var formData = new FormData(form);
 
-    fetch(`/InsurancePlans/HandleCreatePackagePlanFormCancel`, {
+    fetch(`/InsurancePlans/HandlePackagePlanFormCancel`, {
         method: 'POST',
         body: formData,
     })
@@ -170,12 +100,18 @@ function handleCreatePackagePlanFormLeave() {
         });
 }
 
-function handleUpdatePackagePlanFormLeave() {
-    var form = document.getElementById('package-plan-add-form');
+function upsertPlan() {
+    var form = document.getElementById('package-plan-form');
+
+    if (form.checkValidity() == false) {
+        form.reportValidity();
+        return;
+    }
+
     var formData = new FormData(form);
 
-    fetch(`/InsurancePlans/HandleUpdatePackagePlanFormCancel`, {
-        method: 'POST',
+    fetch(`/InsurancePlans`, {
+        method: 'PUT',
         body: formData,
     })
         .then(function (response) {

@@ -1,4 +1,4 @@
-﻿function submitPackageCreation() {
+﻿function upsertInsurancePackage() {
     var form = document.getElementById('insurance-package-form');
 
     if (form.checkValidity() == false) {
@@ -16,55 +16,7 @@
         return;
     }
 
-    var employerId = formData.get('EmployerId')
-
-    fetch('/InsurancePackage', {
-        method: 'POST',
-        body: formData,
-    })
-        .then(function (response) {
-            if (!response.ok) {
-                return response.json().then(function (json) {
-                    throw new Error(json.title);
-                });
-            }
-
-            return response.text();
-        })
-        .then(function (data) {
-            showEmployerPackagePlans(employerId);
-        })
-        .catch(function (error) {
-            if (error.message.includes("Insurance package with this name already exists")) {
-                showError("create-insurance-package-errors", "An insurance package with this name already exists. Please choose a different name.");
-            } else {
-                showError("create-insurance-package-errors", error.message);
-            }
-            console.error('There was a problem with the fetch operation:', error);
-        });
-}
-
-function submitPackageUpdate() {
-    var form = document.getElementById('insurance-package-form');
-
-    if (form.checkValidity() == false) {
-        form.reportValidity();
-        return;
-    }
-
-    var formData = new FormData(form);
-
-    var planStart = formData.get('Package.PlanStart')
-    var planEnd = formData.get('Package.PlanEnd')
-
-    if (planStart >= planEnd) {
-        showError("create-insurance-package-errors", "Plan start date cannot be later than plan end date or at the same day");
-        return;
-    }
-
-    var employerId = formData.get('EmployerId')
-
-    fetch('/InsurancePackage/UpdateInsurancePackage', {
+    fetch('/InsurancePackage/UpsertInsurancePackage', {
         method: 'PUT',
         body: formData,
     })
@@ -78,6 +30,7 @@ function submitPackageUpdate() {
             return response.text();
         })
         .then(function (data) {
+            var employerId = formData.get('EmployerId')
             showEmployerPackagePlans(employerId);
         })
         .catch(function (error) {
@@ -86,7 +39,7 @@ function submitPackageUpdate() {
         });
 }
 
-function createInsurancePackage(employerId) {
+function openCreateInsurancePackageForm(employerId) {
     fetch('/InsurancePackage?employerId=' + employerId)
         .then(function (response) {
             if (!response.ok) {
@@ -102,7 +55,7 @@ function createInsurancePackage(employerId) {
         });
 }
 
-function modifyInsurancePackage(insurancePackageId, employerId) {
+function openModifyInsurancePackageForm(insurancePackageId, employerId) {
     fetch('/InsurancePackage/UpdateInsurancePackage?employerId=' + employerId + '&insurancePackageId=' + insurancePackageId)
         .then(function (response) {
             if (!response.ok) {
