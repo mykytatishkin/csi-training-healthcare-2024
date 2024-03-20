@@ -5,11 +5,31 @@
 @using CSI.IBTA.Shared.DTOs
 @using CSI.IBTA.Shared.Utils.Extensions
 @model ClaimDetailsViewModel
-
 <head>
     <link rel="stylesheet" href="~/css/claim-details.css">
 </head>
+<form method="post" id="claim-view-form">
+    @Html.HiddenFor(m => m.Claim.Id)
+    @Html.HiddenFor(m => m.Claim.EmployeeId)
+    @Html.HiddenFor(m => m.Claim.EmployerId)
+    @Html.HiddenFor(m => m.Claim.PlanId)
+    @Html.HiddenFor(m => m.Claim.ClaimNumber)
+    @Html.HiddenFor(m => m.Claim.DateOfService)
+    @Html.HiddenFor(m => m.Claim.PlanName)
+    @Html.HiddenFor(m => m.Claim.PlanTypeName)
+    @Html.HiddenFor(m => m.Claim.Amount)
+    @Html.HiddenFor(m => m.Claim.Status)
+    @Html.HiddenFor(m => m.Consumer.Id)
+    @Html.HiddenFor(m => m.Consumer.Role)
+    @Html.HiddenFor(m => m.Consumer.UserName)
+    @Html.HiddenFor(m => m.Consumer.FirstName)
+    @Html.HiddenFor(m => m.Consumer.LastName)
+    @Html.HiddenFor(m => m.Consumer.AccountId)
+    @Html.HiddenFor(m => m.Consumer.EmployerId)
+    @Html.HiddenFor(m => m.Consumer.EmailAddress)
+    @Html.HiddenFor(m => m.Consumer.PhoneNumber)
 
+</form>
 <div class="space-between-container">
     <div class="claim-number-container">
         <label for="claim-number">Claim Number:</label>
@@ -22,6 +42,10 @@
 
 <span class="border-label">Detail</span>
 <div class="details-container">
+    @if (Model.Claim.Status == ClaimStatus.Pending)
+    {
+        <button onclick="showEditClaim()" class="btn btn-primary smaller-width-button">Edit</button>
+    }
     <div class="claim-details">
         <label for="consumer">Consumer:</label>
         <span id="consumer">
@@ -59,7 +83,6 @@
         </span>
     </div>
 </div>
-
 @if (Model.Claim.Status == ClaimStatus.Pending)
 {
     <div class="claim-buttons">

@@ -38,7 +38,6 @@ function handleApproveClaim(claimId) {
 
 function handleDenyClaim(claimId) {
     var form = document.getElementById('deny-claim-form');
-
     if (form.checkValidity() == false) {
         form.reportValidity();
         return;

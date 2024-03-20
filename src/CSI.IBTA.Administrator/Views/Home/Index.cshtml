@@ -17,11 +17,14 @@
         <div class="container">
             <div class="row">
                 <div class="col">
+                    <div id="logo-content" class="text-center">
+                        <img class="logo-admin" id="logo-employer" />
+                    </div>
                     <div class="partial">
                         <div class="panel">
                             <div class="control">
-                                <button class="left partial-btn active" onclick="showEmployers()">Employer</button>
-                                <button class="right partial-btn" onclick="showClaims()">Claims</button>
+                                <button id="employerBtn" class="left view-btn-active" onclick="showEmployers()">Employer</button>
+                                <button id="claimBtn" class="right view-btn" onclick="showClaims()">Claims</button>
                             </div>
                             <div id="content"></div>
                         </div>
@@ -43,5 +46,6 @@
     <script type="text/javascript" src="~/Scripts/insurance-packages.js"></script>
     <script type="text/javascript" src="~/Scripts/benefits.js"></script>
     <script type="text/javascript" src="~/Scripts/claim-details.js"></script>
+    <script type="text/javascript" src="~/Scripts/claims.js"></script>
 </body>
 </html>

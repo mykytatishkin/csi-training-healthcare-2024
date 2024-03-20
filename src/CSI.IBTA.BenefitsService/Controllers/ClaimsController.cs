@@ -51,6 +51,23 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpPatch("{claimId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
+        {
+            var response = await _claimsService.UpdateClaim(claimId, updateClaimDto);
+            
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return NoContent();
+        }
+        
         [HttpPatch("Approve/{claimId}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> ApproveClaim(int claimId)
