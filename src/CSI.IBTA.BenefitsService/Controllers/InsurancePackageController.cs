@@ -33,12 +33,29 @@ namespace CSI.IBTA.BenefitsService.Controllers
 
             return Ok(response.Result);
         }
-    
-        [HttpGet("{employerId}")]
+
+        [HttpGet("GetByEmployer/{employerId}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetInsurancePackages(int employerId)
         {
             var response = await _insurancePackageService.GetInsurancePackages(employerId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpGet("{packageId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> GetInsurancePackage(int packageId)
+        {
+            var response = await _insurancePackageService.GetInsurancePackage(packageId);
 
             if (response.Error != null)
             {
@@ -68,6 +85,23 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpPut("{packageId}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> UpdateInsurancePackage(UpdateInsurancePackageDto dto, int packageId)
+        {
+            var response = await _insurancePackageService.UpdateInsurancePackage(dto, packageId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+        
         [HttpDelete("{packageId}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> RemoveInsurancePackage(int packageId)

@@ -62,7 +62,6 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<IEnumerable<PlanTypeDto>>(null, planTypeDtos);
         }
 
-
         public async Task<GenericResponse<PlanDto>> CreatePlan(int packageId, CreatePlanDto createPlanDto)
         {
             var planType = await _unitOfWork.PlanTypes.GetById(createPlanDto.PlanTypeId);
@@ -101,7 +100,7 @@ namespace CSI.IBTA.BenefitsService.Services
                 return new GenericResponse<PlanDto>(new HttpError("Plan not found", HttpStatusCode.NotFound), null);
             }
 
-            var planType = await _unitOfWork.PlanTypes.GetById(updatePlanDto.PlanTypeId);
+            var planType = await _unitOfWork.PlanTypes.GetById(updatePlanDto.PlanType.Id);
             if (planType == null)
             {
                 return new GenericResponse<PlanDto>(new HttpError("Plan type not found", HttpStatusCode.NotFound), null);

@@ -41,19 +41,19 @@
                 <td class="text-align-right">Contribution:* </td>
                 <td class="align-left"><input asp-for="Contribution" type="number" step=".01" required /></td>
             </tr>
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <tr>
-                <td></td>
-                <td>
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                </td>
-            </tr>
-        }
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <tr>
+                    <td></td>
+                    <td>
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                    </td>
+                </tr>
+            }
 
             <tr>
                 <td></td>
-                <td><button class="align-left custom-button" onclick="savePlanData()" type="button">Save</button></td>
+                <td><button class="align-left custom-button" onclick="saveUpdatePlanData()" type="button">Update</button></td>
             </tr>
         </tbody>
     </table>

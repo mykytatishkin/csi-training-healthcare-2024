@@ -3,11 +3,11 @@ using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Models
 {
-    public class InsurancePackageCreationViewModel
+    public class InsurancePackageModificationViewModel
     {
         public int EmployerId { get; set; }
-        public CreateInsurancePackageDto Package { get; set; } = null!;
-        public List<PlanDto> Plans { get; set; } = null!;
+        public FullInsurancePackageDto Package { get; set; } = null!;
+        public IList<PlanDto> Plans { get; set; } = null!;
         public int SelectedPlanTypeId { get; set; }
         public IList<PlanTypeDto> AvailablePlanTypes { get; set; } = new List<PlanTypeDto>();
     }

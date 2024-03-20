@@ -57,9 +57,32 @@ namespace CSI.IBTA.Administrator.Clients
             return new GenericResponse<IEnumerable<PlanTypeDto>>(null, plan);
         }
 
+        public async Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int insurancePackageId)
+        {
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{insurancePackageId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return new GenericResponse<FullInsurancePackageDto>(HttpErrors.GenericError, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var package = JsonConvert.DeserializeObject<FullInsurancePackageDto>(responseContent);
+
+            return new GenericResponse<FullInsurancePackageDto>(null, package);
+        }
+
+        public async Task<GenericResponse<bool?>> UpdateInsurancePackage(UpdateInsurancePackageDto command)
+        {
+            var jsonBody = JsonConvert.SerializeObject(command);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{command.Id}", content);
+
+            return new GenericResponse<bool?>(null, true);
+        }
+
         public async Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId)
         {
-            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{employerId}");
+            var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.InsurancePackagesByEmployer}/{employerId}");
 
             if (!response.IsSuccessStatusCode)
             {

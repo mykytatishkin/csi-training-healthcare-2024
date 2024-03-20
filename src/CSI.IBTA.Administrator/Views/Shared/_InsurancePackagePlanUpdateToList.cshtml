@@ -1,17 +1,19 @@
-﻿@model InsurancePackageNewPlanViewModel
+﻿@model InsurancePackageUpdatePlanViewModel
 
 <head>
     <link rel="stylesheet" href="~/css/insurance-packages.css">
 </head>
-<form asp-controller="InsurancePlans" asp-action="AddPlanToList" method="post" id="package-plan-add-form">
+<form id="package-plan-add-form">
     <table class="table">
         @Html.HiddenFor(m => m.EmployerId)
         @Html.HiddenFor(m => m.PackageModel.EmployerId)
+        @Html.HiddenFor(m => m.PackageModel.Package.Id)
         @Html.HiddenFor(m => m.PackageModel.Package.Name)
         @Html.HiddenFor(m => m.PackageModel.Package.PlanStart)
         @Html.HiddenFor(m => m.PackageModel.Package.PlanEnd)
         @Html.HiddenFor(m => m.PackageModel.Package.EmployerId)
         @Html.HiddenFor(m => m.PackageModel.Package.PayrollFrequency)
+        @Html.HiddenFor(m => m.PlanType)
 
         @for (int i = 0; i < @Model.PackageModel.AvailablePlanTypes.Count; i++)
         {
@@ -26,10 +28,10 @@
             @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Id)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Name)
         }
-        @if(Model.PackageModel.Plans == null)
+        @if (Model.PackageModel.Plans == null)
         {
             @Html.HiddenFor(m => m.PackageModel.Plans)
-        })
+        }
 
         <tbody>
             <tr><td colspan="2"><legend>@Model.PackageModel.Package.Name</legend></td></tr>
@@ -54,7 +56,7 @@
             </tr>
             <tr>
                 <td></td>
-                <td><button class="align-left custom-button" onclick="saveNewPlanData()" type="button">Save</button></td>
+                <td><button class="align-left custom-button" onclick="saveNewUpdatePlanData()" type="button">Update</button></td>
             </tr>
         </tbody>
     </table>
