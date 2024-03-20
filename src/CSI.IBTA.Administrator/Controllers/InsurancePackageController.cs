@@ -31,7 +31,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var viewModel = new InsurancePackageFormViewModel
             {
-                Package = new FullInsurancePackageDto(0, "", DateTime.UtcNow, DateTime.UtcNow, PayrollFrequency.Weekly, 0, new List<PlanDto>()),
+                Package = new FullInsurancePackageDto(0, "", DateTime.UtcNow, DateTime.UtcNow.AddYears(1), PayrollFrequency.Weekly, 0, new List<PlanDto>()),
                 EmployerId = employerId,
                 AvailablePlanTypes = planTypes,
             };
