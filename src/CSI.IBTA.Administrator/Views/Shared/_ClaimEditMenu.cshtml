@@ -1,0 +1,87 @@
+﻿@model EditClaimViewModel
+<head>
+    <link rel="stylesheet" href="~/css/claim-details.css">
+</head>
+<form method="post" id="claim-edit-form">
+    @Html.HiddenFor(m => m.Claim.Id)
+    @Html.HiddenFor(m => m.Claim.EmployeeId)
+    @Html.HiddenFor(m => m.Claim.EmployerId)
+    @Html.HiddenFor(m => m.Claim.ClaimNumber)
+    @Html.HiddenFor(m => m.Claim.Status)
+    @for (int i = 0; i < @Model.AvailablePlans.Count; i++)
+    {
+        @Html.HiddenFor(m => m.AvailablePlans[i].Id)
+        @Html.HiddenFor(m => m.AvailablePlans[i].Name)
+        @Html.HiddenFor(m => m.AvailablePlans[i].Contribution)
+        @Html.HiddenFor(m => m.AvailablePlans[i].PackageId)
+        @Html.HiddenFor(m => m.AvailablePlans[i].PlanType.Id)
+        @Html.HiddenFor(m => m.AvailablePlans[i].PlanType.Name)
+    }
+    @Html.HiddenFor(m => m.Consumer.Id)
+    @Html.HiddenFor(m => m.Consumer.Role)
+    @Html.HiddenFor(m => m.Consumer.UserName)
+    @Html.HiddenFor(m => m.Consumer.FirstName)
+    @Html.HiddenFor(m => m.Consumer.LastName)
+    @Html.HiddenFor(m => m.Consumer.AccountId)
+    @Html.HiddenFor(m => m.Consumer.EmployerId)
+    @Html.HiddenFor(m => m.Consumer.EmailAddress)
+    @Html.HiddenFor(m => m.Consumer.PhoneNumber)
+    <div class="space-between-container">
+        <div class="claim-number-container">
+            <label for="claim-number">Claim Number:</label>
+            <span id="claim-number">
+                @Model.Claim.ClaimNumber
+            </span>
+        </div>
+        <button onclick="showClaims()" class="btn btn-primary">Return to list</button>
+    </div>
+
+    <span class="border-label">Detail</span>
+    <div class="details-container">
+        <div class="claim-details">
+            <label for="consumer">Consumer:</label>
+            <span id="consumer">
+                @($"{Model.Consumer.FirstName} {Model.Consumer.LastName}")
+            </span>
+        </div>
+        <div class="claim-details">
+            <label for="consumer">Phone Number:</label>
+            <span id="phoneNumber">
+                @Model.Consumer.PhoneNumber
+            </span>
+        </div>
+        <div class="claim-details select-field-top select-field-bottom">
+            <label for="dateOfService">Date of Service:</label>
+            <span id="dateOfService">
+                <input asp-for="Claim.DateOfService" type="date" max="@DateTime.UtcNow.ToString("yyyy-MM-dd")" value="@Model.Claim.DateOfService.ToString("yyyy-MM-dd")" required />
+            </span>
+        </div>
+        <div class="claim-details select-field-bottom">
+            <label for="plan">Plan:</label>
+            <span id="plan">
+                <select asp-for="Claim.PlanId" selected="@Model.Claim.PlanId">
+                    @for (int i = 0; i < Model.AvailablePlans.Count; i++)
+                    {
+                        <option value="@Model.AvailablePlans[i].Id">@Model.AvailablePlans[i].Name (@Model.AvailablePlans[i].PlanType.Name)</option>
+                    }
+                </select>
+            </span>
+        </div>
+        <div class="claim-details">
+            <label for="amount">Amount, $:</label>
+            <span id="amount">
+                <td class="align-left"><input asp-for="Claim.Amount" type="number" step=".01" required min="1" /></td>
+            </span>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+                    <div asp-validation-summary="All" class="text-danger"></div>
+        }
+    </div>
+    <div class="claim-buttons">
+        <div id="edit-form-errors" class="modal-errors text-danger"></div>
+        <button class="btn btn-primary" onclick="saveClaimData()" type="button">Save</button>
+        <button onclick="handleEditClaimCancel(@Model.Claim.Id)" class="btn btn-primary">Cancel</button>
+    </div>
+</form>

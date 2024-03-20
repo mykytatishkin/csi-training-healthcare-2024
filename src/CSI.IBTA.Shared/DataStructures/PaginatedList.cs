@@ -5,12 +5,11 @@
         public int PageIndex { get; private set; }
         public int TotalPages { get; private set; }
 
-        public PaginatedList(IQueryable<T> source, int pageIndex, int pageSize)
+        public PaginatedList(IQueryable<T> source, int pageIndex, int totalPages)
         {
-            var count = source.Count();
-            var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var items = source.ToList();
             PageIndex = pageIndex;
-            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+            TotalPages = totalPages;
 
             this.AddRange(items);
         }

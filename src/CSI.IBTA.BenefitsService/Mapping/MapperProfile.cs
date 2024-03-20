@@ -59,6 +59,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Id,
                     x.Enrollment.EmployeeId,
                     x.Enrollment.Plan.Package.EmployerId,
+                    x.Enrollment.PlanId,
                     x.ClaimNumber,
                     x.DateOfService,
                     x.Enrollment.Plan.Name,

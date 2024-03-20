@@ -4,7 +4,7 @@ namespace CSI.IBTA.BenefitsService.Interfaces
 {
     public interface IInsurancePlanService
     {
-        public Task<GenericResponse<IEnumerable<PlanDto>>> GetAllPlans();
+        public Task<GenericResponse<IEnumerable<PlanDto>>> GetAllPlans(int? customerId = null);
         public Task<GenericResponse<PlanDto>> GetPlan(int planId);
         public Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes();
         public Task<GenericResponse<PlanDto>> CreatePlan(int packageId, CreatePlanDto createPlanDto);

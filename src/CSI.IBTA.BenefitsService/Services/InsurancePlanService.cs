@@ -20,11 +20,13 @@ namespace CSI.IBTA.BenefitsService.Services
             _mapper = mapper;
         }
 
-        public async Task<GenericResponse<IEnumerable<PlanDto>>> GetAllPlans()
+        public async Task<GenericResponse<IEnumerable<PlanDto>>> GetAllPlans(int? customerId = null)
         {
+
             var plans = await _unitOfWork.Plans
                 .Include(x => x.Package)
                 .Include(x => x.PlanType)
+                .Where(p => customerId == null || p.Enrollments.FirstOrDefault(e => e.EmployeeId == customerId) != null)
                 .ToListAsync();
 
             var planDtos = plans.Select(_mapper.Map<PlanDto>);

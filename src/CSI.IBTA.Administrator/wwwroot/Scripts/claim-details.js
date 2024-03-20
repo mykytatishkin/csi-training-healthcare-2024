@@ -20,7 +20,6 @@ function handleApproveClaim(claimId) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data)
             if (data.result == false) {
                 var errors = document.getElementById('modal-form-errors');
                 errors.textContent = data.error.title;
@@ -38,7 +37,6 @@ function handleApproveClaim(claimId) {
 
 function handleDenyClaim(claimId) {
     var form = document.getElementById('deny-claim-form');
-
     if (form.checkValidity() == false) {
         form.reportValidity();
         return;
