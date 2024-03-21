@@ -35,7 +35,7 @@
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
-            showError("create-insurance-package-errors", error);
+            showError("create-insurance-package-errors", error.name == "SyntaxError" ? "Failed due to server error" : error.message);
         });
 }
 

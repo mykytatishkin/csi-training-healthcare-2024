@@ -42,6 +42,13 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateInsurancePackage(InsurancePackageFormViewModel viewModel)
         {
+            if (viewModel.Package.Plans == null || viewModel.Package.Plans.Count == 0)
+            {
+                return Problem(
+                    title: "Can't create package when it doesn't have any plans",
+                    statusCode: 400
+                );
+            }
             var dto = new CreateInsurancePackageDto(
                 viewModel.Package.Name,
                 viewModel.Package.PlanStart,
@@ -99,6 +106,13 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPut("UpsertInsurancePackage")]
         public async Task<IActionResult> UpsertInsurancePackage(InsurancePackageFormViewModel viewModel)
         {
+            if (viewModel.Package.Plans == null || viewModel.Package.Plans.Count == 0)
+            {
+                return Problem(
+                    title: "Can't update package when it doesn't have any plans",
+                    statusCode: 400
+                );
+            }
             if (viewModel.Package.Id == 0) return await CreateInsurancePackage(viewModel);
 
             var dto = new UpdateInsurancePackageDto(viewModel.Package.Id, viewModel.Package.Name, viewModel.Package.PlanStart, viewModel.Package.PlanEnd, viewModel.Package.PayrollFrequency, viewModel.EmployerId, viewModel.Package.Plans);
