@@ -1,0 +1,111 @@
+﻿@using CSI.IBTA.Shared.Entities
+@model InsurancePackageModificationViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/insurance-packages.css">
+</head>
+<body>
+    <div id="create-insurance-package">
+        <form asp-controller="Employer" asp-action="Random" method="post" id="insurance-package-create-form">
+            @Html.HiddenFor(model => model.EmployerId)
+            @Html.HiddenFor(model => model.Package.Id)
+            @for (int i = 0; i < @Model.AvailablePlanTypes.Count; i++)
+            {
+                @Html.HiddenFor(m => m.AvailablePlanTypes[i].Id)
+                @Html.HiddenFor(m => m.AvailablePlanTypes[i].Name)
+            }
+            @if (Model is {Plans: not null } && Model.Plans.Count != 0)
+                {@for (int i = 0; i < (@Model.Plans?.Count ?? 0); i++)
+                {
+                    @Html.HiddenFor(m => m.Plans[i].Name)
+                    @Html.HiddenFor(m => m.Plans[i].Id)
+                    @Html.HiddenFor(m => m.Plans[i].PlanType.Name)
+                    @Html.HiddenFor(m => m.Plans[i].Contribution)
+                    @Html.HiddenFor(m => m.Plans[i].PlanType.Id)
+                }}
+            <div class="section general-section">
+                <div class="align-left">
+                    <span class="border-label">General</span>
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="text-align-right">Package Name:* </td>
+                            <td colspan="3"><input id="package-name-input" asp-for="Package.Name" type="text" value="@Model.Package.Name" required /></td>
+                        </tr>
+                        <tr>
+                            <td class="text-align-right">Plan Year Start Date:* </td>
+                            <td class="align-left"><input asp-for="Package.PlanStart" type="date" value="@Model.Package.PlanStart.ToString("yyyy-MM-dd")" required /></td>
+                            <td class="text-align-right" id="payroll-frequency-dropdown">Payroll Frequency:* </td>
+                            <td class="align-left">
+                                <select asp-for="Package.PayrollFrequency" required>
+                                    <option value="@PayrollFrequency.Weekly">@nameof(PayrollFrequency.Weekly)</option>
+                                    <option value="@PayrollFrequency.Monthly">@nameof(PayrollFrequency.Monthly)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-align-right">Plan Year End Date:* </td>
+                            <td class="align-left"><input asp-for="Package.PlanEnd" type="date" value="@Model.Package.PlanEnd.ToString("yyyy-MM-dd")" required /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section plans-section">
+                <div class="align-left">
+                    <span class="border-label">Plans</span>
+                </div>
+                <div class="align-left add-plans-row">
+                    <select asp-for="SelectedPlanTypeId" required selected="@Model.AvailablePlanTypes[0].Id">
+                        @foreach (var planType in Model.AvailablePlanTypes)
+                        {
+                            <option value="@planType.Id">@planType.Name</option>
+                        }
+                    </select>
+                    <button type="button" class="custom-button" onclick="showUpdatePlanForm()">Add Plan</button>
+                </div>
+                @if (Model is {Plans: not null } && Model.Plans.Count != 0)
+                {
+                    <table id="package-plans">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Contributions</th>
+                                @* <th>Actions</th> *@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var plan in Model.Plans!)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => plan.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => plan.PlanType.Name)
+                                    </td>
+                                    <td>
+                                        $@Html.DisplayFor(modelItem => plan.Contribution)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-align-left info-label">This package doesn't have plans.</p>
+                }
+            </div>
+
+            <div class="align-left action-buttons">
+                <button type="button" class="custom-button" onclick="submitPackageUpdate()">Update</button>
+                <button type="button" class="custom-button secondary" onclick="showEmployerPackagePlans(@Model!.EmployerId)">Cancel</button>
+            </div>
+
+            <p class="text-align-left info-label text-danger" id="create-insurance-package-errors"></p>
+        </form>
+    </div>
+</body>

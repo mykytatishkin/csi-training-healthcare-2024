@@ -6,6 +6,7 @@ namespace CSI.IBTA.Shared.DTOs
         int Id,
         int EmployeeId,
         int EmployerId,
+        int PlanId,
         string ClaimNumber,
         DateOnly DateOfService,
         string PlanName,
@@ -34,4 +35,6 @@ namespace CSI.IBTA.Shared.DTOs
         string PlanTypeName,
         decimal Amount,
         ClaimStatus Status);
+
+    public record UpdateClaimDto(DateOnly DateOfService, int PlanId, decimal Amount);
 }

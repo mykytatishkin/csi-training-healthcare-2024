@@ -1,5 +1,8 @@
 ﻿@model InsurancePackageNewPlanViewModel
 
+<head>
+    <link rel="stylesheet" href="~/css/insurance-packages.css">
+</head>
 <form asp-controller="InsurancePlans" asp-action="AddPlanToList" method="post" id="package-plan-add-form">
     <table class="table">
         @Html.HiddenFor(m => m.EmployerId)
@@ -9,6 +12,7 @@
         @Html.HiddenFor(m => m.PackageModel.Package.PlanEnd)
         @Html.HiddenFor(m => m.PackageModel.Package.EmployerId)
         @Html.HiddenFor(m => m.PackageModel.Package.PayrollFrequency)
+
         @for (int i = 0; i < @Model.PackageModel.AvailablePlanTypes.Count; i++)
         {
             @Html.HiddenFor(m => m.PackageModel.AvailablePlanTypes[i].Id)
@@ -16,12 +20,17 @@
         }
         @for (int i = 0; i < (@Model.PackageModel.Plans?.Count ?? 0); i++)
         {
+            Console.WriteLine(@Model.PackageModel.Plans.Count);
             @Html.HiddenFor(m => m.PackageModel.Plans[i].Name)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].Contribution)
-            @Html.HiddenFor(m => m.PackageModel.Plans[i].TypeId)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Id)
             @Html.HiddenFor(m => m.PackageModel.Plans[i].PlanType.Name)
         }
+        @if(Model.PackageModel.Plans == null)
+        {
+            @Html.HiddenFor(m => m.PackageModel.Plans)
+        })
+
         <tbody>
             <tr><td colspan="2"><legend>@Model.PackageModel.Package.Name</legend></td></tr>
 

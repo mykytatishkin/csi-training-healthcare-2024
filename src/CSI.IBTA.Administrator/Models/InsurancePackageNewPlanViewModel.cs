@@ -1,4 +1,5 @@
-﻿using CSI.IBTA.Shared.Entities;
+﻿using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.Administrator.Models
 {
@@ -8,6 +9,6 @@ namespace CSI.IBTA.Administrator.Models
         public int EmployerId { get; set; }
         public string Name { get; set; } = null!;
         public decimal Contribution { get; set; }
-        public PlanType PlanType { get; set; }
+        public PlanTypeDto PlanType { get; set; }
     }
 }

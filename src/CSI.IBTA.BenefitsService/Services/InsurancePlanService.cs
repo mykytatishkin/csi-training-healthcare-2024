@@ -20,11 +20,13 @@ namespace CSI.IBTA.BenefitsService.Services
             _mapper = mapper;
         }
 
-        public async Task<GenericResponse<IEnumerable<PlanDto>>> GetAllPlans()
+        public async Task<GenericResponse<IEnumerable<PlanDto>>> GetAllPlans(int? customerId = null)
         {
+
             var plans = await _unitOfWork.Plans
                 .Include(x => x.Package)
                 .Include(x => x.PlanType)
+                .Where(p => customerId == null || p.Enrollments.FirstOrDefault(e => e.EmployeeId == customerId) != null)
                 .ToListAsync();
 
             var planDtos = plans.Select(_mapper.Map<PlanDto>);
@@ -59,7 +61,6 @@ namespace CSI.IBTA.BenefitsService.Services
             var planTypeDtos = planTypes.Select(_mapper.Map<PlanTypeDto>);
             return new GenericResponse<IEnumerable<PlanTypeDto>>(null, planTypeDtos);
         }
-
 
         public async Task<GenericResponse<PlanDto>> CreatePlan(int packageId, CreatePlanDto createPlanDto)
         {
@@ -99,7 +100,7 @@ namespace CSI.IBTA.BenefitsService.Services
                 return new GenericResponse<PlanDto>(new HttpError("Plan not found", HttpStatusCode.NotFound), null);
             }
 
-            var planType = await _unitOfWork.PlanTypes.GetById(updatePlanDto.PlanTypeId);
+            var planType = await _unitOfWork.PlanTypes.GetById(updatePlanDto.PlanType.Id);
             if (planType == null)
             {
                 return new GenericResponse<PlanDto>(new HttpError("Plan type not found", HttpStatusCode.NotFound), null);

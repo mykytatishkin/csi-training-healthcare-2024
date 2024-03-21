@@ -1,12 +1,22 @@
 ﻿@model InsurancePackagePlanViewModel
 
+<head>
+    <link rel="stylesheet" href="~/css/insurance-packages.css">
+</head>
 <form asp-controller="InsurancePlans" asp-action="@Model.ActionName" method="post" id="package-plan-create-form">
     <table class="table">
         @Html.HiddenFor(m => m.PlanId)
         @Html.HiddenFor(m => m.ActionName)
-        @Html.HiddenFor(m => m.Package)
         @Html.HiddenFor(m => m.EmployerId)
         @Html.HiddenFor(m => m.AvailablePlanTypes)
+        @Html.HiddenFor(m => m.Plans)
+        @for (int i = 0; i < (@Model.Plans?.Count ?? 0); i++)
+        {
+            @Html.HiddenFor(m => m.Plans[i].Name)
+            @Html.HiddenFor(m => m.Plans[i].Contribution)
+            @Html.HiddenFor(m => m.Plans[i].PlanType.Id)
+            @Html.HiddenFor(m => m.Plans[i].PlanType.Name)
+        }
         <tbody>
             <tr><td colspan="2"><legend>General</legend></td></tr>
 

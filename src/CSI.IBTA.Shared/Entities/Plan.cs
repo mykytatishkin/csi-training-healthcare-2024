@@ -10,5 +10,6 @@ namespace CSI.IBTA.Shared.Entities
         public decimal Contribution { get; set; }
         public int PackageId { get; set; }
         public Package Package { get; set; } = null!;
+        public IList<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }

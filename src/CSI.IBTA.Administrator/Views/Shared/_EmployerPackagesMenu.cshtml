@@ -39,9 +39,9 @@
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            @if (item.CanBeModified)
+                                            @if (item.IsInitialized == false)
                                             {
-                                                <button class="btn btn-primary">Update</button>
+                                                <button class="btn btn-primary" onclick="modifyInsurancePackage(@item.Id, @Model.EmployerId)">Update</button>
                                             }
                                             @if (item.CanBeRemoved)
                                             {
