@@ -1,0 +1,128 @@
+@import url('global.css');
+
+table {
+    border-collapse: collapse;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+}
+
+th, td {
+    border-left: 1px solid var(--form-border-color);
+}
+
+th {
+    background-color: #f2f2f2;
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.employees-table {
+    margin-top: 20px;
+}
+
+.filter-inputs {
+    display: flex;
+    justify-content: space-between;
+}
+
+    .filter-inputs div {
+        width: 30%;
+        display: flex;
+        align-items: center;
+    }
+
+    .filter-inputs input {
+        flex-grow: 1;
+    }
+
+    .filter-inputs label {
+        margin-right: 8px;
+    }
+
+.filter-buttons {
+    margin-top: 16px;
+    text-align: end;
+}
+
+.filter-buttons input {
+    margin-left: 4px;
+}
+
+#add-new-button-parent {
+    text-align: end;
+    margin-top: 20px;
+}
+
+    #add-new-button-parent button {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+.form-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+    .form-columns form {
+        width: 100%;
+    }
+
+.border-label {
+    position: relative;
+    left: 30px;
+    top: 12px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+}
+
+.details-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    margin: 10px;
+    padding: 20px;
+}
+
+.claim-details, claim-number-container {
+    margin-top: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.claim-number-container label {
+    font-weight: bold;
+    margin: 20px 2px 0px 20px;
+}
+
+.claim-number-container span {
+    color: var(--secondary-blue);
+}
+
+.claim-details label {
+    width: 120px;
+    margin-left: 40px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+#claims-search-form p {
+    margin: 10px;
+}
+
+.select-view-section {
+    display: flex;
+    margin: 16px 0px;
+    justify-content: end;
+}
+
+    .select-view-section p {
+        margin: 0px;
+        margin-right: 8px;
+    }

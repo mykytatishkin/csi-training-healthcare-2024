@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\shared.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CSI.IBTA.Shared\CSI.IBTA.Shared.csproj" />
   </ItemGroup>
 

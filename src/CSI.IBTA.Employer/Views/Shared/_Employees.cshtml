@@ -1,0 +1,157 @@
+﻿@using CSI.IBTA.Shared.Utils.Extensions
+@using CSI.IBTA.Shared.DataStructures
+@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Entities
+@using CSI.IBTA.Shared.Extensions
+
+@{
+    // var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+    // var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+
+    // string GetFilter(string viewDataId)
+    // {
+    //     return ViewData[viewDataId] == null ? "" : ViewData[viewDataId]!.ToString()!;
+    // }
+
+    // bool IsOptionSelected(string viewDataId, int id)
+    // {
+    //     if (ViewData[viewDataId] == null)
+            //         return false;
+
+    //     return id.ToString() == ViewData[viewDataId]!.ToString();
+    // }
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/claims-home-page.css">
+</head>
+<div id="claims-view">
+    <div id="table-employer" class="employee-container">
+        <span class="border-label" style="text-align:left">Search Employees</span>
+        <div class="form-columns">
+            <form asp-action="Claims" method="get" id="claims-search-form">
+                <div class="form-actions no-color">
+                    <p>
+                        <div class="filter-inputs">
+                            <div>
+                                <label for="NumberFilter">First Name:</label>
+                                <input type="text" name="NumberFilter" value="@ViewData["CurrentNumberFilter"]" />
+                            </div>
+                            <div>
+                                <label for="NumberFilter">Last Name:</label>
+                                <input type="text" name="NumberFilter" value="@ViewData["CurrentNumberFilter"]" />
+                            </div>
+                            <div>
+                                <label for="NumberFilter">SSN:</label>
+                                <input type="text" name="NumberFilter" value="@ViewData["CurrentNumberFilter"]" />
+                            </div>
+                        </div>
+                        <div class="filter-buttons">
+                            <input type="button" onclick="searchClaims()" value="Search" class="btn btn-primary" />
+                            <input type="button" onclick="searchAllClaims()" class="btn btn-secondary" value="Reset Filters">
+                        </div>
+                    </p>
+                </div>
+            </form>
+        </div>
+        <div id="add-new-button-parent">
+            <button class="btn btn-primary">Add New</button>
+        </div>
+        <div class="employees-table">
+            <div class="table-data">
+                <table class="table table-striped" id="claims-table">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>SSN</th>
+                            <th>Date of Birth</th>
+                            <th>Enrolments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*                         @foreach (var item in Model.Claims)
+                        { *@
+                        <tr>
+                            <td>
+                                @* <a onclick="showClaimDetails(@item.Id)" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a> *@
+                                Mario
+                            </td>
+                            <td>
+                                @* <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployeeName)</a> *@
+                                Super
+                            </td>
+                            <td>
+                                @* <a onclick="redirectToEmployersMenu(@item.EmployerId)" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployerName)</a> *@
+                                00000000
+                            </td>
+                            <td>
+                                @* @item.DateOfService.ToAmericanDateOnlyFormat() *@
+                                01/01/1990
+                            </td>
+                            <td>
+                                @* @Html.DisplayFor(modelItem => item.PlanTypeName) *@
+                                <a href="#">Enroll or Update Enrollment</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @* <a onclick="showClaimDetails(@item.Id)" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a> *@
+                                Ivan
+                            </td>
+                            <td>
+                                @* <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployeeName)</a> *@
+                                Petrov
+                            </td>
+                            <td>
+                                @* <a onclick="redirectToEmployersMenu(@item.EmployerId)" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployerName)</a> *@
+                                00000001
+                            </td>
+                            <td>
+                                @* @item.DateOfService.ToAmericanDateOnlyFormat() *@
+                                01/01/1991
+                            </td>
+                            <td>
+                                @* @Html.DisplayFor(modelItem => item.PlanTypeName) *@
+                                <a href="#">Enroll or Update Enrollment</a>
+                            </td>
+                        </tr>
+                        @* } *@
+                    </tbody>
+                </table>
+                <div id="claim-list-errors" class="form-errors text-danger"></div>
+                <div style="text-align:right" class="pages">
+                    @*                     <a onclick="getClaimsPage('', @(Model.Page - 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
+                    class="btn btn-default @prevDisabled">
+                    Previous
+                    </a> *@
+                    <a>Previous</a>
+                    @*                     @{
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                    for (int i = firstPage; i <= lastPage; i++)
+                    {
+                    if (i == Model.Page || Model.Page == 0)
+                    {
+                    <span style="color:var(--secondary-blue);">@Model.Page</span>
+                    }
+                    else
+                    {
+                    <a onclick="getClaimsPage('', @(i), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
+                    class="btn btn-default">
+                    @i
+                    </a>
+                    }
+                    }
+                    } *@
+                    @*                     <a onclick="getClaimsPage('', @(Model.Page + 1), '@GetFilter("CurrentNumberFilter")', '@GetFilter("CurrentEmployerFilter")', '@GetFilter("CurrentClaimStatusFilter")')"
+                    class="btn btn-default @nextDisabled">
+                    Next
+                    </a> *@
+                    <a>Next</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

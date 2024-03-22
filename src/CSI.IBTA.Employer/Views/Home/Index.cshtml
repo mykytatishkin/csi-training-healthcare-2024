@@ -1,8 +1,26 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Employer Portal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<head>
+    <link rel="stylesheet" href="~/css/shared.css" asp-append-version=" true" />
+</head>
+
+<div id="logout-button-parent">
+    <button class="btn btn-primary">Logout</button>
 </div>
+
+<div id="logo-content" class="text-center">
+    <img class="logo-admin" id="logo-employer" src="https://placehold.co/600x400" />
+</div>
+
+<div class="menu-buttons">
+    <button class="btn btn-primary">Home</button>
+    <button class="btn btn-primary">Employees</button>
+    <button class="btn btn-primary">Import</button>
+    <button class="btn btn-primary">Setup</button>
+</div>
+
+<div id="partial-screen"></div>
+
+<script type="text/javascript" src="~/Scripts/shared.js"></script>
