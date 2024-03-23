@@ -13,12 +13,6 @@ function searchEmployees(employerId) {
     }
 
     var form = document.getElementById('employees-search-form');
-
-    if (form.checkValidity() == false) {
-        form.reportValidity();
-        return;
-    }
-
     var formData = new FormData(form);
 
     route = '/Employees?' + new URLSearchParams({
