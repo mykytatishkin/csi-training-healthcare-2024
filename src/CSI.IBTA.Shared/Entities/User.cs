@@ -5,6 +5,8 @@
         public int Id { get; set; }
         public string Firstname { get; set; } = null!;
         public string Lastname { get; set; } = null!;
+        public string? SSN { get; set; } // Employer User can be without SSN, thus - nullable.
+        public DateTime? DateOfBirth { get; set; } // Employer User can be without Date of Birth, thus - nullable.
         public int AccountId { get; set; }
         public Employer? Employer { get; set; }
         public int? EmployerId { get; set; }

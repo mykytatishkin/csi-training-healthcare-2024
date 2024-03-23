@@ -15,12 +15,17 @@
 </div>
 
 <div class="menu-buttons">
-    <button class="btn btn-primary">Home</button>
-    <button class="btn btn-primary">Employees</button>
-    <button class="btn btn-primary">Import</button>
-    <button class="btn btn-primary">Setup</button>
+    <button onclick="showEmployer()" class="btn btn-primary">Home</button>
+    @* Hardcoded employer id until authentication is implemented *@
+    <button onclick="showEmployees(1)" class="btn btn-primary">Employees</button>
+    <button onclick="showContributions()" class="btn btn-primary">Import</button>
+    <button onclick="showSettings()" class="btn btn-primary">Setup</button>
 </div>
 
-<div id="partial-screen"></div>
+<div id="main-partial-screen"></div>
 
 <script type="text/javascript" src="~/Scripts/shared.js"></script>
+<script type="text/javascript" src="~/Scripts/employees-page.js"></script>
+<script type="text/javascript" src="~/Scripts/contributions-page.js"></script>
+<script type="text/javascript" src="~/Scripts/employer-page.js"></script>
+<script type="text/javascript" src="~/Scripts/settings-page.js"></script>

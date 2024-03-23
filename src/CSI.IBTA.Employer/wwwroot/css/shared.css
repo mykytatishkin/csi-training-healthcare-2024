@@ -1,5 +1,6 @@
 ﻿#logout-button-parent {
     text-align: end;
+    margin-top: 20px;
 }
 
 #logo-content {
@@ -20,6 +21,6 @@
         width: 20%;
     }
 
-#partial-screen {
+#main-partial-screen {
     margin-top: 20px;
 }
