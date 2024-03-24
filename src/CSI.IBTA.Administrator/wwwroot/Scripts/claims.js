@@ -54,7 +54,9 @@ function saveClaimData() {
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
-            showError("edit-form-errors", "Failed to edit the claim");
+            let isServerException = error.name == "SyntaxError"
+            let errorMsg = !isServerException ? error.message : "Server error"
+            showError("edit-form-errors", errorMsg);
         });
 }
 
