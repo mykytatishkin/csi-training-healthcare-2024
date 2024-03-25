@@ -1,12 +1,12 @@
 ﻿@using CSI.IBTA.Shared.Entities
-@model InsurancePackageModificationViewModel
+@model InsurancePackageFormViewModel
 
 <head>
     <link rel="stylesheet" href="~/css/insurance-packages.css">
 </head>
 <body>
     <div id="create-insurance-package">
-        <form asp-controller="Employer" asp-action="Random" method="post" id="insurance-package-create-form">
+        <form id="insurance-package-form">
             @Html.HiddenFor(model => model.EmployerId)
             @Html.HiddenFor(model => model.Package.Id)
             @for (int i = 0; i < @Model.AvailablePlanTypes.Count; i++)
@@ -14,15 +14,22 @@
                 @Html.HiddenFor(m => m.AvailablePlanTypes[i].Id)
                 @Html.HiddenFor(m => m.AvailablePlanTypes[i].Name)
             }
-            @if (Model is {Plans: not null } && Model.Plans.Count != 0)
-                {@for (int i = 0; i < (@Model.Plans?.Count ?? 0); i++)
+            @if (@Model.Package.Plans != null)
+            {
+                @for (int i = 0; i < @Model.Package.Plans.Count; i++)
                 {
-                    @Html.HiddenFor(m => m.Plans[i].Name)
-                    @Html.HiddenFor(m => m.Plans[i].Id)
-                    @Html.HiddenFor(m => m.Plans[i].PlanType.Name)
-                    @Html.HiddenFor(m => m.Plans[i].Contribution)
-                    @Html.HiddenFor(m => m.Plans[i].PlanType.Id)
-                }}
+                    @Html.HiddenFor(m => m.Package.Plans[i].Name)
+                    @Html.HiddenFor(m => m.Package.Plans[i].Id)
+                    @Html.HiddenFor(m => m.Package.Plans[i].PlanType.Name)
+                    @Html.HiddenFor(m => m.Package.Plans[i].Contribution)
+                    @Html.HiddenFor(m => m.Package.Plans[i].PlanType.Id)
+                }
+            }
+            else
+            {
+                @Html.HiddenFor(m => m.Package.Plans)
+            }
+            
             <div class="section general-section">
                 <div class="align-left">
                     <span class="border-label">General</span>
@@ -57,15 +64,15 @@
                     <span class="border-label">Plans</span>
                 </div>
                 <div class="align-left add-plans-row">
-                    <select asp-for="SelectedPlanTypeId" required selected="@Model.AvailablePlanTypes[0].Id">
+                    <select asp-for="PlanForm.PlanType.Id" required selected="@Model.AvailablePlanTypes[0].Id">
                         @foreach (var planType in Model.AvailablePlanTypes)
                         {
                             <option value="@planType.Id">@planType.Name</option>
                         }
                     </select>
-                    <button type="button" class="custom-button" onclick="showUpdatePlanForm()">Add Plan</button>
+                    <button type="button" class="custom-button" onclick="showCreatePlanForm()">Add Plan</button>
                 </div>
-                @if (Model is {Plans: not null } && Model.Plans.Count != 0)
+                @if (Model.Package.Plans?.Count > 0)
                 {
                     <table id="package-plans">
                         <thead>
@@ -73,21 +80,24 @@
                                 <th>Name</th>
                                 <th>Type</th>
                                 <th>Contributions</th>
-                                @* <th>Actions</th> *@
+                                <th></th> 
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var plan in Model.Plans!)
+                            @foreach (var plan in Model.Package.Plans.Select((value, index) => new { Value = value, Index = index }))
                             {
                                 <tr>
                                     <td>
-                                        @Html.DisplayFor(modelItem => plan.Name)
+                                        @Html.DisplayFor(modelItem => plan.Value.Name)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => plan.PlanType.Name)
+                                        @Html.DisplayFor(modelItem => plan.Value.PlanType.Name)
                                     </td>
                                     <td>
-                                        $@Html.DisplayFor(modelItem => plan.Contribution)
+                                        $@Html.DisplayFor(modelItem => plan.Value.Contribution)
+                                    </td>
+                                    <td>
+                                        <button onclick="showUpdatePlanForm(@plan.Index)">Update</button>
                                     </td>
                                 </tr>
                             }
@@ -101,8 +111,8 @@
             </div>
 
             <div class="align-left action-buttons">
-                <button type="button" class="custom-button" onclick="submitPackageUpdate()">Update</button>
-                <button type="button" class="custom-button secondary" onclick="showEmployerPackagePlans(@Model!.EmployerId)">Cancel</button>
+                <button id="package-form-submit-btn" type="button" onclick="upsertInsurancePackage()" class="custom-button">@(Model.Package.Id == 0 ? "Create" : "Update")</button>
+                <button type="button" class="custom-button secondary" onclick="showEmployerPackagePlans(@Model.EmployerId)">Cancel</button>
             </div>
 
             <p class="text-align-left info-label text-danger" id="create-insurance-package-errors"></p>

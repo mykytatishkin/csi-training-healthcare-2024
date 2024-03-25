@@ -3,7 +3,6 @@ using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace CSI.IBTA.Administrator.Controllers
 {
@@ -11,56 +10,52 @@ namespace CSI.IBTA.Administrator.Controllers
     public class InsurancePackageController : Controller
     {
         private readonly IInsurancePackageClient _packageClient;
+        private readonly IPlansClient _plansClient;
 
-        public InsurancePackageController(IInsurancePackageClient packageClient)
+        public InsurancePackageController(IInsurancePackageClient packageClient, IPlansClient plansClient)
         {
             _packageClient = packageClient;
+            _plansClient = plansClient;
         }
 
         public async Task<IActionResult> Index(int employerId)
         {
-            var getPlanTypesResponse = await _packageClient.GetPlanTypes();
+            var getPlanTypesResponse = await _plansClient.GetPlanTypes();
+
             if (getPlanTypesResponse.Result == null)
             {
                 return Problem(title: "Failed to retrieve plan types");
             }
-            var PlanTypes = getPlanTypesResponse.Result;
 
-            var viewModel = new InsurancePackageCreationViewModel
+            var planTypes = getPlanTypesResponse.Result;
+
+            var viewModel = new InsurancePackageFormViewModel
             {
-                Package = new CreateInsurancePackageDto("", DateTime.MinValue, DateTime.MinValue, PayrollFrequency.Weekly, 0, new List<CreatePlanDto>()),
+                Package = new FullInsurancePackageDto(0, "", DateTime.UtcNow, DateTime.UtcNow.AddYears(1), PayrollFrequency.Weekly, 0, new List<PlanDto>()),
                 EmployerId = employerId,
-                AvailablePlanTypes = PlanTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList(),
-                Plans = new List<PlanDto>()
+                AvailablePlanTypes = planTypes,
             };
 
-            return PartialView("InsurancePackages/_CreateInsurancePackage", viewModel);
+            return PartialView("InsurancePackages/_PackageForm", viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateInsurancePackage(InsurancePackageCreationViewModel viewModel)
+        public async Task<IActionResult> CreateInsurancePackage(InsurancePackageFormViewModel viewModel)
         {
-            List<CreatePlanDto> planDtos = [];
-
-            if (viewModel.Plans != null)
-            {
-                planDtos = viewModel.Plans
-                    .Select(p => new CreatePlanDto(
-                        p.Name,
-                        p.Contribution,
-                        p.PlanType.Id))
-                    .ToList();
-            }
-
-            var command = new CreateInsurancePackageDto(
+            var dto = new CreateInsurancePackageDto(
                 viewModel.Package.Name,
                 viewModel.Package.PlanStart,
                 viewModel.Package.PlanEnd,
                 viewModel.Package.PayrollFrequency,
                 viewModel.EmployerId,
-                planDtos);
+                viewModel.Package.Plans
+                    .Select(p => new CreatePlanDto(
+                        p.Name,
+                        p.Contribution,
+                        p.PlanType.Id))
+                    .ToList());
 
-            var response = await _packageClient.CreateInsurancePackage(command);
+            var response = await _packageClient.CreateInsurancePackage(dto);
 
             if (response.Error != null)
             {
@@ -85,50 +80,35 @@ namespace CSI.IBTA.Administrator.Controllers
                     title: packageDetails.Error.Title);
             }
 
-            var (_, planTypes) = await _packageClient.GetPlanTypes();
-            if (planTypes == null)
+            var planTypes = await _plansClient.GetPlanTypes();
+            if (planTypes.Result == null)
             {
                 return Problem(title: "Failed to retrieve plan types");
             }
 
-            var viewModel = new InsurancePackageModificationViewModel
+            var viewModel = new InsurancePackageFormViewModel
             {
                 EmployerId = employerId,
                 Package = packageDetails.Result,
-                Plans = packageDetails.Result.Plans,
-                AvailablePlanTypes = planTypes.Select(x => new PlanTypeDto(x.Id, x.Name)).ToList()
+                AvailablePlanTypes = planTypes.Result
             };
 
-            return PartialView("InsurancePackages/_ModifyInsurancePackage", viewModel);
+            return PartialView("InsurancePackages/_PackageForm", viewModel);
         }
 
-        [HttpPut("UpdateInsurancePackage")]
-        public async Task<IActionResult> UpdateInsurancePackage(InsurancePackageModificationViewModel viewModel)
+        [HttpPut("UpsertInsurancePackage")]
+        public async Task<IActionResult> UpsertInsurancePackage(InsurancePackageFormViewModel viewModel)
         {
-            try
+            if (viewModel.Package.Id == 0) return await CreateInsurancePackage(viewModel);
+
+            var dto = new UpdateInsurancePackageDto(viewModel.Package.Id, viewModel.Package.Name, viewModel.Package.PlanStart, viewModel.Package.PlanEnd, viewModel.Package.PayrollFrequency, viewModel.EmployerId, viewModel.Package.Plans);
+            var response = await _packageClient.UpdateInsurancePackage(dto);
+
+            if (response.Error != null)
             {
-                var planDtos = viewModel.Plans?.Select(p => new UpdatePlanDto(
-                        p.Name,
-                        p.Contribution,
-                        p.PlanType))
-                    .ToList() ?? new List<UpdatePlanDto>();
-
-                var command = new UpdateInsurancePackageDto(viewModel.Package.Id, viewModel.Package.Name, viewModel.Package.PlanStart, viewModel.Package.PlanEnd, viewModel.Package.PayrollFrequency, viewModel.EmployerId,
-                    planDtos.ConvertAll(x => new CreatePlanDto(x.Name, x.Contribution, x.PlanType.Id)));
-
-                var response = await _packageClient.UpdateInsurancePackage(command);
-
-                if (response.Error != null)
-                {
-                    return Problem(
-                        statusCode: (int)response.Error.StatusCode,
-                        title: response.Error.Title);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
             }
 
             return Ok();
