@@ -20,7 +20,6 @@ function showEditClaim() {
             return response.text();
         })
         .then(function (data) {
-            console.log(document.getElementById('claims-view'));
             document.getElementById('claims-view').innerHTML = data;
         })
         .catch(function (error) {

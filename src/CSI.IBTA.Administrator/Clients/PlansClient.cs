@@ -1,7 +1,6 @@
 ﻿using CSI.IBTA.Administrator.Endpoints;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.DTOs.Errors;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -37,14 +36,14 @@ namespace CSI.IBTA.Administrator.Clients
             return new GenericResponse<PlanDto>(null, plan);
         }
 
-        public async Task<GenericResponse<IEnumerable<PlanTypeDto>>> GetPlanTypes()
+        public async Task<GenericResponse<List<PlanTypeDto>>> GetPlanTypes()
         {
             var response = await _httpClient.GetAsync(BenefitsServiceApiEndpoints.PlanTypes);
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-            var plan = JsonConvert.DeserializeObject<IEnumerable<PlanTypeDto>>(responseContent);
+            var plan = JsonConvert.DeserializeObject<List<PlanTypeDto>>(responseContent);
 
-            return new GenericResponse<IEnumerable<PlanTypeDto>>(null, plan);
+            return new GenericResponse<List<PlanTypeDto>>(null, plan);
         }
 
 

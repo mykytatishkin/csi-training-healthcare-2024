@@ -27,7 +27,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Id,
                     x.Name,
                     x.Status,
-                    DateTime.UtcNow < x.PlanEnd,
+                    x.Initialized == null && DateTime.UtcNow < x.PlanEnd,
                     x.Initialized == null || DateTime.UtcNow > x.PlanEnd,
                     x.Initialized != null || DateTime.UtcNow > x.PlanEnd));
 

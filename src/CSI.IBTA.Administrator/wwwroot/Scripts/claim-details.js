@@ -20,7 +20,6 @@ function handleApproveClaim(claimId) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data)
             if (data.result == false) {
                 var errors = document.getElementById('modal-form-errors');
                 errors.textContent = data.error.title;

@@ -1,0 +1,59 @@
+﻿@import url('global.css');
+
+.border-label {
+    position: relative;
+    left: 35px;
+    top: 21px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+}
+
+.general-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    margin: 10px;
+    padding: 20px;
+}
+
+.plan-general, .plan-contributions {
+    margin-top: 10px;
+    margin-left: 30px;
+    display: flex;
+    align-items: flex-start;
+}
+
+    .plan-general label {
+        width: 100px;
+    }
+
+    .plan-general input {
+        width: 300px;
+    }
+
+#plan-type {
+    font-weight: bold;
+}
+
+.plan-contributions label {
+    width: 150px;
+}
+
+.plan-contributions input {
+    width: 150px;
+}
+
+.custom-button {
+    border: none;
+    border-radius: 5px;
+    color: var(--button-primary-text-color);
+    padding: 4px 12px 4px 12px;
+    background-color: var(--button-primary-color);
+}
+
+    .custom-button.secondary {
+        background-color: var(--button-secondary-color);
+    }
