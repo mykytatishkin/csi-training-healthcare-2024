@@ -1,0 +1,96 @@
+@import url('global.css');
+
+.pages {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+}
+
+    .pages .page-button {
+        padding: 6px 8px;
+    }
+
+        .pages .page-button.selected {
+            color: var(--secondary-blue);
+        }
+
+table {
+    border-collapse: collapse;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+}
+
+th, td {
+    border-left: 1px solid var(--form-border-color);
+}
+
+th {
+    background-color: #f2f2f2;
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.employees-table {
+    margin-top: 20px;
+}
+
+.filter-inputs {
+    display: flex;
+    justify-content: space-between;
+}
+
+    .filter-inputs div {
+        width: 30%;
+        display: flex;
+        align-items: center;
+    }
+
+    .filter-inputs input {
+        flex-grow: 1;
+    }
+
+    .filter-inputs label {
+        margin-right: 8px;
+    }
+
+.filter-buttons {
+    margin-top: 16px;
+    text-align: end;
+}
+
+    .filter-buttons input {
+        margin-left: 4px;
+    }
+
+#add-new-button-parent {
+    text-align: end;
+    margin-top: 20px;
+}
+
+    #add-new-button-parent button {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+.form-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+    .form-inputs form {
+        width: 100%;
+    }
+
+.border-label {
+    position: relative;
+    left: 30px;
+    top: 12px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+    text-align: left;
+}

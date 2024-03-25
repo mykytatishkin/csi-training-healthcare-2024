@@ -1,7 +1,10 @@
+using CSI.IBTA.Employer;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddEmployerPortal();
 
 var app = builder.Build();
 

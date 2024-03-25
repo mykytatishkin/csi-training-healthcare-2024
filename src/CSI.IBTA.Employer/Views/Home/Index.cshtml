@@ -1,8 +1,31 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Employer Portal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<head>
+    <link rel="stylesheet" href="~/css/shared.css" asp-append-version=" true" />
+</head>
+
+<div id="logout-button-parent">
+    <button class="btn btn-primary">Logout</button>
 </div>
+
+<div id="logo-content" class="text-center">
+    <img class="logo-admin" id="logo-employer" src="https://placehold.co/600x400" />
+</div>
+
+<div class="menu-buttons">
+    <button onclick="showEmployer()" class="btn btn-primary">Home</button>
+    @* Hardcoded employer id until authentication is implemented *@
+    <button onclick="showEmployees(1)" class="btn btn-primary">Employees</button>
+    <button onclick="showContributions()" class="btn btn-primary">Import</button>
+    <button onclick="showSettings()" class="btn btn-primary">Setup</button>
+</div>
+
+<div id="main-partial-screen"></div>
+
+<script type="text/javascript" src="~/Scripts/shared.js"></script>
+<script type="text/javascript" src="~/Scripts/employees-page.js"></script>
+<script type="text/javascript" src="~/Scripts/contributions-page.js"></script>
+<script type="text/javascript" src="~/Scripts/employer-page.js"></script>
+<script type="text/javascript" src="~/Scripts/settings-page.js"></script>

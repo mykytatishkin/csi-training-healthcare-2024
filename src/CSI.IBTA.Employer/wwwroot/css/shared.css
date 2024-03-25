@@ -1,0 +1,26 @@
+﻿#logout-button-parent {
+    text-align: end;
+    margin-top: 20px;
+}
+
+#logo-content {
+    margin-top: 20px;
+}
+
+    #logo-content img {
+        height: 80px;
+    }
+
+.menu-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+    .menu-buttons button {
+        width: 20%;
+    }
+
+#main-partial-screen {
+    margin-top: 20px;
+}
