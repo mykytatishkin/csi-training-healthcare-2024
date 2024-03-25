@@ -1,0 +1,76 @@
+﻿@model EmployeeViewModel
+
+<div class="user-information-section">
+    <div class="align-left">
+        <span class="border-label">User Information</span>
+    </div>
+    <form asp-controller="Employees" asp-action="@Model.ActionName" method="post" id="employee-upsert-form">
+        @Html.HiddenFor(m => m.EmployerId)
+        @Html.HiddenFor(m => m.ActionName)
+        @Html.HiddenFor(m => m.UserId)
+        <table>
+            <tbody>
+                <tr>
+                    <td class="text-align-right">Firstname:* </td>
+                    <td class="align-left"><input asp-for="Firstname" type="text" required /></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">Lastname:* </td>
+                    <td class="align-left"><input asp-for="Lastname" type="text" required /></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">SSN:* </td>
+                    <td class="align-left"><input asp-for="SSN" type="text" required /></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">Phone:* </td>
+                    <td class="align-left">
+                        <input asp-for="Phone" type="text" required />
+                    </td>
+                    <td id="validate-phone" class="text-danger"></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">Street:* </td>
+                    <td class="align-left"><input asp-for="Street" type="text" required /></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">City:* </td>
+                    <td class="align-left"><input asp-for="City" type="text" required /></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">State:* </td>
+                    <td class="align-left"><input asp-for="State" type="text" required /></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">Zip Code:* </td>
+                    <td class="align-left"><input asp-for="ZipCode" type="text" required /></td>
+                    <td id="validate-zip" class="text-danger"></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">Username:* </td>
+                    <td class="align-left"><input asp-for="Username" type="text" required /></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right">Password:* </td>
+                    <td class="align-left">
+                        <input asp-for="Password" type="password" id="passwordInput" required />
+                        <button class="btn btn-primary" id="generate-password-button" type="button" onclick="setRandomPassword()">Generate</button>
+                    </td>
+                </tr>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td class="employee-errors"></td>
+                    <td><button class="align-left btn btn-primary" onclick="saveEmployeeData()" type="button">Submit</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

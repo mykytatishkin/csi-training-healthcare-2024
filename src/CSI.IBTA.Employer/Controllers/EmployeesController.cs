@@ -64,5 +64,23 @@ namespace CSI.IBTA.Employer.Controllers
 
             return PartialView("_Employees", viewModel);
         }
+
+        [HttpGet("/CreateEmployee")]
+        public ActionResult CreateEmployee(int employerId)
+        {
+            var viewModel = new EmployeeViewModel()
+            {
+                ActionName = "CreateEmployee",
+                EmployerId = employerId
+            };
+            return PartialView("_EmployeeForm", viewModel);
+        }
+
+        [HttpPost("/CreateEmployee")]
+        public ActionResult CreateEmployee(EmployeeViewModel viewModel)
+        {
+            Console.WriteLine("a");
+            return PartialView("_EmployeeForm", viewModel);
+        }
     }
 }
