@@ -66,6 +66,8 @@ namespace CSI.IBTA.UserService.Mapping
                     employer.Zip,
                     employer.Phone,
                     employer.Logo));
+
+            CreateMap<User, EmployeeDto>();
         }
     }
 }
