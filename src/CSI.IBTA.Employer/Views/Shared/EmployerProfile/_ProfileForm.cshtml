@@ -61,7 +61,7 @@
             <span class="border-label">Logo</span>
             <div class="container-logo">
                 <div class="logo-preview">
-                    <img id="imagePreview" src="#" onerror="this.style.display='none';">
+                    <img id="imagePreview" src="data:image/png;base64, @Model.Employer.EncodedLogo" onerror="this.style.display='none';">
                 </div>
                 <div class="logo-name-display" id="fileNameDisplay"></div>
                 <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('NewLogo').click();" />
@@ -70,8 +70,8 @@
             </form>
             <div class="form-buttons">
                 <div id="employer-form-errors" class="form-errors text-danger"></div>
-                <button onclick="showEmployerProfile(@Model.Employer.Id)" class="btn btn-outline-primary">Cancel</button>
-                <button type="button" onclick ="handleEmployerProfileFormSubmit()" class="btn btn-primary">Submit</button>
+                <button id="profile-form-cancel-btn" onclick="showEmployerProfile(@Model.Employer.Id)" class="btn btn-outline-primary">Cancel</button>
+                <button type="button"onclick="handleEmployerProfileFormSubmit()" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>

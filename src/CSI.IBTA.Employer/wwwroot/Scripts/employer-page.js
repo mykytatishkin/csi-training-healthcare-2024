@@ -7,9 +7,22 @@
     fetchRoute(route, onSuccess, null);
 }
 
-function showEmployerProfileEditForm(employerId) {
+//function addRestoreLogoEvent(btnId, oldLogoSrc) {
+//    let btn = document.getElementById(btnId);
+//    btn.addEventListener("click", () => 
+//        document.getElementById('logo-employer').src = `data:image/png;base64, ${oldLogoSrc}`
+//    )
+//}
+
+function showEmployerProfileEditForm(employerId, oldLogoSrc) {
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
+
+        //addRestoreLogoEvent('profile-form-cancel-btn', oldLogoSrc);
+        //addRestoreLogoEvent('home-btn', oldLogoSrc);
+        //addRestoreLogoEvent('employees-btn', oldLogoSrc);
+        //addRestoreLogoEvent('setup-btn', oldLogoSrc);
+        //addRestoreLogoEvent('import-btn', oldLogoSrc);
     }
 
     route = `/Employer/ProfileForm/${employerId}`;
@@ -64,6 +77,7 @@ function handleEmployerProfileFormSubmit() {
             }
             else {
                 showEmployerProfile(data.result.id)
+                document.getElementById('logo-employer').src= `data:image/png;base64, ${data.result.encodedLogo}`;
             }
         })
         .catch(function (error) {

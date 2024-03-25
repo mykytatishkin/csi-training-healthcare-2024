@@ -17,7 +17,7 @@
                 <label style="margin-right: auto;">
                     Welcome @Model.Employer.Name (@Model.Employer.Code)
                 </label>
-                <button onclick="showEmployerProfileEditForm(@Model.Employer.Id)" class="btn btn-primary">Edit</button>
+                <button onclick="showEmployerProfileEditForm(@Model.Employer.Id, '@Model.Employer.EncodedLogo')" class="btn btn-primary">Edit</button>
             </div>
             <div id="employer-profile">
                 <span class="border-label">Profile</span>

@@ -1,6 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Employer Portal";
 }
+@using CSI.IBTA.Shared.DTOs
+@model EmployerDto
 
 <head>
     <link rel="stylesheet" href="~/css/shared.css" asp-append-version=" true" />
@@ -11,15 +13,14 @@
 </div>
 
 <div id="logo-content" class="text-center">
-    <img class="logo-admin" id="logo-employer" src="https://placehold.co/600x400" />
+    <img class="logo-employer" id="logo-employer" src="data:image/png;base64, @Model.EncodedLogo" onerror="this.style.display='none';" />
 </div>
 
 <div class="menu-buttons">
-    @* Hardcoded employer id until authentication is implemented *@
-    <button onclick="showEmployerProfile(1)" class="btn btn-primary">Home</button>
-    <button onclick="showEmployees(1)" class="btn btn-primary">Employees</button>
-    <button onclick="showContributions()" class="btn btn-primary">Import</button>
-    <button onclick="showSettings()" class="btn btn-primary">Setup</button>
+    <button id ="home-btn"onclick="showEmployerProfile(@Model.Id)" class="btn btn-primary">Home</button>
+    <button id="employees-btn" onclick="showEmployees(@Model.Id)" class="btn btn-primary">Employees</button>
+    <button id="import-btn" onclick="showContributions()" class="btn btn-primary">Import</button>
+    <button id="setup-btn" onclick="showSettings()" class="btn btn-primary">Setup</button>
 </div>
 
 <div id="main-partial-screen"></div>
