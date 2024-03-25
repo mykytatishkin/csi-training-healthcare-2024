@@ -51,7 +51,7 @@
     </div>
 
     <div id="add-new-button-parent">
-        <button class="btn btn-primary" onclick="openEmployeeForm(1)">Add New</button>
+        <button class="btn btn-primary" onclick="openEmployeeForm(@Model.EmployerId)">Add New</button>
     </div>
 
     @if (Model.Employees.Count() > 0)
