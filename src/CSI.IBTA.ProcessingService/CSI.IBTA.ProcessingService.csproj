@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CSI.IBTA.DataLayer\CSI.IBTA.DataLayer.csproj" />
+    <ProjectReference Include="..\CSI.IBTA.DB.Migrations\CSI.IBTA.DB.Migrations.csproj" />
     <ProjectReference Include="..\CSI.IBTA.Shared\CSI.IBTA.Shared.csproj" />
   </ItemGroup>
 </Project>
