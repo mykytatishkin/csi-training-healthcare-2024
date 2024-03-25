@@ -1,6 +1,4 @@
-using CSI.IBTA.Employer.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace CSI.IBTA.Employer.Controllers
 {

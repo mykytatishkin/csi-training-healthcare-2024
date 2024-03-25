@@ -18,7 +18,7 @@ namespace CSI.IBTA.Administrator.Extensions
 
         public static UpdateEmployerDto ToUpdateEmployerDto(this EmployerFormViewModel model)
         {
-            return new UpdateEmployerDto(model.Name, model.Code, model.Email, model.Street, model.City, model.State, model.ZipCode, model.Phone, model.NewLogo);
+            return new UpdateEmployerDto(model.Id ?? 0, model.Name, model.Code, model.Email, model.Street, model.City, model.State, model.ZipCode, model.Phone, model.NewLogo);
         }
 
         public static EmployerFormViewModel ToFormViewModel(this EmployerDto dto)

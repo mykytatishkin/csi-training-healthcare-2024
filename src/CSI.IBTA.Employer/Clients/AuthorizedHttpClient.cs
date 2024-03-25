@@ -2,7 +2,7 @@
 
 namespace CSI.IBTA.Employer.Clients
 {
-    public class AuthorizedHttpClient : HttpClient
+    internal class AuthorizedHttpClient : HttpClient
     {
         // JwtToken stuff is commented, because authentication is not yet implemented.
         // Will need to be uncommented after it is implemented.
