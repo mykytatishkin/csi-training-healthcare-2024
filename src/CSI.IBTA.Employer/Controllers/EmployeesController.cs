@@ -8,9 +8,9 @@ namespace CSI.IBTA.Employer.Controllers
     [Route("{controller}")]
     public class EmployeesController : Controller
     {
-        private readonly IEmployeeClient _employeeClient;
+        private readonly IEmployeesClient _employeeClient;
 
-        public EmployeesController(IEmployeeClient employeeClient)
+        public EmployeesController(IEmployeesClient employeeClient)
         {
             _employeeClient = employeeClient;
         }

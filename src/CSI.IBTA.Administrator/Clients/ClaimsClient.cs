@@ -32,7 +32,13 @@ namespace CSI.IBTA.Administrator.Clients
             var jsonBody = JsonConvert.SerializeObject(updateClaimDto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PatchAsync($"{BenefitsServiceApiEndpoints.Claims}/{claimId}", content);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorJson = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
+                var errorMessage = error?.title ?? response.ReasonPhrase ?? "Something went wrong";
+                return new GenericResponse<bool>(new HttpError(errorMessage, response.StatusCode), false);
+            }
             return new GenericResponse<bool>(null, true);
         }
 

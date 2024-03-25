@@ -2,7 +2,7 @@
 
 namespace CSI.IBTA.Employer.Interfaces
 {
-    public interface IEmployeeClient
+    public interface IEmployeesClient
     {
         Task<GenericResponse<PagedEmployeesResponse>> GetEmployees(
             int page,

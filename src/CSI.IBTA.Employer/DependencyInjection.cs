@@ -8,7 +8,7 @@ namespace CSI.IBTA.Employer
         public static IServiceCollection AddEmployerPortal(this IServiceCollection services)
         {
             services.AddTransient<AuthorizedHttpClient>();
-            services.AddScoped<IEmployeeClient, EmployeesClient>();
+            services.AddScoped<IEmployeesClient, EmployeesClient>();
             return services;
         }
     }

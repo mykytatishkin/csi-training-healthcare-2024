@@ -1,0 +1,68 @@
+﻿@model InsurancePackageFormViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/insurance-package-plans.css">
+</head>
+<form id="package-plan-form">
+    @Html.HiddenFor(m => m.EmployerId)
+    @Html.HiddenFor(m => m.Package.EmployerId)
+    @Html.HiddenFor(m => m.Package.Id)
+    @Html.HiddenFor(m => m.Package.Name)
+    @Html.HiddenFor(m => m.Package.PlanStart)
+    @Html.HiddenFor(m => m.Package.PlanEnd)
+    @Html.HiddenFor(m => m.Package.EmployerId)
+    @Html.HiddenFor(m => m.Package.PayrollFrequency)
+    @Html.HiddenFor(m => m.PlanForm.SelectedPlanIndex)
+    @Html.HiddenFor(m => m.PlanForm.PlanId)
+    @Html.HiddenFor(m => m.PlanForm.PlanType.Id)
+    @Html.HiddenFor(m => m.PlanForm.PlanType.Name)
+
+    @for (int i = 0; i < @Model.AvailablePlanTypes.Count; i++)
+    {
+        @Html.HiddenFor(m => m.AvailablePlanTypes[i].Id)
+        @Html.HiddenFor(m => m.AvailablePlanTypes[i].Name)
+    }
+
+    @if (@Model.Package.Plans != null)
+    {
+        @for (int i = 0; i < @Model.Package.Plans.Count; i++)
+        {
+            @Html.HiddenFor(m => m.Package.Plans[i].Id)
+            @Html.HiddenFor(m => m.Package.Plans[i].Name)
+            @Html.HiddenFor(m => m.Package.Plans[i].Contribution)
+            @Html.HiddenFor(m => m.Package.Plans[i].PlanType.Id)
+            @Html.HiddenFor(m => m.Package.Plans[i].PlanType.Name)
+        }
+    }
+    else
+    {
+        @Html.HiddenFor(m => m.Package.Plans)
+    }
+
+    <span class="border-label">General</span>
+    <div class="general-container">
+        <div class="plan-general">
+            <label for="Name">Name* :</label>
+            <input asp-for="PlanForm.Name" type="text" name="PlanForm.Name" id="Name" required value="@Model.PlanForm.Name" />
+        </div>
+        <div class="plan-general">
+            <label for="PlanForm.Type">Type* :</label>
+            <span id="plan-type">
+                @Model.PlanForm.PlanType.Name
+            </span>
+        </div>
+    </div>
+
+    <span class="border-label">Contributions</span>
+    <div class="general-container">
+        <div class="plan-contributions">
+            <label for="Contribution">Contributions : $:</label>
+            <input asp-for="PlanForm.Contribution" type="number" step=".01" required min="1" />
+        </div>
+    </div>
+</form>
+
+<div>
+    <button id="plan-form-submit-btn" onclick="upsertPlan()" class ="align-left custom-button" type="button">Submit</button>
+    <button id="plan-form-submit-btn" class="custom-button secondary" onclick="handlePackagePlanFormLeave()" type="button">Cancel</button>
+</div>
