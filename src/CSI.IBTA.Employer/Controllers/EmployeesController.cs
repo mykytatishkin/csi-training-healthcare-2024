@@ -79,7 +79,8 @@ namespace CSI.IBTA.Employer.Controllers
         [HttpPost("/CreateEmployee")]
         public ActionResult CreateEmployee(EmployeeViewModel viewModel)
         {
-            Console.WriteLine("a");
+            // insert employee creation here
+
             return PartialView("_EmployeeForm", viewModel);
         }
     }

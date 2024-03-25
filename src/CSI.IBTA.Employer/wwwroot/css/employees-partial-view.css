@@ -94,3 +94,115 @@ th {
     padding: 0 10px;
     text-align: left;
 }
+
+.border-label {
+    position: relative;
+    left: 35px;
+    top: 21px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+}
+
+.general-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    margin: 10px;
+    padding: 20px;
+}
+
+.general-container-inner {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.general-container-inner-second {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.form-member {
+    margin-top: 10px;
+    margin-left: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+    .form-member label {
+        padding-right: 5px;
+    }
+
+    .form-member input {
+    }
+
+.custom-button {
+    border: none;
+    border-radius: 5px;
+    color: var(--button-primary-text-color);
+    padding: 4px 12px 4px 12px;
+    background-color: var(--button-primary-color);
+}
+
+    .custom-button.secondary {
+        background-color: var(--button-secondary-color);
+    }
+
+.validation-warning {
+    max-width: 300px;
+}
+
+.modal-buttons {
+    margin: 20px 15px 5px 0px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+    .claim-buttons button,
+    .modal-buttons button {
+        padding: 0px;
+        height: 30px;
+        width: 120px;
+        border-radius: 10px;
+    }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    padding: 0px 20px 20px 20px;
+    border: 1px solid #888;
+    max-width: 600px;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    animation-name: modalopen;
+    animation-duration: 0.4s;
+}
+
+    .modal-content span {
+        margin-top: 0px;
+        margin-left: auto
+    }
+
+    .modal-content p {
+        text-align: center;
+    }

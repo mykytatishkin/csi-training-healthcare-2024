@@ -20,3 +20,13 @@
             console.error("Fetch request failed: " + error)
         });
 }
+
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "block";
+}
+
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "none";
+}

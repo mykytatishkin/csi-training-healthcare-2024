@@ -1,76 +1,87 @@
 ﻿@model EmployeeViewModel
 
+<head>
+    <link rel="stylesheet" href="~/css/employees-partial-view.css">
+</head>
 <div class="user-information-section">
-    <div class="align-left">
-        <span class="border-label">User Information</span>
-    </div>
     <form asp-controller="Employees" asp-action="@Model.ActionName" method="post" id="employee-upsert-form">
         @Html.HiddenFor(m => m.EmployerId)
         @Html.HiddenFor(m => m.ActionName)
         @Html.HiddenFor(m => m.UserId)
-        <table>
-            <tbody>
-                <tr>
-                    <td class="text-align-right">Firstname:* </td>
-                    <td class="align-left"><input asp-for="Firstname" type="text" required /></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">Lastname:* </td>
-                    <td class="align-left"><input asp-for="Lastname" type="text" required /></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">SSN:* </td>
-                    <td class="align-left"><input asp-for="SSN" type="text" required /></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">Phone:* </td>
-                    <td class="align-left">
-                        <input asp-for="Phone" type="text" required />
-                    </td>
-                    <td id="validate-phone" class="text-danger"></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">Street:* </td>
-                    <td class="align-left"><input asp-for="Street" type="text" required /></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">City:* </td>
-                    <td class="align-left"><input asp-for="City" type="text" required /></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">State:* </td>
-                    <td class="align-left"><input asp-for="State" type="text" required /></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">Zip Code:* </td>
-                    <td class="align-left"><input asp-for="ZipCode" type="text" required /></td>
-                    <td id="validate-zip" class="text-danger"></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">Username:* </td>
-                    <td class="align-left"><input asp-for="Username" type="text" required /></td>
-                </tr>
-                <tr>
-                    <td class="text-align-right">Password:* </td>
-                    <td class="align-left">
-                        <input asp-for="Password" type="password" id="passwordInput" required />
-                        <button class="btn btn-primary" id="generate-password-button" type="button" onclick="setRandomPassword()">Generate</button>
-                    </td>
-                </tr>
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <tr>
-                        <td></td>
-                        <td>
-                            <div asp-validation-summary="All" class="text-danger"></div>
-                        </td>
-                    </tr>
-                }
-                <tr>
-                    <td class="employee-errors"></td>
-                    <td><button class="align-left btn btn-primary" onclick="saveEmployeeData()" type="button">Submit</button></td>
-                </tr>
-            </tbody>
-        </table>
+        <span class="border-label">Consumer Profile</span>
+        <div class="general-container">
+            <div class="general-container-inner">
+                <div class="form-member">
+                    <label for="Firstname">Name:</label>
+                    <input asp-for="Firstname" type="text" required defaultvalue="@Model.Firstname" />
+                </div>
+                <div class="form-member">
+                    <label for="Lastname">Last name:</label>
+                    <input asp-for="Lastname" type="text" required defaultvalue="@Model.Lastname" />
+                </div>
+                <div class="form-member">
+                    <label for="SSN">SSN:</label>
+                    <input asp-for="SSN" type="text" required defaultvalue="@Model.SSN" />
+                </div>
+                <div class="form-member">
+                    <label for="Phone">Phone:</label>
+                    <input asp-for="Phone" type="text" required defaultvalue="@Model.Phone" oninput="setCustomValidity('')" />
+                </div>
+                <div id="validate-phone" class="form-member text-danger validation-warning"></div>
+            </div>
+            <div class="general-container-inner">
+                <div class="form-member">
+                    <label for="Street">Street:</label>
+                    <input asp-for="Street" type="text" required defaultvalue="@Model.Street" />
+                </div>
+                <div class="form-member">
+                    <label for="City">City:</label>
+                    <input asp-for="City" type="text" required defaultvalue="@Model.City" />
+                </div>
+                <div class="form-member">
+                    <label for="State">State:</label>
+                    <input asp-for="State" type="text" required defaultvalue="@Model.State" />
+                </div>
+                <div class="form-member">
+                    <label for="ZipCode">Zip Code:</label>
+                    <input asp-for="ZipCode" type="text" required defaultvalue="@Model.ZipCode" oninput="setCustomValidity('')" />
+                </div>
+                <div id="validate-zip" class="form-member text-danger"></div>
+            </div>
+        </div>
+
+        <span class="border-label">Security</span>
+        <div class="general-container">
+            <div class="general-container-inner-second">
+                <div class="form-member">
+                    <label for="Username">Username:</label>
+                    <input asp-for="Username" type="text" required defaultvalue="@Model.Username" />
+                </div>
+                <div class="form-member">
+                    <label for="Password">Password:</label>
+                    <input asp-for="Password" type="password" required defaultvalue="@Model.Password" />
+                </div>
+            </div>
+        </div>
+
+        @* @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="text-danger"></div>
+        } *@
+        <div>
+            <div class="employee-errors"></div>
+            <button class="align-left custom-button" onclick="saveEmployeeData()" type="button">Submit</button>
+            <button class="align-left custom-button secondary" onclick="showEmployees(@Model.EmployerId)" type="button">Cancel</button>
+        </div>
     </form>
+</div>
+
+<div id="confirmModal" class="modal" onclick="closeModal('confirmModal')">
+    <div class="modal-content" onclick="event.stopPropagation();">
+        <span class="close" onclick="closeModal('confirmModal')">&times;</span>
+        <p id="confirmModalText">User has been successfully created</p>
+        <div class="modal-buttons">
+            <button onClick="closeModal('confirmModal')" class="btn btn-outline-primary">Ok</button>
+        </div>
+    </div>
 </div>

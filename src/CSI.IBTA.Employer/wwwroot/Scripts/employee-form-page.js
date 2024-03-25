@@ -15,19 +15,19 @@ function saveEmployeeData() {
     var form = document.getElementById('employee-upsert-form');
     var formData = new FormData(form);
 
-    let isnum = /^\d+$/.test(formData.get('Phone'));
-    let is5num = /^\d{6}$/.test(formData.get('ZipCode'));
+    let phoneIsDigits = /^\d+$/.test(formData.get('Phone'));
+    let zipIs6Digits = /^\d{6}$/.test(formData.get('ZipCode'));
 
-    document.getElementById('validate-phone').innerHTML = isnum ? "" : "Phone number has to be digits only";
-    document.getElementById('validate-zip').innerHTML = is5num ? "" : "Zip code has to be 6 digits";
-
+    if (!phoneIsDigits) {
+        document.getElementById('Phone').setCustomValidity("Phone number has to be not empty and digits only");
+    }
+    if (!zipIs6Digits) {
+        document.getElementById('ZipCode').setCustomValidity("Zip code has to be not empty and 6 digits");
+    }
     if (form.checkValidity() == false) {
         form.reportValidity();
         return;
     }
-
-    if (!isnum || !is5num)
-        return;
 
     fetch(`/${formData.get('ActionName')}`, {
         method: 'POST',
@@ -40,10 +40,10 @@ function saveEmployeeData() {
                 });
             }
 
-            return response.text();
+            //return response.text();
         })
         .then(function (data) {
-            //show ok modal
+            showModal('confirmModal')
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
