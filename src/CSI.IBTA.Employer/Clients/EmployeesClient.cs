@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace CSI.IBTA.Employer.Clients
 {
-    public class EmployeesClient : IEmployeeClient
+    internal class EmployeesClient : IEmployeesClient
     {
         private readonly AuthorizedHttpClient _httpClient;
 
