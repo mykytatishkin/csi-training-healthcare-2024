@@ -18,7 +18,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        // [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> GetEmployer(int employerId)
         {
             var response = await _employerService.GetEmployer(employerId);
