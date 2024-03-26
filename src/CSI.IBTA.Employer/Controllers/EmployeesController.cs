@@ -1,6 +1,7 @@
 ﻿using CSI.IBTA.Employer.Constants;
 using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Employer.Models;
+using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Employer.Controllers
@@ -77,11 +78,38 @@ namespace CSI.IBTA.Employer.Controllers
         }
 
         [HttpPost("/CreateEmployee")]
-        public ActionResult CreateEmployee(EmployeeViewModel viewModel)
+        public async Task<IActionResult> CreateEmployee(EmployeeViewModel viewModel)
         {
-            // insert employee creation here
+            if (!ModelState.IsValid)
+            {
+                return PartialView("_EmployeeForm", viewModel);
+            }
 
-            return PartialView("_EmployeeForm", viewModel);
+            var createEmployeeDto = new CreateEmployeeDto(
+                viewModel.Username,
+                viewModel.Password,
+                viewModel.Firstname,
+                viewModel.Lastname,
+                viewModel.SSN,
+                viewModel.Phone,
+                viewModel.State,
+                viewModel.Street,
+                viewModel.City,
+                viewModel.ZipCode,
+                viewModel.EmployerId
+            );
+
+            var response = await _employeeClient.CreateEmployee(createEmployeeDto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
+            }
+
+            ViewBag.SuccessMessage = "Employee created successfully!";
+            return PartialView("_EmployeeForm", new EmployeeViewModel());
         }
     }
 }

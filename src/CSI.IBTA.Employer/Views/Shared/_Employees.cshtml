@@ -54,7 +54,7 @@
         <button class="btn btn-primary" onclick="openEmployeeForm(@Model.EmployerId)">Add New</button>
     </div>
 
-    @if (Model.Employees.Count() > 0)
+    @if (Model.Employees.Any())
     {
         <div class="employees-table">
             <table class="table table-striped">
@@ -81,7 +81,7 @@
                                 @Html.DisplayFor(modelItem => item.SSN)
                             </td>
                             <td>
-                                @item.DateOfBirth.ToString("MM/dd/yyyy")
+                                @(item.DateOfBirth?.ToString("MM/dd/yyyy") ?? "N/A")
                             </td>
                             <td>
                                 <a href="#">Enroll or Update Enrollment</a>

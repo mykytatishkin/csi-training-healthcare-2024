@@ -11,5 +11,7 @@ namespace CSI.IBTA.Employer.Interfaces
             string firstname = "",
             string lastname = "",
             string ssn = "");
+
+        Task<GenericResponse<bool?>> CreateEmployee(CreateEmployeeDto command);
     }
 }
