@@ -72,8 +72,7 @@ function handleEmployerProfileFormSubmit() {
         })
         .then(function (data) {
             if (data.result == null) {
-                var errors = document.getElementById('employer-profile-form-errors');
-                errors.textContent = data.error.title;
+                showError('employer-form-errors', data.error.title);
             }
             else {
                 showEmployerProfile(data.result.id)

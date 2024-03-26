@@ -1,5 +1,4 @@
 using CSI.IBTA.Employer.Interfaces;
-using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Employer.Controllers
