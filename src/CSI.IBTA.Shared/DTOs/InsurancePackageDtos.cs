@@ -28,7 +28,7 @@ namespace CSI.IBTA.Shared.DTOs
         DateTime PlanEnd,
         PayrollFrequency PayrollFrequency,
         int EmployerId,
-        IList<PlanDto> Plans);
+        List<PlanDto> Plans);
 
     public record UpdateInsurancePackageDto(
         int Id,
@@ -37,5 +37,5 @@ namespace CSI.IBTA.Shared.DTOs
         DateTime PlanEnd,
         PayrollFrequency PayrollFrequency,
         int EmployerId,
-        List<CreatePlanDto> Plans);
+        List<PlanDto> Plans);
 }

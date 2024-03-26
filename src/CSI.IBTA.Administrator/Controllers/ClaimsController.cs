@@ -99,7 +99,7 @@ namespace CSI.IBTA.Administrator.Controllers
 
             if (res.Error != null || res.Result == null)
             {
-                throw new Exception("Failed to edit insurance claim");
+                return Problem(title: res.Error.Title);
             }
 
             var viewModel = new ClaimDetailsViewModel

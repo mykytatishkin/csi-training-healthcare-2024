@@ -7,7 +7,7 @@ using AutoMapper;
 
 namespace CSI.IBTA.UserService.Services
 {
-    public class EmployeesService : IEmployeesService
+    internal class EmployeesService : IEmployeesService
     {
         private readonly IUserUnitOfWork _userUnitOfWork;
         private readonly IMapper _mapper;
