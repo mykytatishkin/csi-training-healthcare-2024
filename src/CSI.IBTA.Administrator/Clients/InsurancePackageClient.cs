@@ -5,6 +5,7 @@ using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 using System.Text;
 using System.Net;
+using CSI.IBTA.Administrator.Types;
 
 namespace CSI.IBTA.Administrator.Clients
 {
@@ -33,7 +34,8 @@ namespace CSI.IBTA.Administrator.Clients
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.Conflict:
-                        error = new HttpError("Insurance package with this name already exists", HttpStatusCode.Conflict);
+                        var errorMessage = JsonConvert.DeserializeObject<ErrorResponse>(await response.Content.ReadAsStringAsync());
+                        error = new HttpError(errorMessage?.title ?? "Something went wrong", HttpStatusCode.Conflict);
                         break;
                 }
 
@@ -63,7 +65,20 @@ namespace CSI.IBTA.Administrator.Clients
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var res = await _httpClient.PutAsync($"{BenefitsServiceApiEndpoints.InsurancePackages}/{dto.Id}", content);
 
-            res.EnsureSuccessStatusCode();
+            if (!res.IsSuccessStatusCode)
+            {
+                var error = HttpErrors.GenericError;
+
+                switch (res.StatusCode)
+                {
+                    case HttpStatusCode.Conflict:
+                        var errorMessage = JsonConvert.DeserializeObject<ErrorResponse>(await res.Content.ReadAsStringAsync());
+                        error = new HttpError(errorMessage?.title ?? "Something went wrong", HttpStatusCode.Conflict);
+                        break;
+                }
+
+                return new GenericResponse<bool?>(error, null);
+            }
             return new GenericResponse<bool?>(null, true);
         }
 

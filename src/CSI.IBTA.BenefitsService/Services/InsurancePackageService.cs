@@ -122,13 +122,13 @@ namespace CSI.IBTA.BenefitsService.Services
                 _mapper.Map<FullInsurancePackageDto>(package));
         }
 
-        public async Task<GenericResponse<FullInsurancePackageDto>> UpdateInsurancePackage(UpdateInsurancePackageDto dto, int packageId)
+        public async Task<GenericResponse<bool>> UpdateInsurancePackage(UpdateInsurancePackageDto dto, int packageId)
         {
             var existingPackage = await _benefitsUnitOfWork.Packages.GetById(packageId);
             if (existingPackage == null)
             {
                 var error = new HttpError("Package not found", HttpStatusCode.NotFound);
-                return new(error, null);
+                return new(error, false);
             }
 
             var existingPackageWithSameName = await _benefitsUnitOfWork.Packages
@@ -137,7 +137,7 @@ namespace CSI.IBTA.BenefitsService.Services
             if (existingPackageWithSameName.Any())
             {
                 var error = new HttpError("Other insurance package with this name already exists", HttpStatusCode.Conflict);
-                return new GenericResponse<FullInsurancePackageDto>(error, null);
+                return new GenericResponse<bool>(error, false);
             }
 
             var existingPlans = await _benefitsUnitOfWork.Plans
@@ -153,7 +153,7 @@ namespace CSI.IBTA.BenefitsService.Services
             if (samePlanNames)
             {
                 var error = new HttpError("Multiple plans cannot have same name", HttpStatusCode.Conflict);
-                return new(error, null);
+                return new(error, false);
             }
 
             existingPackage.EmployerId = dto.EmployerId;
@@ -190,18 +190,7 @@ namespace CSI.IBTA.BenefitsService.Services
 
             await _benefitsUnitOfWork.CompleteAsync();
 
-            var createdPackage = new FullInsurancePackageDto(
-                existingPackage.Id,
-                existingPackage.Name,
-                existingPackage.PlanStart,
-                existingPackage.PlanEnd,
-                existingPackage.PayrollFrequency,
-                existingPackage.EmployerId,
-                existingPackage.Plans
-                .Select(p => new PlanDto(p.Id, p.Name, new PlanTypeDto(p.PlanType.Id, p.PlanType.Name), p.Contribution, p.PackageId))
-                .ToList());
-
-            return new(null, createdPackage);
+            return new(null, true);
         }
 
         public async Task<GenericResponse<InsurancePackageDto>> InitializeInsurancePackage(int packageId)
