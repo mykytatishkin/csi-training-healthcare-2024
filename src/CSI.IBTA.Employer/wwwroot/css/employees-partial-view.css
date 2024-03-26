@@ -26,7 +26,6 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2;
     border-bottom: none;
     font-weight: 600;
 }
@@ -94,3 +93,17 @@ th {
     padding: 0 10px;
     text-align: left;
 }
+
+.anchor-style-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0D6EFD;
+}
+
+    .anchor-style-button:hover {
+        text-decoration: none;
+    }
