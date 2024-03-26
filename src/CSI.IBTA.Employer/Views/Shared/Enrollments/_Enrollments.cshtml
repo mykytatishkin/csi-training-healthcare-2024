@@ -1,0 +1,91 @@
+﻿<head>
+    <link rel="stylesheet" href="~/css/enrollments-partial-view.css">
+</head>
+
+<div class="enrollments-container">
+    <span class="border-label">Enrollments</span>
+
+    <div class="container-border">
+        <div id="add-new-button-parent">
+            <button class="btn btn-primary">Add New Enrollment</button>
+        </div>
+
+        <div class="enrollments-table">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Election</th>
+                        <th>Contribution</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* @foreach (var item in Model.Employees)
+                    { *@
+                    <tr>
+                        <td>
+                            @* <a href="#">@Html.DisplayFor(modelItem => item.Firstname)</a> *@
+                            General Medical Insurance
+                        </td>
+                        <td>
+                            @* @Html.DisplayFor(modelItem => item.Lastname) *@
+                            100$
+                        </td>
+                        <td>
+                            @* @Html.DisplayFor(modelItem => item.SSN) *@
+                            2000$
+                        </td>
+                        <td>
+                            @* @item.DateOfBirth.ToString("MM/dd/yyyy") *@
+                            <button class="btn btn-secondary update-button">Update</button>
+                        </td>
+                    </tr>
+                    @* } *@
+                </tbody>
+            </table>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal" @* style="display:block" *@>
+        <div class="modal-content">
+            <div class="modal-header">
+                <p>Add or Update Enrollment</p>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-table">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="input-labels">Select a Plan:</td>
+                                <td>
+                                    <select>
+                                        <option>General Medical Insurance </option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="input-labels">Elections, $:</td>
+                                <td><input value="100" /></td>
+                            </tr>
+                            <tr>
+                                <td class="input-labels">Contributions, $:</td>
+                                <td>2000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-action-buttons">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
