@@ -48,11 +48,22 @@ namespace CSI.IBTA.UserService.Services
 
         public async Task<GenericResponse<CreateEmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
         {
-            bool hasSameCombination = await _userUnitOfWork.Users.GetSet().Where(x => (x.Firstname == dto.FirstName && x.Lastname == dto.LastName) || x.SSN == dto.SSN || x.Account.Username == dto.UserName).AnyAsync();
-
-            if (hasSameCombination)
+            bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN);
+            if (hasSameSSN)
             {
-                return new GenericResponse<CreateEmployeeDto>(new HttpError("An employee already exists with the same SSN, name combination, or username.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<CreateEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+            }
+
+            bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName);
+            if (hasSameName)
+            {
+                return new GenericResponse<CreateEmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
+            }
+
+            bool hasSameUsername = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Account.Username == dto.UserName);
+            if (hasSameUsername)
+            {
+                return new GenericResponse<CreateEmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
             }
 
             var e = new User()
