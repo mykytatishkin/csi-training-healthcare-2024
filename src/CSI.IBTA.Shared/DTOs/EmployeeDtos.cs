@@ -20,6 +20,7 @@ public record CreateEmployeeDto(
     string LastName,
     string SSN,
     string PhoneNumber,
+    DateOnly DateOfBirth,
     string AddressState,
     string AddressStreet,
     string AddressCity,

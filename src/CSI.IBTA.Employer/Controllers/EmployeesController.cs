@@ -72,7 +72,8 @@ namespace CSI.IBTA.Employer.Controllers
             var viewModel = new EmployeeViewModel()
             {
                 ActionName = "CreateEmployee",
-                EmployerId = employerId
+                EmployerId = employerId,
+                DateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow)
             };
             return PartialView("_EmployeeForm", viewModel);
         }
@@ -92,6 +93,7 @@ namespace CSI.IBTA.Employer.Controllers
                 viewModel.Lastname,
                 viewModel.SSN,
                 viewModel.Phone,
+                viewModel.DateOfBirth,
                 viewModel.State,
                 viewModel.Street,
                 viewModel.City,

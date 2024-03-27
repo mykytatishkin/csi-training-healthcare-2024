@@ -46,30 +46,31 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<PagedEmployeesResponse>(null, response);
         }
 
-        public async Task<GenericResponse<CreateEmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
+        public async Task<GenericResponse<EmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
         {
             bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN);
             if (hasSameSSN)
             {
-                return new GenericResponse<CreateEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
             }
 
             bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName);
             if (hasSameName)
             {
-                return new GenericResponse<CreateEmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
             }
 
             bool hasSameUsername = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Account.Username == dto.UserName);
             if (hasSameUsername)
             {
-                return new GenericResponse<CreateEmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
             }
 
             var e = new User()
             {
                 Firstname = dto.FirstName,
                 Lastname = dto.LastName,
+                DateOfBirth = dto.DateOfBirth.ToDateTime(TimeOnly.MinValue),
                 Account = new Account
                 {
                     Username = dto.UserName,
@@ -101,10 +102,10 @@ namespace CSI.IBTA.UserService.Services
 
             var success = await _userUnitOfWork.Users.Add(e);
             if (!success)
-                return new GenericResponse<CreateEmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
+                return new GenericResponse<EmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<CreateEmployeeDto>(null, new CreateEmployeeDto(e.Account.Username, e.Account.Password, e.Firstname, e.Lastname, e.SSN, e.Phones.FirstOrDefault().PhoneNumber, e.Addresses.FirstOrDefault().State, e.Addresses.FirstOrDefault().Street, e.Addresses.FirstOrDefault().City, e.Addresses.FirstOrDefault().Zip, (int)e.EmployerId));
+            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(e.Firstname, e.Lastname, e.SSN, e.DateOfBirth));
         }
     }
 }

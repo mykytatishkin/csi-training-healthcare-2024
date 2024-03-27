@@ -43,7 +43,8 @@ namespace CSI.IBTA.Employer.Clients
             {
                 var errorResponse = await response.Content.ReadAsStringAsync();
                 var error = JsonConvert.DeserializeObject<HttpError>(errorResponse) ?? HttpErrors.GenericError;
-                return new GenericResponse<bool?>(error, null);
+                var errorRes = new HttpError(error.Title, response.StatusCode);
+                return new GenericResponse<bool?>(errorRes, null);
             }
 
             return new GenericResponse<bool?>(null, true);

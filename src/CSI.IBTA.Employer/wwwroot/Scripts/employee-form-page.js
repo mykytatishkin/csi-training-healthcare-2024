@@ -11,7 +11,17 @@ function openEmployeeForm(employerId) {
 }
 
 
+function setSubmit(operationStart) {
+    if (operationStart) {
+        document.getElementById('submit-button').disabled = true;
+        document.getElementById('submit-button').innerText = "Creating...";
+    } else {
+        document.getElementById('submit-button').disabled = false;
+        document.getElementById('submit-button').innerText = "Submit";
+    }
+}
 function saveEmployeeData() {
+    setSubmit(true);
     var form = document.getElementById('employee-upsert-form');
     var formData = new FormData(form);
 
@@ -26,6 +36,7 @@ function saveEmployeeData() {
     }
     if (form.checkValidity() == false) {
         form.reportValidity();
+        setSubmit(false);
         return;
     }
 
@@ -39,14 +50,17 @@ function saveEmployeeData() {
                     throw new Error(json.title);
                 });
             }
-
-            //return response.text();
         })
         .then(function (data) {
             showModal('confirmModal')
         })
         .catch(function (error) {
             console.error('There was a problem with the fetch operation:', error);
-            showError("employee-errors", error);
+            let isServerException = error.name == "SyntaxError"
+            let errorMsg = !isServerException ? error.message : "Server error"
+            showError("employee-errors", errorMsg);
+        })
+        .finally(function () {
+            setSubmit(false);
         });
 }

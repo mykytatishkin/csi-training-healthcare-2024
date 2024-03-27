@@ -17,6 +17,8 @@ namespace CSI.IBTA.Employer.Models
         [Required]
         public string Phone { get; set; } = null!;
         [Required]
+        public DateOnly DateOfBirth { get; set; }
+        [Required]
         public string Street { get; set; } = null!;
         [Required]
         public string City { get; set; } = null!;
