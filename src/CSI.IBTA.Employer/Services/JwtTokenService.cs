@@ -1,12 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Shared.Entities;
-using CSI.IBTA.Administrator.Authentication;
+using CSI.IBTA.Employer.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CSI.IBTA.Administrator.Constants;
+using CSI.IBTA.Employer.Constants;
 
 namespace CSI.IBTA.Administrator.Services
 {
