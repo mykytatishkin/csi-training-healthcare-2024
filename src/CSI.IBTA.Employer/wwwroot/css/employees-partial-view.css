@@ -108,6 +108,7 @@ th {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
     border: 1px solid var(--form-border-color);
     border-radius: 8px;
     margin: 10px;

@@ -14,7 +14,7 @@ function openEmployeeForm(employerId) {
 function setSubmit(operationStart) {
     if (operationStart) {
         document.getElementById('submit-button').disabled = true;
-        document.getElementById('submit-button').innerText = "Creating...";
+        document.getElementById('submit-button').innerText = "Creating Employee...";
     } else {
         document.getElementById('submit-button').disabled = false;
         document.getElementById('submit-button').innerText = "Submit";
@@ -52,6 +52,7 @@ function saveEmployeeData() {
             }
         })
         .then(function (data) {
+            showError("employee-errors", "");
             showModal('confirmModal')
         })
         .catch(function (error) {
