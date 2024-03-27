@@ -15,7 +15,7 @@ namespace CSI.IBTA.Employer.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //Hardcoded employer id until authentication is implemented 
+            // Hardcoded employer id until authentication is implemented 
             var res = await _employersClient.GetEmployerById(5);
 
             if (res.Error != null || res.Result == null)
