@@ -32,9 +32,9 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpPut("Employer/{employerId}/Employee/{employeeId}")]
-        public async Task<IActionResult> UpsertEnrollments(int employerId, int employeeId, List<UpsertEnrollmentDto> enrollments)
+        public async Task<IActionResult> UpsertEnrollments(int employerId, int employeeId, UpsertEnrollmentsDto dto)
         {
-            var response = await _enrollmentsService.UpdateEnrollments(employerId, employeeId, enrollments);
+            var response = await _enrollmentsService.UpsertEnrollments(employerId, employeeId, dto.encodedEmplyerEmployee, dto.enrollments);
 
             if (response.Error != null)
             {

@@ -12,4 +12,9 @@ namespace CSI.IBTA.Shared.DTOs
         int PageSize,
         int TotalPages,
         int TotalCount);
+
+    public record EmployerEmployeeDto(
+        int employerId,
+        int employeeId);
+
 }

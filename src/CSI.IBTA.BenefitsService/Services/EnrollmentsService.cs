@@ -6,6 +6,7 @@ using CSI.IBTA.Shared.DTOs;
 using AutoMapper;
 using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
+using CSI.IBTA.UserService.Interfaces;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -13,11 +14,13 @@ namespace CSI.IBTA.BenefitsService.Services
     {
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
+        private readonly IDecodingService _decodingService;
 
-        public EnrollmentsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper)
+        public EnrollmentsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IDecodingService decodingService)
         {
             _benefitsUnitOfWork = benefitsUnitOfWork;
             _mapper = mapper;
+            _decodingService = decodingService;
         }
 
         public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId)
@@ -32,9 +35,15 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<List<EnrollmentDto>>(null, enrollments.Select(x => _mapper.Map<EnrollmentDto>(x)).ToList());
         }
 
-        public async Task<GenericResponse<List<EnrollmentDto>>> UpdateEnrollments(int employerId, int employeeId, List<UpsertEnrollmentDto> enrollments)
+        public async Task<GenericResponse<List<EnrollmentDto>>> UpsertEnrollments(int employerId, int employeeId, byte[] endodedEmplyoerEmployee, List<UpsertEnrollmentDto> enrollments)
         {
-            if(enrollments.DistinctBy(x => x.PlanId).Count() < enrollments.Count) 
+            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmplyoerEmployee);
+            if(decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
+
+            if(decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
+                return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employer does not have access to enroll this employee", HttpStatusCode.Forbidden), null);
+
+            if (enrollments.DistinctBy(x => x.PlanId).Count() < enrollments.Count) 
             {
                 return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employee can not have multiple enrollments for the same plan", HttpStatusCode.BadRequest), null);
             }
