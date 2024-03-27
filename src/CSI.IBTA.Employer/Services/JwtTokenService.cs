@@ -53,6 +53,12 @@ namespace CSI.IBTA.Employer.Services
 
         public bool IsTokenValid(string token)
         {
+            if (_jwtSettings.Secret == null)
+            {
+                _logger.LogError("JWT secret key is not configured.");
+                return false;
+            }
+
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
 
             var validationParameters = new TokenValidationParameters
@@ -77,6 +83,7 @@ namespace CSI.IBTA.Employer.Services
                 return false;
             }
         }
+
 
         public string? GetCachedToken()
         {
