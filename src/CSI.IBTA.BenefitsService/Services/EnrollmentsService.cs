@@ -56,8 +56,11 @@ namespace CSI.IBTA.BenefitsService.Services
 
             var enrollmentPlanIds = enrollments.Select(e => e.PlanId).ToList();
             var plans = await _benefitsUnitOfWork.Plans.GetSet()
+                .Include(x => x.Package)
                 .Where(x => enrollmentPlanIds.Contains(x.Id))
                 .ToListAsync();
+
+            if(plans.Any(x => x.Package.IsActive == false)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the packages is not initialized yet", HttpStatusCode.BadRequest), null);
 
             foreach (var e in existingEnrollments) 
             {
