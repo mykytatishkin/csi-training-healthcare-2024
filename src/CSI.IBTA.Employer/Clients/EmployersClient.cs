@@ -25,46 +25,5 @@ namespace CSI.IBTA.Employer.Clients
             var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
             return new GenericResponse<EmployerDto>(null, employees);
         }
-
-        public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto)
-        {
-            var defaultErrorMessage = "Failed to update employer";
-            var formData = new MultipartFormDataContent()
-            {
-                { new StringContent(dto.Name), nameof(dto.Name) },
-                { new StringContent(dto.Code), nameof(dto.Code) },
-                { new StringContent(dto.Email), nameof(dto.Email) },
-                { new StringContent(dto.Street), nameof(dto.Street) },
-                { new StringContent(dto.City), nameof(dto.City) },
-                { new StringContent(dto.State), nameof(dto.State) },
-                { new StringContent(dto.ZipCode), nameof(dto.ZipCode) },
-                { new StringContent(dto.Phone), nameof(dto.Phone) }
-            };
-
-            using (var stream = new MemoryStream())
-            {
-                if (dto.NewLogoFile != null)
-                {
-                    await dto.NewLogoFile.CopyToAsync(stream);
-                    stream.Position = 0;
-                    formData.Add(new StreamContent(stream), nameof(dto.NewLogoFile), dto.NewLogoFile.FileName);
-                }
-
-                var response = await _httpClient.PutAsync($"{EmployerEndpoints.Employer}/{dto.Id}", formData);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorJson = await response.Content.ReadAsStringAsync();
-                    var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
-                    var errorMessage = error?.title ?? response.ReasonPhrase ?? defaultErrorMessage;
-                    return new GenericResponse<EmployerDto?>(new HttpError(errorMessage, response.StatusCode), null);
-                }
-
-                var employerJson = await response.Content.ReadAsStringAsync();
-                var employer = JsonConvert.DeserializeObject<EmployerDto>(employerJson);
-
-                return new GenericResponse<EmployerDto?>(null, employer);
-            }
-        }
     }
 }

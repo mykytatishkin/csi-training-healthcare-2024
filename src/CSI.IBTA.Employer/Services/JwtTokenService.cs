@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CSI.IBTA.Employer.Constants;
 
-namespace CSI.IBTA.Administrator.Services
+namespace CSI.IBTA.Employer.Services
 {
     internal class JwtTokenService : IJwtTokenService
     {
