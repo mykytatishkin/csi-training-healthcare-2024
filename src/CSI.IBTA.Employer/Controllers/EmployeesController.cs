@@ -66,7 +66,7 @@ namespace CSI.IBTA.Employer.Controllers
             return PartialView("_Employees", viewModel);
         }
 
-        [HttpGet("/CreateEmployee")]
+        [HttpGet("CreateEmployee")]
         public ActionResult CreateEmployee(int employerId)
         {
             var viewModel = new EmployeeViewModel()
@@ -78,7 +78,7 @@ namespace CSI.IBTA.Employer.Controllers
             return PartialView("_EmployeeForm", viewModel);
         }
 
-        [HttpPost("/CreateEmployee")]
+        [HttpPost("CreateEmployee")]
         public async Task<IActionResult> CreateEmployee(EmployeeViewModel viewModel)
         {
             if (!ModelState.IsValid)

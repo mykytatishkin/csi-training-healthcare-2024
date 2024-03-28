@@ -66,7 +66,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
             }
 
-            var e = new User()
+            var user = new User()
             {
                 Firstname = dto.FirstName,
                 Lastname = dto.LastName,
@@ -100,12 +100,12 @@ namespace CSI.IBTA.UserService.Services
                 EmployerId = dto.EmployerId
             };
 
-            var success = await _userUnitOfWork.Users.Add(e);
+            var success = await _userUnitOfWork.Users.Add(user);
             if (!success)
                 return new GenericResponse<EmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(e.Firstname, e.Lastname, e.SSN, e.DateOfBirth));
+            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Firstname, user.Lastname, user.SSN, user.DateOfBirth));
         }
     }
 }

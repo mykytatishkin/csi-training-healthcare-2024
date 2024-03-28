@@ -3,7 +3,7 @@ function openEmployeeForm(employerId) {
         document.getElementById('main-partial-screen').innerHTML = data;
     }
 
-    route = '/CreateEmployee?' + new URLSearchParams({
+    route = '/Employees/CreateEmployee?' + new URLSearchParams({
         employerId: employerId
     });
 
@@ -40,7 +40,7 @@ function saveEmployeeData() {
         return;
     }
 
-    fetch(`/${formData.get('ActionName')}`, {
+    fetch(`/Employees/${formData.get('ActionName')}`, {
         method: 'POST',
         body: formData,
     })
