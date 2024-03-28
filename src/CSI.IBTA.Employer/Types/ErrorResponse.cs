@@ -2,6 +2,6 @@
 {
     public class ErrorResponse
     {
-        public string? title;
+        public string? Title;
     }
 }

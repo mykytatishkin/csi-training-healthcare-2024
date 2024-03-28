@@ -17,15 +17,6 @@ namespace CSI.IBTA.Employer.Clients
             _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
 
-        public async Task<GenericResponse<EmployerDto>> GetEmployerById(int id)
-        {
-            var res = await _httpClient.GetAsync($"{EmployerEndpoints.Employer}/{id}");
-            res.EnsureSuccessStatusCode();
-            var responseContent = await res.Content.ReadAsStringAsync();
-            var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
-            return new GenericResponse<EmployerDto>(null, employees);
-        }
-
         public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto)
         {
             var defaultErrorMessage = "Failed to update employer";
@@ -56,7 +47,7 @@ namespace CSI.IBTA.Employer.Clients
                 {
                     var errorJson = await response.Content.ReadAsStringAsync();
                     var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
-                    var errorMessage = error?.title ?? response.ReasonPhrase ?? defaultErrorMessage;
+                    var errorMessage = error?.Title ?? response.ReasonPhrase ?? defaultErrorMessage;
                     return new GenericResponse<EmployerDto?>(new HttpError(errorMessage, response.StatusCode), null);
                 }
 
@@ -65,6 +56,24 @@ namespace CSI.IBTA.Employer.Clients
 
                 return new GenericResponse<EmployerDto?>(null, employer);
             }
+        }
+
+        public async Task<GenericResponse<EmployerDto>> GetEmployerById(int id)
+        {
+            var res = await _httpClient.GetAsync($"{EmployerEndpoints.Employer}/{id}");
+            res.EnsureSuccessStatusCode();
+            var responseContent = await res.Content.ReadAsStringAsync();
+            var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
+            return new GenericResponse<EmployerDto>(null, employees);
+        }
+
+        public async Task<GenericResponse<EmployerDto>> GetEmployerByAccountId(int id)
+        {
+            var res = await _httpClient.GetAsync($"{EmployerEndpoints.GetEmployerByAccountId}/{id}");
+            res.EnsureSuccessStatusCode();
+            var responseContent = await res.Content.ReadAsStringAsync();
+            var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
+            return new GenericResponse<EmployerDto>(null, employees);
         }
     }
 }

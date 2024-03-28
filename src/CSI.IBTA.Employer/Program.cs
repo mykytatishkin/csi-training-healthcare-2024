@@ -1,10 +1,11 @@
 using CSI.IBTA.Employer;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddEmployerPortal();
+builder.Services.AddEmployerPortal(builder.Configuration);
 
 var app = builder.Build();
 

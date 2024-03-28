@@ -1,7 +1,7 @@
 ﻿using CSI.IBTA.Administrator.Clients;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Services;
-using CSI.IBTA.AuthService.Authentication;
+using CSI.IBTA.Administrator.Authentication;
 using Microsoft.Extensions.Options;
 
 namespace CSI.IBTA.Administrator
