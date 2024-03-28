@@ -48,7 +48,7 @@ namespace CSI.IBTA.Employer.Controllers
         public IActionResult Logout()
         {
             Response.Cookies.Delete(TokenConstants.JwtTokenCookieName);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Auth");
         }
 
 
