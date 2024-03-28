@@ -47,10 +47,10 @@ namespace CSI.IBTA.Administrator.Controllers
             if (_jwtTokenService.IsTokenValid(token))
             {
                 var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "employer_id");
+                var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "AccountId");
                 if (employerIdClaim != null && int.TryParse(employerIdClaim.Value, out int employerId))
                 {
-                    var employerInfo = await _employersClient.GetEmployerById(employerId);
+                    var employerInfo = await _employersClient.GetEmployerByAccountId(employerId);
 
                     if (employerInfo.Result != null)
                     {

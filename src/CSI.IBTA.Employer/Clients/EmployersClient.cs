@@ -25,5 +25,14 @@ namespace CSI.IBTA.Employer.Clients
             var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
             return new GenericResponse<EmployerDto>(null, employees);
         }
+
+        public async Task<GenericResponse<EmployerDto>> GetEmployerByAccountId(int id)
+        {
+            var res = await _httpClient.GetAsync($"{EmployerEndpoints.GetEmployerByAccountId}/{id}");
+            res.EnsureSuccessStatusCode();
+            var responseContent = await res.Content.ReadAsStringAsync();
+            var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
+            return new GenericResponse<EmployerDto>(null, employees);
+        }
     }
 }

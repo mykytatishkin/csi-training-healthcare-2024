@@ -1,8 +1,10 @@
+using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Employer.Controllers
 {
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
 
