@@ -20,3 +20,7 @@
             console.error("Fetch request failed: " + error)
         });
 }
+
+function showError(id, text) {
+    document.getElementById(id).innerText = text;
+}
