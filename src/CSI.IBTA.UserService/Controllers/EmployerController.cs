@@ -1,5 +1,6 @@
 ﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,16 +12,22 @@ namespace CSI.IBTA.UserService.Controllers
     public class EmployerController : Controller
     {
         private readonly IEmployersService _employerService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public EmployerController(IEmployersService employerService)
+        public EmployerController(IEmployersService employerService, IAuthorizationService authorizationService)
         {
             _employerService = employerService;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet("{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> GetEmployer(int employerId)
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employerService.GetEmployer(employerId);
 
             if (response.Error != null)
