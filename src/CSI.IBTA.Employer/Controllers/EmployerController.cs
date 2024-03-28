@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Employer.Models;
+using CSI.IBTA.Employer.Filters;
 
 namespace CSI.IBTA.Employer.Controllers
 {
     [Route("Employer")]
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class EmployerController : Controller
     {
         private readonly IEmployersClient _employersClient;
