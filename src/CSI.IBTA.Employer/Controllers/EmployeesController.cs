@@ -1,4 +1,5 @@
 ﻿using CSI.IBTA.Employer.Constants;
+using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Employer.Models;
 using CSI.IBTA.Shared.DTOs;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CSI.IBTA.Employer.Controllers
 {
     [Route("{controller}")]
+    [TypeFilter(typeof(AuthenticationFilter))]
     public class EmployeesController : Controller
     {
         private readonly IEmployeesClient _employeeClient;

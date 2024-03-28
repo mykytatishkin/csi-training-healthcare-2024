@@ -19,6 +19,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> GetEmployees(
             int page,
             int pageSize,
@@ -41,6 +42,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDto dto)
         {
             var response = await _employeesService.CreateEmployee(dto);

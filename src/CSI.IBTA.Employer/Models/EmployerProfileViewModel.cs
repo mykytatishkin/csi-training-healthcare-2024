@@ -1,7 +1,6 @@
-
 using CSI.IBTA.Shared.DTOs;
 
-namespace CSI.IBTA.Emplopyer.Models
+namespace CSI.IBTA.Employer.Models
 {
     public class EmployerProfileViewModel
     {

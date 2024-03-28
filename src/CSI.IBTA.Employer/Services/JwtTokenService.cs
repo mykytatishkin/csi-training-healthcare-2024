@@ -1,14 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using CSI.IBTA.Administrator.Interfaces;
+using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Shared.Entities;
-using CSI.IBTA.Administrator.Authentication;
+using CSI.IBTA.Employer.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CSI.IBTA.Administrator.Constants;
+using CSI.IBTA.Employer.Constants;
 
-namespace CSI.IBTA.Administrator.Services
+namespace CSI.IBTA.Employer.Services
 {
     internal class JwtTokenService : IJwtTokenService
     {
@@ -48,11 +48,17 @@ namespace CSI.IBTA.Administrator.Services
                 .FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?
                 .Value;
 
-            return role == Role.Administrator.ToString();
+            return role == Role.EmployerAdmin.ToString();
         }
 
         public bool IsTokenValid(string token)
         {
+            if (_jwtSettings.Secret == null)
+            {
+                _logger.LogError("JWT secret key is not configured.");
+                return false;
+            }
+
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
 
             var validationParameters = new TokenValidationParameters
@@ -77,6 +83,7 @@ namespace CSI.IBTA.Administrator.Services
                 return false;
             }
         }
+
 
         public string? GetCachedToken()
         {
