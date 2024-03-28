@@ -47,7 +47,7 @@ namespace CSI.IBTA.Employer.Clients
                 {
                     var errorJson = await response.Content.ReadAsStringAsync();
                     var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
-                    var errorMessage = error?.title ?? response.ReasonPhrase ?? defaultErrorMessage;
+                    var errorMessage = error?.Title ?? response.ReasonPhrase ?? defaultErrorMessage;
                     return new GenericResponse<EmployerDto?>(new HttpError(errorMessage, response.StatusCode), null);
                 }
 
