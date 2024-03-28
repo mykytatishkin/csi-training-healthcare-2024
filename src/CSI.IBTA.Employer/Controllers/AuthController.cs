@@ -42,25 +42,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 return View("Index");
             }
 
-            var token = _jwtTokenService.GetCachedToken();
-
-            if (_jwtTokenService.IsTokenValid(token))
-            {
-                var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "AccountId");
-                if (employerIdClaim != null && int.TryParse(employerIdClaim.Value, out int employerId))
-                {
-                    var employerInfo = await _employersClient.GetEmployerByAccountId(employerId);
-
-                    if (employerInfo.Result != null)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-            }
-
-            ModelState.AddModelError("", "Failed to retrieve employer information");
-            return View("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Logout()
