@@ -1,14 +1,29 @@
-using CSI.IBTA.Employer.Models;
+using CSI.IBTA.Employer.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace CSI.IBTA.Employer.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+
+        private readonly IEmployersClient _employersClient;
+
+        public HomeController(IEmployersClient employersClient)
         {
-            return View();
+            _employersClient = employersClient;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            //Hardcoded employer id until authentication is implemented 
+            var res = await _employersClient.GetEmployerById(1);
+
+            if (res.Error != null || res.Result == null)
+            {
+                return Problem(title: "Failed to retrieve employer");
+            }
+
+            return View(res.Result);
         }
     }
 }
