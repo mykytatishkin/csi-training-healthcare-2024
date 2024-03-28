@@ -4,21 +4,16 @@ using CSI.IBTA.Employer.Extensions;
 using CSI.IBTA.Employer.Constants;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace CSI.IBTA.Employer.Controllers
 {
     public class AuthController : Controller
     {
         private readonly IAuthClient _client;
-        private readonly IEmployersClient _employersClient;
-        private readonly IJwtTokenService _jwtTokenService;
 
-        public AuthController(IAuthClient client, IEmployersClient employersClient, IJwtTokenService jwtTokenService)
+        public AuthController(IAuthClient client)
         {
             _client = client;
-            _employersClient = employersClient;
-            _jwtTokenService = jwtTokenService;
         }
 
         [HttpGet("/Login")]
