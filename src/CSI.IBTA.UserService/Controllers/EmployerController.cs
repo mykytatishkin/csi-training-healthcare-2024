@@ -18,7 +18,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        //[Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> GetEmployer(int employerId)
         {
             var response = await _employerService.GetEmployer(employerId);
@@ -103,7 +103,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPut("{employerId}")]
-        [Authorize(Roles = nameof(Role.Administrator))]
+        //[Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> UpdateEmployer(int employerId, [FromForm] UpdateEmployerDto dto)
         {
             var response = await _employerService.UpdateEmployer(employerId, dto);
