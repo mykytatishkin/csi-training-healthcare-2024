@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace CSI.IBTA.Administrator.Controllers
+namespace CSI.IBTA.Employer.Controllers
 {
     public class AuthController : Controller
     {

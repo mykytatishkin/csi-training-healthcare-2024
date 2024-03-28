@@ -17,9 +17,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet]
-        // Commenting this out, because employer portal doesn't have authentication.
-        // This will need to be uncommented when login is implemented.
-        //[Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> GetEmployees(
             int page,
             int pageSize,
