@@ -17,7 +17,7 @@ namespace CSI.IBTA.Employer.Clients
             _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
 
-        public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto)
+        public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId)
         {
             var defaultErrorMessage = "Failed to update employer";
             var formData = new MultipartFormDataContent()
@@ -41,7 +41,7 @@ namespace CSI.IBTA.Employer.Clients
                     formData.Add(new StreamContent(stream), nameof(dto.NewLogoFile), dto.NewLogoFile.FileName);
                 }
 
-                var response = await _httpClient.PutAsync($"{EmployerEndpoints.Employer}/{dto.Id}", formData);
+                var response = await _httpClient.PutAsync($"{EmployerEndpoints.Employer}/{employerId}", formData);
 
                 if (!response.IsSuccessStatusCode)
                 {

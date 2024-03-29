@@ -57,7 +57,7 @@ namespace CSI.IBTA.Employer.Controllers
         public async Task<IActionResult> UpdateEmployer(EmployerProfileViewModel model)
         {
             var e = model.Employer;
-            var res = await _employersClient.UpdateEmployer(new UpdateEmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.ZipCode, e.Phone, model.NewLogo));
+            var res = await _employersClient.UpdateEmployer(new UpdateEmployerDto(e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.ZipCode, e.Phone, model.NewLogo), e.Id);
             return Json(res);
         }
     }

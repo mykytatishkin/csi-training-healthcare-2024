@@ -1,12 +1,9 @@
-﻿using CSI.IBTA.DB.Migrations.Migrations;
-using CSI.IBTA.Shared.Constants;
-using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace CSI.IBTA.UserService.Controllers
 {
