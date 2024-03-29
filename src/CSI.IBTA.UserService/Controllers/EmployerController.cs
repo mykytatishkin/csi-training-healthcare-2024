@@ -41,23 +41,6 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpGet("GetByAccountId/{accountId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
-        public async Task<IActionResult> GetEmployerByAccountId(int accountId)
-        {
-            var response = await _employerService.GetEmployerByAccountId(accountId);
-
-            if (response.Error != null)
-            {
-                return Problem(
-                    title: response.Error.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
-            }
-
-            return Ok(response.Result);
-        }
-
         [HttpGet("~/api/v1/Employers")]
         [Authorize(Roles = $"{nameof(Role.Administrator)}")]
         public async Task<IActionResult> GetEmployer([FromQuery] List<int> employerIds)
@@ -127,9 +110,13 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPut("{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> UpdateEmployer(int employerId, [FromForm] UpdateEmployerDto dto)
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employerService.UpdateEmployer(employerId, dto);
 
             if (response.Error != null)
@@ -161,9 +148,13 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("settings/{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> GetEmployerSetting(int employerId, string condition)
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employerService.GetEmployerSettingValue(employerId, condition);
 
             if (response.Error != null)
@@ -178,9 +169,13 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("allsettings/{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> GetAllEmployerSettings(int employerId)
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employerService.GetAllEmployerSettings(employerId);
 
             if (response.Error != null)
@@ -195,9 +190,13 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPatch("allsettings/{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> UpdateAllEmployerSettings(int employerId, SettingsDto[] SettingsDtos)
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employerService.UpdateEmployerSettings(employerId, SettingsDtos);
 
             if (response.Error != null)
@@ -212,9 +211,13 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("{employerId}/Users")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> GetEmployerUsers(int employerId)
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var employerUsersResponse = await _employerService.GetEmployerUsers(employerId);
 
             if (employerUsersResponse.Error != null)

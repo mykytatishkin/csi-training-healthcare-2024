@@ -21,10 +21,14 @@ namespace CSI.IBTA.Employer.Controllers
         {
             var token = _jwtTokenService.GetCachedToken();
             var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            var accountId = jwtSecurityToken.Subject;
-            int intAccountId = Convert.ToInt32(accountId);
+            var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "employerId");
 
-            var res = await _employersClient.GetEmployerByAccountId(intAccountId);
+            if (employerIdClaim == null || !int.TryParse(employerIdClaim.Value, out int employerId))
+            {
+                return Problem(title: "Employer ID claim not found or invalid");
+            }
+
+            var res = await _employersClient.GetEmployerById(employerId);
 
             if (res.Error != null || res.Result == null)
             {

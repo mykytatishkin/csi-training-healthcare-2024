@@ -1,4 +1,5 @@
 ﻿using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,14 +11,16 @@ namespace CSI.IBTA.UserService.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeesService _employeesService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public EmployeeController(IEmployeesService employeesService)
+        public EmployeeController(IEmployeesService employeesService, IAuthorizationService authorizationService)
         {
             _employeesService = employeesService;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> GetEmployees(
             int page,
             int pageSize,
@@ -26,6 +29,10 @@ namespace CSI.IBTA.UserService.Controllers
             string lastname = "",
             string ssn = "")
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employeesService.GetEmployees(page, pageSize, employerId, firstname, lastname, ssn);
 
             if (response.Error != null)
