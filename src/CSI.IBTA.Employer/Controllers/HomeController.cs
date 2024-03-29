@@ -1,5 +1,6 @@
 using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
+using CSI.IBTA.Shared.Constants;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -21,7 +22,7 @@ namespace CSI.IBTA.Employer.Controllers
         {
             var token = _jwtTokenService.GetCachedToken();
             var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "employerId");
+            var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.EmployerId);
 
             if (employerIdClaim == null || !int.TryParse(employerIdClaim.Value, out int employerId))
             {

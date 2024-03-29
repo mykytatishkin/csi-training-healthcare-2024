@@ -1,8 +1,12 @@
-﻿using CSI.IBTA.Shared.Entities;
+﻿using CSI.IBTA.DB.Migrations.Migrations;
+using CSI.IBTA.Shared.Constants;
+using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace CSI.IBTA.UserService.Controllers
 {
@@ -41,6 +45,26 @@ namespace CSI.IBTA.UserService.Controllers
                     title: response.Error.Title,
                     statusCode: (int)response.Error.StatusCode
                 );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = nameof(Role.EmployerAdmin))]
+        public async Task<IActionResult> CreateEmployee(CreateEmployeeDto dto)
+        {
+            var result = await _authorizationService.AuthorizeAsync(User, dto.EmployerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
+            var response = await _employeesService.CreateEmployee(dto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error!.Title);
             }
 
             return Ok(response.Result);

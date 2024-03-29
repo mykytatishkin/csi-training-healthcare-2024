@@ -21,6 +21,16 @@
         });
 }
 
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "block";
+}
+
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "none";
+}
+
 function showError(id, text) {
     document.getElementById(id).innerText = text;
 }

@@ -6,6 +6,9 @@
     route = '/Employees?employerId=' + employerId;
     fetchRoute(route, onSuccess, null);
 }
+function showError(id, text) {
+    document.getElementById(id).innerText = text;
+}
 
 function searchEmployees(employerId) {
     function onSuccess(data) {
