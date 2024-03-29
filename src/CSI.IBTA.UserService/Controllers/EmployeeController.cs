@@ -1,5 +1,7 @@
-﻿using CSI.IBTA.Shared.Entities;
+﻿using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Interfaces;
+using CSI.IBTA.UserService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,6 +36,22 @@ namespace CSI.IBTA.UserService.Controllers
                     title: response.Error.Title,
                     statusCode: (int)response.Error.StatusCode
                 );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        public async Task<IActionResult> CreateEmployee(CreateEmployeeDto dto)
+        {
+            var response = await _employeesService.CreateEmployee(dto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error!.Title);
             }
 
             return Ok(response.Result);
