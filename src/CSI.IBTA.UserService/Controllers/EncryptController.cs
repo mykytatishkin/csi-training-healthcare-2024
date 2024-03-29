@@ -14,7 +14,7 @@ namespace CSI.IBTA.UserService.Controllers
             _encodingService = encodingService;
         }
 
-        [HttpPost("Employer/{employerId}/Employee/{employeeId}")]
+        [HttpGet("Employer/{employerId}/Employee/{employeeId}")]
         //[Authorize($"{nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> EncodeEmployerEmployee(int employerId, int employeeId)
         {

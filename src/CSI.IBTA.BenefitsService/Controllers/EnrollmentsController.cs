@@ -16,7 +16,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpGet("{employeeId}")]
-        public async Task<IActionResult> GetEnrollmentsByEnployeeId(int employeeId)
+        public async Task<IActionResult> GetEnrollmentsByEmployeeId(int employeeId)
         {
             var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId);
 
@@ -35,7 +35,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         public async Task<IActionResult> UpsertEnrollments(int employerId, int employeeId, UpsertEnrollmentsDto dto)
         {
             //todo: after login functionality is implemented, replace employerId with employerId from JWT token
-            var response = await _enrollmentsService.UpsertEnrollments(employerId, employeeId, dto.encodedEmplyerEmployee, dto.enrollments);
+            var response = await _enrollmentsService.UpsertEnrollments(employerId, employeeId, dto.EncodedEmployerEmployee, dto.Enrollments);
 
             if (response.Error != null)
             {

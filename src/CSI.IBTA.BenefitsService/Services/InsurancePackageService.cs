@@ -6,6 +6,7 @@ using CSI.IBTA.Shared.DTOs;
 using System.Net;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -95,6 +96,20 @@ namespace CSI.IBTA.BenefitsService.Services
 
             return new GenericResponse<List<InsurancePackageDto>>(null,
                 packages.Select(_mapper.Map<InsurancePackageDto>).ToList());
+        }
+
+        public async Task<GenericResponse<List<FullInsurancePackageDto>>> GetFullInsurancePackages(int employerId)
+        {
+            var packages = await _benefitsUnitOfWork.Packages.Find(x => x.EmployerId == employerId && x.IsRemoved != true);
+            var packageIds = packages.Select(p => p.Id).ToList();
+            var plans = await _benefitsUnitOfWork.Plans
+                .Include(x => x.PlanType)
+                .Where(x => packageIds.Contains(x.PackageId)).ToListAsync();
+
+            packages.ToList().ForEach(p => p.Plans = plans.Where(plan => plan.PackageId == p.Id).ToList());
+
+            var fullPackages = packages.Select(_mapper.Map<FullInsurancePackageDto>).ToList();
+            return new GenericResponse<List<FullInsurancePackageDto>>(null, fullPackages);
         }
 
         public async Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int packageId)
@@ -193,6 +208,7 @@ namespace CSI.IBTA.BenefitsService.Services
             var createdPackage = new FullInsurancePackageDto(
                 existingPackage.Id,
                 existingPackage.Name,
+                existingPackage.Initialized != null,
                 existingPackage.PlanStart,
                 existingPackage.PlanEnd,
                 existingPackage.PayrollFrequency,

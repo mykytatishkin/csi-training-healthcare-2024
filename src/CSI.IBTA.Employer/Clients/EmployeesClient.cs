@@ -30,5 +30,15 @@ namespace CSI.IBTA.Employer.Clients
             var employees = JsonConvert.DeserializeObject<PagedEmployeesResponse>(responseContent);
             return new GenericResponse<PagedEmployeesResponse>(null, employees);
         }
+
+        public async Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId)
+        {
+            var requestUrl = string.Format(EmployeeEndpoints.EncryptedEmployee, employerId, employeeId);
+            var response = await _httpClient.GetAsync(requestUrl);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            var employees = JsonConvert.DeserializeObject<byte[]>(responseContent);
+            return new GenericResponse<byte[]>(null, employees);
+        }
     }
 }

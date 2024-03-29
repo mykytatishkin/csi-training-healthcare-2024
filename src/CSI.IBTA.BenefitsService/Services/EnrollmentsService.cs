@@ -38,12 +38,12 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<List<EnrollmentDto>>> UpsertEnrollments(int employerId, int employeeId, byte[] endodedEmplyoerEmployee, List<UpsertEnrollmentDto> enrollments)
         {
             var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmplyoerEmployee);
-            if(decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
+            if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
 
-            if(decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
+            if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
                 return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employer does not have access to enroll this employee", HttpStatusCode.Forbidden), null);
 
-            if (enrollments.DistinctBy(x => x.PlanId).Count() < enrollments.Count) 
+            if (enrollments.DistinctBy(x => x.PlanId).Count() < enrollments.Count)
             {
                 return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employee can not have multiple enrollments for the same plan", HttpStatusCode.BadRequest), null);
             }
@@ -62,19 +62,19 @@ namespace CSI.IBTA.BenefitsService.Services
             var existingEnrollments = await _benefitsUnitOfWork.Enrollments.GetSet()
                 .Where(x => x.EmployeeId == employeeId)
                 .ToListAsync();
-
+            
             var enrollmentPlanIds = enrollments.Select(e => e.PlanId).ToList();
             var plans = await _benefitsUnitOfWork.Plans.GetSet()
                 .Include(x => x.Package)
                 .Where(x => enrollmentPlanIds.Contains(x.Id))
                 .ToListAsync();
 
-            if(plans.Any(x => x.Package.IsActive == false)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the packages is not initialized yet", HttpStatusCode.BadRequest), null);
+            if (plans.Any(x => x.Package.Initialized == null)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the packages is not initialized yet", HttpStatusCode.BadRequest), null);
 
-            foreach (var e in existingEnrollments) 
+            foreach (var e in existingEnrollments)
             {
                 var dto = enrollments.FirstOrDefault(x => x.Id == e.Id);
-                if(dto == null) return new GenericResponse<List<EnrollmentDto>>(HttpErrors.ResourceNotFound, null);
+                if (dto == null) return new GenericResponse<List<EnrollmentDto>>(HttpErrors.ResourceNotFound, null);
 
                 e.Election = dto.Election;
                 e.PlanId = dto.PlanId;
@@ -85,7 +85,7 @@ namespace CSI.IBTA.BenefitsService.Services
 
             await _benefitsUnitOfWork.CompleteAsync();
 
-            foreach (var e in enrollments.Where(x => x.Id == 0)) 
+            foreach (var e in enrollments.Where(x => x.Id == 0))
             {
                 var enrollment = new Enrollment()
                 {

@@ -40,12 +40,3 @@ function getEmployeesPage(employerId, page, firstnameFilter, lastnameFilter, ssn
 
     fetchRoute(route, onSuccess, null);
 }
-
-function showEnrollments(employerId) {
-    function onSuccess(data) {
-        document.getElementById('main-partial-screen').innerHTML = data;
-    }
-
-    route = '/Enrollments?employerId=' + employerId;
-    fetchRoute(route, onSuccess, null);
-}

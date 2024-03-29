@@ -9,6 +9,7 @@ namespace CSI.IBTA.Employer
         {
             services.AddTransient<AuthorizedHttpClient>();
             services.AddScoped<IEmployeesClient, EmployeesClient>();
+            services.AddScoped<IInsuranceClient, InsuranceClient>();
             return services;
         }
     }

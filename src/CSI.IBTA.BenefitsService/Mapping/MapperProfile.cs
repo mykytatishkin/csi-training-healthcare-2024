@@ -35,6 +35,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                 .ConstructUsing(x => new FullInsurancePackageDto(
                     x.Id,
                     x.Name,
+                    x.Initialized != null,
                     x.PlanStart,
                     x.PlanEnd,
                     x.PayrollFrequency,

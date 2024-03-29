@@ -51,6 +51,23 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpGet("GetFullByEmployer/{employerId}")]
+        //[Authorize(Roles = nameof(Role.Administrator))]
+        public async Task<IActionResult> GetFullInsurancePackages(int employerId)
+        {
+            var response = await _insurancePackageService.GetFullInsurancePackages(employerId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
         [HttpGet("{packageId}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetInsurancePackage(int packageId)

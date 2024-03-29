@@ -11,5 +11,6 @@ namespace CSI.IBTA.Employer.Interfaces
             string firstname = "",
             string lastname = "",
             string ssn = "");
+        Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId);
     }
 }
