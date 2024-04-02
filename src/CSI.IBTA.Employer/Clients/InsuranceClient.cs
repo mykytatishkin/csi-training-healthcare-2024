@@ -46,8 +46,7 @@ namespace CSI.IBTA.Employer.Clients
 
         public async Task<GenericResponse<List<FullInsurancePackageDto>>> GetEmployerPackages(int employerId)
         {
-            var requestUrl = string.Format(InsuranceEndpoints.InsurancePackagesByEmployer, employerId);
-            var response = await _httpClient.GetAsync(requestUrl);
+            var response = await _httpClient.GetAsync(InsuranceEndpoints.InsurancePackagesByEmployer);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
