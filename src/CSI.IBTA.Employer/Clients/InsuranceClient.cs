@@ -44,30 +44,6 @@ namespace CSI.IBTA.Employer.Clients
             return new GenericResponse<List<EnrollmentDto>>(null, enrollments);
         }
 
-        public async Task<GenericResponse<List<PlanDto>>> GetEmployeePlans(int employeeId)
-        {
-            var requestUrl = string.Format(InsuranceEndpoints.InsurancePlans, employeeId);
-            var response = await _httpClient.GetAsync(requestUrl);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
-
-                if (responseError?.Title != null)
-                {
-                    var error = new HttpError(responseError.Title, response.StatusCode);
-                    return new GenericResponse<List<PlanDto>>(error, null);
-                }
-
-                var genericError = new HttpError("Something went wrong...", response.StatusCode);
-                return new GenericResponse<List<PlanDto>>(genericError, null);
-            }
-
-            var plans = JsonConvert.DeserializeObject<List<PlanDto>>(responseContent);
-            return new GenericResponse<List<PlanDto>>(null, plans);
-        }
-
         public async Task<GenericResponse<List<FullInsurancePackageDto>>> GetEmployerPackages(int employerId)
         {
             var requestUrl = string.Format(InsuranceEndpoints.InsurancePackagesByEmployer, employerId);

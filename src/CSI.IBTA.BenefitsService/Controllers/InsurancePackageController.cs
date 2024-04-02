@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Constants;
 
 namespace CSI.IBTA.BenefitsService.Controllers
 {
@@ -51,11 +52,18 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpGet("GetFullByEmployer/{employerId}")]
-        //[Authorize(Roles = nameof(Role.Administrator))]
-        public async Task<IActionResult> GetFullInsurancePackages(int employerId)
+        [HttpGet("GetFullByEmployer")]
+        [Authorize(Roles = nameof(Role.EmployerAdmin))]
+        public async Task<IActionResult> GetFullInsurancePackages()
         {
-            var response = await _insurancePackageService.GetFullInsurancePackages(employerId);
+            var employerIdClaim = User.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.EmployerId);
+
+            if (employerIdClaim == null || !int.TryParse(employerIdClaim.Value, out int id))
+            {
+                return Problem(title: "EmployerId claim not found or invalid");
+            }
+
+            var response = await _insurancePackageService.GetFullInsurancePackages(id);
 
             if (response.Error != null)
             {

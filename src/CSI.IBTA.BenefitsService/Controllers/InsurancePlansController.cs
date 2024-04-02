@@ -2,6 +2,7 @@
 using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CSI.IBTA.Shared.Entities;
 
 namespace CSI.IBTA.BenefitsService.Controllers
 {
@@ -17,7 +18,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetAllPlans(int? customerId)
         {
             var response = await _benefitsService.GetAllPlans(customerId);
@@ -34,7 +35,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpGet("{planId}")]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetPlan(int planId)
         {
             var response = await _benefitsService.GetPlan(planId);
@@ -51,7 +52,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpGet("PlanTypes")]
-        [Authorize]
+        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}, {nameof(Role.Employee)}")]
         public async Task<IActionResult> GetPlanTypes()
         {
             var response = await _benefitsService.GetPlanTypes();
@@ -68,7 +69,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> CreatePlan(int packageId,CreatePlanDto createPlanDto)
         {
             var response = await _benefitsService.CreatePlan(packageId, createPlanDto);
@@ -85,7 +86,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpPatch("{planId}")]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> UpdatePlan(int planId, UpdatePlanDto updatePlanDto)
         {
             var response = await _benefitsService.UpdatePlan(planId, updatePlanDto);
