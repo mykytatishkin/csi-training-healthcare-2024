@@ -68,6 +68,8 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Status,
                     x.RejectionReason)
                 );
+
+            CreateMap<Enrollment, EnrollmentDto>();
         }
     }
 }

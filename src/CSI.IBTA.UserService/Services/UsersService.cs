@@ -81,6 +81,19 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));
         }
 
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetUsersBySSNs(List<string> ssns)
+        {
+            var users = await _unitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Employer)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
+                .Where(u => u.SSN != null && ssns.Contains(u.SSN))
+                .ToListAsync();
+
+            return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));
+        }
+
         public async Task<GenericResponse<NewUserDto>> CreateUser(CreateUserDto createUserDto)
         {
             var existingAccount = await _unitOfWork.Accounts.Find(a => a.Username == createUserDto.UserName);

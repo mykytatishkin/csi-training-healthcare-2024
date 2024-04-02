@@ -1,1 +1,9 @@
 ﻿<p>Import Contributions partial view</p>
+
+<form method="post" enctype="multipart/form-data" asp-controller="Contributions" asp-action="Upload">
+    <div class="form-group">
+        <label>Choose File:</label>
+        <input type="file" name="File" class="form-control-file" />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>

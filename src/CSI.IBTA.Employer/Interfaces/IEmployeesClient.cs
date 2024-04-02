@@ -13,5 +13,6 @@ namespace CSI.IBTA.Employer.Interfaces
             string ssn = "");
 
         Task<GenericResponse<bool?>> CreateEmployee(CreateEmployeeDto command);
+        Task<GenericResponse<IEnumerable<UserDto>>> GetUsersBySSNs(List<string> ssns);
     }
 }

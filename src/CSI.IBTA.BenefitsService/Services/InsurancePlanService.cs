@@ -33,6 +33,23 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<IEnumerable<PlanDto>>(null, planDtos);
         }
 
+        public async Task<GenericResponse<IEnumerable<PlanDto>>> GetActivePlansByNames(List<string> planNames)
+        {
+            var distinctPlanNames = planNames.Distinct();
+
+            var plans = await _unitOfWork.Plans
+                .Include(x => x.Package)
+                .Include(x => x.PlanType)
+                .Where(p => planNames.Contains(p.Name))
+                .Where(p => p.Package.PlanEnd > DateTime.UtcNow)
+                .Where(p => p.Package.PlanStart <= DateTime.UtcNow)
+                .Where(p => p.Package.Initialized.HasValue)
+                .ToListAsync();
+
+            var planDtos = plans.Select(_mapper.Map<PlanDto>);
+            return new GenericResponse<IEnumerable<PlanDto>>(null, planDtos);
+        }
+
         public async Task<GenericResponse<PlanDto>> GetPlan(int planId)
         {
             var plan = await _unitOfWork.Plans
