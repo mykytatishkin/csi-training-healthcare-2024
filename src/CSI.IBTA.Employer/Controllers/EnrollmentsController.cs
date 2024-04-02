@@ -31,6 +31,16 @@ namespace CSI.IBTA.Employer.Controllers
                 Packages = []
             };
 
+            var encryptedEmployeeResponse = await _employeesClient.GetEncryptedEmployee(employerId, employeeId);
+
+            if (encryptedEmployeeResponse.Error != null)
+            {
+                return Problem(
+                    detail: encryptedEmployeeResponse.Error.Title,
+                    statusCode: (int)encryptedEmployeeResponse.Error.StatusCode
+                );
+            }
+
             var packagesResponse = await _insuranceClient.GetEmployerPackages(employerId);
 
             if (packagesResponse.Error != null)
@@ -40,7 +50,7 @@ namespace CSI.IBTA.Employer.Controllers
 
             var plans = packagesResponse.Result!.SelectMany(p => p.Plans).ToList();
             
-            var enrollmentsResponse = await _insuranceClient.GetEmployeeEnrollments(employeeId);
+            var enrollmentsResponse = await _insuranceClient.GetEmployeeEnrollments(employeeId, new GetEnrollmentsDto(encryptedEmployeeResponse.Result!));
 
             if (enrollmentsResponse.Error != null)
             {

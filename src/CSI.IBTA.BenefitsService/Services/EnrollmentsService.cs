@@ -7,6 +7,7 @@ using AutoMapper;
 using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
 using CSI.IBTA.UserService.Interfaces;
+using CSI.IBTA.DB.Migrations.Migrations;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -23,8 +24,14 @@ namespace CSI.IBTA.BenefitsService.Services
             _decodingService = decodingService;
         }
 
-        public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId)
+        public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId, int employerId, byte[] endodedEmplyoerEmployee)
         {
+            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmplyoerEmployee);
+            if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
+
+            if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
+                return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employer does not have access to view this employee enrollments", HttpStatusCode.Forbidden), null);
+
             var enrollments = await _benefitsUnitOfWork.Enrollments
                 .Include(x => x.Plan)
                 .Where(x => x.EmployeeId == employeeId)

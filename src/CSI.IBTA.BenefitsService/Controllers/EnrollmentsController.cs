@@ -1,5 +1,8 @@
 ﻿using CSI.IBTA.BenefitsService.Interfaces;
+using CSI.IBTA.Shared.Constants;
 using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.BenefitsService.Controllers
@@ -15,10 +18,18 @@ namespace CSI.IBTA.BenefitsService.Controllers
             _enrollmentsService = enrollmentsService;
         }
 
-        [HttpGet("{employeeId}")]
-        public async Task<IActionResult> GetEnrollmentsByEmployeeId(int employeeId)
+        [HttpPost("{employeeId}")]
+        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}")]
+        public async Task<IActionResult> GetEnrollmentsByEmployeeId(int employeeId, GetEnrollmentsDto dto)
         {
-            var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId);
+            var employerIdClaim = User.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.EmployerId);
+
+            if (employerIdClaim == null || !int.TryParse(employerIdClaim.Value, out int employerId))
+            {
+                return Problem(title: "EmployerId claim not found or invalid");
+            }
+
+            var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId, employerId, dto.EncodedEmployerEmployee);
 
             if (response.Error != null)
             {
@@ -32,9 +43,9 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpPut("Employer/{employerId}/Employee/{employeeId}")]
+        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> UpsertEnrollments(int employerId, int employeeId, UpsertEnrollmentsDto dto)
         {
-            //todo: after login functionality is implemented, replace employerId with employerId from JWT token
             var response = await _enrollmentsService.UpsertEnrollments(employerId, employeeId, dto.EncodedEmployerEmployee, dto.Enrollments);
 
             if (response.Error != null)

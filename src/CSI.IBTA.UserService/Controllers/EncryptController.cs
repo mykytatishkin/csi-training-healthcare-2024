@@ -1,4 +1,6 @@
-﻿using CSI.IBTA.UserService.Interfaces;
+﻿using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.UserService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.UserService.Controllers
@@ -15,7 +17,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("Employer/{employerId}/Employee/{employeeId}")]
-        //[Authorize($"{nameof(Role.EmployerAdmin)}")]
+        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> EncodeEmployerEmployee(int employerId, int employeeId)
         {
             var response = await _encodingService.GetEncodedEmployerEmployee(employerId, employeeId);
