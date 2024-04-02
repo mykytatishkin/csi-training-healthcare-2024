@@ -28,9 +28,9 @@ namespace CSI.IBTA.Employer.Clients
             {
                 var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
 
-                if (responseError?.title != null)
+                if (responseError?.Title != null)
                 {
-                    var error = new HttpError(responseError.title, response.StatusCode);
+                    var error = new HttpError(responseError.Title, response.StatusCode);
                     return new GenericResponse<List<EnrollmentDto>>(error, null);
                 }
 
@@ -52,9 +52,9 @@ namespace CSI.IBTA.Employer.Clients
             {
                 var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
 
-                if (responseError?.title != null)
+                if (responseError?.Title != null)
                 {
-                    var error = new HttpError(responseError.title, response.StatusCode);
+                    var error = new HttpError(responseError.Title, response.StatusCode);
                     return new GenericResponse<List<PlanDto>>(error, null);
                 }
 
@@ -76,9 +76,9 @@ namespace CSI.IBTA.Employer.Clients
             {
                 var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
 
-                if (responseError?.title != null)
+                if (responseError?.Title != null)
                 {
-                    var error = new HttpError(responseError.title, response.StatusCode);
+                    var error = new HttpError(responseError.Title, response.StatusCode);
                     return new GenericResponse<List<FullInsurancePackageDto>>(error, null);
                 }
 
@@ -102,9 +102,9 @@ namespace CSI.IBTA.Employer.Clients
             {
                 var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
 
-                if (responseError?.title != null)
+                if (responseError?.Title != null)
                 {
-                    var error = new HttpError(responseError.title, response.StatusCode);
+                    var error = new HttpError(responseError.Title, response.StatusCode);
                     return new GenericResponse<List<EnrollmentDto>>(error, null);
                 }
 

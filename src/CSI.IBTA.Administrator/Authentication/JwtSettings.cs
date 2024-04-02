@@ -1,4 +1,4 @@
-﻿namespace CSI.IBTA.AuthService.Authentication
+﻿namespace CSI.IBTA.Administrator.Authentication
 {
     public class JwtSettings
     {

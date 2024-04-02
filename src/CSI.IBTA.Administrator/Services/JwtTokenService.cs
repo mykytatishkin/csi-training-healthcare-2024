@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Shared.Entities;
-using CSI.IBTA.AuthService.Authentication;
+using CSI.IBTA.Administrator.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;

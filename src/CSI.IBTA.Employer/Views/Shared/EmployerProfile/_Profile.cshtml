@@ -1,0 +1,72 @@
+﻿@using CSI.IBTA.Employer.Models
+@model EmployerProfileViewModel;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="~/css/employer-profile.css">
+    <script type="text/javascript" src="~/Scripts/employer-page.js"></script>
+</head>
+<body>
+    <div class="main-container">
+        <div id="employer" class="container">
+            <div class="space-between-container">
+                <label style="margin-right: auto;">
+                    Welcome @Model.Employer.Name (@Model.Employer.Code)
+                </label>
+                <button onclick="showEmployerProfileEditForm(@Model.Employer.Id)" class="btn btn-primary">Edit</button>
+            </div>
+            <div id="employer-profile">
+                <span class="border-label">Profile</span>
+                <div class="container-columns">
+                    <div class="container-column">
+                        <div class="container-row">
+                            <label for="Name">Name:</label>
+                            <span>@Model.Employer.Name</span>
+                        </div>
+                        <div class="container-row">
+                            <label for="Code">Code:</label>
+                            <span>@Model.Employer.Code</span>
+                        </div>
+                        <div class="container-row">
+                            <label for="Email">Email:</label>
+                            <span>@Model.Employer.Email</span>
+                        </div>
+                    </div>
+                    <div class="container-column">
+                        <div class="container-row">
+                            <label for="Street">Street:</label>
+                            <span>@Model.Employer.Street</span>
+                        </div>
+                        <div class="container-row">
+                            <label for="City">City:</label>
+                            <span>@Model.Employer.City</span>
+                        </div>
+                        <div class="container-row">
+                            <label for="State">State:</label>
+                            <span>@Model.Employer.State</span>
+                        </div>
+                        <div class="container-row">
+                            <label for="ZipCode">Zip Code:</label>
+                            <span>@Model.Employer.ZipCode</span>
+                        </div>
+                        <div class="container-row">
+                            <label for="Phone">Phone:</label>
+                            <span>@Model.Employer.Phone</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="border-label">Logo</span>
+                <div class="container-logo">
+                    <div class="logo-preview">
+                        <img id="imagePreview" src="data:image/png;base64,@Model.Employer.EncodedLogo" onerror="this.style.display='none';">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

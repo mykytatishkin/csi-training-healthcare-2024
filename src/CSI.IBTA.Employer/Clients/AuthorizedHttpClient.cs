@@ -1,27 +1,24 @@
-﻿using System.Net.Http.Headers;
+﻿using CSI.IBTA.Employer.Interfaces;
+using System.Net.Http.Headers;
 
 namespace CSI.IBTA.Employer.Clients
 {
     internal class AuthorizedHttpClient : HttpClient
     {
-        // JwtToken stuff is commented, because authentication is not yet implemented.
-        // Will need to be uncommented after it is implemented.
-
-        //private readonly IJwtTokenService _jwtTokenService;
+        private readonly IJwtTokenService _jwtTokenService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthorizedHttpClient> _logger;
 
         public AuthorizedHttpClient(
-            //IJwtTokenService jwtTokenService,
+            IJwtTokenService jwtTokenService,
             IConfiguration configuration,
             ILogger<AuthorizedHttpClient> logger)
         {
-            //_jwtTokenService = jwtTokenService;
+            _jwtTokenService = jwtTokenService;
             _configuration = configuration;
             _logger = logger;
 
-            //string token = _jwtTokenService.GetCachedToken() ?? string.Empty;
-            string token = "";
+            string token = _jwtTokenService.GetCachedToken() ?? string.Empty;
             DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 

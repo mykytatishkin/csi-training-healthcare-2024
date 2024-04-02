@@ -12,4 +12,18 @@ public record EmployeeDto(
     string Firstname,
     string Lastname,
     string SSN,
-    DateTime DateOfBirth);
+    DateTime? DateOfBirth);
+
+public record CreateEmployeeDto(
+    string UserName,
+    string Password,
+    string FirstName,
+    string LastName,
+    string SSN,
+    string PhoneNumber,
+    DateOnly DateOfBirth,
+    string AddressState,
+    string AddressStreet,
+    string AddressCity,
+    string AddressZip,
+    int EmployerId);

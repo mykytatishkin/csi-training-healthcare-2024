@@ -171,7 +171,7 @@ namespace CSI.IBTA.Administrator.Clients
 
         public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId)
         {
-            var defaultErrorMessage = "Failed to create a new employer";
+            var defaultErrorMessage = "Failed to update employer";
             var formData = new MultipartFormDataContent()
             {
                 { new StringContent(dto.Name), nameof(dto.Name) },

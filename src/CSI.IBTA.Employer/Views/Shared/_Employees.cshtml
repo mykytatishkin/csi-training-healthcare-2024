@@ -21,7 +21,7 @@
 </head>
 
 <div class="employee-container">
-    <span class="border-label">Search Employees</span>
+    <span class="border-label-employees">Search Employees</span>
 
     <div class="form-inputs">
         <form asp-action="Employees" method="get" id="employees-search-form">
@@ -51,10 +51,10 @@
     </div>
 
     <div id="add-new-button-parent">
-        <button class="btn btn-primary">Add New</button>
+        <button class="btn btn-primary" onclick="openEmployeeForm(@Model.EmployerId)">Add New</button>
     </div>
 
-    @if (Model.Employees.Count() > 0)
+    @if (Model.Employees.Any())
     {
         <div class="employees-table">
             <table class="table table-striped">
@@ -81,7 +81,7 @@
                                 @Html.DisplayFor(modelItem => item.SSN)
                             </td>
                             <td>
-                                @item.DateOfBirth.ToString("MM/dd/yyyy")
+                                @(item.DateOfBirth?.ToString("MM/dd/yyyy") ?? "N/A")
                             </td>
                             <td>
                                 <button class="anchor-style-button" onclick="showEnrollments(@Model.EmployerId, @item.Id)">Enroll or Update Enrollment</button>
