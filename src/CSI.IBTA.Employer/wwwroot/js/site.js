@@ -31,12 +31,14 @@ function closeModal(modalId) {
     modal.style.display = "none";
 }
 
-function showError(id, text) {
-    let a = document.getElementById(id);
-    document.getElementById(id).innerText = text;
+function showError(errorElementId, text) {
+    let error = document.getElementById(errorElementId);
+    error.innerText = text;
+    error.style.display = "block";
 }
 
 function hideError(errorElementId) {
-    var modalError = document.getElementById(errorElementId);
-    modalError.style.display = "none";
+    let error = document.getElementById(errorElementId);
+    error.innerText = "";
+    error.style.display = "none";
 }

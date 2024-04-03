@@ -60,6 +60,7 @@ function showEnrollmentModal(enrollmentId, planId) {
 function closeEnrollmentModal() {
     var modal = document.getElementById("enrollment-details-modal");
     modal.style.display = "none";
+    hideError('modal-error');
 }
 
 async function fetchEnrollmentData(employerId, employeeId) {
