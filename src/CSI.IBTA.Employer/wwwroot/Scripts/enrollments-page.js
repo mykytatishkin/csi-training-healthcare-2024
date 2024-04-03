@@ -30,7 +30,6 @@ function showEnrollmentModal(enrollmentId, planId) {
     var validPlans = getValidPlans(plan);
 
     if (validPlans.length == 0) {
-        console.log('????');
         showError('enrollments-error', "You don't have any valid plans");
         return;
     }
@@ -151,17 +150,6 @@ function updateEnrollment(enrollmentId) {
     closeEnrollmentModal();
     hideError('modal-error');
     handleEnrollmentsSection();
-}
-
-function showError(errorElementId, error) {
-    var modalError = document.getElementById(errorElementId);
-    modalError.innerText = error;
-    modalError.style.display = "block";
-}
-
-function hideError(errorElementId) {
-    var modalError = document.getElementById(errorElementId);
-    modalError.style.display = "none";
 }
 
 function populatePlanOptions(plans, selectedPlanIndex) {
