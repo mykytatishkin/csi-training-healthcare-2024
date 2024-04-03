@@ -146,15 +146,6 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<EmployerDto>(null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
         }
 
-        public async Task<GenericResponse<EmployerDto>> GetEmployerByAccountId(int accountId)
-        {
-            var e = await _unitOfWork.Users.Include(x => x.Employer).FirstOrDefaultAsync(x => x.AccountId == accountId);
-
-            if (e == null) return new GenericResponse<EmployerDto>(new HttpError("User not found", HttpStatusCode.NotFound), null);
-
-            return new GenericResponse<EmployerDto>(null, new EmployerDto(e.Employer.Id, e.Employer.Name, e.Employer.Code, e.Employer.Email, e.Employer.Street, e.Employer.City, e.Employer.State, e.Employer.Zip, e.Employer.Phone, e.Employer.Logo));
-        }
-
         public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetEmployers(List<int> employerIds)
         {
             var employers = await _unitOfWork.Employers.Find(e => employerIds.Contains(e.Id));
