@@ -120,7 +120,14 @@ th {
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
-    min-width: 60%;
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 60%
 }
 
 .general-container-inner-second {
