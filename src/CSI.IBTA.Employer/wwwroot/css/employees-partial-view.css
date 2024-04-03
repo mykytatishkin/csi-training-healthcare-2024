@@ -120,6 +120,7 @@ th {
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
+    min-width: 60%;
 }
 
 .general-container-inner-second {
@@ -128,6 +129,33 @@ th {
     flex-wrap: wrap;
     justify-content: center;
 }
+
+.form-member-right {
+    display: flex;
+    justify-content: flex-end;
+}
+    .form-member-right label {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+    .form-member-right span {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+.form-member-left {
+    display: flex;
+    justify-content: flex-start;
+}
+    .form-member-left label {
+        padding-right: 30px;
+        padding-left: 30px;
+        /*padding: 5px;*/
+    }
+    .form-member-left span {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
 
 .form-member {
     margin-top: 10px;

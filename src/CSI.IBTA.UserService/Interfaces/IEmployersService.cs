@@ -14,7 +14,8 @@ namespace CSI.IBTA.UserService.Interfaces
         public Task<GenericResponse<bool>> DeleteEmployer(int employerId);
         public Task<GenericResponse<IEnumerable<UserDto>>> GetEmployerUsers(int employerId);
         public Task<GenericResponse<SettingsDto[]>> GetAllEmployerSettings(int employerId);
-        public Task<GenericResponse<bool?>> GetEmployerSettingValue(int employerId, string condition);
+        public Task<GenericResponse<SettingsWithEmployerStateDto?>> GetEmployerSetting(int employerId, string condition);
         public Task<GenericResponse<SettingsDto[]>> UpdateEmployerSettings(int employerId, SettingsDto[] SettingsDtos);
+        public Task<GenericResponse<SettingsWithEmployerStateDto>> UpdateEmployerClaimSetting(int employerId, UpdateClaimSettingDto employerSettingState);
     }
 }

@@ -1,1 +1,38 @@
-﻿<p>Settings partial view</p>
+﻿@model EmployerSettingsViewModel
+<head>
+    <link rel="stylesheet" href="~/css/employees-partial-view.css">
+</head>
+<div class="user-information-section">
+    <form asp-controller="Employer" asp-action="UpdateSettings" method="post" id="employer-settings-form">
+        @Html.HiddenFor(m => m.EmployerId)
+        @Html.HiddenFor(m => m.AdminCondition)
+
+        <span class="border-label">Consumer data management</span>
+        <div class="general-container">
+            <div class="general-container-inner">
+                <div class="form-member-left">
+                    <label for="FollowAdminCondition">Claim Filling</label>
+                    @Html.RadioButtonFor(m => m.FollowAdminCondition, true,
+                             (object)new { onChange = "onFollowAdminSettingClick();onAnySettingClick()" }) 
+                             <span>Administrator Default</span>
+                    @Html.RadioButtonFor(m => m.FollowAdminCondition, false,
+                             !Model.AdminCondition ? (object)new { disabled = "disabled" } : (object)new { onChange = "onFollowAdminSettingClick();onAnySettingClick()" })
+                             <span>Customize</span>
+                </div>
+                <div class="form-member-right">
+                    @Html.RadioButtonFor(m => m.EmployerAdminCondition, true,
+                             !Model.AdminCondition || Model.FollowAdminCondition ? (object)new { disabled = "disabled", onChange = "onAnySettingClick()" } : (object)new { onChange = "onAnySettingClick()" })
+                    <span>Allow</span>
+                    @Html.RadioButtonFor(m => m.EmployerAdminCondition, false,
+                             !Model.AdminCondition || Model.FollowAdminCondition ? (object)new { disabled = "disabled", onChange = "onAnySettingClick()" } : (object)new { onChange = "onAnySettingClick()" })
+                    <span>Prevent</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div id="setting-errors" class="text-danger"></div>
+            <button id="submit-button" class="align-left custom-button" onclick="saveSettings()" disabled type="button">Submit</button>
+            <button class="align-left custom-button secondary" onclick="showEmployees(@Model.EmployerId)" type="button">Cancel</button>
+        </div>
+    </form>
+</div>

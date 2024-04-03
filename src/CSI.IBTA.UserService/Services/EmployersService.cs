@@ -224,7 +224,7 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<SettingsDto[]>(null, e.Select(s => new SettingsDto(s.Condition, s.State)).ToArray());
         }
 
-        public async Task<GenericResponse<bool?>> GetEmployerSettingValue(int employerId, string condition)
+        public async Task<GenericResponse<SettingsWithEmployerStateDto?>> GetEmployerSetting(int employerId, string condition)
         {
             bool wrongCondition = true;
             foreach (var s in _defaultSettings)
@@ -234,19 +234,20 @@ namespace CSI.IBTA.UserService.Services
                     break;
                 }
             if (wrongCondition)
-                return new GenericResponse<bool?>(new HttpError("Wrong settings type", HttpStatusCode.NotFound), null);
+                return new GenericResponse<SettingsWithEmployerStateDto?>(new HttpError("Wrong settings type", HttpStatusCode.NotFound), null);
 
-            var e = await _unitOfWork.Settings.Find(s => s.EmployerId == employerId && s.Condition.Equals(condition));
-            if (e == null) return new GenericResponse<bool?>(new HttpError("Settings not found", HttpStatusCode.NotFound), null);
+            var employerSetting = (await _unitOfWork.Settings.Find(s => s.EmployerId == employerId && s.Condition.Equals(condition)))?.First();
+            if (employerSetting == null) return new GenericResponse<SettingsWithEmployerStateDto?>(new HttpError("Settings not found", HttpStatusCode.NotFound), null);
+            var settingDto = new SettingsWithEmployerStateDto(employerSetting.Condition, employerSetting.State, employerSetting.EmployerState);
 
-            return new GenericResponse<bool?>(null, e.First().State);
+            return new GenericResponse<SettingsWithEmployerStateDto?>(null, settingDto);
         }
 
         public async Task<GenericResponse<SettingsDto[]>> UpdateEmployerSettings(int employerId, SettingsDto[] SettingsDtos)
         {
             var e = await _unitOfWork.Employers.Include(e => e.Settings)
                 .FirstOrDefaultAsync(s => s.Id == employerId);
-            if (e == null) return new GenericResponse<SettingsDto[]>(new HttpError("Settings not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericResponse<SettingsDto[]>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             foreach (var newSetting in e.Settings)
             {
@@ -265,7 +266,29 @@ namespace CSI.IBTA.UserService.Services
             await _unitOfWork.CompleteAsync();
 
             return new GenericResponse<SettingsDto[]>(null, e.Settings.Select(s => new SettingsDto(s.Condition, s.State)).ToArray());
+        }
 
+        public async Task<GenericResponse<SettingsWithEmployerStateDto>> UpdateEmployerClaimSetting(int employerId, UpdateClaimSettingDto updateClaimSettingDto)
+        {
+            var employer = await _unitOfWork.Employers.Include(e => e.Settings)
+                .FirstOrDefaultAsync(s => s.Id == employerId);
+            if (employer == null) return new GenericResponse<SettingsWithEmployerStateDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+
+
+            var setting = employer.Settings.Where(s => s.Condition.Equals("ClaimFilling")).FirstOrDefault();
+            if (setting == null)
+            {
+                return new GenericResponse<SettingsWithEmployerStateDto>(new HttpError("Setting not found", HttpStatusCode.NotFound), null);
+            }
+
+            setting.EmployerState = updateClaimSettingDto.EmployerState;
+
+            var success = _unitOfWork.Employers.Upsert(employer);
+            if (!success)
+                return new GenericResponse<SettingsWithEmployerStateDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
+            await _unitOfWork.CompleteAsync();
+
+            return new GenericResponse<SettingsWithEmployerStateDto>(null, new SettingsWithEmployerStateDto(setting.Condition, setting.State, setting.EmployerState));
         }
     }
 }
