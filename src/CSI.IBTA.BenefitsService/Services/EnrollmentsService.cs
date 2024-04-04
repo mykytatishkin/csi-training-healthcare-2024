@@ -23,9 +23,9 @@ namespace CSI.IBTA.BenefitsService.Services
             _decodingService = decodingService;
         }
 
-        public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId, int employerId, byte[] endodedEmployerEmployee)
+        public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId, int employerId, byte[] encodedEmployerEmployee)
         {
-            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmployerEmployee);
+            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(encodedEmployerEmployee);
             if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
 
             if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
@@ -41,9 +41,9 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<List<EnrollmentDto>>(null, enrollments.Select(x => _mapper.Map<EnrollmentDto>(x)).ToList());
         }
 
-        public async Task<GenericResponse<List<EnrollmentDto>>> UpsertEnrollments(int employerId, int employeeId, byte[] endodedEmployerEmployee, List<UpsertEnrollmentDto> enrollments)
+        public async Task<GenericResponse<List<EnrollmentDto>>> UpsertEnrollments(int employerId, int employeeId, byte[] encodedEmployerEmployee, List<UpsertEnrollmentDto> enrollments)
         {
-            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmployerEmployee);
+            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(encodedEmployerEmployee);
             if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
 
             if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
