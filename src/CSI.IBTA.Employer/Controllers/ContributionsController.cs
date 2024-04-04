@@ -26,11 +26,9 @@ namespace CSI.IBTA.Employer.Controllers
         [HttpPost("Upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            // Fix
             if (file == null || file.Length == 0)
             {
-                ModelState.AddModelError("File", "Please select a file.");
-                return View(file);
+                return UnprocessableEntity();
             }
 
             var contributionsFileResponse = await _contributionService.ProcessContributionsFile(file);

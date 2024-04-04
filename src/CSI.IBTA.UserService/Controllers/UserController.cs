@@ -71,7 +71,7 @@ namespace CSI.IBTA.UserService.Controllers
 
         [HttpPost("~/api/v1/UsersByUsernames")]
         [Authorize]
-        public async Task<IActionResult> GetUsersBySSN(List<string> usernames)
+        public async Task<IActionResult> GetUsersByUsernames(List<string> usernames)
         {
             var response = await _userService.GetUsersByUsernames(usernames);
 

@@ -1,19 +1,22 @@
 ﻿function showContributions() {
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
-
-        document.getElementById('contributions-file-input').addEventListener('change', function () {
-            if (this.files.length == 0) {
-                document.querySelector('.file-name').textContent = 'No file selected';
-                return;
-            }
-            var fileName = this.files[0].name;
-            document.querySelector('.file-name').textContent = fileName;
-        });
+        addInputListener();
     }
 
     route = '/Contributions';
     fetchRoute(route, onSuccess, null);
+}
+
+function addInputListener() {
+    document.getElementById('contributions-file-input').addEventListener('change', function () {
+        if (this.files.length == 0) {
+            document.querySelector('.file-name').textContent = 'No file selected';
+            return;
+        }
+        var fileName = this.files[0].name;
+        document.querySelector('.file-name').textContent = fileName;
+    });
 }
 
 function importContributions() {
@@ -29,7 +32,7 @@ function importContributions() {
 
     if (fileInput.files.length == 0) {
         let errorsElement = document.getElementById('import-contributions-errors');
-        errorsElement.innerText = 'Select contributions file';
+        errorsElement.innerText = 'Contributions file is not selected';
         return;
     }
 
@@ -43,19 +46,31 @@ function importContributions() {
     fetch('/Contributions/Upload', options)
         .then(async response => {
             if (!response.ok) {
+                if (response.status == 422) {
+                    errorsElement.innerText = 'File is empty';
+                    return;
+                }
+
                 let responseJson = await response.json();
+
                 if (responseJson.errors == null) {
                     throw new Error('Network response was not ok');
-                } else {
-                    let errorsElement = document.getElementById('import-contributions-errors');
-                    errorsElement.innerText = '';
-                    errorsElement.innerText += 'The import file does not pass validation. \n';
-                    responseJson.errors.forEach(error => {
-                        errorsElement.innerText += error + '\n';
-                    });
                 }
+
+                errorsElement.innerText = '';
+                errorsElement.innerText += 'The import file does not pass validation. \n';
+                responseJson.errors.forEach(error => {
+                    errorsElement.innerText += error + '\n';
+                });
             } else {
-                successElement.style.display = 'block';
+                function onSuccess(data) {
+                    document.getElementById('main-partial-screen').innerHTML = data;
+                    document.getElementById('import-contributions-success').style.display = 'block';
+                    addInputListener();
+                }
+
+                route = '/Contributions';
+                fetchRoute(route, onSuccess, null);
             }
         })
         .catch(error => {

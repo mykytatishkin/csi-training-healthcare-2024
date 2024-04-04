@@ -47,24 +47,7 @@ namespace CSI.IBTA.Employer.Services
                         return new(null, new() { Errors = invalidFileResponse });
                     }
 
-                    for (int i = 0; i < content.Length; i++)
-                    {
-                        if (string.IsNullOrEmpty(content[i]))
-                        {
-                            errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[i]} is empty");
-                        }
-                    }
-
-                    if (!decimal.TryParse(content[2], out decimal contribution))
-                    {
-                        errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is not a number");
-                    }
-
-                    if (contribution < 0)
-                    {
-                        Console.WriteLine($"Record #{recordNumber} failed because {columnsMap[2]} is negative");
-                        errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is negative");
-                    }
+                    ValidateContributionLine(content, recordNumber, columnsMap, ref errors, out decimal contribution);
 
                     var contributionEntry = new UnprocessedContributionDto
                     (
@@ -80,50 +63,117 @@ namespace CSI.IBTA.Employer.Services
                 }
             }
 
+            var response = await GetDataFromDatabase(unprocessedContributions);
+
+            if (response.Error != null)
+            {
+                return new(response.Error, null);
+            }
+
+            (List<UserDto> users, List<PlanDto> plans, List<EnrollmentDto> enrollments) = response.Result;
+
+            List<ProcessedContributionDto> processedContributions = GetProcessedContributions(
+                unprocessedContributions, 
+                users, 
+                plans, 
+                enrollments,
+                columnsMap,
+                ref errors);
+
+            var orderedErrors = errors.OrderBy(e => e.Key).SelectMany(e => e.Value).ToList();
+
+            return new(null, new ContributionsResponse()
+            {
+                ProcessedContributions = processedContributions,
+                Errors = orderedErrors
+            });
+        }
+
+        private void ValidateContributionLine(
+            string[] content,
+            int recordNumber,
+            Dictionary<int, string> columnsMap,
+            ref Dictionary<int, List<string>> errors,
+            out decimal contribution)
+        {
+            for (int i = 0; i < content.Length; i++)
+            {
+                if (string.IsNullOrEmpty(content[i]))
+                {
+                    errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[i]} is empty");
+                }
+            }
+
+            if (!decimal.TryParse(content[2], out contribution))
+            {
+                errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is not a number");
+            }
+
+            if (contribution < 0)
+            {
+                errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is negative");
+            }
+        }
+
+        private async Task<GenericResponse<(List<UserDto>, List<PlanDto>, List<EnrollmentDto>)>> GetDataFromDatabase(
+            List<UnprocessedContributionDto> unprocessedContributions)
+        {
             var usernames = unprocessedContributions.Select(c => c.Username).Distinct().ToList();
             var usersResponse = await _employeesClient.GetUsersByUsernames(usernames);
 
             if (usersResponse.Error != null)
             {
-                return new(usersResponse.Error, null);
+                return new(usersResponse.Error, (null, null, null)!);
             }
 
             var users = usersResponse.Result;
-            var userIds = users!.Select(users => users.Id).Distinct().ToList();
 
             var planNames = unprocessedContributions.Select(c => c.PlanName).Distinct().ToList();
             var plansResponse = await _plansClient.GetPlansByNames(planNames);
 
             if (plansResponse.Error != null)
             {
-                return new(plansResponse.Error, null);
+                return new(plansResponse.Error, (null, null, null)!);
             }
 
             var plans = plansResponse.Result;
 
+            var userIds = users!.Select(users => users.Id).Distinct().ToList();
             var enrollmentsResponse = await _enrollmentsClient.GetEnrollmentsByUserIds(userIds);
 
             if (enrollmentsResponse.Error != null)
             {
-                return new(enrollmentsResponse.Error, null);
+                return new(enrollmentsResponse.Error, (null, null, null)!);
             }
 
             var enrollments = enrollmentsResponse.Result;
 
+            return new(null, (users!.ToList(), plans!.ToList(), enrollments!.ToList()));
+        }
+
+        private List<ProcessedContributionDto> GetProcessedContributions(
+            List<UnprocessedContributionDto> unprocessedContributions, 
+            List<UserDto> users,
+            List<PlanDto> plans,
+            List<EnrollmentDto> enrollments,
+            Dictionary<int, string> columnsMap,
+            ref Dictionary<int, List<string>> errors)
+        {
             List<ProcessedContributionDto> processedContributions = [];
 
             foreach (var unprocessedContribution in unprocessedContributions)
             {
+                int recordNumber = unprocessedContribution.RecordNumber;
                 bool valuesExistInDb = true;
 
                 UserDto? user = null;
                 if (!string.IsNullOrEmpty(unprocessedContribution.Username))
                 {
-                    user = users!.Where(u => u.UserName == unprocessedContribution.Username).FirstOrDefault();
+                    user = users!.FirstOrDefault(u => u.UserName == unprocessedContribution.Username);
 
                     if (user == null)
                     {
-                        errors[unprocessedContribution.RecordNumber].Add($"Record #{unprocessedContribution.RecordNumber} failed because {columnsMap[0]} does not exist in DB");
+                        errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[0]} does not exist in DB");
                         valuesExistInDb = false;
                     }
                 }
@@ -131,11 +181,11 @@ namespace CSI.IBTA.Employer.Services
                 PlanDto? plan = null;
                 if (!string.IsNullOrEmpty(unprocessedContribution.PlanName))
                 {
-                    plan = plans!.Where(p => p.Name == unprocessedContribution.PlanName).FirstOrDefault();
+                    plan = plans!.FirstOrDefault(p => p.Name == unprocessedContribution.PlanName);
 
                     if (plan == null)
                     {
-                        errors[unprocessedContribution.RecordNumber].Add($"Record #{unprocessedContribution.RecordNumber} failed because {columnsMap[1]} does not exist in DB or is inactive");
+                        errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[1]} does not exist in DB or is inactive");
                         valuesExistInDb = false;
                     }
                 }
@@ -143,11 +193,11 @@ namespace CSI.IBTA.Employer.Services
                 EnrollmentDto? enrollment = null;
                 if (user != null && plan != null)
                 {
-                    enrollment = enrollments!.Where(e => e.PlanId == plan.Id && e.EmployeeId == user.Id).FirstOrDefault();
+                    enrollment = enrollments!.FirstOrDefault(e => e.PlanId == plan.Id && e.EmployeeId == user.Id);
 
                     if (enrollment == null)
                     {
-                        errors[unprocessedContribution.RecordNumber].Add($"Record #{unprocessedContribution.RecordNumber} failed because {columnsMap[0]} is not enrolled into specified plan");
+                        errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[0]} is not enrolled into specified plan");
                         valuesExistInDb = false;
                     }
                 }
@@ -165,13 +215,7 @@ namespace CSI.IBTA.Employer.Services
                 processedContributions.Add(processedContribution);
             }
 
-            var orderedErrors = errors.OrderBy(e => e.Key).SelectMany(e => e.Value).ToList();
-
-            return new(null, new ContributionsResponse()
-            {
-                ProcessedContributions = processedContributions,
-                Errors = orderedErrors
-            });
+            return processedContributions;
         }
     }
 }
