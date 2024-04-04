@@ -24,7 +24,7 @@ namespace CSI.IBTA.Employer.Services
                 { 1, "Employee plan name" },
                 { 2, "Contribution amount" },
             };
-            
+
             Dictionary<int, List<string>> errors = [];
             List<UnprocessedContributionDto> unprocessedContributions = [];
 
@@ -43,7 +43,7 @@ namespace CSI.IBTA.Employer.Services
 
                     if (content.Length != 3)
                     {
-                        var invalidFileResponse = new Dictionary<int, List<string>> { { -1, [$"The import file should contain only the records: {string.Join(", ", columnsMap.Values)}"] } };
+                        List<string> invalidFileResponse = [$"The import file should contain only the records: {string.Join(", ", columnsMap.Values)}"];
                         return new(null, new() { Errors = invalidFileResponse });
                     }
 
@@ -165,7 +165,13 @@ namespace CSI.IBTA.Employer.Services
                 processedContributions.Add(processedContribution);
             }
 
-            return new(null, new ContributionsResponse() { ProcessedContributions = processedContributions, Errors = errors });
+            var orderedErrors = errors.OrderBy(e => e.Key).SelectMany(e => e.Value).ToList();
+
+            return new(null, new ContributionsResponse()
+            {
+                ProcessedContributions = processedContributions,
+                Errors = orderedErrors
+            });
         }
     }
 }

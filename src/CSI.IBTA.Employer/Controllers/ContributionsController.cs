@@ -6,6 +6,7 @@ using System.Reflection;
 namespace CSI.IBTA.Employer.Controllers
 {
     [TypeFilter(typeof(AuthenticationFilter))]
+    [Route("{controller}")]
     public class ContributionsController : Controller
     {
         private readonly IContributionsService _contributionService;
@@ -42,13 +43,23 @@ namespace CSI.IBTA.Employer.Controllers
                 );
             }
 
-            if (contributionsFileResponse.Result!.Errors.Sum(e => e.Value.Count) > 0)
+            var processedResults = contributionsFileResponse.Result!;
+
+            if (processedResults.Errors.Count > 0)
             {
-                // Return errors
-            } else
+                return BadRequest(new { processedResults.Errors });
+            }
+            else
             {
-                // Send transactions
-                await _contributionsClient.CreateContributions(contributionsFileResponse.Result.ProcessedContributions);
+                var createContributionsResponse = await _contributionsClient.CreateContributions(processedResults.ProcessedContributions);
+
+                if (createContributionsResponse.Error != null)
+                {
+                    return Problem(
+                        title: createContributionsResponse.Error.Title,
+                        statusCode: (int)createContributionsResponse.Error.StatusCode
+                    );
+                }
             }
 
             return Ok();
