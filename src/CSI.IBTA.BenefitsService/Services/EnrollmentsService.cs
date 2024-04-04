@@ -7,7 +7,6 @@ using AutoMapper;
 using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
 using CSI.IBTA.UserService.Interfaces;
-using CSI.IBTA.DB.Migrations.Migrations;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -24,9 +23,9 @@ namespace CSI.IBTA.BenefitsService.Services
             _decodingService = decodingService;
         }
 
-        public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId, int employerId, byte[] endodedEmplyoerEmployee)
+        public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId, int employerId, byte[] endodedEmployerEmployee)
         {
-            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmplyoerEmployee);
+            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmployerEmployee);
             if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
 
             if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
@@ -42,9 +41,9 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<List<EnrollmentDto>>(null, enrollments.Select(x => _mapper.Map<EnrollmentDto>(x)).ToList());
         }
 
-        public async Task<GenericResponse<List<EnrollmentDto>>> UpsertEnrollments(int employerId, int employeeId, byte[] endodedEmplyoerEmployee, List<UpsertEnrollmentDto> enrollments)
+        public async Task<GenericResponse<List<EnrollmentDto>>> UpsertEnrollments(int employerId, int employeeId, byte[] endodedEmployerEmployee, List<UpsertEnrollmentDto> enrollments)
         {
-            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmplyoerEmployee);
+            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(endodedEmployerEmployee);
             if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
 
             if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
@@ -105,9 +104,9 @@ namespace CSI.IBTA.BenefitsService.Services
                     Plan = plans.First(x => x.Id == e.PlanId)
                 };
                 await _benefitsUnitOfWork.Enrollments.Add(enrollment);
-                await _benefitsUnitOfWork.CompleteAsync();
                 upserted.Add(_mapper.Map<EnrollmentDto>(enrollment));
             }
+            await _benefitsUnitOfWork.CompleteAsync();
 
             return new GenericResponse<List<EnrollmentDto>>(null, upserted);
         }

@@ -1,3 +1,4 @@
+using CSI.IBTA.Employer.Extensions;
 using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Shared.Constants;
@@ -21,15 +22,14 @@ namespace CSI.IBTA.Employer.Controllers
         public async Task<IActionResult> Index()
         {
             var token = _jwtTokenService.GetCachedToken();
-            var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.EmployerId);
+            var employerId = JwtSecurityTokenExtensions.GetEmployerId(token);
 
-            if (employerIdClaim == null || !int.TryParse(employerIdClaim.Value, out int employerId))
+            if (employerId == null)
             {
                 return Problem(title: "Employer ID claim not found or invalid");
             }
 
-            var res = await _employersClient.GetEmployerById(employerId);
+            var res = await _employersClient.GetEmployerById((int) employerId);
 
             if (res.Error != null || res.Result == null)
             {

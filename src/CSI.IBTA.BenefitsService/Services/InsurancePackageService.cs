@@ -6,7 +6,6 @@ using CSI.IBTA.Shared.DTOs;
 using System.Net;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace CSI.IBTA.BenefitsService.Services
 {

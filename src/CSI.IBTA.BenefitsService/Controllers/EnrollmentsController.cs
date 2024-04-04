@@ -1,5 +1,5 @@
-﻿using CSI.IBTA.BenefitsService.Interfaces;
-using CSI.IBTA.Shared.Constants;
+﻿using CSI.IBTA.BenefitsService.Extensions;
+using CSI.IBTA.BenefitsService.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -22,14 +22,11 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> GetEnrollmentsByEmployeeId(int employeeId, GetEnrollmentsDto dto)
         {
-            var employerIdClaim = User.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.EmployerId);
+            var employerId = User.GetEmployerId();
+            
+            if(employerId == null) return Problem(title: "EmployerId claim not found or invalid");
 
-            if (employerIdClaim == null || !int.TryParse(employerIdClaim.Value, out int employerId))
-            {
-                return Problem(title: "EmployerId claim not found or invalid");
-            }
-
-            var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId, employerId, dto.EncodedEmployerEmployee);
+            var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId, (int) employerId, dto.EncodedEmployerEmployee);
 
             if (response.Error != null)
             {

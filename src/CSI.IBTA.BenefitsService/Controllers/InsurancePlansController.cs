@@ -52,7 +52,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpGet("PlanTypes")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}, {nameof(Role.Employee)}")]
+        [Authorize]
         public async Task<IActionResult> GetPlanTypes()
         {
             var response = await _benefitsService.GetPlanTypes();

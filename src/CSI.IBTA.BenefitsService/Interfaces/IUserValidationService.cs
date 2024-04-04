@@ -2,9 +2,8 @@
 
 namespace CSI.IBTA.BenefitsService.Interfaces
 {
-    public interface IEnrollmentsService
+    public interface IUserValidationService
     {
-        Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId, int employerId, byte[] endodedEmplyoerEmployee);
-        Task<GenericResponse<List<EnrollmentDto>>> UpsertEnrollments(int employerId, int employeeId, byte[] endodedEmplyoerEmployee, List<UpsertEnrollmentDto> enrollments);
+        Task<GenericResponse<bool>> DoesEmployeeBelongToEmployer(int employerId, int employeeId);
     }
 }
