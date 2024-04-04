@@ -237,7 +237,7 @@ namespace CSI.IBTA.UserService.Services
         public async Task<GenericResponse<SettingsDto[]>> UpdateEmployerSettings(int employerId, SettingsDto[] SettingsDtos)
         {
             var e = await _unitOfWork.Employers.Include(e => e.Settings)
-                .FirstOrDefaultAsync(s => s.Id == employerId);
+                .SingleOrDefaultAsync(s => s.Id == employerId);
             if (e == null) return new GenericResponse<SettingsDto[]>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             foreach (var newSetting in e.Settings)
@@ -262,7 +262,7 @@ namespace CSI.IBTA.UserService.Services
         public async Task<GenericResponse<SettingsWithEmployerStateDto>> UpdateEmployerClaimSetting(int employerId, UpdateClaimSettingDto updateClaimSettingDto)
         {
             var employer = await _unitOfWork.Employers.Include(e => e.Settings)
-                .FirstOrDefaultAsync(s => s.Id == employerId);
+                .SingleOrDefaultAsync(s => s.Id == employerId);
             if (employer == null) return new GenericResponse<SettingsWithEmployerStateDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
 

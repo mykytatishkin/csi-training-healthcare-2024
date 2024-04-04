@@ -21,10 +21,9 @@ namespace CSI.IBTA.Employer.Clients
         {
             var requestUrl = string.Format(EmployerEndpoints.GetEmployerSetting, employerId, "ClaimFilling");
             var response = await _httpClient.GetAsync(requestUrl);
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var claimFillingSetting = await response.Content.ReadFromJsonAsync<SettingsWithEmployerStateDto>();
             response.EnsureSuccessStatusCode();
-            var employees = JsonConvert.DeserializeObject<SettingsWithEmployerStateDto>(responseContent);
-            return new GenericResponse<SettingsWithEmployerStateDto>(null, employees);
+            return new GenericResponse<SettingsWithEmployerStateDto>(null, claimFillingSetting);
         }
 
         public async Task<GenericResponse<SettingsWithEmployerStateDto>> UpdateClaimSetting(
@@ -34,10 +33,9 @@ namespace CSI.IBTA.Employer.Clients
             var requestContent = JsonContent.Create(updateClaimSettingDto);
 
             var response = await _httpClient.PutAsync(requestUrl, requestContent);
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var claimFillingSetting = await response.Content.ReadFromJsonAsync<SettingsWithEmployerStateDto>();
             response.EnsureSuccessStatusCode();
-            var employees = JsonConvert.DeserializeObject<SettingsWithEmployerStateDto>(responseContent);
-            return new GenericResponse<SettingsWithEmployerStateDto>(null, employees);
+            return new GenericResponse<SettingsWithEmployerStateDto>(null, claimFillingSetting);
         }
     }
 }
