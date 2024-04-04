@@ -67,7 +67,13 @@ namespace CSI.IBTA.UserService.Mapping
                     employer.Phone,
                     employer.Logo));
 
-            CreateMap<User, EmployeeDto>();
+            CreateMap<User, EmployeeDto>()
+                .ConstructUsing(user => new EmployeeDto(
+                    user.Firstname,
+                    user.Lastname,
+                    user.SSN,
+                    user.DateOfBirth,
+                    user.Id));
         }
     }
 }

@@ -63,7 +63,7 @@
             <div class="general-container-inner-second">
                 <div class="form-member">
                     <label for="Username">User Name:</label>
-                    <input asp-for="Username" type="text" required defaultvalue="@Model.Username" oninput="setCustomValidity('')" />
+                    <input asp-for="Username" type="text" required defaultvalue="@Model.Username" oninput="setCustomValidity('')" disabled="@(Model.ActionName == "UpdateEmployee" ? "disabled" : null)" />
                 </div>
                 <div class="form-member">
                     <label for="Password">Password:</label>
@@ -83,7 +83,7 @@
 <div id="confirmModal" class="modal" onclick="closeModal('confirmModal')">
     <div class="modal-content" onclick="event.stopPropagation();">
         <span class="close" onclick="closeModal('confirmModal')">&times;</span>
-        <p id="confirmModalText">User has been successfully created</p>
+        <p id="confirmModalText">User has been successfully saved</p>
         <div class="modal-buttons">
             <button onClick="closeModal('confirmModal')" class="btn btn-outline-primary">Ok</button>
         </div>

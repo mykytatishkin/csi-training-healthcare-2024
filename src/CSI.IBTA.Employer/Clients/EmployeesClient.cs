@@ -49,5 +49,37 @@ namespace CSI.IBTA.Employer.Clients
 
             return new GenericResponse<bool?>(null, true);
         }
+
+        public async Task<GenericResponse<CreateEmployeeDto>> GetEmployee(int id)
+        {
+            var response = await _httpClient.GetAsync(string.Format(EmployeeEndpoints.GetEmployee, id));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<HttpError>(errorResponse) ?? HttpErrors.GenericError;
+                return new GenericResponse<CreateEmployeeDto>(error, null);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var employee = JsonConvert.DeserializeObject<CreateEmployeeDto>(responseContent);
+            return new GenericResponse<CreateEmployeeDto>(null, employee);
+        }
+
+        public async Task<GenericResponse<bool?>> UpdateEmployee(int? id, CreateEmployeeDto dto)
+        {
+            var jsonBody = JsonConvert.SerializeObject(dto);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync(string.Format(EmployeeEndpoints.UpdateEmployee, id), content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<HttpError>(errorResponse) ?? HttpErrors.GenericError;
+                return new GenericResponse<bool?>(error, false);
+            }
+
+            return new GenericResponse<bool?>(null, true);
+        }
     }
 }

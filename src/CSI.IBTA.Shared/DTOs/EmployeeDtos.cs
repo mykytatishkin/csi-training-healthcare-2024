@@ -11,9 +11,11 @@ public record EmployeeDto(
     string Firstname,
     string Lastname,
     string SSN,
-    DateTime? DateOfBirth);
+    DateTime? DateOfBirth,
+    int UserId);
 
 public record CreateEmployeeDto(
+    int UserId,
     string UserName,
     string Password,
     string FirstName,

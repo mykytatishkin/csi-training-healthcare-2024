@@ -56,5 +56,35 @@ namespace CSI.IBTA.UserService.Controllers
 
             return Ok(response.Result);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEmployee(int id)
+        {
+            var response = await _employeesService.GetEmployee(id);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] CreateEmployeeDto dto)
+        {
+            var response = await _employeesService.UpdateEmployee(id, dto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
+            }
+
+            return Ok(response.Result);
+        }
     }
 }

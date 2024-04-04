@@ -83,12 +83,15 @@ namespace CSI.IBTA.Employer.Controllers
         [HttpPost("CreateEmployee")]
         public async Task<IActionResult> CreateEmployee(EmployeeViewModel viewModel)
         {
+            viewModel.ActionName = "CreateEmployee";
+
             if (!ModelState.IsValid)
             {
                 return PartialView("_EmployeeForm", viewModel);
             }
 
             var createEmployeeDto = new CreateEmployeeDto(
+                0,
                 viewModel.Username,
                 viewModel.Password,
                 viewModel.Firstname,
@@ -113,6 +116,88 @@ namespace CSI.IBTA.Employer.Controllers
             }
 
             ViewBag.SuccessMessage = "Employee created successfully!";
+            return PartialView("_EmployeeForm", new EmployeeViewModel());
+        }
+
+        [HttpGet("UpdateEmployee")]
+        public async Task<IActionResult> UpdateEmployee(int id, string employerId)
+        {
+            var (httpError, employee) = await _employeeClient.GetEmployee(id);
+
+            if (httpError != null)
+            {
+                return Problem(
+                    statusCode: (int)httpError.StatusCode,
+                    title: httpError.Title);
+            }
+
+            var viewModel = new EmployeeViewModel()
+            {
+                ActionName = "UpdateEmployee",
+                UserId = employee.UserId,
+                Username = employee.UserName,
+                Password = employee.Password,
+                Firstname = employee.FirstName,
+                Lastname = employee.LastName,
+                SSN = employee.SSN,
+                Phone = employee.PhoneNumber,
+                DateOfBirth = employee.DateOfBirth,
+                State = employee.AddressState,
+                Street = employee.AddressStreet,
+                City = employee.AddressCity,
+                ZipCode = employee.AddressZip,
+                EmployerId = employee.EmployerId
+            };
+
+            return PartialView("_EmployeeForm", viewModel);
+        }
+
+        [HttpPut("UpdateEmployee")]
+        public async Task<IActionResult> UpdateEmployee(EmployeeViewModel viewModel)
+        {
+            var (httpError, existingEmployee) = await _employeeClient.GetEmployee(viewModel.UserId.Value);
+            if (httpError != null)
+            {
+                return Problem(
+                    statusCode: (int)httpError.StatusCode,
+                    title: httpError.Title);
+            }
+
+            viewModel.Username = existingEmployee.UserName; // Username is not editable
+            ModelState.Remove("Username");
+            viewModel.ActionName = "UpdateEmployee";
+
+            if (!ModelState.IsValid)
+            {
+                return PartialView("_EmployeeForm", viewModel);
+            }
+
+            var createEmployeeDto = new CreateEmployeeDto(
+                viewModel.UserId.Value,
+                viewModel.Username,
+                viewModel.Password,
+                viewModel.Firstname,
+                viewModel.Lastname,
+                viewModel.SSN,
+                viewModel.Phone,
+                viewModel.DateOfBirth,
+                viewModel.State,
+                viewModel.Street,
+                viewModel.City,
+                viewModel.ZipCode,
+                viewModel.EmployerId
+                );
+
+            var response = await _employeeClient.UpdateEmployee(viewModel.UserId, createEmployeeDto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
+            }
+
+            ViewBag.SuccessMessage = "Employee updated successfully!";
             return PartialView("_EmployeeForm", new EmployeeViewModel());
         }
     }

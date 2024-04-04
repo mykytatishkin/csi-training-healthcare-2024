@@ -10,6 +10,18 @@ function openEmployeeForm(employerId) {
     fetchRoute(route, onSuccess, null);
 }
 
+function openUpdateEmployeeForm(employeeId, employerId) {
+    function onSuccess(data) {
+        document.getElementById('main-partial-screen').innerHTML = data;
+    }
+
+    route = '/Employees/UpdateEmployee?' + new URLSearchParams({
+        id: employeeId,
+        employerId: employerId
+    });
+
+    fetchRoute(route, onSuccess, null);
+}
 
 function setSubmit(operationStart) {
     if (operationStart) {
@@ -40,8 +52,9 @@ function saveEmployeeData() {
         return;
     }
 
-    fetch(`/Employees/${formData.get('ActionName')}`, {
-        method: 'POST',
+    const actionName = formData.get('ActionName');
+    fetch(`/Employees/${actionName}`, {
+        method: actionName === 'CreateEmployee' ? 'POST' : 'PUT',
         body: formData,
     })
         .then(function (response) {

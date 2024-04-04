@@ -72,7 +72,7 @@
                     {
                         <tr>
                             <td>
-                                <a href="#">@Html.DisplayFor(modelItem => item.Firstname)</a>
+                                <a href="#" onclick="openUpdateEmployeeForm(@item.UserId, @Model.EmployerId)">@Html.DisplayFor(modelItem => item.Firstname)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Lastname)

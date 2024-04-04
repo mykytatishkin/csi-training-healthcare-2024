@@ -24,12 +24,12 @@ namespace CSI.IBTA.UserService.Services
         public async Task<GenericResponse<PagedEmployeesResponse>> GetEmployees(int page, int pageSize, int employerId, string firstname = "", string lastname = "", string ssn = "")
         {
             var filteredEmployees = _userUnitOfWork.Users.GetSet()
-                .Include(c => c.Account)
-                .Where(c => c.EmployerId == employerId)
-                .Where(c => c.Account.Role == Role.Employee)
-                .Where(c => firstname == "" || c.Firstname.ToLower().Contains(firstname.ToLower()))
-                .Where(c => lastname == "" || c.Lastname.ToLower().Contains(lastname.ToLower()))
-                .Where(c => ssn == "" || c.SSN != null && c.SSN.ToLower().Contains(ssn.ToLower()));
+            .Include(c => c.Account)
+            .Where(c => c.EmployerId == employerId)
+            .Where(c => c.Account.Role == Role.Employee)
+            .Where(c => firstname == "" || c.Firstname.ToLower().Contains(firstname.ToLower()))
+            .Where(c => lastname == "" || c.Lastname.ToLower().Contains(lastname.ToLower()))
+            .Where(c => ssn == "" || c.SSN != null && c.SSN.ToLower().Contains(ssn.ToLower()));
 
             var totalCount = filteredEmployees.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
@@ -105,7 +105,81 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<EmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Firstname, user.Lastname, user.SSN, user.DateOfBirth));
+            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Firstname, user.Lastname, user.SSN, user.DateOfBirth, user.Id));
+        }
+
+        public async Task<GenericResponse<CreateEmployeeDto>> GetEmployee(int id)
+        {
+            var user = await _userUnitOfWork.Users.GetSet()
+                .Include(u => u.Addresses)
+                .Include(u => u.Account)
+                .Include(u => u.Phones)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return new GenericResponse<CreateEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
+            }
+
+            var address = user.Addresses is { Count: > 0 } ? user.Addresses[0] : null;
+
+            var employeeDto = new CreateEmployeeDto(
+                user.Id,
+                user.Account.Username,
+                user.Account.Password,
+                user.Firstname,
+                user.Lastname,
+                user.SSN,
+                user.Phones is { Count: > 0 } ? user.Phones[0].PhoneNumber : "",
+                DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()),
+                address?.State ?? "",
+                address?.Street ?? "",
+                address?.City ?? "",
+                address?.Zip ?? "",
+                user.EmployerId.GetValueOrDefault());
+
+            return new GenericResponse<CreateEmployeeDto>(null, employeeDto);
+        }
+
+        public async Task<GenericResponse<EmployeeDto>> UpdateEmployee(int id, CreateEmployeeDto dto)
+        {
+            var user = await _userUnitOfWork.Users.GetSet()
+                .Include(u => u.Addresses)
+                .Include(u => u.Account)
+                .Include(u => u.Phones)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return new GenericResponse<EmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
+            }
+
+            bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN && x.Id != id);
+            if (hasSameSSN)
+            {
+                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+            }
+
+            bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName && x.Id != id);
+            if (hasSameName)
+            {
+                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
+            }
+
+            user.Firstname = dto.FirstName;
+            user.Lastname = dto.LastName;
+            user.DateOfBirth = dto.DateOfBirth.ToDateTime(TimeOnly.MinValue);
+            user.SSN = dto.SSN;
+            user.Account.Password = PasswordHasher.Hash(dto.Password);
+            user.Addresses[0].State = dto.AddressState;
+            user.Addresses[0].Street = dto.AddressStreet;
+            user.Addresses[0].City = dto.AddressCity;
+            user.Addresses[0].Zip = dto.AddressZip;
+            user.Phones[0].PhoneNumber = dto.PhoneNumber;
+
+            await _userUnitOfWork.CompleteAsync();
+
+            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Firstname, user.Lastname, user.SSN, user.DateOfBirth, id));
         }
     }
 }
