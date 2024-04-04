@@ -17,7 +17,7 @@ namespace CSI.IBTA.Employer.Clients
             _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
 
-        public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto)
+        public async Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId)
         {
             var defaultErrorMessage = "Failed to update employer";
             var formData = new MultipartFormDataContent()
@@ -41,7 +41,7 @@ namespace CSI.IBTA.Employer.Clients
                     formData.Add(new StreamContent(stream), nameof(dto.NewLogoFile), dto.NewLogoFile.FileName);
                 }
 
-                var response = await _httpClient.PutAsync($"{EmployerEndpoints.Employer}/{dto.Id}", formData);
+                var response = await _httpClient.PutAsync($"{EmployerEndpoints.Employer}/{employerId}", formData);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -61,15 +61,6 @@ namespace CSI.IBTA.Employer.Clients
         public async Task<GenericResponse<EmployerDto>> GetEmployerById(int id)
         {
             var res = await _httpClient.GetAsync($"{EmployerEndpoints.Employer}/{id}");
-            res.EnsureSuccessStatusCode();
-            var responseContent = await res.Content.ReadAsStringAsync();
-            var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
-            return new GenericResponse<EmployerDto>(null, employees);
-        }
-
-        public async Task<GenericResponse<EmployerDto>> GetEmployerByAccountId(int id)
-        {
-            var res = await _httpClient.GetAsync($"{EmployerEndpoints.GetEmployerByAccountId}/{id}");
             res.EnsureSuccessStatusCode();
             var responseContent = await res.Content.ReadAsStringAsync();
             var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);

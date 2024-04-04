@@ -4,6 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using CSI.IBTA.UserService.Services;
 using System.Reflection;
 using System.Text;
+using CSI.IBTA.UserService.Authorization.Policies.Requirements;
+using Microsoft.AspNetCore.Authorization;
+using CSI.IBTA.UserService.Authorization.Policies.Handlers;
+using CSI.IBTA.UserService.Authorization.Constants;
 
 namespace CSI.IBTA.UserService
 {
@@ -35,7 +39,10 @@ namespace CSI.IBTA.UserService
                 options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]));
             });
 
-            services.AddAuthorization();
+            services.AddSingleton<IAuthorizationHandler, EmployerAdminOwnerRequirementHandler>();
+            services.AddAuthorization(o =>
+                o.AddPolicy(PolicyConstants.EmployerAdminOwner, policy =>
+                    policy.Requirements.Add(new EmployerAdminOwnerRequirement())));
             return services;
         }
     }
