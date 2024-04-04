@@ -19,8 +19,9 @@ namespace CSI.IBTA.Employer
             services.AddScoped<IEmployersClient, EmployersClient>();
             services.AddScoped<IPlansClient, PlansClient>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
-            services.AddScoped<IContributionService, ContributionService>();
+            services.AddScoped<IContributionsService, ContributionService>();
             services.AddScoped<IEnrollmentsClient, EnrollmentsClient>();
+            services.AddScoped<IContributionsClient, ContributionsClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
             return services;
         }

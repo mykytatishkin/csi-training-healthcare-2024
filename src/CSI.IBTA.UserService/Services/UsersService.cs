@@ -81,14 +81,14 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));
         }
 
-        public async Task<GenericResponse<IEnumerable<UserDto>>> GetUsersBySSNs(List<string> ssns)
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetUsersByUsernames(List<string> usernames)
         {
             var users = await _unitOfWork.Users
                 .Include(u => u.Account)
                 .Include(u => u.Employer)
                 .Include(u => u.Emails)
                 .Include(u => u.Phones)
-                .Where(u => u.SSN != null && ssns.Contains(u.SSN))
+                .Where(u => usernames.Contains(u.Account.Username))
                 .ToListAsync();
 
             return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));

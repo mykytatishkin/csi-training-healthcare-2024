@@ -8,11 +8,13 @@ namespace CSI.IBTA.Employer.Controllers
     [TypeFilter(typeof(AuthenticationFilter))]
     public class ContributionsController : Controller
     {
-        private readonly IContributionService _contributionService;
+        private readonly IContributionsService _contributionService;
+        private readonly IContributionsClient _contributionsClient;
 
-        public ContributionsController(IContributionService contributionService)
+        public ContributionsController(IContributionsService contributionService, IContributionsClient contributionsClient)
         {
             _contributionService = contributionService;
+            _contributionsClient = contributionsClient;
         }
 
         public IActionResult Index()
@@ -46,6 +48,7 @@ namespace CSI.IBTA.Employer.Controllers
             } else
             {
                 // Send transactions
+                await _contributionsClient.CreateContributions(contributionsFileResponse.Result.ProcessedContributions);
             }
 
             return Ok();

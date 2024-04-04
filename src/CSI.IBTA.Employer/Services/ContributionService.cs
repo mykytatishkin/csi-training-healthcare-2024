@@ -4,7 +4,7 @@ using CSI.IBTA.Shared.DTOs;
 
 namespace CSI.IBTA.Employer.Services
 {
-    public class ContributionService : IContributionService
+    public class ContributionService : IContributionsService
     {
         private readonly IEmployeesClient _employeesClient;
         private readonly IPlansClient _plansClient;
@@ -20,11 +20,11 @@ namespace CSI.IBTA.Employer.Services
         public async Task<GenericResponse<ContributionsResponse>> ProcessContributionsFile(IFormFile file)
         {
             Dictionary<int, string> columnsMap = new() {
-                { 0, "Employee SSN" },
+                { 0, "Employee username" },
                 { 1, "Employee plan name" },
                 { 2, "Contribution amount" },
             };
-
+            
             Dictionary<int, List<string>> errors = [];
             List<UnprocessedContributionDto> unprocessedContributions = [];
 
@@ -80,8 +80,8 @@ namespace CSI.IBTA.Employer.Services
                 }
             }
 
-            var ssns = unprocessedContributions.Select(c => c.SSN).Distinct().ToList();
-            var usersResponse = await _employeesClient.GetUsersBySSNs(ssns);
+            var usernames = unprocessedContributions.Select(c => c.Username).Distinct().ToList();
+            var usersResponse = await _employeesClient.GetUsersByUsernames(usernames);
 
             if (usersResponse.Error != null)
             {
@@ -117,9 +117,9 @@ namespace CSI.IBTA.Employer.Services
                 bool valuesExistInDb = true;
 
                 UserDto? user = null;
-                if (!string.IsNullOrEmpty(unprocessedContribution.SSN))
+                if (!string.IsNullOrEmpty(unprocessedContribution.Username))
                 {
-                    user = users!.Where(u => u.SSN == unprocessedContribution.SSN).FirstOrDefault();
+                    user = users!.Where(u => u.UserName == unprocessedContribution.Username).FirstOrDefault();
 
                     if (user == null)
                     {
@@ -140,9 +140,10 @@ namespace CSI.IBTA.Employer.Services
                     }
                 }
 
+                EnrollmentDto? enrollment = null;
                 if (user != null && plan != null)
                 {
-                    EnrollmentDto? enrollment = enrollments!.Where(e => e.PlanId == plan.Id && e.EmployeeId == user.Id).FirstOrDefault();
+                    enrollment = enrollments!.Where(e => e.PlanId == plan.Id && e.EmployeeId == user.Id).FirstOrDefault();
 
                     if (enrollment == null)
                     {
@@ -158,9 +159,9 @@ namespace CSI.IBTA.Employer.Services
 
                 int userId = user!.Id;
                 int planId = plan!.Id;
+                int enrollmentId = enrollment!.Id;
 
-                // ProcessedContributionDto has enrollment and contribution amount?
-                var processedContribution = new ProcessedContributionDto(userId, planId, unprocessedContribution.Contribution);
+                var processedContribution = new ProcessedContributionDto(enrollmentId, unprocessedContribution.Contribution);
                 processedContributions.Add(processedContribution);
             }
 

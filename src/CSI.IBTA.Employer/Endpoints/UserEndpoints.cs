@@ -2,6 +2,6 @@
 {
     public class UserEndpoints
     {
-        public const string UsersBySSNs = "v1/UsersBySSNs";
+        public const string UsersByUsernames = "v1/UsersByUsernames";
     }
 }
