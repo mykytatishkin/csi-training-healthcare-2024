@@ -26,25 +26,26 @@ function openUpdateEmployeeForm(employeeId, employerId) {
 function setSubmit(operationStart) {
     if (operationStart) {
         document.getElementById('submit-button').disabled = true;
-        document.getElementById('submit-button').innerText = "Creating Employee...";
+        document.getElementById('submit-button').innerText = "Saving Employee...";
     } else {
         document.getElementById('submit-button').disabled = false;
         document.getElementById('submit-button').innerText = "Submit";
     }
 }
+
 function saveEmployeeData() {
     setSubmit(true);
     var form = document.getElementById('employee-upsert-form');
     var formData = new FormData(form);
 
-    let phoneIsDigits = /^\d+$/.test(formData.get('Phone'));
-    let zipIs6Digits = /^\d{6}$/.test(formData.get('ZipCode'));
+    let phoneIsDigits = /^\d+$/.test(formData.get('Employee.PhoneNumber'));
+    let zipIs6Digits = /^\d{6}$/.test(formData.get('Employee.AddressZip'));
 
     if (!phoneIsDigits) {
-        document.getElementById('Phone').setCustomValidity("Phone number has to be not empty and digits only");
+        document.getElementById('employee-phone').setCustomValidity("Phone number has to be not empty and digits only");
     }
     if (!zipIs6Digits) {
-        document.getElementById('ZipCode').setCustomValidity("Zip code has to be not empty and 6 digits");
+        document.getElementById('employee-zip').setCustomValidity("Zip code has to be not empty and 6 digits");
     }
     if (form.checkValidity() == false) {
         form.reportValidity();
@@ -52,9 +53,10 @@ function saveEmployeeData() {
         return;
     }
 
-    const actionName = formData.get('ActionName');
-    fetch(`/Employees/${actionName}`, {
-        method: actionName === 'CreateEmployee' ? 'POST' : 'PUT',
+    const employeeId = formData.get('Employee.Id');
+
+    fetch(`/Employees`, {
+        method: employeeId == 0 ? 'POST' : 'PUT',
         body: formData,
     })
         .then(function (response) {

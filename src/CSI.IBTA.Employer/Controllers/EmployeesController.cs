@@ -73,50 +73,47 @@ namespace CSI.IBTA.Employer.Controllers
         {
             var viewModel = new EmployeeViewModel()
             {
-                ActionName = "CreateEmployee",
-                EmployerId = employerId,
-                DateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow)
+                Employee = new FullEmployeeDto(0, "", "", "", "", "", "", DateOnly.FromDateTime(DateTime.UtcNow), "", "", "", "", employerId),
             };
             return PartialView("_EmployeeForm", viewModel);
         }
 
-        [HttpPost("CreateEmployee")]
+        [HttpPost]
         public async Task<IActionResult> CreateEmployee(EmployeeViewModel viewModel)
         {
-            viewModel.ActionName = "CreateEmployee";
-
             if (!ModelState.IsValid)
             {
                 return PartialView("_EmployeeForm", viewModel);
             }
 
             var createEmployeeDto = new CreateEmployeeDto(
-                0,
-                viewModel.Username,
-                viewModel.Password,
-                viewModel.Firstname,
-                viewModel.Lastname,
-                viewModel.SSN,
-                viewModel.Phone,
-                viewModel.DateOfBirth,
-                viewModel.State,
-                viewModel.Street,
-                viewModel.City,
-                viewModel.ZipCode,
-                viewModel.EmployerId
+                viewModel.Employee.UserName,
+                viewModel.Employee.Password,
+                viewModel.Employee.FirstName,
+                viewModel.Employee.LastName,
+                viewModel.Employee.SSN,
+                viewModel.Employee.PhoneNumber,
+                viewModel.Employee.DateOfBirth,
+                viewModel.Employee.AddressState,
+                viewModel.Employee.AddressStreet,
+                viewModel.Employee.AddressCity,
+                viewModel.Employee.AddressZip,
+                viewModel.Employee.EmployerId
             );
 
             var response = await _employeeClient.CreateEmployee(createEmployeeDto);
 
-            if (response.Error != null)
+            if (response.Result == null)
             {
                 return Problem(
-                    statusCode: (int)response.Error.StatusCode,
+                    statusCode: (int)response.Error?.StatusCode!,
                     title: response.Error.Title);
             }
 
+            ModelState.Clear();
+            viewModel.Employee = response.Result;
             ViewBag.SuccessMessage = "Employee created successfully!";
-            return PartialView("_EmployeeForm", new EmployeeViewModel());
+            return PartialView("_EmployeeForm", viewModel);
         }
 
         [HttpGet("UpdateEmployee")]
@@ -124,71 +121,46 @@ namespace CSI.IBTA.Employer.Controllers
         {
             var (httpError, employee) = await _employeeClient.GetEmployee(id);
 
-            if (httpError != null)
+            if (employee == null)
             {
                 return Problem(
-                    statusCode: (int)httpError.StatusCode,
+                    statusCode: (int)httpError!.StatusCode,
                     title: httpError.Title);
             }
 
             var viewModel = new EmployeeViewModel()
             {
-                ActionName = "UpdateEmployee",
-                UserId = employee.UserId,
-                Username = employee.UserName,
-                Password = employee.Password,
-                Firstname = employee.FirstName,
-                Lastname = employee.LastName,
-                SSN = employee.SSN,
-                Phone = employee.PhoneNumber,
-                DateOfBirth = employee.DateOfBirth,
-                State = employee.AddressState,
-                Street = employee.AddressStreet,
-                City = employee.AddressCity,
-                ZipCode = employee.AddressZip,
-                EmployerId = employee.EmployerId
+                Employee = employee
             };
 
             return PartialView("_EmployeeForm", viewModel);
         }
 
-        [HttpPut("UpdateEmployee")]
+        [HttpPut]
         public async Task<IActionResult> UpdateEmployee(EmployeeViewModel viewModel)
         {
-            var (httpError, existingEmployee) = await _employeeClient.GetEmployee(viewModel.UserId.Value);
-            if (httpError != null)
-            {
-                return Problem(
-                    statusCode: (int)httpError.StatusCode,
-                    title: httpError.Title);
-            }
-
-            viewModel.Username = existingEmployee.UserName; // Username is not editable
-            ModelState.Remove("Username");
-            viewModel.ActionName = "UpdateEmployee";
+            ModelState.Remove("Employee.UserName");
 
             if (!ModelState.IsValid)
             {
                 return PartialView("_EmployeeForm", viewModel);
             }
 
-            var createEmployeeDto = new CreateEmployeeDto(
-                viewModel.UserId.Value,
-                viewModel.Username,
-                viewModel.Password,
-                viewModel.Firstname,
-                viewModel.Lastname,
-                viewModel.SSN,
-                viewModel.Phone,
-                viewModel.DateOfBirth,
-                viewModel.State,
-                viewModel.Street,
-                viewModel.City,
-                viewModel.ZipCode,
-                viewModel.EmployerId
+            var updateEmployeeDto = new UpdateEmployeeDto(
+                viewModel.Employee.Id,
+                viewModel.Employee.Password,
+                viewModel.Employee.FirstName,
+                viewModel.Employee.LastName,
+                viewModel.Employee.SSN,
+                viewModel.Employee.PhoneNumber,
+                viewModel.Employee.DateOfBirth,
+                viewModel.Employee.AddressState,
+                viewModel.Employee.AddressStreet,
+                viewModel.Employee.AddressCity,
+                viewModel.Employee.AddressZip
                 );
 
-            var response = await _employeeClient.UpdateEmployee(viewModel.UserId, createEmployeeDto);
+            var response = await _employeeClient.UpdateEmployee(updateEmployeeDto);
 
             if (response.Error != null)
             {
@@ -198,7 +170,7 @@ namespace CSI.IBTA.Employer.Controllers
             }
 
             ViewBag.SuccessMessage = "Employee updated successfully!";
-            return PartialView("_EmployeeForm", new EmployeeViewModel());
+            return PartialView("_EmployeeForm", viewModel);
         }
     }
 }

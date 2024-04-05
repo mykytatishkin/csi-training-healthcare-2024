@@ -68,6 +68,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetEmployee(int id)
         {
             var response = await _employeesService.GetEmployee(id);
@@ -83,9 +84,12 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] CreateEmployeeDto dto)
+        [Authorize]
+        public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDto dto)
         {
-            var response = await _employeesService.UpdateEmployee(id, dto);
+            //todo check if user resource is owned by employer
+
+            var response = await _employeesService.UpdateEmployee(dto);
 
             if (response.Error != null)
             {

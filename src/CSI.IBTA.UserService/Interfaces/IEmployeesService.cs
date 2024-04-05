@@ -6,10 +6,10 @@ namespace CSI.IBTA.UserService.Interfaces
     {
         Task<GenericResponse<PagedEmployeesResponse>> GetEmployees(int page, int pageSize, int employerId, string firstname = "", string lastname = "", string ssn = "");
 
-        Task<GenericResponse<EmployeeDto>> CreateEmployee(CreateEmployeeDto dto);
+        Task<GenericResponse<FullEmployeeDto>> CreateEmployee(CreateEmployeeDto dto);
 
-        Task<GenericResponse<EmployeeDto>> UpdateEmployee(int id, CreateEmployeeDto dto);
+        Task<GenericResponse<FullEmployeeDto>> UpdateEmployee(UpdateEmployeeDto dto);
 
-        Task<GenericResponse<CreateEmployeeDto>> GetEmployee(int id);
+        Task<GenericResponse<FullEmployeeDto>> GetEmployee(int id);
     }
 }

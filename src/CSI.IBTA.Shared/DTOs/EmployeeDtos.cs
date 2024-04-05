@@ -15,7 +15,6 @@ public record EmployeeDto(
     int UserId);
 
 public record CreateEmployeeDto(
-    int UserId,
     string UserName,
     string Password,
     string FirstName,
@@ -28,3 +27,31 @@ public record CreateEmployeeDto(
     string AddressCity,
     string AddressZip,
     int EmployerId);
+
+public record FullEmployeeDto(
+    int Id,
+    string UserName,
+    string Password,
+    string FirstName,
+    string LastName,
+    string SSN,
+    string PhoneNumber,
+    DateOnly DateOfBirth,
+    string AddressState,
+    string AddressStreet,
+    string AddressCity,
+    string AddressZip,
+    int EmployerId);
+
+public record UpdateEmployeeDto(
+    int Id,
+    string Password,
+    string FirstName,
+    string LastName,
+    string SSN,
+    string PhoneNumber,
+    DateOnly DateOfBirth,
+    string AddressState,
+    string AddressStreet,
+    string AddressCity,
+    string AddressZip);

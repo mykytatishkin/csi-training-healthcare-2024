@@ -4,34 +4,31 @@
     <link rel="stylesheet" href="~/css/employees-partial-view.css">
 </head>
 <div class="user-information-section">
-    <form asp-controller="Employees" asp-action="@Model.ActionName" method="post" id="employee-upsert-form">
-        @Html.HiddenFor(m => m.EmployerId)
-        @Html.HiddenFor(m => m.ActionName)
-        @Html.HiddenFor(m => m.UserId)
-        @Html.HiddenFor(m => m.EmployerId)
-
+    <form id="employee-upsert-form">
+        @Html.HiddenFor(m => m.Employee.Id)
+        @Html.HiddenFor(m => m.Employee.EmployerId)
         <span class="border-label">Consumer Profile</span>
         <div class="general-container">
             <div class="general-container-inner">
                 <div class="form-member">
                     <label for="Firstname">First Name:</label>
-                    <input asp-for="Firstname" type="text" required defaultvalue="@Model.Firstname" />
+                    <input asp-for="Employee.FirstName" type="text" required defaultvalue="@Model.Employee.FirstName" />
                 </div>
                 <div class="form-member">
                     <label for="Lastname">Last Name:</label>
-                    <input asp-for="Lastname" type="text" required defaultvalue="@Model.Lastname" />
+                    <input asp-for="Employee.LastName" type="text" required defaultvalue="@Model.Employee.LastName" />
                 </div>
                 <div class="form-member">
                     <label for="SSN">SSN:</label>
-                    <input asp-for="SSN" type="text" required defaultvalue="@Model.SSN" oninput="setCustomValidity('')" />
+                    <input asp-for="Employee.SSN" type="text" required defaultvalue="@Model.Employee.SSN" oninput="setCustomValidity('')" />
                 </div>
                 <div class="form-member">
                     <label for="Phone">Phone:</label>
-                    <input asp-for="Phone" type="text" required defaultvalue="@Model.Phone" oninput="setCustomValidity('')" />
+                    <input id="employee-phone" asp-for="Employee.PhoneNumber" type="text" required defaultvalue="@Model.Employee.PhoneNumber" oninput="setCustomValidity('')" />
                 </div>
                 <div class="form-member">
                     <label for="DateOfBirth">Date of Birth:</label>
-                    <input asp-for="DateOfBirth" type="date" value="@Model.DateOfBirth.ToString("yyyy-MM-dd")" required />
+                    <input asp-for="Employee.DateOfBirth" type="date" value="@Model.Employee.DateOfBirth.ToString("yyyy-MM-dd")" required />
                 </div>
                 <td class="align-left"></td>
 
@@ -40,19 +37,19 @@
             <div class="general-container-inner">
                 <div class="form-member">
                     <label for="Street">Street:</label>
-                    <input asp-for="Street" type="text" required defaultvalue="@Model.Street" />
+                    <input asp-for="Employee.AddressStreet" type="text" required defaultvalue="@Model.Employee.AddressStreet" />
                 </div>
                 <div class="form-member">
                     <label for="City">City:</label>
-                    <input asp-for="City" type="text" required defaultvalue="@Model.City" />
+                    <input asp-for="Employee.AddressCity" type="text" required defaultvalue="@Model.Employee.AddressCity" />
                 </div>
                 <div class="form-member">
                     <label for="State">State:</label>
-                    <input asp-for="State" type="text" required defaultvalue="@Model.State" />
+                    <input asp-for="Employee.AddressState" type="text" required defaultvalue="@Model.Employee.AddressState" />
                 </div>
                 <div class="form-member">
                     <label for="ZipCode">Zip Code:</label>
-                    <input asp-for="ZipCode" type="text" required defaultvalue="@Model.ZipCode" oninput="setCustomValidity('')" />
+                    <input id = "employee-zip" asp-for="Employee.AddressZip" type="text" required defaultvalue="@Model.Employee.AddressZip" oninput="setCustomValidity('')" />
                 </div>
                 <div id="validate-zip" class="form-member text-danger"></div>
             </div>
@@ -63,11 +60,11 @@
             <div class="general-container-inner-second">
                 <div class="form-member">
                     <label for="Username">User Name:</label>
-                    <input asp-for="Username" type="text" required defaultvalue="@Model.Username" oninput="setCustomValidity('')" disabled="@(Model.ActionName == "UpdateEmployee" ? "disabled" : null)" />
+                    <input asp-for="Employee.UserName" type="text" required defaultvalue="@Model.Employee.UserName" oninput="setCustomValidity('')" disabled="@(Model.Employee.Id != 0 ? "disabled" : null)" />
                 </div>
                 <div class="form-member">
                     <label for="Password">Password:</label>
-                    <input asp-for="Password" type="password" required defaultvalue="@Model.Password" />
+                    <input asp-for="Employee.Password" type="password" required defaultvalue="@Model.Employee.Password" />
                 </div>
             </div>
         </div>
@@ -75,7 +72,7 @@
         <div>
             <div id="employee-errors" class="text-danger"></div>
             <button id="submit-button" class="align-left custom-button" onclick="saveEmployeeData()" type="button">Submit</button>
-            <button class="align-left custom-button secondary" onclick="showEmployees(@Model.EmployerId)" type="button">Cancel</button>
+            <button class="align-left custom-button secondary" onclick="showEmployees(@Model.Employee.EmployerId)" type="button">Cancel</button>
         </div>
     </form>
 </div>

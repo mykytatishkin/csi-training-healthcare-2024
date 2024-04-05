@@ -46,24 +46,24 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<PagedEmployeesResponse>(null, response);
         }
 
-        public async Task<GenericResponse<EmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
+        public async Task<GenericResponse<FullEmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
         {
             bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN);
             if (hasSameSSN)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
             }
 
             bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName);
             if (hasSameName)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
             }
 
             bool hasSameUsername = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Account.Username == dto.UserName);
             if (hasSameUsername)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
             }
 
             var user = new User()
@@ -102,13 +102,13 @@ namespace CSI.IBTA.UserService.Services
 
             var success = await _userUnitOfWork.Users.Add(user);
             if (!success)
-                return new GenericResponse<EmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Firstname, user.Lastname, user.SSN, user.DateOfBirth, user.Id));
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int) user.EmployerId));
         }
 
-        public async Task<GenericResponse<CreateEmployeeDto>> GetEmployee(int id)
+        public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int id)
         {
             var user = await _userUnitOfWork.Users.GetSet()
                 .Include(u => u.Addresses)
@@ -118,12 +118,12 @@ namespace CSI.IBTA.UserService.Services
 
             if (user == null)
             {
-                return new GenericResponse<CreateEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
             }
 
             var address = user.Addresses is { Count: > 0 } ? user.Addresses[0] : null;
 
-            var employeeDto = new CreateEmployeeDto(
+            var employeeDto = new FullEmployeeDto(
                 user.Id,
                 user.Account.Username,
                 user.Account.Password,
@@ -138,32 +138,32 @@ namespace CSI.IBTA.UserService.Services
                 address?.Zip ?? "",
                 user.EmployerId.GetValueOrDefault());
 
-            return new GenericResponse<CreateEmployeeDto>(null, employeeDto);
+            return new GenericResponse<FullEmployeeDto>(null, employeeDto);
         }
 
-        public async Task<GenericResponse<EmployeeDto>> UpdateEmployee(int id, CreateEmployeeDto dto)
+        public async Task<GenericResponse<FullEmployeeDto>> UpdateEmployee(UpdateEmployeeDto dto)
         {
             var user = await _userUnitOfWork.Users.GetSet()
                 .Include(u => u.Addresses)
                 .Include(u => u.Account)
                 .Include(u => u.Phones)
-                .FirstOrDefaultAsync(u => u.Id == id);
-
+                .FirstOrDefaultAsync(u => u.Id == dto.Id);
+            
             if (user == null)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
             }
 
-            bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN && x.Id != id);
+            bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN && x.Id != dto.Id);
             if (hasSameSSN)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
             }
 
-            bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName && x.Id != id);
+            bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName && x.Id != dto.Id);
             if (hasSameName)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
             }
 
             user.Firstname = dto.FirstName;
@@ -179,7 +179,7 @@ namespace CSI.IBTA.UserService.Services
 
             await _userUnitOfWork.CompleteAsync();
 
-            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Firstname, user.Lastname, user.SSN, user.DateOfBirth, id));
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
         }
     }
 }
