@@ -1,6 +1,6 @@
 ﻿using CSI.IBTA.Shared.DTOs;
 
-namespace CSI.IBTA.UserService.Interfaces
+namespace CSI.IBTA.BenefitsService.Interfaces
 {
     public interface IDecodingService
     {

@@ -16,7 +16,6 @@ namespace CSI.IBTA.Employer
             services.AddHttpContextAccessor();
             services.AddTransient<AuthorizedHttpClient>();
             services.AddScoped<IEmployeesClient, EmployeesClient>();
-            services.AddScoped<IInsuranceClient, InsuranceClient>();
             services.AddScoped<IEmployersClient, EmployersClient>();
             services.AddScoped<IPlansClient, PlansClient>();
             services.AddScoped<ISettingsClient, SettingsClient>();

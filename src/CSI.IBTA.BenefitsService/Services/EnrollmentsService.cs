@@ -1,11 +1,11 @@
+using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using AutoMapper;
-using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
-using CSI.IBTA.UserService.Interfaces;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
