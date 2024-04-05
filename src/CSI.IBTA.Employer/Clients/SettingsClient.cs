@@ -1,5 +1,6 @@
 ﻿using CSI.IBTA.Employer.Endpoints;
 using CSI.IBTA.Employer.Interfaces;
+using CSI.IBTA.Shared.Constants;
 using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -19,7 +20,7 @@ namespace CSI.IBTA.Employer.Clients
         public async Task<GenericResponse<SettingsWithEmployerStateDto>> GetClaimSetting(
             int employerId)
         {
-            var requestUrl = string.Format(EmployerEndpoints.GetEmployerSetting, employerId, "ClaimFilling");
+            var requestUrl = string.Format(EmployerEndpoints.GetEmployerSetting, employerId, EmployerConstants.ClaimFilling);
             var response = await _httpClient.GetAsync(requestUrl);
             var claimFillingSetting = await response.Content.ReadFromJsonAsync<SettingsWithEmployerStateDto>();
             response.EnsureSuccessStatusCode();

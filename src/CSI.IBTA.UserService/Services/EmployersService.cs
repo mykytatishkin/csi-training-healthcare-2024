@@ -1,5 +1,6 @@
 using AutoMapper;
 using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.Shared.Constants;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
@@ -266,7 +267,7 @@ namespace CSI.IBTA.UserService.Services
             if (employer == null) return new GenericResponse<SettingsWithEmployerStateDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
 
-            var setting = employer.Settings.Where(s => s.Condition.Equals("ClaimFilling")).FirstOrDefault();
+            var setting = employer.Settings.Where(s => s.Condition.Equals(EmployerConstants.ClaimFilling)).FirstOrDefault();
             if (setting == null)
             {
                 return new GenericResponse<SettingsWithEmployerStateDto>(new HttpError("Setting not found", HttpStatusCode.NotFound), null);
