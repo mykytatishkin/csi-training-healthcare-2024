@@ -25,7 +25,9 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<List<EnrollmentDto>>> GetUsersEnrollments(List<int> userIds)
         {
             var enrollments = await _benefitsUnitOfWork.Enrollments
-                .Find(e => userIds.Contains(e.EmployeeId));
+                .Include(e => e.Plan)
+                .Where(e => userIds.Contains(e.EmployeeId))
+                .ToListAsync();
 
             var enrollmentDtos = enrollments.Select(_mapper.Map<EnrollmentDto>).ToList();
             return new(null, enrollmentDtos);

@@ -76,23 +76,6 @@ namespace CSI.IBTA.UserService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpPost("~/api/v1/UsersByUsernames")]
-        [Authorize]
-        public async Task<IActionResult> GetUsersByUsernames(List<string> usernames)
-        {
-            var response = await _userService.GetUsersByUsernames(usernames);
-
-            if (response.Error != null)
-            {
-                return Problem(
-                    title: response.Error!.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
-            }
-
-            return Ok(response.Result);
-        }
-
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)

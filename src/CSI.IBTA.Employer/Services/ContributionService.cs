@@ -17,7 +17,7 @@ namespace CSI.IBTA.Employer.Services
             _enrollmentsClient = enrollmentsClient;
         }
 
-        public async Task<GenericResponse<ContributionsResponse>> ProcessContributionsFile(IFormFile file)
+        public async Task<GenericResponse<ContributionsResponse>> ProcessContributionsFile(IFormFile file, int employerId)
         {
             Dictionary<int, string> columnsMap = new() {
                 { 0, "Employee username" },
@@ -63,7 +63,7 @@ namespace CSI.IBTA.Employer.Services
                 }
             }
 
-            var response = await GetDataFromDatabase(unprocessedContributions);
+            var response = await GetDataFromDatabase(unprocessedContributions, employerId);
 
             if (response.Error != null)
             {
@@ -119,10 +119,11 @@ namespace CSI.IBTA.Employer.Services
         }
 
         private async Task<GenericResponse<(List<UserDto>, List<PlanDto>, List<EnrollmentDto>)>> GetDataFromDatabase(
-        List<UnprocessedContributionDto> unprocessedContributions)
+            List<UnprocessedContributionDto> unprocessedContributions,
+            int employerId)
         {
             var usernames = unprocessedContributions.Select(c => c.Username).Distinct().ToList();
-            var usersResponse = await _employeesClient.GetUsersByUsernames(usernames);
+            var usersResponse = await _employeesClient.GetEmployeesByUsernames(usernames, employerId);
 
             if (usersResponse.Error != null)
             {
@@ -132,7 +133,7 @@ namespace CSI.IBTA.Employer.Services
             var users = usersResponse.Result;
 
             var planNames = unprocessedContributions.Select(c => c.PlanName).Distinct().ToList();
-            var plansResponse = await _plansClient.GetPlansByNames(planNames);
+            var plansResponse = await _plansClient.GetPlansByNames(planNames, employerId);
 
             if (plansResponse.Error != null)
             {

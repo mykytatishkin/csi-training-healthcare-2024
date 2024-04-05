@@ -5,6 +5,6 @@ namespace CSI.IBTA.Employer.Interfaces
 {
     public interface IContributionsService
     {
-        Task<GenericResponse<ContributionsResponse>> ProcessContributionsFile(IFormFile file);
+        Task<GenericResponse<ContributionsResponse>> ProcessContributionsFile(IFormFile file, int employerId);
     }
 }

@@ -45,6 +45,7 @@ function importContributions() {
 
     fetch('/Contributions/Upload', options)
         .then(async response => {
+            console.log(response);
             if (!response.ok) {
                 if (response.status == 422) {
                     errorsElement.innerText = 'File is empty';
@@ -52,8 +53,10 @@ function importContributions() {
                 }
 
                 let responseJson = await response.json();
+                console.log(responseJson);
 
                 if (responseJson.errors == null) {
+                    errorsElement.innerText = 'Something went wrong...';
                     throw new Error('Network response was not ok');
                 }
 

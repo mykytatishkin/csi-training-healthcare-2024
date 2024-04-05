@@ -1,9 +1,9 @@
-using CSI.IBTA.BenefitsService.Extensions;
 using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Extensions;
 
 namespace CSI.IBTA.BenefitsService.Controllers
 {

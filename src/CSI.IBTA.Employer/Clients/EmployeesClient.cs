@@ -50,11 +50,12 @@ namespace CSI.IBTA.Employer.Clients
             return new GenericResponse<bool?>(null, true);
         }
 
-        public async Task<GenericResponse<IEnumerable<UserDto>>> GetUsersByUsernames(List<string> usernames)
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId)
         {
             var jsonBody = JsonConvert.SerializeObject(usernames);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(UserServiceEndpoints.UsersByUsernames, content);
+            var requestUrl = string.Format(UserServiceEndpoints.UsersByUsernames, employerId);
+            var response = await _httpClient.PostAsync(requestUrl, content);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)

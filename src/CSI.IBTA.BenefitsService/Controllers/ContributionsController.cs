@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Extensions;
 
 namespace CSI.IBTA.BenefitsService.Controllers
 {
@@ -21,6 +22,13 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = nameof(Role.EmployerAdmin))]
         public async Task<IActionResult> Post(List<ProcessedContributionDto> contributionEntries)
         {
+            var employerId = User.GetEmployerId();
+
+            if (employerId == null)
+            {
+                return Problem(title: "EmployerId claim not found or invalid");
+            }
+
             var response = await _contributionsService.CreateContributions(contributionEntries);
 
             if (response.Error != null)

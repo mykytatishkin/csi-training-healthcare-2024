@@ -36,9 +36,9 @@ namespace CSI.IBTA.BenefitsService.Controllers
 
         [HttpPost("~/api/v1/ActivePlansByNames")]
         [Authorize]
-        public async Task<IActionResult> GetActivePlansByNames(List<string> planNames)
+        public async Task<IActionResult> GetActivePlansByNames(List<string> planNames, int employerId)
         {
-            var response = await _benefitsService.GetActivePlansByNames(planNames);
+            var response = await _benefitsService.GetActivePlansByNames(planNames, employerId);
 
             if (response.Error != null)
             {

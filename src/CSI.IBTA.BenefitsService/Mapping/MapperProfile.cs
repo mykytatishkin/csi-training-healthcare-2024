@@ -15,7 +15,8 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     plan.Name,
                     new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name),
                     plan.Contribution,
-                    plan.PackageId));
+                    plan.PackageId,
+                    plan.Package.EmployerId));
 
             CreateMap<PlanType, PlanTypeDto>()
                 .ConstructUsing(planType => new PlanTypeDto(
@@ -45,8 +46,8 @@ namespace CSI.IBTA.BenefitsService.Mapping
                         plan.Name,
                         new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name),
                         plan.Contribution,
-                        plan.PackageId)).ToList()))
-                    ;
+                        plan.PackageId,
+                        plan.Package.EmployerId)).ToList()));
 
             CreateMap<Plan, UpdatePlanDto>()
                 .ConstructUsing(plan => new UpdatePlanDto(

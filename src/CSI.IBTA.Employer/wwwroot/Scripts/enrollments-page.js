@@ -53,6 +53,7 @@ function showEnrollmentModal(enrollmentId, planId) {
             updateEnrollment(enrollmentId);
         };
     } else {
+        electionsInput.value = 0;
         submitButton.onclick = addEnrollment;
     }
 }
@@ -303,9 +304,8 @@ function findItemArrayIndex(array, id) {
 function submitEnrollmentChanges() {
 
     const filteredEnrollments = fetchedEnrollments.filter(enrollment => {
-        const associatedPackage = fetchedPackages.find(package => package.packageId === enrollment.packageId);
-
-        return associatedPackage && new Date(associatedPackage.EndDate) < new Date(Date.UTC());
+        const associatedPackage = fetchedPackages.find(package => package.id == enrollment.plan.packageId);
+        return !didPackageEnd(associatedPackage);
     });
 
     const options = {

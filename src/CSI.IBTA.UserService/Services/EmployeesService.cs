@@ -107,5 +107,19 @@ namespace CSI.IBTA.UserService.Services
             await _userUnitOfWork.CompleteAsync();
             return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Id, user.Firstname, user.Lastname, user.SSN, user.DateOfBirth));
         }
+
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId)
+        {
+            var users = await _userUnitOfWork.Users
+                .Include(u => u.Account)
+                .Include(u => u.Employer)
+                .Include(u => u.Emails)
+                .Include(u => u.Phones)
+                .Where(u => u.EmployerId == employerId)
+                .Where(u => usernames.Contains(u.Account.Username))
+                .ToListAsync();
+
+            return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));
+        }
     }
 }
