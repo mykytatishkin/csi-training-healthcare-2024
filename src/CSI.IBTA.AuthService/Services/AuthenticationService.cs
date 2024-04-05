@@ -4,6 +4,8 @@ using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.Shared.DTOs.Login;
 using CSI.IBTA.Shared.DTOs.Errors;
+using CSI.IBTA.Shared.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSI.IBTA.AuthService.Services
 {
@@ -22,23 +24,28 @@ namespace CSI.IBTA.AuthService.Services
 
         public async Task<GenericResponse<LoginResponse>> Login(LoginRequest request)
         {
-            var result = await _unitOfWork.Accounts.Find(a => a.Username == request.Username);
+            var account = await _unitOfWork.Accounts.GetSet()
+                .FirstOrDefaultAsync(a => a.Username == request.Username);
 
-            if (!result.Any())
-            {
+            if (account == null) 
                 return new GenericResponse<LoginResponse>(HttpErrors.InvalidCredentials, null);
-            }
-
-            var account = result.Single();
 
             bool isPasswordCorrect = PasswordHasher.Verify(request.Password, account.Password);
 
-            if (isPasswordCorrect == false)
-            {
+            if (!isPasswordCorrect) 
                 return new GenericResponse<LoginResponse>(HttpErrors.InvalidCredentials, null);
+
+            (int? employerId, int? userId) = (null, null);
+            if (account.Role != Role.Administrator)
+            {
+                var user = await _unitOfWork.Users.GetSet().FirstOrDefaultAsync(x => x.AccountId == account.Id);
+                if (user == null) return new GenericResponse<LoginResponse>(HttpErrors.ResourceNotFound, null);
+
+                if (account.Role == Role.EmployerAdmin) employerId = user.EmployerId;
+                else if (account.Role == Role.Employee) userId = user.Id;
             }
 
-            var token = _jwtTokenGenerator.GenerateToken(account.Id, account.Role.ToString());
+            var token = _jwtTokenGenerator.GenerateToken(account.Id, employerId, userId, account.Role.ToString());
 
             return new GenericResponse<LoginResponse>(null, new LoginResponse(token));
         }

@@ -1,5 +1,7 @@
-﻿using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.DB.Migrations.Migrations;
+using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +14,16 @@ namespace CSI.IBTA.UserService.Controllers
     public class UserController : Controller
     {
         private readonly IUsersService _userService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public UserController(IUsersService userService)
+        public UserController(IUsersService userService, IAuthorizationService authorizationService)
         {
             _userService = userService;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetAllUsers()
         {
             var response = await _userService.GetAllUsers();
@@ -45,15 +49,19 @@ namespace CSI.IBTA.UserService.Controllers
             {
                 return Problem(
                     title: response.Error!.Title,
-                    statusCode: (int)response.Error.StatusCode
+                statusCode: (int)response.Error.StatusCode
                 );
             }
+
+            var result = await _authorizationService.AuthorizeAsync(User, response.Result?.EmployerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
 
             return Ok(response.Result);
         }
 
         [HttpGet("~/api/v1/Users")]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetUsers([FromQuery] List<int> userIds)
         {
             var response = await _userService.GetUsers(userIds);
@@ -87,7 +95,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
             if (!IsNextSuperiorRole(HttpContext.User, createUserDto.Role))
@@ -109,8 +117,6 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPut("{userId}")]
-        // Later we can have policy based authorization which will handle checking
-        // if user is owner of the resource
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> PutUser(int userId, PutUserDto putUserDto)
         {
@@ -128,7 +134,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpDelete("{userId}")]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> DeleteUser(int userId)
         {
             var getResponse = await _userService.GetUser(userId);
