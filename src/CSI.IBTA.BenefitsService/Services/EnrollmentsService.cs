@@ -54,7 +54,7 @@ namespace CSI.IBTA.BenefitsService.Services
                 return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employee can not have multiple enrollments for the same plan", HttpStatusCode.BadRequest), null);
             }
 
-            if (enrollments.Any(x => x.Election < 0)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the plans contains negative contribution", HttpStatusCode.BadRequest), null);
+            if (enrollments.Any(x => x.Election < 0)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the plans contains negative election", HttpStatusCode.BadRequest), null);
 
             var employerPlans = await _benefitsUnitOfWork.Plans.Include(x => x.Package)
                 .Where(x => x.Package.EmployerId == employerId)
@@ -79,7 +79,8 @@ namespace CSI.IBTA.BenefitsService.Services
 
             if (plans.Any(x => x.Package.Initialized == null)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the packages is not initialized yet", HttpStatusCode.BadRequest), null);
             if (plans.Any(x => x.Package.PlanEnd < DateTime.UtcNow)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the plans has expired", HttpStatusCode.BadRequest), null);
-            
+            if (plans.Any(x => x.Package.IsRemoved)) return new GenericResponse<List<EnrollmentDto>>(new HttpError("At least one of the packages were removed", HttpStatusCode.BadRequest), null);
+
             foreach (var e in existingEnrollments)
             {
                 var dto = enrollments.FirstOrDefault(x => x.Id == e.Id);
