@@ -301,12 +301,19 @@ function findItemArrayIndex(array, id) {
 }
 
 function submitEnrollmentChanges() {
+
+    const filteredEnrollments = fetchedEnrollments.filter(enrollment => {
+        const associatedPackage = fetchedPackages.find(package => package.packageId === enrollment.packageId);
+
+        return associatedPackage && new Date(associatedPackage.EndDate) < new Date(Date.UTC());
+    });
+
     const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(fetchedEnrollments)
+        body: JSON.stringify(filteredEnrollments)
     };
 
     fetch('/Enrollments/Update?employeeId=' + fetchedEmployeeId + '&employerId=' + fetchedEmployerId, options)
