@@ -47,7 +47,7 @@ namespace CSI.IBTA.Employer.Services
                         return new(null, new() { Errors = invalidFileResponse });
                     }
 
-                    ValidateContributionLine(content, recordNumber, columnsMap, ref errors, out decimal contribution);
+                    ValidateContributionRecord(content, recordNumber, columnsMap, ref errors, out decimal contribution);
 
                     var contributionEntry = new UnprocessedContributionDto
                     (
@@ -73,9 +73,9 @@ namespace CSI.IBTA.Employer.Services
             (List<UserDto> users, List<PlanDto> plans, List<EnrollmentDto> enrollments) = response.Result;
 
             List<ProcessedContributionDto> processedContributions = GetProcessedContributions(
-                unprocessedContributions, 
-                users, 
-                plans, 
+                unprocessedContributions,
+                users,
+                plans,
                 enrollments,
                 columnsMap,
                 ref errors);
@@ -89,7 +89,7 @@ namespace CSI.IBTA.Employer.Services
             });
         }
 
-        private void ValidateContributionLine(
+        private void ValidateContributionRecord(
             string[] content,
             int recordNumber,
             Dictionary<int, string> columnsMap,
@@ -104,19 +104,22 @@ namespace CSI.IBTA.Employer.Services
                 }
             }
 
-            if (!decimal.TryParse(content[2], out contribution))
+            contribution = 0;
+            if (!string.IsNullOrEmpty(content[2]))
             {
-                errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is not a number");
-            }
-
-            if (contribution < 0)
-            {
-                errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is negative");
+                if (!decimal.TryParse(content[2], out contribution))
+                {
+                    errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is not a number");
+                }
+                else if (contribution < 0)
+                {
+                    errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[2]} is negative");
+                }
             }
         }
 
         private async Task<GenericResponse<(List<UserDto>, List<PlanDto>, List<EnrollmentDto>)>> GetDataFromDatabase(
-            List<UnprocessedContributionDto> unprocessedContributions)
+        List<UnprocessedContributionDto> unprocessedContributions)
         {
             var usernames = unprocessedContributions.Select(c => c.Username).Distinct().ToList();
             var usersResponse = await _employeesClient.GetUsersByUsernames(usernames);
@@ -152,7 +155,7 @@ namespace CSI.IBTA.Employer.Services
         }
 
         private List<ProcessedContributionDto> GetProcessedContributions(
-            List<UnprocessedContributionDto> unprocessedContributions, 
+            List<UnprocessedContributionDto> unprocessedContributions,
             List<UserDto> users,
             List<PlanDto> plans,
             List<EnrollmentDto> enrollments,
@@ -164,7 +167,6 @@ namespace CSI.IBTA.Employer.Services
             foreach (var unprocessedContribution in unprocessedContributions)
             {
                 int recordNumber = unprocessedContribution.RecordNumber;
-                bool valuesExistInDb = true;
 
                 UserDto? user = null;
                 if (!string.IsNullOrEmpty(unprocessedContribution.Username))
@@ -174,7 +176,6 @@ namespace CSI.IBTA.Employer.Services
                     if (user == null)
                     {
                         errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[0]} does not exist in DB");
-                        valuesExistInDb = false;
                     }
                 }
 
@@ -186,8 +187,12 @@ namespace CSI.IBTA.Employer.Services
                     if (plan == null)
                     {
                         errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[1]} does not exist in DB or is inactive");
-                        valuesExistInDb = false;
                     }
+                }
+
+                if (plan == null || user == null)
+                {
+                    continue;
                 }
 
                 EnrollmentDto? enrollment = null;
@@ -198,21 +203,19 @@ namespace CSI.IBTA.Employer.Services
                     if (enrollment == null)
                     {
                         errors[recordNumber].Add($"Record #{recordNumber} failed because {columnsMap[0]} is not enrolled into specified plan");
-                        valuesExistInDb = false;
                     }
-                }
-
-                if (valuesExistInDb == false)
-                {
-                    continue;
                 }
 
                 int userId = user!.Id;
                 int planId = plan!.Id;
-                int enrollmentId = enrollment!.Id;
 
-                var processedContribution = new ProcessedContributionDto(enrollmentId, unprocessedContribution.Contribution);
-                processedContributions.Add(processedContribution);
+                if (enrollment != null)
+                {
+                    int enrollmentId = enrollment!.Id;
+
+                    var processedContribution = new ProcessedContributionDto(enrollmentId, unprocessedContribution.Contribution);
+                    processedContributions.Add(processedContribution);
+                }
             }
 
             return processedContributions;
