@@ -25,7 +25,7 @@ namespace CSI.IBTA.Employer.Clients
             string lastname = "",
             string ssn = "")
         {
-            var requestUrl = string.Format(EmployeeEndpoints.Employees, page, pageSize, employerId, firstname, lastname, ssn);
+            var requestUrl = string.Format(UserServiceEndpoints.Employees, page, pageSize, employerId, firstname, lastname, ssn);
             var response = await _httpClient.GetAsync(requestUrl);
             var responseContent = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
@@ -37,7 +37,7 @@ namespace CSI.IBTA.Employer.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(employee);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(EmployeeEndpoints.CreateEmployee, content);
+            var response = await _httpClient.PostAsync(UserServiceEndpoints.CreateEmployee, content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -54,7 +54,7 @@ namespace CSI.IBTA.Employer.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(usernames);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(UserEndpoints.UsersByUsernames, content);
+            var response = await _httpClient.PostAsync(UserServiceEndpoints.UsersByUsernames, content);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)

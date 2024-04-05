@@ -21,7 +21,7 @@ namespace CSI.IBTA.Employer.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(userIds);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(EnrollmentsEndpoints.EnrollmentsByUserIds, content);
+            var response = await _httpClient.PostAsync(BenefitsServiceEndpoints.EnrollmentsByUserIds, content);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
