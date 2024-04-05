@@ -18,6 +18,7 @@ namespace CSI.IBTA.UserService
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IEmployersService, EmployersService>();
             services.AddScoped<IEmployeesService, EmployeesService>();
+            services.AddScoped<IEncodingService, EncodingService>();
             services.AddSingleton<IFileService, FileService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddAuth(configuration);

@@ -1,6 +1,9 @@
-﻿using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.BenefitsService.Interfaces;
+using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.BenefitsService.Controllers
@@ -9,11 +12,11 @@ namespace CSI.IBTA.BenefitsService.Controllers
     [ApiController]
     public class EnrollmentsController : Controller
     {
-        private readonly IEnrollmentService _enrollmentService;
+        private readonly IEnrollmentsService _enrollmentsService;
 
-        public EnrollmentsController(IEnrollmentService enrollmentService)
+        public EnrollmentsController(IEnrollmentsService enrollmentsService)
         {
-            _enrollmentService = enrollmentService;
+            _enrollmentsService = enrollmentsService;
         }
 
         [HttpPost("GetByUserIds")]
@@ -21,6 +24,44 @@ namespace CSI.IBTA.BenefitsService.Controllers
         public async Task<IActionResult> GetUsersEnrollments(List<int> userIds)
         {
             var response = await _enrollmentService.GetUsersEnrollments(userIds);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPost("{employeeId}")]
+        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}")]
+        public async Task<IActionResult> GetEnrollmentsByEmployeeId(int employeeId, GetEnrollmentsDto dto)
+        {
+            var employerId = User.GetEmployerId();
+            
+            if(employerId == null) return Problem(title: "EmployerId claim not found or invalid");
+
+            var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId, (int) employerId, dto.EncodedEmployerEmployee);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPut("Employer/{employerId}/Employee/{employeeId}")]
+        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}")]
+        public async Task<IActionResult> UpsertEnrollments(int employerId, int employeeId, UpsertEnrollmentsDto dto)
+        {
+            var response = await _enrollmentsService.UpsertEnrollments(employerId, employeeId, dto.EncodedEmployerEmployee, dto.Enrollments);
 
             if (response.Error != null)
             {

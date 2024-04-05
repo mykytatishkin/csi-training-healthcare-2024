@@ -26,7 +26,6 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2;
     border-bottom: none;
     font-weight: 600;
 }
@@ -86,21 +85,22 @@ th {
         width: 100%;
     }
 
-.border-label {
+.border-label-create-employee {
+    position: relative;
+    left: 30px;
+    top: 20px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+    text-align: left;
+}
+
+.border-label-employees {
     position: relative;
     left: 30px;
     top: 12px;
     background-color: var(--container-background-color);
     padding: 0 10px;
     text-align: left;
-}
-
-.border-label {
-    position: relative;
-    left: 35px;
-    top: 21px;
-    background-color: var(--container-background-color);
-    padding: 0 10px;
 }
 
 .general-container {
@@ -122,12 +122,47 @@ th {
     justify-content: center;
 }
 
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 60%
+}
+
 .general-container-inner-second {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
 }
+
+.form-member-right {
+    display: flex;
+    justify-content: flex-end;
+}
+    .form-member-right label {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+    .form-member-right span {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+.form-member-left {
+    display: flex;
+    justify-content: flex-start;
+}
+    .form-member-left label {
+        padding-right: 30px;
+        padding-left: 30px;
+        /*padding: 5px;*/
+    }
+    .form-member-left span {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
 
 .form-member {
     margin-top: 10px;
@@ -206,4 +241,18 @@ th {
 
     .modal-content p {
         text-align: center;
+    }
+
+.anchor-style-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0D6EFD;
+}
+
+    .anchor-style-button:hover {
+        text-decoration: none;
     }
