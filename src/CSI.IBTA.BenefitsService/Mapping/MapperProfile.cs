@@ -35,6 +35,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                 .ConstructUsing(x => new FullInsurancePackageDto(
                     x.Id,
                     x.Name,
+                    x.Initialized != null,
                     x.PlanStart,
                     x.PlanEnd,
                     x.PayrollFrequency,
@@ -68,6 +69,15 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Status,
                     x.RejectionReason)
                 );
+
+            CreateMap<Enrollment, EnrollmentDto>()
+               .ConstructUsing(x => new EnrollmentDto(
+                   x.Id,
+                   x.PlanId,
+                   x.Election,
+                   x.Plan.Contribution,
+                   x.EmployeeId)
+               );
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.DTOs.Errors;
 
 namespace CSI.IBTA.BenefitsService.Interfaces
 {
@@ -8,6 +7,7 @@ namespace CSI.IBTA.BenefitsService.Interfaces
         Task<GenericResponse<CreatedInsurancePackageDto>> CreateInsurancePackage(CreateInsurancePackageDto dto);
 
         Task<GenericResponse<List<InsurancePackageDto>>> GetInsurancePackages(int employerId);
+        Task<GenericResponse<List<FullInsurancePackageDto>>> GetFullInsurancePackages(int employerId);
 
         Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int packageId);
 

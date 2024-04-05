@@ -97,6 +97,20 @@ namespace CSI.IBTA.BenefitsService.Services
                 packages.Select(_mapper.Map<InsurancePackageDto>).ToList());
         }
 
+        public async Task<GenericResponse<List<FullInsurancePackageDto>>> GetFullInsurancePackages(int employerId)
+        {
+            var packages = await _benefitsUnitOfWork.Packages.Find(x => x.EmployerId == employerId && x.IsRemoved != true);
+            var packageIds = packages.Select(p => p.Id).ToList();
+            var plans = await _benefitsUnitOfWork.Plans
+                .Include(x => x.PlanType)
+                .Where(x => packageIds.Contains(x.PackageId)).ToListAsync();
+
+            packages.ToList().ForEach(p => p.Plans = plans.Where(plan => plan.PackageId == p.Id).ToList());
+
+            var fullPackages = packages.Select(_mapper.Map<FullInsurancePackageDto>).ToList();
+            return new GenericResponse<List<FullInsurancePackageDto>>(null, fullPackages);
+        }
+
         public async Task<GenericResponse<FullInsurancePackageDto>> GetInsurancePackage(int packageId)
         {
             var plans = await _benefitsUnitOfWork.Plans.Include(x => x.PlanType)

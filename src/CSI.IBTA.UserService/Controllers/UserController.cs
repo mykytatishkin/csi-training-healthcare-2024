@@ -1,5 +1,4 @@
-﻿using CSI.IBTA.DB.Migrations.Migrations;
-using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;

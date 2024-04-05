@@ -105,7 +105,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<EmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Firstname, user.Lastname, user.SSN, user.DateOfBirth));
+            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Id, user.Firstname, user.Lastname, user.SSN, user.DateOfBirth));
         }
     }
 }

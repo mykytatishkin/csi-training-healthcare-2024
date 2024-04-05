@@ -31,6 +31,14 @@ function closeModal(modalId) {
     modal.style.display = "none";
 }
 
-function showError(id, text) {
-    document.getElementById(id).innerText = text;
+function showError(errorElementId, text) {
+    let error = document.getElementById(errorElementId);
+    error.innerText = text;
+    error.style.display = "block";
+}
+
+function hideError(errorElementId) {
+    let error = document.getElementById(errorElementId);
+    error.innerText = "";
+    error.style.display = "none";
 }

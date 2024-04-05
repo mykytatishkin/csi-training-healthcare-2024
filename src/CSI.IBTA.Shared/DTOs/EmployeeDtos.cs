@@ -8,6 +8,7 @@ public record PagedEmployeesResponse(
     int TotalCount);
 
 public record EmployeeDto(
+    int Id,
     string Firstname,
     string Lastname,
     string SSN,

@@ -26,7 +26,6 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2;
     border-bottom: none;
     font-weight: 600;
 }
@@ -86,21 +85,22 @@ th {
         width: 100%;
     }
 
-.border-label {
+.border-label-create-employee {
+    position: relative;
+    left: 30px;
+    top: 20px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+    text-align: left;
+}
+
+.border-label-employees {
     position: relative;
     left: 30px;
     top: 12px;
     background-color: var(--container-background-color);
     padding: 0 10px;
     text-align: left;
-}
-
-.border-label {
-    position: relative;
-    left: 35px;
-    top: 21px;
-    background-color: var(--container-background-color);
-    padding: 0 10px;
 }
 
 .general-container {
@@ -241,4 +241,18 @@ th {
 
     .modal-content p {
         text-align: center;
+    }
+
+.anchor-style-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0D6EFD;
+}
+
+    .anchor-style-button:hover {
+        text-decoration: none;
     }
