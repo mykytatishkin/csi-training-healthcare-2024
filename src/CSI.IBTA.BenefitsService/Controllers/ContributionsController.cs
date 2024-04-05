@@ -22,14 +22,14 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = nameof(Role.EmployerAdmin))]
         public async Task<IActionResult> Post(List<ProcessedContributionDto> contributionEntries)
         {
-            var employerId = User.GetEmployerId();
+            var signedEmployerId = User.GetEmployerId();
 
-            if (employerId == null)
+            if (signedEmployerId == null)
             {
                 return Problem(title: "EmployerId claim not found or invalid");
             }
 
-            var response = await _contributionsService.CreateContributions(contributionEntries);
+            var response = await _contributionsService.CreateContributions(contributionEntries, signedEmployerId.Value);
 
             if (response.Error != null)
             {
@@ -39,7 +39,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
                 );
             }
 
-            return Ok(response.Result);
+            return Ok();
         }
     }
 }
