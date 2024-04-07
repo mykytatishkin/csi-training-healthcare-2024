@@ -73,7 +73,7 @@ namespace CSI.IBTA.Employer.Controllers
         {
             var viewModel = new EmployeeViewModel()
             {
-                Employee = new FullEmployeeDto(0, "", "", "", "", "", "", DateOnly.FromDateTime(DateTime.UtcNow), "", "", "", "", employerId),
+                Employee = new FullEmployeeDto(0, "", "", "", "", "", "", DateOnly.FromDateTime(DateTime.UtcNow), "", "", "", "", "", employerId),
             };
             return PartialView("_EmployeeForm", viewModel);
         }
@@ -94,6 +94,7 @@ namespace CSI.IBTA.Employer.Controllers
                 viewModel.Employee.SSN,
                 viewModel.Employee.PhoneNumber,
                 viewModel.Employee.DateOfBirth,
+                viewModel.Employee.Email,
                 viewModel.Employee.AddressState,
                 viewModel.Employee.AddressStreet,
                 viewModel.Employee.AddressCity,
@@ -140,6 +141,7 @@ namespace CSI.IBTA.Employer.Controllers
         public async Task<IActionResult> UpdateEmployee(EmployeeViewModel viewModel)
         {
             ModelState.Remove("Employee.UserName");
+            ModelState.Remove("Employee.Password");
 
             if (!ModelState.IsValid)
             {
@@ -154,6 +156,7 @@ namespace CSI.IBTA.Employer.Controllers
                 viewModel.Employee.SSN,
                 viewModel.Employee.PhoneNumber,
                 viewModel.Employee.DateOfBirth,
+                viewModel.Employee.Email,
                 viewModel.Employee.AddressState,
                 viewModel.Employee.AddressStreet,
                 viewModel.Employee.AddressCity,

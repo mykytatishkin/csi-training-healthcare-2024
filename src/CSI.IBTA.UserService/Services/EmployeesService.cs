@@ -54,12 +54,6 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
             }
 
-            bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName);
-            if (hasSameName)
-            {
-                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
-            }
-
             bool hasSameUsername = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Account.Username == dto.UserName);
             if (hasSameUsername)
             {
@@ -87,7 +81,13 @@ namespace CSI.IBTA.UserService.Services
                         Zip = dto.AddressZip,
                     }
                 },
-                Emails = new List<Email>(),
+                Emails = new List<Email>()
+                {
+                    new Email()
+                    {
+                        EmailAddress = dto.Email
+                    }
+                },
                 Phones = new List<Phone>
                 {
                     new Phone()
@@ -105,7 +105,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<FullEmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int) user.EmployerId));
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()?.EmailAddress, user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
         }
 
         public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int id)
@@ -114,6 +114,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Addresses)
                 .Include(u => u.Account)
                 .Include(u => u.Phones)
+                .Include(u => u.Emails)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
@@ -132,6 +133,7 @@ namespace CSI.IBTA.UserService.Services
                 user.SSN,
                 user.Phones is { Count: > 0 } ? user.Phones[0].PhoneNumber : "",
                 DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()),
+                user.Emails is { Count: > 0 } ? user.Emails[0].EmailAddress : "",
                 address?.State ?? "",
                 address?.Street ?? "",
                 address?.City ?? "",
@@ -148,7 +150,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Account)
                 .Include(u => u.Phones)
                 .FirstOrDefaultAsync(u => u.Id == dto.Id);
-            
+
             if (user == null)
             {
                 return new GenericResponse<FullEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
@@ -160,26 +162,24 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
             }
 
-            bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName && x.Id != dto.Id);
-            if (hasSameName)
+            if (!string.IsNullOrEmpty(dto.Password))
             {
-                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
+                user.Account.Password = PasswordHasher.Hash(dto.Password);
             }
-
             user.Firstname = dto.FirstName;
             user.Lastname = dto.LastName;
             user.DateOfBirth = dto.DateOfBirth.ToDateTime(TimeOnly.MinValue);
             user.SSN = dto.SSN;
-            user.Account.Password = PasswordHasher.Hash(dto.Password);
             user.Addresses[0].State = dto.AddressState;
             user.Addresses[0].Street = dto.AddressStreet;
             user.Addresses[0].City = dto.AddressCity;
             user.Addresses[0].Zip = dto.AddressZip;
             user.Phones[0].PhoneNumber = dto.PhoneNumber;
+            user.Emails[0].EmailAddress = dto.Email;
 
             await _userUnitOfWork.CompleteAsync();
 
-            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()?.EmailAddress, user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Employer.Extensions;
+using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
@@ -87,10 +88,21 @@ namespace CSI.IBTA.UserService.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDto dto)
         {
-            //todo check if user resource is owned by employer
+            var token = Request.Headers.Authorization.ToString().Split(' ')[1];
+            var tokenEmployerId = token.GetEmployerId();
+            var userResponse = await _employeesService.GetEmployee(id);
+            if (userResponse.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)userResponse.Error.StatusCode,
+                    title: userResponse.Error.Title);
+            }
+            if (tokenEmployerId != userResponse.Result.EmployerId)
+            {
+                return Forbid();
+            }
 
             var response = await _employeesService.UpdateEmployee(dto);
-
             if (response.Error != null)
             {
                 return Problem(

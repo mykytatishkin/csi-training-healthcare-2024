@@ -51,6 +51,10 @@
                     <label for="ZipCode">Zip Code:</label>
                     <input id = "employee-zip" asp-for="Employee.AddressZip" type="text" required defaultvalue="@Model.Employee.AddressZip" oninput="setCustomValidity('')" />
                 </div>
+                <div class="form-member">
+                    <label for="Email">Email:</label>
+                    <input asp-for="Employee.Email" type="email" required defaultvalue="@Model.Employee.Email" />
+                </div>
                 <div id="validate-zip" class="form-member text-danger"></div>
             </div>
         </div>
@@ -64,7 +68,7 @@
                 </div>
                 <div class="form-member">
                     <label for="Password">Password:</label>
-                    <input asp-for="Employee.Password" type="password" required defaultvalue="@Model.Employee.Password" />
+                    <input asp-for="Employee.Password" type="password" defaultvalue="@Model.Employee.Password" required="@(Model.Employee.Id == 0 ? "required" : null)" />
                 </div>
             </div>
         </div>

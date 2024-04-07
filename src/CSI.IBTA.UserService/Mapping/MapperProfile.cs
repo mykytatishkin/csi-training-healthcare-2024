@@ -54,7 +54,7 @@ namespace CSI.IBTA.UserService.Mapping
                     user.Addresses[0].City,
                     user.Addresses[0].Zip));
 
-            CreateMap<Employer, EmployerDto>()
+            CreateMap<Shared.Entities.Employer, EmployerDto>()
                 .ConstructUsing(employer => new EmployerDto(
                     employer.Id,
                     employer.Name,
@@ -69,6 +69,7 @@ namespace CSI.IBTA.UserService.Mapping
 
             CreateMap<User, EmployeeDto>()
                 .ConstructUsing(user => new EmployeeDto(
+                    user.Id,
                     user.Firstname,
                     user.Lastname,
                     user.SSN,
