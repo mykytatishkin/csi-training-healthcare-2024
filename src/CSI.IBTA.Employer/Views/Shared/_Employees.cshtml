@@ -21,7 +21,7 @@
 </head>
 
 <div class="employee-container">
-    <span class="border-label">Search Employees</span>
+    <span class="border-label-employees">Search Employees</span>
 
     <div class="form-inputs">
         <form asp-action="Employees" method="get" id="employees-search-form">
@@ -84,7 +84,7 @@
                                 @(item.DateOfBirth?.ToString("MM/dd/yyyy") ?? "N/A")
                             </td>
                             <td>
-                                <a href="#">Enroll or Update Enrollment</a>
+                                <button class="anchor-style-button" onclick="showEnrollments(@Model.EmployerId, @item.Id)">Enroll or Update Enrollment</button>
                             </td>
                         </tr>
                     }
