@@ -1,32 +1,4 @@
 ﻿@{
-    ViewData["Title"] = "Employer Portal";
+    ViewData["Title"] = "Cosumer Portal";
 }
-@using CSI.IBTA.Shared.DTOs
-@model EmployerDto
-
-<head>
-    <link rel="stylesheet" href="~/css/shared.css" asp-append-version=" true" />
-</head>
-
-<div id="logout-button-parent">
-    <a asp-controller="Auth" asp-action="Logout" class="btn btn-primary">Logout</a>
-</div>
-
-<div id="logo-content" class="text-center">
-    <img class="logo-employer" id="logo-employer" src="data:image/png;base64, @Model.EncodedLogo" onerror="this.style.display='none';" />
-</div>
-
-<div class="menu-buttons">
-    <button id ="home-btn"onclick="showEmployerProfile(@Model.Id)" class="btn btn-primary">Home</button>
-    <button id="employees-btn" onclick="showEmployees(@Model.Id)" class="btn btn-primary">Employees</button>
-    <button id="import-btn" onclick="showContributions()" class="btn btn-primary">Import</button>
-    <button id="setup-btn" onclick="showSettings()" class="btn btn-primary">Setup</button>
-</div>
-
-<div id="main-partial-screen"></div>
-
-<script type="text/javascript" src="~/Scripts/shared.js"></script>
-<script type="text/javascript" src="~/Scripts/employees-page.js"></script>
-<script type="text/javascript" src="~/Scripts/contributions-page.js"></script>
-<script type="text/javascript" src="~/Scripts/employer-page.js"></script>
-<script type="text/javascript" src="~/Scripts/settings-page.js"></script>
+<h1>Welcome</h1>

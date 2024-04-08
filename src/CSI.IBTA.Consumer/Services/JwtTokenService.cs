@@ -48,7 +48,7 @@ namespace CSI.IBTA.Consumer.Services
                 .FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?
                 .Value;
 
-            return role == Role.EmployerAdmin.ToString();
+            return role == Role.Employee.ToString();
         }
 
         public bool IsTokenValid(string token)
