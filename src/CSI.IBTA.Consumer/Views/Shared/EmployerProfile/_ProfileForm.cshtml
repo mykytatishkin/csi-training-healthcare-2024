@@ -1,0 +1,78 @@
+﻿@using CSI.IBTA.Consumer.Models
+@model EmployerProfileViewModel;
+
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome</title>
+        <link rel="stylesheet" href="~/css/employer-profile.css">
+        <script type="text/javascript" src="~/Scripts/employer-page.js"></script>
+    </head>
+<body>
+<div class="main-container">
+    <div id="employerForm" class="container">
+        <div class="space-between-container">
+            <label style="margin-right: auto;">
+                Employer Administration
+            </label>
+        </div>
+        <form id="employer-profile-form" EncType="multipart/form-data">
+            @Html.HiddenFor(m => m.Employer.Id)
+            <span class="border-label">Profile</span>
+            <div class="container-columns">
+                <div class="container-column">
+                    <div class="container-row">
+                        <label for="Name">Name:*</label>
+                        <input type="text" name="Employer.Name" id="Name" required value="@Model.Employer.Name" />
+                    </div>
+                    <div class="container-row">
+                        <label for="Code">Code:*</label>
+                        <input type="text" name="Employer.Code" id="Code" required value="@Model.Employer.Code" />
+                    </div>
+                    <div class="container-row">
+                        <label for="Email">Email:*</label>
+                        <input type="email" name="Employer.Email" id="Email" required value="@Model.Employer.Email" />
+                    </div>
+                </div>
+                    <div class="container-column">
+                    <div class="container-row">
+                        <label for="Street">Street:*</label>
+                        <input type="text" name="Employer.Street" id="Street" required value="@Model.Employer.Street" />
+                    </div>
+                    <div class="container-row">
+                        <label for="City">City:*</label>
+                        <input type="text" name="Employer.City" id="City" required value="@Model.Employer.City" />
+                    </div>
+                        <div class="container-row">
+                        <label for="State">State:*</label>
+                        <input type="text" name="Employer.State" id="State" required value="@Model.Employer.State" />
+                    </div>
+                    <div class="container-row">
+                        <label for="ZipCode">Zip Code:*</label>
+                        <input type="text" name="Employer.ZipCode" id="ZipCode" required value="@Model.Employer.ZipCode" />
+                    </div>
+                    <div class="container-row">
+                        <label for="Phone">Phone:*</label>
+                        <input type="text" name="Employer.Phone" id="Phone" required value="@Model.Employer.Phone" />
+                    </div>
+                </div>
+            </div>
+            <span class="border-label">Logo</span>
+            <div class="container-logo">
+                <div class="logo-preview">
+                    <img id="imagePreview" src="data:image/png;base64, @Model.Employer.EncodedLogo" onerror="this.style.display='none';">
+                </div>
+                <div class="logo-name-display" id="fileNameDisplay"></div>
+                <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('NewLogo').click();" />
+                <input type="file" name="NewLogo" style="display:none;" onchange="previewImage(event); updateFileName(event);" accept="image/*" id="NewLogo" />
+            </div>
+            </form>
+            <div class="form-buttons">
+                <div id="employer-form-errors" class="form-errors text-danger"></div>
+                <button id="profile-form-cancel-btn" onclick="showEmployerProfile(@Model.Employer.Id)" class="btn btn-outline-primary">Cancel</button>
+                <button type="button"onclick="handleEmployerProfileFormSubmit()" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</body>
