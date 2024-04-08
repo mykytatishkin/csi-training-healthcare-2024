@@ -178,6 +178,14 @@ th {
     .form-member input {
     }
 
+.form-validity-error {
+    margin-left: 30px;
+    height: 14px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
 .custom-button {
     border: none;
     border-radius: 5px;

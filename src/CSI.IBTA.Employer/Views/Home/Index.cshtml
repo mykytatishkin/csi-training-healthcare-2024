@@ -2,7 +2,7 @@
     ViewData["Title"] = "Employer Portal";
 }
 @using CSI.IBTA.Shared.DTOs
-@model EmployerDto
+@model EmployerWithConsumerSettingDto
 
 <head>
     <link rel="stylesheet" href="~/css/shared.css" asp-append-version=" true" />
@@ -18,7 +18,7 @@
 
 <div class="menu-buttons">
     <button id ="home-btn"onclick="showEmployerProfile(@Model.Id)" class="btn btn-primary">Home</button>
-    <button id="employees-btn" onclick="showEmployees(@Model.Id)" class="btn btn-primary">Employees</button>
+    <button id="employees-btn" onclick='showEmployees(@Model.Id, @(@Model.AllowAddConsumers ? "true" : "false") )' class="btn btn-primary">Employees</button>
     <button id="import-btn" onclick="showContributions()" class="btn btn-primary">Import</button>
     <button id="setup-btn" onclick="showSettings(@Model.Id)" class="btn btn-primary">Setup</button>
 </div>

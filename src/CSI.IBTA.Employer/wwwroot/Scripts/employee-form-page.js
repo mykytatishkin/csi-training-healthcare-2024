@@ -1,23 +1,25 @@
-function openEmployeeForm(employerId) {
+function openEmployeeForm(employerId, addConsumersSetting) {
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
     }
 
     route = '/Employees/CreateEmployee?' + new URLSearchParams({
-        employerId: employerId
+        employerId: employerId,
+        employerAddConsumers: addConsumersSetting
     });
 
     fetchRoute(route, onSuccess, null);
 }
 
-function openUpdateEmployeeForm(employeeId, employerId) {
+function openUpdateEmployeeForm(employeeId, employerId, addConsumersSetting) {
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
     }
 
     route = '/Employees/UpdateEmployee?' + new URLSearchParams({
         id: employeeId,
-        employerId: employerId
+        employerId: employerId,
+        employerAddConsumers: addConsumersSetting
     });
 
     fetchRoute(route, onSuccess, null);
@@ -31,6 +33,14 @@ function setSubmit(operationStart) {
         document.getElementById('submit-button').disabled = false;
         document.getElementById('submit-button').innerText = "Submit";
     }
+}
+
+function setValidationMessages(form) {
+    Array.from(form.elements).forEach(function (e) {
+        let errorMsg = document.getElementById('error-' + e.name)
+        if (errorMsg != null)
+            errorMsg.innerText = e.validationMessage
+    });
 }
 
 function saveEmployeeData() {
@@ -48,10 +58,11 @@ function saveEmployeeData() {
         document.getElementById('employee-zip').setCustomValidity("Zip code has to be not empty and 6 digits");
     }
     if (form.checkValidity() == false) {
-        form.reportValidity();
+        setValidationMessages(form);
         setSubmit(false);
         return;
     }
+    setValidationMessages(form);
 
     const employeeId = formData.get('Employee.Id');
 

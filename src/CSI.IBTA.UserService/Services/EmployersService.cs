@@ -138,13 +138,17 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<bool>(null, true);
         }
 
-        public async Task<GenericResponse<EmployerDto>> GetEmployer(int employerId)
+        public async Task<GenericResponse<EmployerWithConsumerSettingDto>> GetEmployer(int employerId)
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericResponse<EmployerDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericResponse<EmployerWithConsumerSettingDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
-            return new GenericResponse<EmployerDto>(null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            var addConsumersSetting = (await _unitOfWork.Settings.Find(s => s.EmployerId == e.Id && s.Condition.Equals(EmployerConstants.AddConsumers))).SingleOrDefault();
+            if (addConsumersSetting == null) return new GenericResponse<EmployerWithConsumerSettingDto>(new HttpError("Employer AddConsumers setting not found", HttpStatusCode.NotFound), null);
+
+
+            return new GenericResponse<EmployerWithConsumerSettingDto>(null, new EmployerWithConsumerSettingDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo, addConsumersSetting.State));
         }
 
         public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetEmployers(List<int> employerIds)

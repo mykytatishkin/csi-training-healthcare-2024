@@ -7,6 +7,7 @@ using AutoMapper;
 using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
 using CSI.IBTA.Shared.Utils;
+using CSI.IBTA.Shared.Constants;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -48,16 +49,31 @@ namespace CSI.IBTA.UserService.Services
 
         public async Task<GenericResponse<FullEmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
         {
+            var addConsumerSetting = (await _userUnitOfWork.Settings.Find(s => s.EmployerId == dto.EmployerId 
+                && s.Condition.Equals(EmployerConstants.AddConsumers))).SingleOrDefault();
+
+            if (addConsumerSetting == null || !addConsumerSetting.IsAllowed) 
+            { 
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Administrator has forbidden adding consumers. Try again later.", HttpStatusCode.BadRequest), null);
+            }
+
             bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN);
+            string invalidValues = "";
             if (hasSameSSN)
             {
-                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+                invalidValues += "SSN";
             }
 
             bool hasSameUsername = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Account.Username == dto.UserName);
             if (hasSameUsername)
             {
-                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
+                invalidValues += invalidValues == "" ? "" : ", ";
+                invalidValues += "username";
+            }
+
+            if (invalidValues != "")
+            {
+                return new GenericResponse<FullEmployeeDto>(new HttpError($"An employee already exists with the same: {invalidValues}.", HttpStatusCode.BadRequest), null);
             }
 
             var user = new User()
@@ -149,6 +165,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Addresses)
                 .Include(u => u.Account)
                 .Include(u => u.Phones)
+                .Include(u => u.Emails)
                 .FirstOrDefaultAsync(u => u.Id == dto.Id);
 
             if (user == null)
