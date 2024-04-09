@@ -8,12 +8,12 @@ namespace CSI.IBTA.Employer.Controllers
     [Route("[controller]")]
     public class EnrollmentsController : Controller
     {
-        private readonly IInsuranceClient _insuranceClient;
+        private readonly IEnrollmentsClient _enrollmentClient;
         private readonly IEmployeesClient _employeesClient;
 
-        public EnrollmentsController(IInsuranceClient enrollmentClient, IEmployeesClient employeesClient)
+        public EnrollmentsController(IEnrollmentsClient enrollmentClient, IEmployeesClient employeesClient)
         {
-            _insuranceClient = enrollmentClient;
+            _enrollmentClient = enrollmentClient;
             _employeesClient = employeesClient;
         }
 
@@ -41,7 +41,7 @@ namespace CSI.IBTA.Employer.Controllers
                 );
             }
 
-            var packagesResponse = await _insuranceClient.GetEmployerPackages(employerId);
+            var packagesResponse = await _enrollmentClient.GetEmployerPackages(employerId);
 
             if (packagesResponse.Error != null)
             {
@@ -50,7 +50,7 @@ namespace CSI.IBTA.Employer.Controllers
 
             var plans = packagesResponse.Result!.SelectMany(p => p.Plans).ToList();
             
-            var enrollmentsResponse = await _insuranceClient.GetEmployeeEnrollments(employeeId, new GetEnrollmentsDto(encryptedEmployeeResponse.Result!));
+            var enrollmentsResponse = await _enrollmentClient.GetEmployeeEnrollments(employeeId, new GetEnrollmentsDto(encryptedEmployeeResponse.Result!));
 
             if (enrollmentsResponse.Error != null)
             {
@@ -92,7 +92,7 @@ namespace CSI.IBTA.Employer.Controllers
             var upsertDtos = enrollments.Select(e => new UpsertEnrollmentDto(e.Plan.Id, e.Election, e.Id)).ToList();
             var upsertDto = new UpsertEnrollmentsDto(upsertDtos, encryptedEmployeeResponse.Result!);
 
-            var upsertResponse = await _insuranceClient.UpdateEnrollments(employerId, employeeId, upsertDto);
+            var upsertResponse = await _enrollmentClient.UpdateEnrollments(employerId, employeeId, upsertDto);
 
             if (upsertResponse.Error != null)
             {

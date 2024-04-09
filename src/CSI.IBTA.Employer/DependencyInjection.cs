@@ -3,7 +3,6 @@ using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Employer.Services;
 using CSI.IBTA.Employer.Authentication;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CSI.IBTA.Employer
 {
@@ -17,10 +16,13 @@ namespace CSI.IBTA.Employer
             services.AddHttpContextAccessor();
             services.AddTransient<AuthorizedHttpClient>();
             services.AddScoped<IEmployeesClient, EmployeesClient>();
-            services.AddScoped<IInsuranceClient, InsuranceClient>();
             services.AddScoped<IEmployersClient, EmployersClient>();
+            services.AddScoped<IPlansClient, PlansClient>();
             services.AddScoped<ISettingsClient, SettingsClient>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IContributionsService, ContributionService>();
+            services.AddScoped<IEnrollmentsClient, EnrollmentsClient>();
+            services.AddScoped<IContributionsClient, ContributionsClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
             return services;
         }
