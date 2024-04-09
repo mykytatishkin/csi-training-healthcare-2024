@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CSI.IBTA.DataLayer\CSI.IBTA.DataLayer.csproj" />
     <ProjectReference Include="..\CSI.IBTA.DB.Migrations\CSI.IBTA.DB.Migrations.csproj" />
-    <ProjectReference Include="..\CSI.IBTA.Employer\CSI.IBTA.Employer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using CSI.IBTA.Employer.Extensions;
-using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
@@ -72,24 +71,6 @@ namespace CSI.IBTA.UserService.Controllers
         [Authorize]
         public async Task<IActionResult> GetEmployee(int id)
         {
-            var response = await _employeesService.GetEmployee(id);
-
-            if (response.Error != null)
-            {
-                return Problem(
-                    statusCode: (int)response.Error.StatusCode,
-                    title: response.Error.Title);
-            }
-
-            return Ok(response.Result);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDto dto)
-        {
-            var token = Request.Headers.Authorization.ToString().Split(' ')[1];
-            var tokenEmployerId = token.GetEmployerId();
             var userResponse = await _employeesService.GetEmployee(id);
             if (userResponse.Error != null)
             {
@@ -97,10 +78,27 @@ namespace CSI.IBTA.UserService.Controllers
                     statusCode: (int)userResponse.Error.StatusCode,
                     title: userResponse.Error.Title);
             }
-            if (tokenEmployerId != userResponse.Result.EmployerId)
+
+            var result = await _authorizationService.AuthorizeAsync(User, userResponse.Result.EmployerId, PolicyConstants.EmployerAdminOwner);
+            if (!result.Succeeded) return Forbid();
+
+            return Ok(userResponse.Result);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDto dto)
+        {
+            var userResponse = await _employeesService.GetEmployee(id);
+            if (userResponse.Error != null)
             {
-                return Forbid();
+                return Problem(
+                    statusCode: (int)userResponse.Error.StatusCode,
+                    title: userResponse.Error.Title);
             }
+
+            var result = await _authorizationService.AuthorizeAsync(User, userResponse.Result.EmployerId, PolicyConstants.EmployerAdminOwner);
+            if (!result.Succeeded) return Forbid();
 
             var response = await _employeesService.UpdateEmployee(dto);
             if (response.Error != null)
