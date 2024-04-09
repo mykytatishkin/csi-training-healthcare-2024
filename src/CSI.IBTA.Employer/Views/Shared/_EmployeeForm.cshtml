@@ -1,4 +1,5 @@
-﻿@model EmployeeViewModel
+﻿@using CSI.IBTA.Shared.Utils.Extensions
+@model EmployeeViewModel
 
 <head>
     <link rel="stylesheet" href="~/css/employees-partial-view.css">
@@ -36,7 +37,7 @@
 
                 <div class="form-member">
                     <label for="DateOfBirth">Date of Birth:</label>
-                    <input asp-for="Employee.DateOfBirth" type="date" value="@Model.Employee.DateOfBirth.ToString("yyyy-MM-dd")" required />
+                    <input asp-for="Employee.DateOfBirth" type="date" value="@Model.Employee.DateOfBirth.ToAmericanDateOnlyFormat()" required />
                 </div>
                 <div id="error-Employee.DateOfBirth" class="text-danger form-validity-error"></div>
 
