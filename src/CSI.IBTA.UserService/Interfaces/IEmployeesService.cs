@@ -5,5 +5,7 @@ namespace CSI.IBTA.UserService.Interfaces
     public interface IEmployeesService
     {
         Task<GenericResponse<PagedEmployeesResponse>> GetEmployees(int page, int pageSize, int employerId, string firstname = "", string lastname = "", string ssn = "");
+        public Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId);
+        Task<GenericResponse<EmployeeDto>> CreateEmployee(CreateEmployeeDto dto);
     }
 }

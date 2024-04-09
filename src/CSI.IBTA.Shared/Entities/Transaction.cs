@@ -8,5 +8,6 @@
         public DateTime DateTime { get; set; }
         public Enrollment Enrollment { get; set; } = null!;
         public int EnrollmentId { get; set; }
+        public TransactionReason Reason { get; set; }
     }
 }

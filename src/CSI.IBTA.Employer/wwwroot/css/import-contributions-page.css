@@ -1,0 +1,69 @@
+﻿@import url('global.css');
+
+#import-contributions-errors {
+    color: red;
+    margin-top: 20px;
+}
+
+#import-contributions-success {
+    color: green;
+    margin-top: 20px;
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.custom-button {
+    padding: 4px 8px;
+    background-color: #0d6efd;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+    .custom-button:hover {
+        background-color: #0056b3;
+    }
+
+.file-name-wrapper {
+    border: 1px solid var(--form-border-color);
+    border-radius: 4px;
+    padding: 4px;
+    margin-right: 8px;
+    width: 300px;
+}
+
+.file-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+form {
+    margin-top: 32px;
+}
+
+.file-name-column {
+    display: flex;
+    flex-direction: column;
+}
+
+    .file-name-column span {
+        color: grey;
+    }
+
+.upload-file-text {
+    margin-right: 8px;
+}
+
+.file-name-column {
+    display: flex;
+}
+
+.import-button {
+    margin-top: 12px;
+    width: 150px;
+}

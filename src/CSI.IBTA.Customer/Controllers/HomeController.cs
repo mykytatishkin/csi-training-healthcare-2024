@@ -1,4 +1,3 @@
-using CSI.IBTA.Customer.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Customer.Controllers

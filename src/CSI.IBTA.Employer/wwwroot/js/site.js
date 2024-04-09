@@ -21,6 +21,24 @@
         });
 }
 
-function showError(id, text) {
-    document.getElementById(id).innerText = text;
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "block";
+}
+
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "none";
+}
+
+function showError(errorElementId, text) {
+    let error = document.getElementById(errorElementId);
+    error.innerText = text;
+    error.style.display = "block";
+}
+
+function hideError(errorElementId) {
+    let error = document.getElementById(errorElementId);
+    error.innerText = "";
+    error.style.display = "none";
 }

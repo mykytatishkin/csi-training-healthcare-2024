@@ -1,5 +1,7 @@
+using CSI.IBTA.Employer.Extensions;
 using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
+using CSI.IBTA.Shared.Constants;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -20,11 +22,14 @@ namespace CSI.IBTA.Employer.Controllers
         public async Task<IActionResult> Index()
         {
             var token = _jwtTokenService.GetCachedToken();
-            var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            var accountId = jwtSecurityToken.Subject;
-            int intAccountId = Convert.ToInt32(accountId);
+            var employerId = JwtSecurityTokenExtensions.GetEmployerId(token);
 
-            var res = await _employersClient.GetEmployerByAccountId(intAccountId);
+            if (employerId == null)
+            {
+                return Problem(title: "Employer ID claim not found or invalid");
+            }
+
+            var res = await _employersClient.GetEmployerById((int) employerId);
 
             if (res.Error != null || res.Result == null)
             {
