@@ -6,5 +6,6 @@
         CookieOptions GetCookieOptions();
         bool IsTokenValid(string token);
         string? GetCachedToken();
+        int? GetEmployerId(string token);
     }
 }

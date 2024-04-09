@@ -1,12 +1,11 @@
-﻿using CSI.IBTA.BenefitsService.Interfaces;
+using CSI.IBTA.BenefitsService.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CSI.IBTA.DataLayer.Interfaces;
+using CSI.IBTA.Shared.DTOs.Errors;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.DTOs;
 using AutoMapper;
-using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
-using CSI.IBTA.UserService.Interfaces;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -21,6 +20,17 @@ namespace CSI.IBTA.BenefitsService.Services
             _benefitsUnitOfWork = benefitsUnitOfWork;
             _mapper = mapper;
             _decodingService = decodingService;
+        }
+
+        public async Task<GenericResponse<List<EnrollmentDto>>> GetUsersEnrollments(List<int> userIds)
+        {
+            var enrollments = await _benefitsUnitOfWork.Enrollments
+                .Include(e => e.Plan)
+                .Where(e => userIds.Contains(e.EmployeeId))
+                .ToListAsync();
+
+            var enrollmentDtos = enrollments.Select(_mapper.Map<EnrollmentDto>).ToList();
+            return new(null, enrollmentDtos);
         }
 
         public async Task<GenericResponse<List<EnrollmentDto>>> GetEnrollmentsByEmployeeId(int employeeId, int employerId, byte[] encodedEmployerEmployee)

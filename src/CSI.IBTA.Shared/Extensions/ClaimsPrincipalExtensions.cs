@@ -1,7 +1,7 @@
 ﻿using CSI.IBTA.Shared.Constants;
 using System.Security.Claims;
 
-namespace CSI.IBTA.BenefitsService.Extensions
+namespace CSI.IBTA.Shared.Extensions
 {
     public static class ClaimsPrincipalExtensions
     {

@@ -1,10 +1,10 @@
-﻿using CSI.IBTA.UserService.Interfaces;
-using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.DTOs;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text;
+using CSI.IBTA.BenefitsService.Interfaces;
 
-namespace CSI.IBTA.UserService.Services
+namespace CSI.IBTA.BenefitsService.Services
 {
     internal class DecodingService : IDecodingService
     {

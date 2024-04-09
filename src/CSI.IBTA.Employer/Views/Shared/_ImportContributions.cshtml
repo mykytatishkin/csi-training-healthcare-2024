@@ -1,1 +1,32 @@
-﻿<p>Import Contributions partial view</p>
+﻿<head>
+    <link rel="stylesheet" href="~/css/import-contributions-page.css" asp-append-version=" true" />
+</head>
+<form method="post" enctype="multipart/form-data" asp-controller="Contributions" asp-action="Upload" id="import-contributions-form">
+    <table>
+        <tr>
+            <td>
+                <span class="upload-file-text">Upload File:</span>
+            </td>
+            <td>
+                <div class="file-name-wrapper">
+                    <span class="file-name">No file selected</span>
+                </div>
+            </td>
+            <td>
+                <input type="file" id="contributions-file-input" accept=".csv" class="hidden" />
+                <label for="contributions-file-input" class="custom-button">Choose File</label>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <div class="file-name-column">
+                    <span>Locate the file you want to upload</span>
+                    <button type="button" class="btn btn-primary import-button" onclick="importContributions()">Import</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <p id="import-contributions-errors"></p>
+    <p id="import-contributions-success">Contributions imported successfully</p>
+</form>
