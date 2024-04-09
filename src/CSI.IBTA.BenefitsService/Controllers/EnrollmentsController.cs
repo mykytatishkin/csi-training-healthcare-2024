@@ -12,10 +12,12 @@ namespace CSI.IBTA.BenefitsService.Controllers
     public class EnrollmentsController : Controller
     {
         private readonly IEnrollmentsService _enrollmentsService;
+        private readonly IUserBalanceService _userBalanceService;
 
-        public EnrollmentsController(IEnrollmentsService enrollmentsService)
+        public EnrollmentsController(IEnrollmentsService enrollmentsService, IUserBalanceService userBalanceService)
         {
             _enrollmentsService = enrollmentsService;
+            _userBalanceService = userBalanceService;
         }
 
         [HttpPost("{employeeId}")]
@@ -44,6 +46,23 @@ namespace CSI.IBTA.BenefitsService.Controllers
         public async Task<IActionResult> UpsertEnrollments(int employerId, int employeeId, UpsertEnrollmentsDto dto)
         {
             var response = await _enrollmentsService.UpsertEnrollments(employerId, employeeId, dto.EncodedEmployerEmployee, dto.Enrollments);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPost("Balances")]
+        //[Authorize(Roles = $"{nameof(Role.Employee)}")]
+        public async Task<IActionResult> GetEnrollmentsBalances(List<int> enrollmentIds)
+        {
+            var response = await _userBalanceService.GetCurrentBalances(enrollmentIds);
 
             if (response.Error != null)
             {

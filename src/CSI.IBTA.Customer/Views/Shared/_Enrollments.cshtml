@@ -1,10 +1,5 @@
 ﻿@using CSI.IBTA.Customer.Constants
-@    using CSI.IBTA.Employer.Constants
-@    using CSI.IBTA.Shared.Utils.Extensions
-@    using CSI.IBTA.Shared.DataStructures
-@    using CSI.IBTA.Shared.DTOs
-@    using CSI.IBTA.Shared.Entities
-@    using CSI.IBTA.Shared.Extensions
+@model EnrollmentsViewModel
 
 @{
     var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
@@ -15,86 +10,84 @@
     <link rel="stylesheet" href="~/css/employees-partial-view.css">
 </head>
 
-<div class="employee-container">
-    <span class="border-label-employees">Search Employees</span>
-
-    @if (Model.Employees.Any())
-    {
-        <div class="employees-table">
-            <table class="table table-striped">
-                <thead>
+<p>Active Enrollments:</p>
+@if (Model.Enrollments.Any())
+{
+    <div class="employees-table">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Election</th>
+                    <th>Contribution</th>
+                    <th>Total Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Enrollments)
+                {
                     <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Election</th>
-                        <th>Contribution</th>
-                        <th>Total Balance</th>
-                        <th>Actions</th>
+                        <td>
+                            @* <a href="#">@Html.DisplayFor(modelItem => item.Firstname)</a> *@
+                            General Medical Insurance
+                        </td>
+                        <td>
+                            @* @Html.DisplayFor(modelItem => item.Lastname) *@
+                            Medical
+                        </td>
+                        <td>
+                            @* @Html.DisplayFor(modelItem => item.SSN) *@
+                            100$
+                        </td>
+                        <td>
+                            2000$
+                        </td>
+                        <td>
+                            6548$
+                        </td>
+                        <td>
+                            <button class="btn btn-primary">File a Claim</button>
+                            @* <button class="anchor-style-button" onclick="showEnrollments(@Model.EmployerId, @item.Id)">File a Claim</button> *@
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Employees)
-                    {
-                        <tr>
-                            <td>
-                                @* <a href="#">@Html.DisplayFor(modelItem => item.Firstname)</a> *@
-                                General Medical Insurance
-                            </td>
-                            <td>
-                                @* @Html.DisplayFor(modelItem => item.Lastname) *@
-                                Medical
-                            </td>
-                            <td>
-                                @* @Html.DisplayFor(modelItem => item.SSN) *@
-                                100$
-                            </td>
-                            <td>
-                                2000$
-                            </td>
-                            <td>
-                                6548$
-                            </td>
-                            <td>
-                                <button class="anchor-style-button" onclick="showEnrollments(@Model.EmployerId, @item.Id)">File a Claim</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                }
+            </tbody>
+        </table>
 
-            <div class="pages">
-                <a onclick="getEmployeesPage(@Model.EmployerId, @(Model.Page - 1))"
-                   class="btn btn-default @prevDisabled">
-                    &lt;&lt; Prev
-                </a>
-                @{
-                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
-                    var lastPage = Math.Min(nextPages, Model.TotalPages);
-                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
-                    for (int i = firstPage; i <= lastPage; i++)
+        <div class="pages">
+            <a onclick="getEmployeesPage(@Model.EmployeeId, @(Model.Page - 1))"
+               class="btn btn-default @prevDisabled">
+                &lt;&lt; Prev
+            </a>
+            @{
+                var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
+                var lastPage = Math.Min(nextPages, Model.TotalPages);
+                var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                for (int i = firstPage; i <= lastPage; i++)
+                {
+                    if (i == Model.Page || Model.Page == 0)
                     {
-                        if (i == Model.Page || Model.Page == 0)
-                        {
-                            <span class="page-button selected">@Model.Page</span>
-                        }
-                        else
-                        {
-                            <a onclick="getEmployeesPage(@Model.EmployerId, @(i))"
-                               class="btn btn-default page-button">
-                                @i
-                            </a>
-                        }
+                        <span class="page-button selected">@Model.Page</span>
+                    }
+                    else
+                    {
+                        <a onclick="getEmployeesPage(@Model.EmployeeId, @(i))"
+                           class="btn btn-default page-button">
+                            @i
+                        </a>
                     }
                 }
-                <a onclick="getEmployeesPage(@Model.EmployerId, @(Model.Page + 1))"
-                   class="btn btn-default @nextDisabled">
-                    Next >>
-                </a>
-            </div>
+            }
+            <a onclick="getEmployeesPage(@Model.EmployeeId, @(Model.Page + 1))"
+               class="btn btn-default @nextDisabled">
+                Next >>
+            </a>
         </div>
-    }
-    else
-    {
-        <p>No employees found</p>
-    }
-</div>
+    </div>
+}
+else
+{
+    <p>No enrollments found</p>
+}
