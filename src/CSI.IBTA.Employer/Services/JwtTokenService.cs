@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CSI.IBTA.Employer.Constants;
+using Newtonsoft.Json.Linq;
+using CSI.IBTA.Shared.Constants;
 
 namespace CSI.IBTA.Employer.Services
 {
@@ -17,8 +19,8 @@ namespace CSI.IBTA.Employer.Services
         private readonly JwtSettings _jwtSettings;
 
         public JwtTokenService(
-            ILogger<JwtTokenService> logger, 
-            IOptions<JwtSettings> jwtSettings, 
+            ILogger<JwtTokenService> logger,
+            IOptions<JwtSettings> jwtSettings,
             IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
@@ -49,6 +51,28 @@ namespace CSI.IBTA.Employer.Services
                 .Value;
 
             return role == Role.EmployerAdmin.ToString();
+        }
+
+        public int? GetEmployerId(string token)
+        {
+            if (token == null)
+            {
+                return null;
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var employerIdString = jwtSecurityToken.Claims
+                .FirstOrDefault(claim => claim.Type == JwtTokenClaimConstants.EmployerId)?
+                .Value;
+            bool success = int.TryParse(employerIdString, out int employerId);
+
+            if (!success)
+            {
+                return null;
+            }
+
+            return employerId;
         }
 
         public bool IsTokenValid(string token)

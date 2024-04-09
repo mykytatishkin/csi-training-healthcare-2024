@@ -40,7 +40,8 @@ namespace CSI.IBTA.Administrator.Controllers
                 model.PlanForm.Name,
                 model.PlanForm.PlanType,
                 model.PlanForm.Contribution,
-                model.Package.Id);
+                model.Package.Id,
+                model.EmployerId);
 
             model.Package.Plans.Add(newPlan);
 
@@ -55,7 +56,7 @@ namespace CSI.IBTA.Administrator.Controllers
             var index = (int) model.PlanForm.SelectedPlanIndex;
 
             var plan = model.Package.Plans[index];
-            model.Package.Plans[index] = new PlanDto(plan.Id, model.PlanForm.Name, model.PlanForm.PlanType, model.PlanForm.Contribution, plan.PackageId);
+            model.Package.Plans[index] = new PlanDto(plan.Id, model.PlanForm.Name, model.PlanForm.PlanType, model.PlanForm.Contribution, plan.PackageId, model.Package.EmployerId);
             ModelState.Clear();
             return PartialView("InsurancePackages/_PackageForm", model);
         }

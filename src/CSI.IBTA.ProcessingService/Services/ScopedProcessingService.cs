@@ -32,6 +32,7 @@ namespace CSI.IBTA.ProcessingService.Services
                     var transactionCount = await _benefitsUnitOfWork.Transactions.GetSet()
                         .Where(t => t.EnrollmentId == enrollment.Id)
                         .Where(t => t.Type == TransactionType.Income)
+                        .Where(t => t.Reason == TransactionReason.Regular)
                         .CountAsync(cancellationToken: stoppingToken);
 
                     Plan plan = enrollment.Plan;
@@ -57,7 +58,8 @@ namespace CSI.IBTA.ProcessingService.Services
                             Amount = transactionAmount,
                             DateTime = DateTime.UtcNow,
                             Enrollment = enrollment,
-                            Type = TransactionType.Income
+                            Type = TransactionType.Income,
+                            Reason = TransactionReason.Regular,
                         };
 
                         await _benefitsUnitOfWork.Transactions.Add(transaction);

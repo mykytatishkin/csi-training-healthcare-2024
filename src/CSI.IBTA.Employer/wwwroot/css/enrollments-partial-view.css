@@ -1,0 +1,152 @@
+﻿@import url('global.css');
+
+.border-label {
+    position: relative;
+    left: 30px;
+    top: 12px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+    text-align: left;
+}
+
+.container-border {
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    padding: 20px 20px;
+}
+
+#add-new-button-parent {
+    text-align: end;
+}
+
+.enrollments-table table {
+    border-collapse: collapse;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+}
+
+.enrollments-table th,
+.enrollments-table td {
+    border-left: 1px solid var(--form-border-color);
+    vertical-align: middle;
+}
+
+.enrollments-table th {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.enrollments-table {
+    margin-top: 20px;
+}
+
+.update-button {
+    padding: 2px .75rem;
+}
+
+.action-buttons button {
+    margin-right: 4px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    border: 1px solid #888;
+    width: 40%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+}
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+.modal-header {
+    display: flex;
+    padding: 8px 20px;
+}
+
+    .modal-header p {
+        margin: 0px;
+        width: 100%;
+        text-align: center;
+    }
+
+.modal-table table,
+.modal-table th,
+.modal-table td,
+.modal-table tr,
+.modal-table tbody {
+    border: none;
+}
+
+.modal-table td {
+    padding: 2px 4px;
+}
+
+.input-labels {
+    text-align: right;
+    padding-right: 8px;
+}
+
+.modal-table {
+    display: flex;
+    justify-content: center;
+}
+
+    .modal-table input {
+        width: 100px;
+    }
+
+.modal-action-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+    .modal-action-buttons .btn-secondary {
+        margin-right: 8px;
+    }
+
+.modal-body {
+    padding: 20px 0px;
+}
+
+.enrollments-error {
+    color: red;
+    margin-top: 16px;
+    margin-bottom: 0px;
+}
+
+.modal .enrollments-error {
+    text-align: center;
+}

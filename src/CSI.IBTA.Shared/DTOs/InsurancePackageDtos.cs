@@ -24,6 +24,7 @@ namespace CSI.IBTA.Shared.DTOs
     public record FullInsurancePackageDto(
         int Id,
         string Name,
+        bool IsInitialized,
         DateTime PlanStart,
         DateTime PlanEnd,
         PayrollFrequency PayrollFrequency,

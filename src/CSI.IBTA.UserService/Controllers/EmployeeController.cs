@@ -1,5 +1,8 @@
-﻿using CSI.IBTA.Shared.Entities;
+﻿using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
+using CSI.IBTA.UserService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,14 +13,16 @@ namespace CSI.IBTA.UserService.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeesService _employeesService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public EmployeeController(IEmployeesService employeesService)
+        public EmployeeController(IEmployeesService employeesService, IAuthorizationService authorizationService)
         {
             _employeesService = employeesService;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> GetEmployees(
             int page,
             int pageSize,
@@ -26,6 +31,10 @@ namespace CSI.IBTA.UserService.Controllers
             string lastname = "",
             string ssn = "")
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employeesService.GetEmployees(page, pageSize, employerId, firstname, lastname, ssn);
 
             if (response.Error != null)
@@ -34,6 +43,43 @@ namespace CSI.IBTA.UserService.Controllers
                     title: response.Error.Title,
                     statusCode: (int)response.Error.StatusCode
                 );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPost("~/api/v1/EmployeesByUsernames")]
+        [Authorize]
+        public async Task<IActionResult> GetEmployeesByUsernames(List<string> usernames, int employerId)
+        {
+            var response = await _employeesService.GetEmployeesByUsernames(usernames, employerId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = nameof(Role.EmployerAdmin))]
+        public async Task<IActionResult> CreateEmployee(CreateEmployeeDto dto)
+        {
+            var result = await _authorizationService.AuthorizeAsync(User, dto.EmployerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
+            var response = await _employeesService.CreateEmployee(dto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error!.Title);
             }
 
             return Ok(response.Result);

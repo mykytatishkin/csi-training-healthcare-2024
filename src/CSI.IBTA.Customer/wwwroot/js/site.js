@@ -1,4 +1,22 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function fetchRoute(route, callbackSuccess, callbackFailure) {
+    fetch(route)
+        .then(function (response) {
+            if (!response.ok) {
+                callbackFailure?.(response.status);
+                throw new Error("Response was not ok");
+            }
 
-// Write your JavaScript code.
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
+
+            return response.text();
+        })
+        .then(function (data) {
+            callbackSuccess?.(data);
+        })
+        .catch(function (error) {
+            console.error("Fetch request failed: " + error)
+        });
+}

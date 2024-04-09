@@ -1,7 +1,34 @@
 ﻿@{
-    ViewData["Title"] = "Cosumer Portal";
+    ViewData["Title"] = "Consumer Portal";
 }
-<h1>Welcome</h1>
+
+<head>
+    <link rel="stylesheet" href="~/css/shared.css" asp-append-version=" true" />
+</head>
+
 <div id="logout-button-parent">
     <a asp-controller="Auth" asp-action="Logout" class="btn btn-primary">Logout</a>
 </div>
+
+<div id="logo-content" class="text-center">
+    <img class="logo-employer" id="logo-employer" src="https://placehold.co/600x400" onerror="this.style.display='none';" />
+</div>
+
+<div class="menu-buttons">
+    <button id="home-btn" onclick="showHome()" class="btn btn-primary">Home</button>
+    <button id="employees-btn" onclick="showEnrollments()" class="btn btn-primary">Enrollments</button>
+    <button id="import-btn" onclick="showClaims()" class="btn btn-primary">Claims</button>
+    <button id="ghost-btn"></button> @* Ghost button for styling/alignment *@
+</div>
+
+<div id="main-partial-screen"></div>
+
+<script type="text/javascript" src="~/Scripts/home-page.js"></script>
+<script type="text/javascript" src="~/Scripts/enrollments-page.js"></script>
+<script type="text/javascript" src="~/Scripts/claims-page.js"></script>
+
+<script>
+    window.onload = function () {
+        showHome();
+    }
+</script>

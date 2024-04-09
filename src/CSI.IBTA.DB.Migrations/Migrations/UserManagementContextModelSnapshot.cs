@@ -221,6 +221,9 @@ namespace CSI.IBTA.DB.Migrations.Migrations
                     b.Property<int>("EmployerId")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("EmployerState")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("State")
                         .HasColumnType("bit");
 
