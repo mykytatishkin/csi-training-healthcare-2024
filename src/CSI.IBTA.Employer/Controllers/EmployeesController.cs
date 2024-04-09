@@ -2,6 +2,7 @@
 using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Employer.Models;
+using CSI.IBTA.Shared.Constants;
 using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,12 @@ namespace CSI.IBTA.Employer.Controllers
     public class EmployeesController : Controller
     {
         private readonly IEmployeesClient _employeeClient;
+        private readonly ISettingsClient _settingsClient;
 
-        public EmployeesController(IEmployeesClient employeeClient)
+        public EmployeesController(IEmployeesClient employeeClient, ISettingsClient settingsClient)
         {
             _employeeClient = employeeClient;
+            _settingsClient = settingsClient;
         }
 
         [HttpGet]
@@ -47,7 +50,15 @@ namespace CSI.IBTA.Employer.Controllers
                 employerId,
                 firstnameFilter ?? "",
                 lastnameFilter ?? "",
-                ssnFilter ?? "");
+            ssnFilter ?? "");
+
+
+            var addConsumersResponse = await _settingsClient.GetEmployerSetting(employerId, EmployerConstants.AddConsumers);
+
+            if (addConsumersResponse.Error != null || addConsumersResponse.Result == null)
+            {
+                return Problem(title: "Failed to retrieve claim setting");
+            }
 
             if (employeesResponse.Error != null || employeesResponse.Result == null)
             {
@@ -60,6 +71,7 @@ namespace CSI.IBTA.Employer.Controllers
             {
                 Employees = employees,
                 EmployerId = employerId,
+                EmployerAddConsumers = addConsumersResponse.Result.State,
                 Page = pageNumber ?? 1,
                 TotalCount = employeesResponse.Result.TotalCount,
                 TotalPages = employeesResponse.Result.TotalPages,
@@ -69,10 +81,11 @@ namespace CSI.IBTA.Employer.Controllers
         }
 
         [HttpGet("CreateEmployee")]
-        public ActionResult CreateEmployee(int employerId)
+        public ActionResult CreateEmployee(int employerId, bool employerAddConsumers)
         {
             var viewModel = new EmployeeViewModel()
             {
+                AllowAddConsumers = employerAddConsumers,
                 Employee = new FullEmployeeDto(0, "", "", "", "", "", "", DateOnly.FromDateTime(DateTime.UtcNow), "", "", "", "", "", employerId),
             };
             return PartialView("_EmployeeForm", viewModel);
@@ -85,6 +98,8 @@ namespace CSI.IBTA.Employer.Controllers
             {
                 return PartialView("_EmployeeForm", viewModel);
             }
+
+
 
             var createEmployeeDto = new CreateEmployeeDto(
                 viewModel.Employee.UserName,
@@ -118,7 +133,7 @@ namespace CSI.IBTA.Employer.Controllers
         }
 
         [HttpGet("UpdateEmployee")]
-        public async Task<IActionResult> UpdateEmployee(int id, string employerId)
+        public async Task<IActionResult> UpdateEmployee(int id, string employerId, bool employerAddConsumers)
         {
             var (httpError, employee) = await _employeeClient.GetEmployee(id);
 
@@ -131,7 +146,8 @@ namespace CSI.IBTA.Employer.Controllers
 
             var viewModel = new EmployeeViewModel()
             {
-                Employee = employee
+                Employee = employee,
+                AllowAddConsumers = employerAddConsumers
             };
 
             return PartialView("_EmployeeForm", viewModel);

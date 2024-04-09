@@ -51,7 +51,7 @@
     </div>
 
     <div id="add-new-button-parent">
-        <button class="btn btn-primary" onclick="openEmployeeForm(@Model.EmployerId)">Add New</button>
+        <button class="btn btn-primary" disabled='@(@Model.EmployerAddConsumers == true ? null : "disabled")' onclick="openEmployeeForm(@Model.EmployerId, @(@Model.EmployerAddConsumers ? "true" : "false"))">Add New</button>
     </div>
 
     @if (Model.Employees.Any())
@@ -72,7 +72,7 @@
                     {
                         <tr>
                             <td>
-                                <a href="#" onclick="openUpdateEmployeeForm(@item.UserId, @Model.EmployerId)">@Html.DisplayFor(modelItem => item.Firstname)</a>
+                                <a href="#" onclick="openUpdateEmployeeForm(@item.UserId, @Model.EmployerId, @(@Model.EmployerAddConsumers ? "true" : "false"))">@Html.DisplayFor(modelItem => item.Firstname)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Lastname)

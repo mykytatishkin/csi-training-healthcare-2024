@@ -5,5 +5,6 @@ namespace CSI.IBTA.Employer.Models
     public class EmployeeViewModel
     {
         public FullEmployeeDto Employee { get; set; } = null!;
+        public bool AllowAddConsumers { get; set; }
     }
 }

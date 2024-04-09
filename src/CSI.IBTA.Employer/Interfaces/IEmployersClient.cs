@@ -5,6 +5,6 @@ namespace CSI.IBTA.Employer.Interfaces
     public interface IEmployersClient
     {
         Task<GenericResponse<EmployerDto?>> UpdateEmployer(UpdateEmployerDto dto, int employerId);
-        Task<GenericResponse<EmployerDto>> GetEmployerById(int id);
+        Task<GenericResponse<EmployerWithConsumerSettingDto>> GetEmployerById(int id);
     }
 }
