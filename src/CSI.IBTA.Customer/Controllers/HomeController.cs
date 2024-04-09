@@ -1,5 +1,4 @@
 using CSI.IBTA.Customer.Filters;
-using CSI.IBTA.Customer.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Customer.Controllers
@@ -10,6 +9,12 @@ namespace CSI.IBTA.Customer.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet("HomePartialView")]
+        public IActionResult GetPartialView()
+        {
+            return PartialView("_Home");
         }
     }
 }
