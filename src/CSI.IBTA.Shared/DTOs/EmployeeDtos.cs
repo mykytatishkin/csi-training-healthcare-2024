@@ -12,7 +12,8 @@ public record EmployeeDto(
     string Firstname,
     string Lastname,
     string SSN,
-    DateTime? DateOfBirth);
+    DateTime? DateOfBirth,
+    int UserId);
 
 public record CreateEmployeeDto(
     string UserName,
@@ -22,8 +23,39 @@ public record CreateEmployeeDto(
     string SSN,
     string PhoneNumber,
     DateOnly DateOfBirth,
+    string Email,
     string AddressState,
     string AddressStreet,
     string AddressCity,
     string AddressZip,
     int EmployerId);
+
+public record FullEmployeeDto(
+    int Id,
+    string UserName,
+    string Password,
+    string FirstName,
+    string LastName,
+    string SSN,
+    string PhoneNumber,
+    DateOnly DateOfBirth,
+    string Email,
+    string AddressState,
+    string AddressStreet,
+    string AddressCity,
+    string AddressZip,
+    int EmployerId);
+
+public record UpdateEmployeeDto(
+    int Id,
+    string? Password,
+    string FirstName,
+    string LastName,
+    string SSN,
+    string PhoneNumber,
+    DateOnly DateOfBirth,
+    string Email,
+    string AddressState,
+    string AddressStreet,
+    string AddressCity,
+    string AddressZip);

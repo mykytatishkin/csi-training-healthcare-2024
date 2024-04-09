@@ -1,1 +1,63 @@
-﻿Home partial view
+﻿@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Utils.Extensions
+@model FullEmployeeDto
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome</title>
+        <link rel="stylesheet" href="~/css/home-page.css">
+    </head>
+    <body>
+        <div class="main-container">
+            <div id="employee" class="container">
+                <label style="margin-right: auto;">
+                    Welcome, @Model.FirstName @Model.LastName
+                </label>
+                <div id="employee-profile">
+                    <span class="border-label">Profile</span>
+                    <div class="container-columns">
+                        <div class="container-column">
+                            <div class="container-row">
+                                <label for="SSN">SSN:</label>
+                                <span>@Model.SSN</span>
+                            </div>
+                            <div class="container-row">
+                                <label for="Phone">Phone:</label>
+                                <span>@Model.PhoneNumber</span>
+                            </div>
+                            <div class="container-row">
+                                <label for="Email">Email:</label>
+                                <span>@Model.Email</span>
+                            </div>
+                            <div class="container-row">
+                                <label for="DateOfBirth">Date of Birth:</label>
+                                <span>@Model.DateOfBirth.ToAmericanDateOnlyFormat()</span>
+                            </div>
+                        </div>
+                        <div class="container-column">
+                            <div class="container-row">
+                                <label for="Street">Street:</label>
+                                <span>@Model.AddressStreet</span>
+                            </div>
+                            <div class="container-row">
+                                <label for="City">City:</label>
+                                <span>@Model.AddressCity</span>
+                            </div>
+                            <div class="container-row">
+                                <label for="State">State:</label>
+                                <span>@Model.AddressState</span>
+                            </div>
+                            <div class="container-row">
+                                <label for="ZipCode">Zip Code:</label>
+                                <span>@Model.AddressZip</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

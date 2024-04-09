@@ -1,8 +1,8 @@
-﻿function showHome() {
+﻿function showHome(employeeId) {
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
     }
 
-    route = '/HomePartialView';
+    route = `/HomePartialView/${employeeId}`;
     fetchRoute(route, onSuccess, null);
 }
