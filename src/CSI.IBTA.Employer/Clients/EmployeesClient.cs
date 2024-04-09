@@ -25,7 +25,7 @@ namespace CSI.IBTA.Employer.Clients
             string lastname = "",
             string ssn = "")
         {
-            var requestUrl = string.Format(EmployeeEndpoints.Employees, page, pageSize, employerId, firstname, lastname, ssn);
+            var requestUrl = string.Format(UserServiceEndpoints.Employees, page, pageSize, employerId, firstname, lastname, ssn);
             var response = await _httpClient.GetAsync(requestUrl);
             var responseContent = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
@@ -82,9 +82,28 @@ namespace CSI.IBTA.Employer.Clients
             return new GenericResponse<bool?>(null, true);
         }
 
+        public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId)
+        {
+            var jsonBody = JsonConvert.SerializeObject(usernames);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var requestUrl = string.Format(UserServiceEndpoints.UsersByUsernames, employerId);
+            var response = await _httpClient.PostAsync(requestUrl, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = JsonConvert.DeserializeObject<HttpError>(responseContent) ?? HttpErrors.GenericError;
+                var errorRes = new HttpError(error.Title, response.StatusCode);
+                return new GenericResponse<IEnumerable<UserDto>>(errorRes, null);
+            }
+
+            var users = JsonConvert.DeserializeObject<IEnumerable<UserDto>>(responseContent);
+            return new GenericResponse<IEnumerable<UserDto>>(null, users);
+        }
+        
         public async Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId)
         {
-            var requestUrl = string.Format(EmployeeEndpoints.EncryptedEmployee, employerId, employeeId);
+            var requestUrl = string.Format(UserServiceEndpoints.EncryptedEmployee, employerId, employeeId);
             var response = await _httpClient.GetAsync(requestUrl);
             var responseContent = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();

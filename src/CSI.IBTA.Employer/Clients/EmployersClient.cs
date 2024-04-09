@@ -41,7 +41,7 @@ namespace CSI.IBTA.Employer.Clients
                     formData.Add(new StreamContent(stream), nameof(dto.NewLogoFile), dto.NewLogoFile.FileName);
                 }
 
-                var response = await _httpClient.PutAsync($"{EmployerEndpoints.Employer}/{employerId}", formData);
+                var response = await _httpClient.PutAsync($"{UserServiceEndpoints.Employer}/{employerId}", formData);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -60,7 +60,16 @@ namespace CSI.IBTA.Employer.Clients
 
         public async Task<GenericResponse<EmployerWithConsumerSettingDto>> GetEmployerById(int id)
         {
-            var res = await _httpClient.GetAsync($"{EmployerEndpoints.Employer}/{id}");
+            var res = await _httpClient.GetAsync($"{UserServiceEndpoints.Employer}/{id}");
+            res.EnsureSuccessStatusCode();
+            var responseContent = await res.Content.ReadAsStringAsync();
+            var employees = JsonConvert.DeserializeObject<EmployerDto>(responseContent);
+            return new GenericResponse<EmployerDto>(null, employees);
+        }
+
+        public async Task<GenericResponse<EmployerDto>> GetEmployerByAccountId(int id)
+        {
+            var res = await _httpClient.GetAsync($"{UserServiceEndpoints.GetEmployerByAccountId}/{id}");
             res.EnsureSuccessStatusCode();
             var responseContent = await res.Content.ReadAsStringAsync();
             var employees = JsonConvert.DeserializeObject<EmployerWithConsumerSettingDto>(responseContent);

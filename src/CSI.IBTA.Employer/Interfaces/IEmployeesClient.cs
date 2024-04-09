@@ -18,5 +18,7 @@ namespace CSI.IBTA.Employer.Interfaces
         Task<GenericResponse<FullEmployeeDto>> GetEmployee(int id);
 
         Task<GenericResponse<bool?>> UpdateEmployee(UpdateEmployeeDto command);
+
+        Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId);
     }
 }

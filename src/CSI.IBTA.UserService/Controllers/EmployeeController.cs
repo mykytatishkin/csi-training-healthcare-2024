@@ -2,6 +2,7 @@
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
+using CSI.IBTA.UserService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +41,23 @@ namespace CSI.IBTA.UserService.Controllers
             {
                 return Problem(
                     title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpPost("~/api/v1/EmployeesByUsernames")]
+        [Authorize]
+        public async Task<IActionResult> GetEmployeesByUsernames(List<string> usernames, int employerId)
+        {
+            var response = await _employeesService.GetEmployeesByUsernames(usernames, employerId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error!.Title,
                     statusCode: (int)response.Error.StatusCode
                 );
             }

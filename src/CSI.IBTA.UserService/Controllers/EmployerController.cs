@@ -211,9 +211,13 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpPut("claimSetting/{employerId}")]
-        [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
+        [Authorize]
         public async Task<IActionResult> UpdateEmployerClaimSetting(int employerId, UpdateClaimSettingDto updateClaimSettingDto)
         {
+            var result = await _authorizationService.AuthorizeAsync(User, employerId, PolicyConstants.EmployerAdminOwner);
+
+            if (!result.Succeeded) return Forbid();
+
             var response = await _employerService.UpdateEmployerClaimSetting(employerId, updateClaimSettingDto);
 
             if (response.Error != null)

@@ -17,7 +17,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -191,6 +191,9 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Reason")
+                        .HasColumnType("int");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -215,7 +218,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Enrollment", b =>
                 {
                     b.HasOne("CSI.IBTA.Shared.Entities.Plan", "Plan")
-                        .WithMany()
+                        .WithMany("Enrollments")
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -226,7 +229,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
             modelBuilder.Entity("CSI.IBTA.Shared.Entities.Plan", b =>
                 {
                     b.HasOne("CSI.IBTA.Shared.Entities.Package", "Package")
-                        .WithMany()
+                        .WithMany("Plans")
                         .HasForeignKey("PackageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -251,6 +254,16 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                         .IsRequired();
 
                     b.Navigation("Enrollment");
+                });
+
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Package", b =>
+                {
+                    b.Navigation("Plans");
+                });
+
+            modelBuilder.Entity("CSI.IBTA.Shared.Entities.Plan", b =>
+                {
+                    b.Navigation("Enrollments");
                 });
 #pragma warning restore 612, 618
         }
