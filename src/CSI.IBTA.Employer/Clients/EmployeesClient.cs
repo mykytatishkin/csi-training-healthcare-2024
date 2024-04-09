@@ -37,7 +37,7 @@ namespace CSI.IBTA.Employer.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(employee);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(EmployeeEndpoints.CreateEmployee, content);
+            var response = await _httpClient.PostAsync(UserServiceEndpoints.CreateEmployee, content);
             var responseString = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
@@ -52,7 +52,7 @@ namespace CSI.IBTA.Employer.Clients
 
         public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int id)
         {
-            var response = await _httpClient.GetAsync(string.Format(EmployeeEndpoints.GetEmployee, id));
+            var response = await _httpClient.GetAsync(string.Format(UserServiceEndpoints.GetEmployee, id));
 
             if (!response.IsSuccessStatusCode)
             {
@@ -70,7 +70,7 @@ namespace CSI.IBTA.Employer.Clients
         {
             var jsonBody = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync(string.Format(EmployeeEndpoints.UpdateEmployee, dto.Id), content);
+            var response = await _httpClient.PutAsync(string.Format(UserServiceEndpoints.UpdateEmployee, dto.Id), content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -100,7 +100,7 @@ namespace CSI.IBTA.Employer.Clients
             var users = JsonConvert.DeserializeObject<IEnumerable<UserDto>>(responseContent);
             return new GenericResponse<IEnumerable<UserDto>>(null, users);
         }
-        
+
         public async Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId)
         {
             var requestUrl = string.Format(UserServiceEndpoints.EncryptedEmployee, employerId, employeeId);
