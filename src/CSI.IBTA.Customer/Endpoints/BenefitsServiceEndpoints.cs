@@ -1,4 +1,4 @@
-﻿namespace CSI.IBTA.Employer.Endpoints
+﻿namespace CSI.IBTA.Customer.Endpoints
 {
     public static class BenefitsServiceEndpoints
     {

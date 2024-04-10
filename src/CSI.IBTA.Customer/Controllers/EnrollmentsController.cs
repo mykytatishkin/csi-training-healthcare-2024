@@ -8,15 +8,15 @@ namespace CSI.IBTA.Customer.Controllers
     [Route("[controller]")]
     public class EnrollmentsController : Controller
     {
-        private readonly IInsuranceClient _insuranceClient;
+        private readonly IEnrollmentsClient _enrollmentClient;
         private readonly IEmployeesClient _employeesClient;
-        
-        public EnrollmentsController(IInsuranceClient enrollmentClient, IEmployeesClient employeesClient)
+
+        public EnrollmentsController(IEnrollmentsClient enrollmentClient, IEmployeesClient employeesClient)
         {
-            _insuranceClient = enrollmentClient;
+            _enrollmentClient = enrollmentClient;
             _employeesClient = employeesClient;
         }
-
+        
         public IActionResult Index()
         {
             return PartialView("_Enrollments");
@@ -28,10 +28,11 @@ namespace CSI.IBTA.Customer.Controllers
             var viewModel = new EnrollmentsViewModel()
             {
                 Enrollments = [],
+                //Packages = []
             };
 
             var encryptedEmployeeResponse = await _employeesClient.GetEncryptedEmployee(employerId, employeeId);
-            
+
             if (encryptedEmployeeResponse.Error != null)
             {
                 return Problem(
@@ -39,9 +40,9 @@ namespace CSI.IBTA.Customer.Controllers
                     statusCode: (int)encryptedEmployeeResponse.Error.StatusCode
                 );
             }
-            
-            var packagesResponse = await _insuranceClient.GetEmployerPackages(employerId);
-            
+
+            var packagesResponse = await _enrollmentClient.GetEmployerPackages(employerId);
+
             if (packagesResponse.Error != null)
             {
                 return PartialView("Enrollments/_Enrollments", viewModel);
@@ -49,9 +50,17 @@ namespace CSI.IBTA.Customer.Controllers
 
             var plans = packagesResponse.Result!.SelectMany(p => p.Plans).ToList();
 
-            var enrollmentsResponse = await _insuranceClient.GetEmployeeEnrollments(employeeId, new GetEnrollmentsDto(encryptedEmployeeResponse.Result!));
+            var enrollmentsResponse = await _enrollmentClient.GetEmployeeEnrollments(employeeId, new GetEnrollmentsDto(encryptedEmployeeResponse.Result!));
 
             if (enrollmentsResponse.Error != null)
+            {
+                return PartialView("Enrollments/_Enrollments", viewModel);
+            }
+
+            var enrollmentIds = enrollmentsResponse.Result!.Select(e  => e.Id).Distinct().ToList();
+            var enrollmentsBalancesResponse = await _enrollmentClient.GetEnrollmentsBalances(enrollmentIds);
+
+            if (enrollmentsBalancesResponse.Error != null)
             {
                 return PartialView("Enrollments/_Enrollments", viewModel);
             }
@@ -67,6 +76,8 @@ namespace CSI.IBTA.Customer.Controllers
             viewModel = new EnrollmentsViewModel()
             {
                 Enrollments = fullEnrollmentDtos.ToList(),
+                //Packages = packagesResponse.Result!,
+                EnrollmentsBalances = enrollmentsBalancesResponse.Result!,
                 EmployerId = employerId,
                 EmployeeId = employeeId
             };

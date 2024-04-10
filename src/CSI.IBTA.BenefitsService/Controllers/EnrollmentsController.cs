@@ -76,7 +76,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         }
 
         [HttpPost("Balances")]
-        //[Authorize(Roles = $"{nameof(Role.Employee)}")]
+        [Authorize(Roles = $"{nameof(Role.Employee)}")]
         public async Task<IActionResult> GetEnrollmentsBalances(List<int> enrollmentIds)
         {
             var response = await _userBalanceService.GetCurrentBalances(enrollmentIds);

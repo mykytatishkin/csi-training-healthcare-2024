@@ -1,8 +1,8 @@
 ﻿using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Employer.Endpoints;
 using CSI.IBTA.Shared.DTOs.Errors;
-using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Employer.Types;
+using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -43,7 +43,7 @@ namespace CSI.IBTA.Employer.Clients
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(requestUrl, content);
             var responseContent = await response.Content.ReadAsStringAsync();
-
+            
             if (!response.IsSuccessStatusCode)
             {
                 var responseError = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
