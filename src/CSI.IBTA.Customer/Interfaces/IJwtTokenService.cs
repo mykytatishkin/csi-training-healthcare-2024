@@ -2,7 +2,7 @@
 {
     public interface IJwtTokenService
     {
-        bool IsAdmin(string token);
+        bool IsCustomer(string token);
         CookieOptions GetCookieOptions();
         bool IsTokenValid(string token);
         string? GetCachedToken();

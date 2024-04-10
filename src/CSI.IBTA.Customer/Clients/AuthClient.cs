@@ -84,9 +84,9 @@ namespace CSI.IBTA.Customer.Clients
                 return new GenericResponse<bool>(new HttpError(defaultErrorMessage, response.StatusCode), false);
             }
 
-            var isAdmin = _jwtTokenService.IsAdmin(token);
+            var isCustomer = _jwtTokenService.IsCustomer(token);
 
-            if (!isAdmin)
+            if (!isCustomer)
                 return new GenericResponse<bool>(new HttpError("Response to the portal is denied", response.StatusCode), false);
 
             _httpContextAccessor.HttpContext.Response.Cookies.Append(TokenConstants.JwtTokenCookieName, token, _jwtTokenService.GetCookieOptions());

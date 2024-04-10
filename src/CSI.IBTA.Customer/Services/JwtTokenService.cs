@@ -34,7 +34,7 @@ namespace CSI.IBTA.Customer.Services
             };
         }
 
-        public bool IsAdmin(string token)
+        public bool IsCustomer(string token)
         {
             if (token == null)
             {
