@@ -1,22 +1,53 @@
-using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Customer.Filters;
+using CSI.IBTA.Customer.Interfaces;
+using CSI.IBTA.Customer.Extensions;
 
 namespace CSI.IBTA.Customer.Controllers
 {
     [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
+        private readonly IEmployeesClient _employeesClient;
+        private readonly IJwtTokenService _jwtTokenService;
+
+        public HomeController(IEmployeesClient employesClient, IJwtTokenService jwtTokenService)
+        {
+            _employeesClient = employesClient;
+            _jwtTokenService = jwtTokenService;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        [HttpGet("HomePartialView/{emploeeId}")]
-        public IActionResult GetPartialView(int employeeId)
+        [HttpGet("HomePartialView")]
+        public async Task<IActionResult> GetPartialView()
         {
-            var employee = new FullEmployeeDto(employeeId, "Employee", "", "John", "Smith", "15547A", "4544485747", new DateOnly(2000, 10, 9), "johnsmith@gmail.com", "Kauno", "Studentu st.", "Kaunas", "525861", 4);
-            return PartialView("_Home", employee);
+            var token = _jwtTokenService.GetCachedToken();
+            var employeeId = JwtSecurityTokenExtensions.GetEmployeeId(token);
+
+            if (employeeId == null)
+            {
+                return Problem(title: "Employee ID claim not found or invalid");
+            }
+
+            var res = await _employeesClient.GetEmployee((int) employeeId);
+
+            if (res.Error != null || res.Result == null)
+            {
+                return Problem(title: "Failed to retrieve employer");
+            }
+
+            return PartialView("_Home", res.Result);
+        }
+
+        [HttpGet("EmployerLogo")]
+        public async Task<string> GetEmployerLogo()
+        {
+            var res = await _employeesClient.GetEmployerLogo();
+            return res.Result ?? "";
         }
     }
 }

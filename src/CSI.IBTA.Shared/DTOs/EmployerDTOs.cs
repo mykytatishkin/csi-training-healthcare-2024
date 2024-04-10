@@ -16,7 +16,10 @@ namespace CSI.IBTA.Shared.DTOs
         int TotalCount);
 
     public record EmployerEmployeeDto(
-        int employerId,
-        int employeeId);
+        int EmployerId,
+        int EmployeeId);
+
+    public record EmployerLogoDto(
+        string? EncodedLogo);
 
 }

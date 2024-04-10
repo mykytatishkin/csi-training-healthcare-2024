@@ -20,3 +20,12 @@
             console.error("Fetch request failed: " + error)
         });
 }
+
+function showEmployerLogo() {
+    function onSuccess(data) {
+        document.getElementById('employer-logo').src = "data:image/png;base64," + data;
+    }
+
+    route = `/EmployerLogo`;
+    fetchRoute(route, onSuccess, null);
+}

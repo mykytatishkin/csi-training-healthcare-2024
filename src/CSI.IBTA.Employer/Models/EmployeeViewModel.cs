@@ -21,6 +21,8 @@ namespace CSI.IBTA.Employer.Models
         [Required]
         public string Street { get; set; } = null!;
         [Required]
+        public string Email { get; set; } = null!;
+        [Required]
         public string City { get; set; } = null!;
         [Required]
         public string State { get; set; } = null!;

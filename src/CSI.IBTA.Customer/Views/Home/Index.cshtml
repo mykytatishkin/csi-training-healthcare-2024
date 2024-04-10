@@ -11,11 +11,11 @@
 </div>
 
 <div id="logo-content" class="text-center">
-    <img class="logo-employer" id="logo-employer" src="https://placehold.co/600x400" onerror="this.style.display='none';" />
+    <img class="logo-employer" id="employer-logo" onerror="this.style.display='none';" />
 </div>
 
 <div class="menu-buttons">
-    <button id="home-btn" onclick="showHome(1)" class="btn btn-primary">Home</button>
+    <button id="home-btn" onclick="showHome()" class="btn btn-primary">Home</button>
     <button id="employees-btn" onclick="showEnrollments()" class="btn btn-primary">Enrollments</button>
     <button id="import-btn" onclick="showClaims()" class="btn btn-primary">Claims</button>
     <button id="ghost-btn"></button> @* Ghost button for styling/alignment *@
@@ -30,5 +30,6 @@
 <script>
     window.onload = function () {
         showHome();
+        showEmployerLogo();
     }
 </script>
