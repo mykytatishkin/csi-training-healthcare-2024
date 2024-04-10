@@ -1,1 +1,129 @@
-﻿Claims partial view
+﻿@using CSI.IBTA.Shared.Utils.Extensions
+@using CSI.IBTA.Shared.DataStructures
+@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Entities
+@using CSI.IBTA.Shared.Extensions
+@using CSI.IBTA.Customer.Constants
+@model ClaimsSearchViewModel
+
+@{
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+
+    string GetFilter(string viewDataId)
+    {
+        return ViewData[viewDataId] == null ? "" : ViewData[viewDataId]!.ToString()!;
+    }
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/claims-partial-view.css">
+</head>
+
+<div class="claim-container">
+    <span class="border-label-claims">Search Claims</span>
+
+    <div class="form-inputs">
+        <form asp-action="Claims" method="get" id="claims-search-form">
+            <div>
+                <p>
+                    @* <div class="filter-inputs">
+                        <div>
+                            <label for="NumberFilter">First Name:</label>
+                            <input type="text" name="FirstnameFilter" value="@ViewData["CurrentFirstnameFilter"]" />
+                        </div>
+                        <div>
+                            <label for="NumberFilter">Last Name:</label>
+                            <input type="text" name="LastnameFilter" value="@ViewData["CurrentLastnameFilter"]" />
+                        </div>
+                        <div>
+                            <label for="NumberFilter">SSN:</label>
+                            <input type="text" name="SsnFilter" value="@ViewData["CurrentSsnFilter"]" />
+                        </div>
+                    </div>
+                    <div class="filter-buttons">
+                        <input type="button" onclick="searchClaims(@Model.EmployerId)" value="Search" class="btn btn-primary" />
+                        <input type="button" onclick="showClaims(@Model.EmployerId)" class="btn btn-secondary" value="Reset Filters">
+                    </div> *@
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <div id="add-new-button-parent">
+        <button class="btn btn-primary" disabled='@(@Model.EmployerClaimFilling == true ? null : "disabled")' onclick="openClaimForm(@Model.EmployerId, @(@Model.EmployerClaimFilling ? "true" : "false"))">Add New</button>
+    </div>
+
+    @if (Model.Claims.Any())
+    {
+        <div class="claims-table">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Claim Number</th>
+                        <th>Date of Service</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Claims)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ClaimNumber)
+                            </td>
+                            <td>
+                                @(item.DateOfService.ToString("MM/dd/yyyy") ?? "N/A")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PlanTypeName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="pages">
+                <a onclick="getClaimsPage(@Model.EmployerId, @(Model.Page - 1), '@GetFilter("CurrentFirstnameFilter")', '@GetFilter("CurrentLastnameFilter")', '@GetFilter("CurrentSsnFilter")')"
+                   class="btn btn-default @prevDisabled">
+                    &lt;&lt; Prev
+                </a>
+                @{
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                    for (int i = firstPage; i <= lastPage; i++)
+                    {
+                        if (i == Model.Page || Model.Page == 0)
+                        {
+                            <span class="page-button selected">@Model.Page</span>
+                        }
+                        else
+                        {
+                            <a onclick="getClaimsPage(@Model.EmployerId, @(i), '@GetFilter("CurrentFirstnameFilter")', '@GetFilter("CurrentLastnameFilter")', '@GetFilter("CurrentSsnFilter")')"
+                               class="btn btn-default page-button">
+                                @i
+                            </a>
+                        }
+                    }
+                }
+                <a onclick="getClaimsPage(@Model.EmployerId, @(Model.Page + 1), '@GetFilter("CurrentFirstnameFilter")', '@GetFilter("CurrentLastnameFilter")', '@GetFilter("CurrentSsnFilter")')"
+                   class="btn btn-default @nextDisabled">
+                    Next >>
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>No claims found</p>
+    }
+</div>
