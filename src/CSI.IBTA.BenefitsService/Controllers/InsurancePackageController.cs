@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using CSI.IBTA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.Constants;
-using CSI.IBTA.BenefitsService.Extensions;
+using CSI.IBTA.Shared.Extensions;
 
 namespace CSI.IBTA.BenefitsService.Controllers
 {

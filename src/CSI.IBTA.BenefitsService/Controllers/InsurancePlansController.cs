@@ -34,6 +34,23 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpPost("~/api/v1/ActivePlansByNames")]
+        [Authorize]
+        public async Task<IActionResult> GetActivePlansByNames(List<string> planNames, int employerId)
+        {
+            var response = await _benefitsService.GetActivePlansByNames(planNames, employerId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error!.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
         [HttpGet("{planId}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetPlan(int planId)
