@@ -1,11 +1,6 @@
 ﻿@import url('global.css');
 
-.main-container {
-    margin: 20px;
-}
-
 .container {
-    margin: 0 auto;
     width: 100%;
 }
 
@@ -15,12 +10,11 @@
     justify-content: space-evenly;
     border: 1px solid var(--form-border-color);
     border-radius: 8px;
-    padding: 10px;
+    padding: 20px;
 }
 
 .container-column {
     width: 300px;
-    margin-top: 15px;
 }
 
 .container-row {
