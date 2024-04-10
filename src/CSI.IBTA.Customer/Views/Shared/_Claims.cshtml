@@ -92,7 +92,7 @@
             </table>
 
             <div class="pages">
-                <a onclick="getClaimsPage(@Model.EmployerId, @(Model.Page - 1), '@GetFilter("CurrentFirstnameFilter")', '@GetFilter("CurrentLastnameFilter")', '@GetFilter("CurrentSsnFilter")')"
+                <a onclick="showClaims(@(Model.Page - 1), @Model.EmployeeId, @Model.EmployerId)"
                    class="btn btn-default @prevDisabled">
                     &lt;&lt; Prev
                 </a>
@@ -108,14 +108,14 @@
                         }
                         else
                         {
-                            <a onclick="getClaimsPage(@Model.EmployerId, @(i), '@GetFilter("CurrentFirstnameFilter")', '@GetFilter("CurrentLastnameFilter")', '@GetFilter("CurrentSsnFilter")')"
+                            <a onclick="showClaims(@(i), @Model.EmployeeId, @Model.EmployerId)"
                                class="btn btn-default page-button">
                                 @i
                             </a>
                         }
                     }
                 }
-                <a onclick="getClaimsPage(@Model.EmployerId, @(Model.Page + 1), '@GetFilter("CurrentFirstnameFilter")', '@GetFilter("CurrentLastnameFilter")', '@GetFilter("CurrentSsnFilter")')"
+                <a onclick="showClaims(@(Model.Page + 1), @Model.EmployeeId, @Model.EmployerId)"
                    class="btn btn-default @nextDisabled">
                     Next >>
                 </a>

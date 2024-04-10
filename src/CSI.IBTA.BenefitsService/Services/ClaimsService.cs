@@ -22,13 +22,14 @@ namespace CSI.IBTA.BenefitsService.Services
             _userBalanceService = userBalanceService;
         }
 
-        public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "")
+        public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string employeeId = "", string claimStatus = "")
         {
             var filteredClaims = _benefitsUnitOfWork.Claims.GetSet()
                 .Include(c => c.Enrollment.Plan.Package)
                 .Include(c => c.Enrollment.Plan.PlanType)
                 .Where(c => claimNumber == "" || c.ClaimNumber.Contains(claimNumber))
                 .Where(c => employerId == "" || c.Enrollment.Plan.Package.EmployerId.ToString() == employerId)
+                .Where(c => employeeId == "" || c.Enrollment.EmployeeId.ToString() == employeeId)
                 .Where(c => claimStatus == "" || c.Status == Enum.Parse<ClaimStatus>(claimStatus));
 
             var totalCount = filteredClaims.Count();

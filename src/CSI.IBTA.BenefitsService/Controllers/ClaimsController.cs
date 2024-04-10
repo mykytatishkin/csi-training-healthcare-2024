@@ -34,6 +34,23 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
+        [HttpGet("ByEmployee")]
+        [Authorize]
+        public async Task<IActionResult> GetEmployeeClaims(int page, int pageSize, string employeeId)
+        {
+            var response = await _claimsService.GetClaims(page, pageSize, employeeId: employeeId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
         [HttpGet("{claimId}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetClaim(int claimId)
