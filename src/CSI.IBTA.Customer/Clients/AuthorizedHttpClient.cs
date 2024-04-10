@@ -1,24 +1,24 @@
-﻿using System.Net.Http.Headers;
+﻿using CSI.IBTA.Customer.Interfaces;
+using System.Net.Http.Headers;
 
 namespace CSI.IBTA.Customer.Clients
 {
     internal class AuthorizedHttpClient : HttpClient
     {
-        //private readonly IJwtTokenService _jwtTokenService;
+        private readonly IJwtTokenService _jwtTokenService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthorizedHttpClient> _logger;
-        
+
         public AuthorizedHttpClient(
-            //IJwtTokenService jwtTokenService,
+            IJwtTokenService jwtTokenService,
             IConfiguration configuration,
             ILogger<AuthorizedHttpClient> logger)
         {
-            //_jwtTokenService = jwtTokenService;
+            _jwtTokenService = jwtTokenService;
             _configuration = configuration;
             _logger = logger;
 
-            //string token = _jwtTokenService.GetCachedToken() ?? string.Empty;
-            string token = "";
+            string token = _jwtTokenService.GetCachedToken() ?? string.Empty;
             DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 

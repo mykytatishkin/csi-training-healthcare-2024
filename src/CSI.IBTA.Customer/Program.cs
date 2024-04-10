@@ -1,7 +1,10 @@
+using CSI.IBTA.Customer;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddCustomerPortal(builder.Configuration);
 
 var app = builder.Build();
 
