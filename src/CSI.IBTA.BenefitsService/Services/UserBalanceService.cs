@@ -41,11 +41,13 @@ namespace CSI.IBTA.BenefitsService.Services
         public async Task<GenericResponse<Dictionary<int, decimal>>> GetCurrentBalances(List<int> enrollmentIds)
         {
             Dictionary<int, decimal> balances = [];
-            
+
+            var distinctEnrollmentIds = enrollmentIds.Distinct();
+
             var enrollments = await _benefitsUnitOfWork.Enrollments
                 .Include(c => c.Plan)
                 .Include(c => c.Plan.Package)
-                .Where(x => enrollmentIds.Contains(x.Id))
+                .Where(x => distinctEnrollmentIds.Contains(x.Id))
                 .ToListAsync();
 
             foreach (var enrollment in enrollments)
