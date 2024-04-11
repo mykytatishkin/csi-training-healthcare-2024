@@ -14,12 +14,76 @@ namespace CSI.IBTA.BenefitsService.Services
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
         private readonly IDecodingService _decodingService;
+        private readonly IUserBalanceService _userBalanceService;
 
-        public EnrollmentsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IDecodingService decodingService)
+        public EnrollmentsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IDecodingService decodingService, IUserBalanceService userBalanceService)
         {
             _benefitsUnitOfWork = benefitsUnitOfWork;
             _mapper = mapper;
             _decodingService = decodingService;
+            _userBalanceService = userBalanceService;
+        }
+
+        public async Task<GenericResponse<PagedEnrollmentsResponse>> GetActiveEnrollmentsPaged(int employeeId, byte[] encodedEmployerEmployee, int page, int pageSize)
+        {
+            var decodedResponse = _decodingService.GetDecodedEmployerEmployee(encodedEmployerEmployee);
+
+            if (decodedResponse.Result == null)
+            {
+                return new GenericResponse<PagedEnrollmentsResponse>(decodedResponse.Error, null);
+            }
+
+            if (decodedResponse.Result.employeeId != employeeId)
+            {
+                var error = new HttpError("Employer does not have access to view this employee enrollments", HttpStatusCode.Forbidden);
+                return new GenericResponse<PagedEnrollmentsResponse>(error, null);
+            }
+
+            var now = DateTime.UtcNow;
+            var filteredEnrollments = _benefitsUnitOfWork.Enrollments
+                .Include(x => x.Plan)
+                .Include(x => x.Plan.PlanType)
+                .Where(x => x.EmployeeId == employeeId)
+                .Where(x => x.Plan.Package.PlanStart < now && x.Plan.Package.PlanEnd > now)
+                .Where(x => x.Plan.Package.Initialized != null);
+
+            var totalCount = filteredEnrollments.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var enrollments = await filteredEnrollments
+                .OrderBy(p => p.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var enrollmentIds = enrollments.Select(e => e.Id).Distinct().ToList();
+            var balancesResponse = await _userBalanceService.GetCurrentBalances(enrollmentIds);
+
+            if (balancesResponse.Result == null)
+            {
+                return new GenericResponse<PagedEnrollmentsResponse>(balancesResponse.Error, null);
+            }
+
+            List<FullEnrollmentWithBalanceDto> fullEnrollmentWithBalanceDtos = [];
+
+            foreach (var enrollment in enrollments)
+            {
+                var planDto = _mapper.Map<PlanDto>(enrollment.Plan);
+
+                var enrollmentDto = new FullEnrollmentWithBalanceDto(
+                    enrollment.Id,
+                    enrollment.Plan.Package.Name,
+                    planDto,
+                    enrollment.Election,
+                    enrollment.Plan.Contribution,
+                    balancesResponse.Result[enrollment.Id],
+                    enrollment.EmployeeId);
+
+                fullEnrollmentWithBalanceDtos.Add(enrollmentDto);
+            }
+
+            var response = new PagedEnrollmentsResponse(fullEnrollmentWithBalanceDtos, page, pageSize, totalPages, totalCount);
+            return new GenericResponse<PagedEnrollmentsResponse>(null, response);
         }
 
         public async Task<GenericResponse<List<EnrollmentDto>>> GetUsersEnrollments(List<int> userIds)

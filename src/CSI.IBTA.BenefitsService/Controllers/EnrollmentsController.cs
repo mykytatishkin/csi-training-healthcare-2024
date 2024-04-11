@@ -20,6 +20,30 @@ namespace CSI.IBTA.BenefitsService.Controllers
             _userBalanceService = userBalanceService;
         }
 
+        [HttpPost("{employeeId}/ActivePaged")]
+        [Authorize(Roles = nameof(Role.Employee))]
+        public async Task<IActionResult> GetActiveEnrollmentsPaged(GetEnrollmentsDto dto, int page, int pageSize)
+        {
+            var userId = User.GetUserId();
+
+            if (userId == null)
+            {
+                return Problem(title: "UserId claim not found or invalid");
+            }
+
+            var response = await _enrollmentsService.GetActiveEnrollmentsPaged((int)userId, dto.EncodedEmployerEmployee, page, pageSize);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
+
         [HttpPost("GetByUserIds")]
         [Authorize(Roles = $"{nameof(Role.Administrator)}, {nameof(Role.EmployerAdmin)}")]
         public async Task<IActionResult> GetUsersEnrollments(List<int> userIds)
@@ -42,10 +66,10 @@ namespace CSI.IBTA.BenefitsService.Controllers
         public async Task<IActionResult> GetEnrollmentsByEmployeeId(int employeeId, GetEnrollmentsDto dto)
         {
             var employerId = User.GetEmployerId();
-            
-            if(employerId == null) return Problem(title: "EmployerId claim not found or invalid");
 
-            var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId, (int) employerId, dto.EncodedEmployerEmployee);
+            if (employerId == null) return Problem(title: "EmployerId claim not found or invalid");
+
+            var response = await _enrollmentsService.GetEnrollmentsByEmployeeId(employeeId, (int)employerId, dto.EncodedEmployerEmployee);
 
             if (response.Error != null)
             {

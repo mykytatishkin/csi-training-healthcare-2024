@@ -69,6 +69,23 @@ namespace CSI.IBTA.Customer.Clients
             return new GenericResponse<IEnumerable<UserDto>>(null, users);
         }
 
+        public async Task<GenericResponse<UserDto>> GetEmployee(int userId)
+        {
+            var requestUrl = string.Format(UserServiceEndpoints.User, userId);
+            var response = await _httpClient.GetAsync(requestUrl);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = JsonConvert.DeserializeObject<HttpError>(responseContent) ?? HttpErrors.GenericError;
+                var errorRes = new HttpError(error.Title, response.StatusCode);
+                return new GenericResponse<UserDto>(errorRes, null);
+            }
+
+            var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
+            return new GenericResponse<UserDto>(null, user);
+        }
+
         public async Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId)
         {
             var requestUrl = string.Format(UserServiceEndpoints.EncryptedEmployee, employerId, employeeId);

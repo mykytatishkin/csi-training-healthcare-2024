@@ -7,13 +7,13 @@
 }
 
 <head>
-    <link rel="stylesheet" href="~/css/employees-partial-view.css">
+    <link rel="stylesheet" href="~/css/enrollments-partial-view.css">
 </head>
 
-<p>Active Enrollments:</p>
+<p id="title-text">Active Enrollments:</p>
 @if (Model.Enrollments.Any())
 {
-    <div class="employees-table">
+    <div class="enrollments-table">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -30,26 +30,22 @@
                 {
                     <tr>
                         <td>
-                            @* <a href="#">@Html.DisplayFor(modelItem => item.Firstname)</a> *@
-                            General Medical Insurance
+                            @item.Plan.Name (@item.PackageName)
                         </td>
                         <td>
-                            @* @Html.DisplayFor(modelItem => item.Lastname) *@
-                            Medical
+                            @item.Plan.PlanType.Name
                         </td>
                         <td>
-                            @* @Html.DisplayFor(modelItem => item.SSN) *@
-                            100$
+                            @item.Election
                         </td>
                         <td>
-                            2000$
+                            @item.Contribution
                         </td>
                         <td>
-                            6548$
+                            @item.TotalBalance
                         </td>
                         <td>
                             <button class="btn btn-primary">File a Claim</button>
-                            @* <button class="anchor-style-button" onclick="showEnrollments(@Model.EmployerId, @item.Id)">File a Claim</button> *@
                         </td>
                     </tr>
                 }
@@ -57,7 +53,7 @@
         </table>
 
         <div class="pages">
-            <a onclick="getEmployeesPage(@Model.EmployeeId, @(Model.Page - 1))"
+            <a onclick="showEnrollments(@Model.EmployeeId, @Model.EmployerId, @(Model.Page - 1))"
                class="btn btn-default @prevDisabled">
                 &lt;&lt; Prev
             </a>
@@ -73,14 +69,14 @@
                     }
                     else
                     {
-                        <a onclick="getEmployeesPage(@Model.EmployeeId, @(i))"
+                        <a onclick="showEnrollments(@Model.EmployeeId, @Model.EmployerId, @(i))"
                            class="btn btn-default page-button">
                             @i
                         </a>
                     }
                 }
             }
-            <a onclick="getEmployeesPage(@Model.EmployeeId, @(Model.Page + 1))"
+            <a onclick="showEnrollments(@Model.EmployeeId, @Model.EmployerId, @(Model.Page + 1))"
                class="btn btn-default @nextDisabled">
                 Next >>
             </a>

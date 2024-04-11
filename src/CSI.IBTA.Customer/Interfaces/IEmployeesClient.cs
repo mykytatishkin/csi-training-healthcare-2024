@@ -13,6 +13,7 @@ namespace CSI.IBTA.Customer.Interfaces
             string ssn = "");
         Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId);
         Task<GenericResponse<bool?>> CreateEmployee(CreateEmployeeDto command);
+        Task<GenericResponse<UserDto>> GetEmployee(int userId);
         Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId);
     }
 }

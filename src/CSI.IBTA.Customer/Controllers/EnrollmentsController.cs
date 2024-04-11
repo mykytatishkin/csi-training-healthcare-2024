@@ -1,4 +1,5 @@
-﻿using CSI.IBTA.Customer.Interfaces;
+﻿using CSI.IBTA.Customer.Constants;
+using CSI.IBTA.Customer.Interfaces;
 using CSI.IBTA.Customer.Models;
 using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -17,18 +18,16 @@ namespace CSI.IBTA.Customer.Controllers
             _employeesClient = employeesClient;
         }
         
-        public IActionResult Index()
-        {
-            return PartialView("_Enrollments");
-        }
-
-        [HttpGet("Data")]
-        public async Task<IActionResult> GetEnrollmentsData(int employerId, int employeeId)
+        public async Task<IActionResult> Index(int employerId, int employeeId, int? pageNumber)
         {
             var viewModel = new EnrollmentsViewModel()
             {
                 Enrollments = [],
-                //Packages = []
+                Page = 1,
+                TotalCount = 0,
+                TotalPages = 0,
+                EmployeeId = employeeId,
+                EmployerId = employerId,
             };
 
             var encryptedEmployeeResponse = await _employeesClient.GetEncryptedEmployee(employerId, employeeId);
@@ -41,48 +40,28 @@ namespace CSI.IBTA.Customer.Controllers
                 );
             }
 
-            var packagesResponse = await _enrollmentClient.GetEmployerPackages(employerId);
-
-            if (packagesResponse.Error != null)
-            {
-                return PartialView("Enrollments/_Enrollments", viewModel);
-            }
-
-            var plans = packagesResponse.Result!.SelectMany(p => p.Plans).ToList();
-
-            var enrollmentsResponse = await _enrollmentClient.GetEmployeeEnrollments(employeeId, new GetEnrollmentsDto(encryptedEmployeeResponse.Result!));
+            var enrollmentsResponse = await _enrollmentClient.GetEmployeeEnrollmentsPaged(
+                employeeId, 
+                new GetEnrollmentsDto(encryptedEmployeeResponse.Result!), 
+                pageNumber ?? 1,
+                PaginationConstants.EnrollmentsPerPage);
 
             if (enrollmentsResponse.Error != null)
             {
-                return PartialView("Enrollments/_Enrollments", viewModel);
+                return PartialView("_Enrollments", viewModel);
             }
-
-            var enrollmentIds = enrollmentsResponse.Result!.Select(e  => e.Id).Distinct().ToList();
-            var enrollmentsBalancesResponse = await _enrollmentClient.GetEnrollmentsBalances(enrollmentIds);
-
-            if (enrollmentsBalancesResponse.Error != null)
-            {
-                return PartialView("Enrollments/_Enrollments", viewModel);
-            }
-
-            var fullEnrollmentDtos = enrollmentsResponse.Result!
-                .Select(e => new FullEnrollmentDto(
-                    e.Id,
-                    plans.Where(p => p.Id == e.PlanId).First(),
-                    e.Election,
-                    e.Contribution,
-                    e.EmployeeId));
 
             viewModel = new EnrollmentsViewModel()
             {
-                Enrollments = fullEnrollmentDtos.ToList(),
-                //Packages = packagesResponse.Result!,
-                EnrollmentsBalances = enrollmentsBalancesResponse.Result!,
+                Enrollments = enrollmentsResponse.Result!.Enrollments,
+                TotalCount = enrollmentsResponse.Result.TotalCount,
+                Page = enrollmentsResponse.Result.CurrentPage,
+                TotalPages = enrollmentsResponse.Result.TotalPages,
                 EmployerId = employerId,
                 EmployeeId = employeeId
             };
 
-            return Ok(viewModel);
+            return PartialView("_Enrollments", viewModel);
         }
     }
 }
