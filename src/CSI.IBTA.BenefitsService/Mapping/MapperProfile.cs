@@ -79,21 +79,6 @@ namespace CSI.IBTA.BenefitsService.Mapping
                    x.Plan.Contribution,
                    x.EmployeeId)
                );
-
-            //CreateMap<Enrollment, FullEnrollmentWithBalanceDto>()
-            //    .ConstructUsing(x => new FullEnrollmentWithBalanceDto(
-            //        x.Id,
-            //        new PlanDto(
-            //            x.Plan.Id,
-            //            x.Plan.Name,
-            //            new PlanTypeDto(x.Plan.PlanType.Id, x.Plan.PlanType.Name),
-            //            x.Plan.Contribution,
-            //            x.Plan.PackageId,
-            //            x.Plan.Package.EmployerId),
-            //        x.Election,
-            //        x.Plan.Contribution,
-            //        x.EmployeeId)
-            //    );
         }
     }
 }
