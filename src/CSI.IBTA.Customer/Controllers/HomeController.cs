@@ -17,9 +17,24 @@ namespace CSI.IBTA.Customer.Controllers
             _jwtTokenService = jwtTokenService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var token = _jwtTokenService.GetCachedToken();
+            var employeeId = JwtSecurityTokenExtensions.GetEmployeeId(token);
+            
+            if (employeeId == null)
+            {
+                return Problem(title: "Employee ID claim not found or invalid");
+            }
+
+            var res = await _employeesClient.GetEmployee((int)employeeId);
+
+            if (res.Error != null || res.Result == null)
+            {
+                return Problem(title: "Failed to retrieve employee");
+            }
+
+            return View(res.Result);
         }
 
         [HttpGet("HomePartialView")]
@@ -37,7 +52,7 @@ namespace CSI.IBTA.Customer.Controllers
 
             if (res.Error != null || res.Result == null)
             {
-                return Problem(title: "Failed to retrieve employer");
+                return Problem(title: "Failed to retrieve employee");
             }
 
             return PartialView("_Home", res.Result);

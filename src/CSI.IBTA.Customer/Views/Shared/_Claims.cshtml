@@ -21,39 +21,10 @@
 </head>
 
 <div class="claim-container">
-    <span class="border-label-claims">Search Claims</span>
-
-    <div class="form-inputs">
-        <form asp-action="Claims" method="get" id="claims-search-form">
-            <div>
-                <p>
-                    @* <div class="filter-inputs">
-                        <div>
-                            <label for="NumberFilter">First Name:</label>
-                            <input type="text" name="FirstnameFilter" value="@ViewData["CurrentFirstnameFilter"]" />
-                        </div>
-                        <div>
-                            <label for="NumberFilter">Last Name:</label>
-                            <input type="text" name="LastnameFilter" value="@ViewData["CurrentLastnameFilter"]" />
-                        </div>
-                        <div>
-                            <label for="NumberFilter">SSN:</label>
-                            <input type="text" name="SsnFilter" value="@ViewData["CurrentSsnFilter"]" />
-                        </div>
-                    </div>
-                    <div class="filter-buttons">
-                        <input type="button" onclick="searchClaims(@Model.EmployerId)" value="Search" class="btn btn-primary" />
-                        <input type="button" onclick="showClaims(@Model.EmployerId)" class="btn btn-secondary" value="Reset Filters">
-                    </div> *@
-                </p>
-            </div>
-        </form>
-    </div>
-
+    <p id="title-text">Claims</p>
     <div id="add-new-button-parent">
         <button class="btn btn-primary" disabled='@(@Model.EmployerClaimFilling == true ? null : "disabled")' onclick="openClaimForm(@Model.EmployerId, @(@Model.EmployerClaimFilling ? "true" : "false"))">Add New</button>
     </div>
-
     @if (Model.Claims.Any())
     {
         <div class="claims-table">
@@ -92,7 +63,7 @@
             </table>
 
             <div class="pages">
-                <a onclick="showClaims(@(Model.Page - 1), @Model.EmployeeId, @Model.EmployerId)"
+                <a onclick="showClaims(@Model.EmployeeId, @Model.EmployerId, @(Model.Page - 1))"
                    class="btn btn-default @prevDisabled">
                     &lt;&lt; Prev
                 </a>
@@ -108,14 +79,14 @@
                         }
                         else
                         {
-                            <a onclick="showClaims(@(i), @Model.EmployeeId, @Model.EmployerId)"
+                            <a onclick="showClaims(@Model.EmployeeId, @Model.EmployerId, @(i))"
                                class="btn btn-default page-button">
                                 @i
                             </a>
                         }
                     }
                 }
-                <a onclick="showClaims(@(Model.Page + 1), @Model.EmployeeId, @Model.EmployerId)"
+                <a onclick="showClaims(@Model.EmployeeId, @Model.EmployerId, @(Model.Page + 1))"
                    class="btn btn-default @nextDisabled">
                     Next >>
                 </a>
