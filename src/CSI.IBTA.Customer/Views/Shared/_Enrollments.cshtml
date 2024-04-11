@@ -36,13 +36,13 @@
                             @item.Plan.PlanType.Name
                         </td>
                         <td>
-                            @item.Election
+                            @item.Election.ToString("0.##")$
                         </td>
                         <td>
-                            @item.Contribution
+                            @item.Contribution.ToString("0.##")$
                         </td>
                         <td>
-                            @item.TotalBalance
+                            @item.TotalBalance.ToString("0.##")$
                         </td>
                         <td>
                             <button class="anchor-style-button">File a Claim</button>
