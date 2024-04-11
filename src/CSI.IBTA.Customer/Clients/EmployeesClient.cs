@@ -25,7 +25,7 @@ namespace CSI.IBTA.Customer.Clients
             string lastname = "",
             string ssn = "")
         {
-            var requestUrl = string.Format(UserServiceEndpoints.Employees, page, pageSize, employerId, firstname, lastname, ssn);
+            var requestUrl = string.Format(UserServiceEndpoints.EmployeesPaged, page, pageSize, employerId, firstname, lastname, ssn);
             var response = await _httpClient.GetAsync(requestUrl);
             var responseContent = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
@@ -67,23 +67,6 @@ namespace CSI.IBTA.Customer.Clients
 
             var users = JsonConvert.DeserializeObject<IEnumerable<UserDto>>(responseContent);
             return new GenericResponse<IEnumerable<UserDto>>(null, users);
-        }
-
-        public async Task<GenericResponse<UserDto>> GetUser(int userId)
-        {
-            var requestUrl = string.Format(UserServiceEndpoints.User, userId);
-            var response = await _httpClient.GetAsync(requestUrl);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = JsonConvert.DeserializeObject<HttpError>(responseContent) ?? HttpErrors.GenericError;
-                var errorRes = new HttpError(error.Title, response.StatusCode);
-                return new GenericResponse<UserDto>(errorRes, null);
-            }
-
-            var user = JsonConvert.DeserializeObject<UserDto>(responseContent);
-            return new GenericResponse<UserDto>(null, user);
         }
 
         public async Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId)

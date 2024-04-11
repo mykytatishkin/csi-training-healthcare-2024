@@ -20,7 +20,7 @@ namespace CSI.IBTA.Customer.Controllers
         public async Task<IActionResult> Index()
         {
             var token = _jwtTokenService.GetCachedToken();
-            var userId = JwtSecurityTokenExtensions.GetUserId(token);
+            var userId = JwtSecurityTokenExtensions.GetEmployeeId(token);
 
             if (userId == null)
             {

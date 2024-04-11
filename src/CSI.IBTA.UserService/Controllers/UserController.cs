@@ -52,9 +52,9 @@ namespace CSI.IBTA.UserService.Controllers
                 );
             }
 
-            //var result = await _authorizationService.AuthorizeAsync(User, response.Result?.EmployerId, PolicyConstants.EmployerAdminOwner);
+            var result = await _authorizationService.AuthorizeAsync(User, response.Result?.EmployerId, PolicyConstants.EmployerAdminOwner);
 
-            //if (!result.Succeeded) return Forbid();
+            if (!result.Succeeded) return Forbid();
 
             return Ok(response.Result);
         }

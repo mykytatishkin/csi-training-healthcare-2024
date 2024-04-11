@@ -33,7 +33,7 @@ namespace CSI.IBTA.BenefitsService.Services
                 return new GenericResponse<PagedEnrollmentsResponse>(decodedResponse.Error, null);
             }
 
-            if (decodedResponse.Result.employeeId != employeeId)
+            if (decodedResponse.Result.EmployeeId != employeeId)
             {
                 var error = new HttpError("Employer does not have access to view this employee enrollments", HttpStatusCode.Forbidden);
                 return new GenericResponse<PagedEnrollmentsResponse>(error, null);

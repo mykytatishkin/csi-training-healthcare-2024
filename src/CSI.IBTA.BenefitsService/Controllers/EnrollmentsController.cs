@@ -24,7 +24,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = nameof(Role.Employee))]
         public async Task<IActionResult> GetActiveEnrollmentsPaged(GetEnrollmentsDto dto, int page, int pageSize)
         {
-            var userId = User.GetUserId();
+            var userId = User.GetEmployeeId();
 
             if (userId == null)
             {
