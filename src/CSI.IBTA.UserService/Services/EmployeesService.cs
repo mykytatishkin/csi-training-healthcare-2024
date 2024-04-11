@@ -46,6 +46,20 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<PagedEmployeesResponse>(null, response);
         }
 
+        public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId)
+        {
+            var employee = _userUnitOfWork.Users.GetSet()
+                .Include(x => x.Emails)
+                .Include(x => x.Phones)
+                .Include(x => x.Addresses)
+                .Include(x => x.Account)
+                .FirstOrDefault(x => x.Id == employeeId);
+
+            if(employee == null) return new GenericResponse<FullEmployeeDto>(HttpErrors.ResourceNotFound, null);
+
+            return new GenericResponse<FullEmployeeDto>(null, _mapper.Map<FullEmployeeDto>(employee));
+        }
+
         public async Task<GenericResponse<EmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
         {
             bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN);

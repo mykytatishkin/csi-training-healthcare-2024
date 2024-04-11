@@ -3,6 +3,6 @@
         document.getElementById('main-partial-screen').innerHTML = data;
     }
 
-    route = '/HomePartialView';
+    route = `/HomePartialView`;
     fetchRoute(route, onSuccess, null);
 }

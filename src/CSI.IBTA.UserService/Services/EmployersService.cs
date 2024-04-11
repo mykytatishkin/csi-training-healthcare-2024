@@ -282,5 +282,21 @@ namespace CSI.IBTA.UserService.Services
 
             return new GenericResponse<SettingsWithEmployerStateDto>(null, new SettingsWithEmployerStateDto(setting.Condition, setting.State, setting.EmployerState));
         }
+
+        public async Task<GenericResponse<EmployerLogoDto>> GetEmployerLogo(int userId)
+        {
+            var employee = await _unitOfWork.Users.GetById(userId);
+
+            if (employee == null) return new GenericResponse<EmployerLogoDto>(HttpErrors.ResourceNotFound, null);
+
+            var e = await _unitOfWork.Employers.GetSet()
+             .Where(x => x.Id == employee.EmployerId)
+             .Select(x => x.Logo)
+             .FirstOrDefaultAsync();
+
+            if (e == null) return new GenericResponse<EmployerLogoDto>(HttpErrors.ResourceNotFound, null);
+
+            return new GenericResponse<EmployerLogoDto>(null, new EmployerLogoDto(e));
+        }
     }
 }

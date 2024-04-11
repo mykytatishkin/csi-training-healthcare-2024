@@ -3,7 +3,6 @@ using CSI.IBTA.Customer.Interfaces;
 using CSI.IBTA.Customer.Services;
 using CSI.IBTA.Customer.Authentication;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CSI.IBTA.Customer
 {
@@ -17,6 +16,7 @@ namespace CSI.IBTA.Customer
             services.AddHttpContextAccessor();
             services.AddTransient<AuthorizedHttpClient>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IEmployeesClient, EmployeesClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
             return services;
         }
