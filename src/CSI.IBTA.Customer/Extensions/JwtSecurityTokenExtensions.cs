@@ -5,17 +5,17 @@ namespace CSI.IBTA.Customer.Extensions
 {
     public static class JwtSecurityTokenExtensions
     {
-        public static int? GetUserId(this string? token)
+        public static int? GetEmployeeId(this string? token)
         {
             var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            var employerIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.UserId);
+            var employeeIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.UserId);
 
-            if (employerIdClaim == null || !int.TryParse(employerIdClaim.Value, out int employerId))
+            if (employeeIdClaim == null || !int.TryParse(employeeIdClaim.Value, out int employeeId))
             {
                 return null;
             }
 
-            return employerId;
+            return employeeId;
         }
     }
 }

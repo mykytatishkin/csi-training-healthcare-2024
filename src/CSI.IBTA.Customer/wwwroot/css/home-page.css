@@ -1,0 +1,41 @@
+﻿@import url('global.css');
+
+.container {
+    width: 100%;
+}
+
+.container-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.container-column {
+    width: 300px;
+}
+
+.container-row {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+    .container-row label {
+        width: 100px;
+        margin-right: 10px;
+    }
+
+    .container-row input {
+        flex: 1;
+    }
+
+.border-label {
+    position: relative;
+    left: 25px;
+    top: 12px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+}

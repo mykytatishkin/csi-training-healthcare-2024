@@ -15,7 +15,7 @@ namespace CSI.IBTA.Shared.Extensions
             return employerId;
         }
 
-        public static int? GetUserId(this ClaimsPrincipal user)
+        public static int? GetEmployeeId(this ClaimsPrincipal user)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == JwtTokenClaimConstants.UserId);
 

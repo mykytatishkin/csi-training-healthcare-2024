@@ -15,5 +15,7 @@ namespace CSI.IBTA.Customer.Interfaces
         Task<GenericResponse<bool?>> CreateEmployee(CreateEmployeeDto command);
         Task<GenericResponse<UserDto>> GetEmployee(int userId);
         Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId);
+        Task<GenericResponse<FullEmployeeDto>> GetEmployee(int id);
+        Task<GenericResponse<string?>> GetEmployerLogo();
     }
 }

@@ -3,7 +3,6 @@ using CSI.IBTA.Customer.Interfaces;
 using CSI.IBTA.Customer.Services;
 using CSI.IBTA.Customer.Authentication;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CSI.IBTA.Customer
 {

@@ -8,13 +8,13 @@ namespace CSI.IBTA.Customer.Controllers
     [TypeFilter(typeof(AuthenticationFilter))]
     public class HomeController : Controller
     {
-        private readonly IJwtTokenService _jwtTokenService;
         private readonly IEmployeesClient _employeesClient;
+        private readonly IJwtTokenService _jwtTokenService;
 
-        public HomeController(IJwtTokenService jwtTokenService, IEmployeesClient employeesClient)
+        public HomeController(IEmployeesClient employesClient, IJwtTokenService jwtTokenService)
         {
+            _employeesClient = employesClient;
             _jwtTokenService = jwtTokenService;
-            _employeesClient = employeesClient;
         }
 
         public async Task<IActionResult> Index()
@@ -38,9 +38,31 @@ namespace CSI.IBTA.Customer.Controllers
         }
 
         [HttpGet("HomePartialView")]
-        public IActionResult GetPartialView()
+        public async Task<IActionResult> GetPartialView()
         {
-            return PartialView("_Home");
+            var token = _jwtTokenService.GetCachedToken();
+            var employeeId = JwtSecurityTokenExtensions.GetEmployeeId(token);
+
+            if (employeeId == null)
+            {
+                return Problem(title: "Employee ID claim not found or invalid");
+            }
+
+            var res = await _employeesClient.GetEmployee((int) employeeId);
+
+            if (res.Error != null || res.Result == null)
+            {
+                return Problem(title: "Failed to retrieve employer");
+            }
+
+            return PartialView("_Home", res.Result);
+        }
+
+        [HttpGet("EmployerLogo")]
+        public async Task<string> GetEmployerLogo()
+        {
+            var res = await _employeesClient.GetEmployerLogo();
+            return res.Result ?? "";
         }
     }
 }

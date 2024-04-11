@@ -1,7 +1,7 @@
-﻿using CSI.IBTA.Customer.Endpoints;
 using CSI.IBTA.Customer.Interfaces;
-using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Customer.Endpoints;
 using CSI.IBTA.Shared.DTOs.Errors;
+using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -69,7 +69,7 @@ namespace CSI.IBTA.Customer.Clients
             return new GenericResponse<IEnumerable<UserDto>>(null, users);
         }
 
-        public async Task<GenericResponse<UserDto>> GetEmployee(int userId)
+        public async Task<GenericResponse<UserDto>> GetUser(int userId)
         {
             var requestUrl = string.Format(UserServiceEndpoints.User, userId);
             var response = await _httpClient.GetAsync(requestUrl);
@@ -94,6 +94,24 @@ namespace CSI.IBTA.Customer.Clients
             response.EnsureSuccessStatusCode();
             var employees = JsonConvert.DeserializeObject<byte[]>(responseContent);
             return new GenericResponse<byte[]>(null, employees);
+        }
+
+        public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId)
+        {
+            var response = await _httpClient.GetAsync($"{UserServiceEndpoints.Employees}/{employeeId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            var employees = JsonConvert.DeserializeObject<FullEmployeeDto>(responseContent);
+            return new GenericResponse<FullEmployeeDto>(null, employees);
+        }
+
+        public async Task<GenericResponse<string?>> GetEmployerLogo()
+        {
+            var response = await _httpClient.GetAsync(UserServiceEndpoints.EmployerLogo);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            var deserialized = JsonConvert.DeserializeObject<EmployerLogoDto>(responseContent);
+            return new GenericResponse<string?>(null, deserialized?.EncodedLogo);
         }
     }
 }

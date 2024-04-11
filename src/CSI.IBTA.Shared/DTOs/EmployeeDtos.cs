@@ -1,4 +1,6 @@
-﻿namespace CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.Authorization.Interfaces;
+
+namespace CSI.IBTA.Shared.DTOs;
 
 public record PagedEmployeesResponse(
     List<EmployeeDto> Employees,
@@ -22,8 +24,42 @@ public record CreateEmployeeDto(
     string SSN,
     string PhoneNumber,
     DateOnly DateOfBirth,
+    string Email,
     string AddressState,
     string AddressStreet,
     string AddressCity,
     string AddressZip,
     int EmployerId);
+
+public record FullEmployeeDto(
+    int Id,
+    string UserName,
+    string Password,
+    string FirstName,
+    string LastName,
+    string SSN,
+    string PhoneNumber,
+    DateTime DateOfBirth,
+    string Email,
+    string AddressState,
+    string AddressStreet,
+    string AddressCity,
+    string AddressZip,
+    int EmployerId) : IEmployeeOwnedResource
+{
+    public int EmployeeId => Id;
+}
+
+public record UpdateEmployeeDto(
+    int Id,
+    string? Password,
+    string FirstName,
+    string LastName,
+    string SSN,
+    string PhoneNumber,
+    DateOnly DateOfBirth,
+    string Email,
+    string AddressState,
+    string AddressStreet,
+    string AddressCity,
+    string AddressZip);

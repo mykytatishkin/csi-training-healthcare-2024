@@ -102,7 +102,7 @@ namespace CSI.IBTA.BenefitsService.Services
             var decodedResponse = _decodingService.GetDecodedEmployerEmployee(encodedEmployerEmployee);
             if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
 
-            if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
+            if (decodedResponse.Result.EmployerId != employerId || decodedResponse.Result.EmployeeId != employeeId)
                 return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employer does not have access to view this employee enrollments", HttpStatusCode.Forbidden), null);
 
             var enrollments = await _benefitsUnitOfWork.Enrollments
@@ -120,7 +120,7 @@ namespace CSI.IBTA.BenefitsService.Services
             var decodedResponse = _decodingService.GetDecodedEmployerEmployee(encodedEmployerEmployee);
             if (decodedResponse.Result == null) return new GenericResponse<List<EnrollmentDto>>(decodedResponse.Error, null);
 
-            if (decodedResponse.Result.employerId != employerId || decodedResponse.Result.employeeId != employeeId)
+            if (decodedResponse.Result.EmployerId != employerId || decodedResponse.Result.EmployeeId != employeeId)
                 return new GenericResponse<List<EnrollmentDto>>(new HttpError("Employer does not have access to enroll this employee", HttpStatusCode.Forbidden), null);
 
             if (enrollments.DistinctBy(x => x.PlanId).Count() < enrollments.Count)
