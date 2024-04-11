@@ -96,6 +96,7 @@ namespace CSI.IBTA.Employer.Controllers
                 viewModel.SSN,
                 viewModel.Phone,
                 viewModel.DateOfBirth,
+                viewModel.Email,
                 viewModel.State,
                 viewModel.Street,
                 viewModel.City,

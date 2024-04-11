@@ -2,7 +2,6 @@
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
-using CSI.IBTA.UserService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +43,27 @@ namespace CSI.IBTA.UserService.Controllers
                     statusCode: (int)response.Error.StatusCode
                 );
             }
+
+            return Ok(response.Result);
+        }
+
+        [HttpGet("{employeeId}")]
+        [Authorize]
+        public async Task<IActionResult> GetEmployee(int employeeId)
+        {
+            var response = await _employeesService.GetEmployee(employeeId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            var result = await _authorizationService.AuthorizeAsync(User, response.Result, PolicyConstants.EmployeeOwner);
+
+            if (!result.Succeeded) return Forbid();
 
             return Ok(response.Result);
         }

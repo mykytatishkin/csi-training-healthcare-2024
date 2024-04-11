@@ -41,9 +41,14 @@ namespace CSI.IBTA.UserService
             });
 
             services.AddSingleton<IAuthorizationHandler, EmployerAdminOwnerRequirementHandler>();
+            services.AddSingleton<IAuthorizationHandler, EmployeeOwnerRequirementHandler>();
             services.AddAuthorization(o =>
+            {
                 o.AddPolicy(PolicyConstants.EmployerAdminOwner, policy =>
-                    policy.Requirements.Add(new EmployerAdminOwnerRequirement())));
+                    policy.Requirements.Add(new EmployerAdminOwnerRequirement()));
+                o.AddPolicy(PolicyConstants.EmployeeOwner, policy =>
+                    policy.Requirements.Add(new EmployeeOwnerRequirement()));
+            });
             return services;
         }
     }
