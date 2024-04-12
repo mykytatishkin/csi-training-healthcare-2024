@@ -1,0 +1,54 @@
+﻿@import url('global.css');
+
+.pages {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+}
+
+    .pages .page-button {
+        padding: 6px 8px;
+    }
+
+        .pages .page-button.selected {
+            color: var(--secondary-blue);
+        }
+
+table {
+    border-collapse: collapse;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+}
+
+th, td {
+    border-left: 1px solid var(--form-border-color);
+    vertical-align: middle;
+}
+
+th {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.enrollments-table {
+    margin-top: 10px;
+}
+
+#title-text {
+    margin-bottom: 0px;
+}
+
+.anchor-style-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0D6EFD;
+}
+
+    .anchor-style-button:hover {
+        text-decoration: none;
+    }

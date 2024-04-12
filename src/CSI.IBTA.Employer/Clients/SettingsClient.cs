@@ -17,8 +17,8 @@ namespace CSI.IBTA.Employer.Clients
             _httpClient.SetBaseAddress("UserServiceApiUrl");
         }
 
-        public async Task<GenericResponse<SettingsWithEmployerStateDto>> GetClaimSetting(
-            int employerId)
+        public async Task<GenericResponse<SettingsWithEmployerStateDto>> GetEmployerSetting(
+            int employerId, string settingCondition)
         {
             var requestUrl = string.Format(UserServiceEndpoints.GetEmployerSetting, employerId, EmployerConstants.ClaimFilling);
             var response = await _httpClient.GetAsync(requestUrl);

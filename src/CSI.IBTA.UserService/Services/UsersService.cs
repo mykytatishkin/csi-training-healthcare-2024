@@ -140,11 +140,12 @@ namespace CSI.IBTA.UserService.Services
 
             if (createUserDto.EmployerId != null)
             {
-                Employer? employer = await _unitOfWork.Employers.GetById((int)createUserDto.EmployerId);
+                Shared.Entities.Employer? employer = await _unitOfWork.Employers.GetById((int)createUserDto.EmployerId);
                 if (employer == null)
                 {
                     return new GenericResponse<NewUserDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
-                } else
+                }
+                else
                 {
                     newUser.Employer = employer;
                 }
@@ -183,7 +184,7 @@ namespace CSI.IBTA.UserService.Services
                 .Include(u => u.Account)
                 .Where(u => u.Emails.First().EmailAddress == putUserDto.EmailAddress && u.Account.Id != user.AccountId)
                 .ToListAsync();
-            
+
             if (conflictingEmail.Count != 0)
             {
                 var error = new HttpError("User with this email already exists", HttpStatusCode.Conflict);

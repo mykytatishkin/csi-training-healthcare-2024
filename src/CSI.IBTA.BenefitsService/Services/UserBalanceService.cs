@@ -37,5 +37,39 @@ namespace CSI.IBTA.BenefitsService.Services
             var balance = transactions.Sum(x => x.Type == TransactionType.Income ? x.Amount : -x.Amount);
             return new GenericResponse<decimal>(null, balance);
         }
+
+        public async Task<GenericResponse<Dictionary<int, decimal>>> GetCurrentBalances(List<int> enrollmentIds)
+        {
+            Dictionary<int, decimal> balances = [];
+
+            var distinctEnrollmentIds = enrollmentIds.Distinct();
+
+            var enrollments = await _benefitsUnitOfWork.Enrollments
+                .Include(c => c.Plan)
+                .Include(c => c.Plan.Package)
+                .Where(x => distinctEnrollmentIds.Contains(x.Id))
+                .ToListAsync();
+
+            foreach (var enrollment in enrollments)
+            {
+                var package = enrollment.Plan.Package;
+
+                if (!package.IsActive)
+                {
+                    var error = new HttpError("One of the packages is not active", HttpStatusCode.BadRequest);
+                    return new GenericResponse<Dictionary<int, decimal>>(error, null);
+                }
+
+                var transactions = await _benefitsUnitOfWork.Transactions
+                    .Include(x => x.Enrollment)
+                    .Where(x => x.Enrollment.Id == enrollment.Id)
+                    .ToListAsync();
+
+                var balance = transactions.Sum(x => x.Type == TransactionType.Income ? x.Amount : -x.Amount);
+                balances.Add(enrollment.Id, balance);
+            }
+
+            return new GenericResponse<Dictionary<int, decimal>>(null, balances);
+        }
     }
 }

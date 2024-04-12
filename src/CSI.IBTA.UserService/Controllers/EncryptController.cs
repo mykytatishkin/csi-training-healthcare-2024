@@ -17,7 +17,7 @@ namespace CSI.IBTA.UserService.Controllers
         }
 
         [HttpGet("Employer/{employerId}/Employee/{employeeId}")]
-        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}")]
+        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}, {nameof(Role.Employee)}")]
         public async Task<IActionResult> EncodeEmployerEmployee(int employerId, int employeeId)
         {
             var response = await _encodingService.GetEncodedEmployerEmployee(employerId, employeeId);

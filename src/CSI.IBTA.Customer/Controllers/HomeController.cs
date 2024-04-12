@@ -20,14 +20,14 @@ namespace CSI.IBTA.Customer.Controllers
         public async Task<IActionResult> Index()
         {
             var token = _jwtTokenService.GetCachedToken();
-            var employeeId = JwtSecurityTokenExtensions.GetEmployeeId(token);
-            
-            if (employeeId == null)
+            var userId = JwtSecurityTokenExtensions.GetEmployeeId(token);
+
+            if (userId == null)
             {
-                return Problem(title: "Employee ID claim not found or invalid");
+                return Problem(title: "User ID claim not found or invalid");
             }
 
-            var res = await _employeesClient.GetEmployee((int)employeeId);
+            var res = await _employeesClient.GetEmployee((int)userId);
 
             if (res.Error != null || res.Result == null)
             {

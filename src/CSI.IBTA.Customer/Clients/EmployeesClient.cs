@@ -1,4 +1,4 @@
-﻿using CSI.IBTA.Customer.Interfaces;
+using CSI.IBTA.Customer.Interfaces;
 using CSI.IBTA.Customer.Endpoints;
 using CSI.IBTA.Shared.DTOs;
 using Newtonsoft.Json;
@@ -13,6 +13,16 @@ namespace CSI.IBTA.Customer.Clients
         {
             _httpClient = httpClient;
             _httpClient.SetBaseAddress("UserServiceApiUrl");
+        }
+
+        public async Task<GenericResponse<byte[]>> GetEncryptedEmployee(int employerId, int employeeId)
+        {
+            var requestUrl = string.Format(UserServiceEndpoints.EncryptedEmployee, employerId, employeeId);
+            var response = await _httpClient.GetAsync(requestUrl);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            var employees = JsonConvert.DeserializeObject<byte[]>(responseContent);
+            return new GenericResponse<byte[]>(null, employees);
         }
 
         public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId)

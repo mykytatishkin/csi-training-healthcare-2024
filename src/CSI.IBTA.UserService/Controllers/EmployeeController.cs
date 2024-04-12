@@ -104,5 +104,31 @@ namespace CSI.IBTA.UserService.Controllers
 
             return Ok(response.Result);
         }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDto dto)
+        {
+            var userResponse = await _employeesService.GetEmployee(id);
+            if (userResponse.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)userResponse.Error.StatusCode,
+                    title: userResponse.Error.Title);
+            }
+
+            var result = await _authorizationService.AuthorizeAsync(User, userResponse.Result.EmployerId, PolicyConstants.EmployerAdminOwner);
+            if (!result.Succeeded) return Forbid();
+
+            var response = await _employeesService.UpdateEmployee(dto);
+            if (response.Error != null)
+            {
+                return Problem(
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
+            }
+
+            return Ok(response.Result);
+        }
     }
 }

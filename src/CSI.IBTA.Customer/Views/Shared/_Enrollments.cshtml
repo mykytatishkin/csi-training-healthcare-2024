@@ -1,1 +1,89 @@
-﻿Enrollments partial view
+﻿@using CSI.IBTA.Customer.Constants
+@model EnrollmentsViewModel
+
+@{
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/enrollments-partial-view.css">
+</head>
+
+<p id="title-text">Active Enrollments:</p>
+@if (Model.Enrollments.Any())
+{
+    <div class="enrollments-table">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Election</th>
+                    <th>Contribution</th>
+                    <th>Total Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Enrollments)
+                {
+                    <tr>
+                        <td>
+                            @item.Plan.Name (@item.PackageName)
+                        </td>
+                        <td>
+                            @item.Plan.PlanType.Name
+                        </td>
+                        <td>
+                            @item.Election.ToString("0.##")$
+                        </td>
+                        <td>
+                            @item.Contribution.ToString("0.##")$
+                        </td>
+                        <td>
+                            @item.TotalBalance.ToString("0.##")$
+                        </td>
+                        <td>
+                            <button class="anchor-style-button">File a Claim</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="pages">
+            <a onclick="showEnrollments(@Model.EmployeeId, @Model.EmployerId, @(Model.Page - 1))"
+               class="btn btn-default @prevDisabled">
+                &lt;&lt; Prev
+            </a>
+            @{
+                var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
+                var lastPage = Math.Min(nextPages, Model.TotalPages);
+                var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                for (int i = firstPage; i <= lastPage; i++)
+                {
+                    if (i == Model.Page || Model.Page == 0)
+                    {
+                        <span class="page-button selected">@Model.Page</span>
+                    }
+                    else
+                    {
+                        <a onclick="showEnrollments(@Model.EmployeeId, @Model.EmployerId, @(i))"
+                           class="btn btn-default page-button">
+                            @i
+                        </a>
+                    }
+                }
+            }
+            <a onclick="showEnrollments(@Model.EmployeeId, @Model.EmployerId, @(Model.Page + 1))"
+               class="btn btn-default @nextDisabled">
+                Next >>
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <p>No enrollments found</p>
+}
