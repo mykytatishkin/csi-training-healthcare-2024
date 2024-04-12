@@ -9,5 +9,6 @@ namespace CSI.IBTA.BenefitsService.Interfaces
         Task<GenericResponse<bool>> DenyClaim(int claimId, DenyClaimDto dto);
         Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "");
         Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto);
+        Task<GenericResponse<bool>> FileClaim(int userId, FileClaimDto dto);
     }
 }

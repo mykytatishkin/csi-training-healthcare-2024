@@ -1,6 +1,7 @@
 ﻿using CSI.IBTA.BenefitsService.Interfaces;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.Shared.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -100,6 +101,26 @@ namespace CSI.IBTA.BenefitsService.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPost("FileClaim")]
+        [Authorize(Roles = nameof(Role.Employee))]
+        public async Task<IActionResult> FileClaim([FromForm] FileClaimDto dto)
+        {
+            var userId = User.GetEmployeeId();
+            if (userId == null) return Problem(title: "UserId claim not found or invalid");
+
+            var response = await _claimsService.FileClaim((int) userId, dto);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok();
         }
     }
 }

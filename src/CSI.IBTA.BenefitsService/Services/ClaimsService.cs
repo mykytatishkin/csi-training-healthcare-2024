@@ -140,5 +140,46 @@ namespace CSI.IBTA.BenefitsService.Services
 
             return new GenericResponse<bool>(null, true);
         }
+
+        public async Task<GenericResponse<bool>> FileClaim(int userId, FileClaimDto dto)
+        {
+            var enrollment = await _benefitsUnitOfWork.Enrollments
+                .Include(x => x.Plan)
+                .Include(x => x.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == dto.EnrollmentId);
+
+            if (enrollment == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+
+            if (enrollment.EmployeeId != userId) return new GenericResponse<bool>(HttpErrors.Forbidden, false);
+
+            if (dto.Amount < 0) return new GenericResponse<bool>(new HttpError("Amount can not be negative", HttpStatusCode.BadRequest), false);
+            if (dto.DateOfService > DateOnly.FromDateTime(DateTime.UtcNow)) return new GenericResponse<bool>(new HttpError("Date of service date must be less than current date", HttpStatusCode.BadRequest), false);
+            if (dto.DateOfService < DateOnly.FromDateTime(enrollment.Plan.Package.PlanStart)) return new GenericResponse<bool>(new HttpError("Date of service date must be greater than package start date", HttpStatusCode.BadRequest), false);
+            
+            if (dto.Receipt == null || dto.Receipt.Length == 0)
+                return new GenericResponse<bool>(new HttpError("Receipt file is invalid", HttpStatusCode.BadRequest), false);
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                await dto.Receipt.CopyToAsync(memoryStream);
+                var bytes = memoryStream.ToArray();
+                var encodedReceipt  = Convert.ToBase64String(bytes);
+
+                var claim = new Claim()
+                {
+                    ClaimNumber = "TempNumber",
+                    DateOfService = dto.DateOfService,
+                    EnrollmentId = dto.EnrollmentId,
+                    Amount = dto.Amount,
+                    Status = ClaimStatus.Pending,
+                    EncodedReceipt = encodedReceipt
+                };
+
+                await _benefitsUnitOfWork.Claims.Add(claim);
+                await _benefitsUnitOfWork.CompleteAsync();
+
+                return new GenericResponse<bool>(null, true);
+            }
+        }
     }
 }

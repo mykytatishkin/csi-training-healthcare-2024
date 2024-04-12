@@ -1,4 +1,5 @@
 ﻿using CSI.IBTA.Shared.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace CSI.IBTA.Shared.DTOs
 {
@@ -37,4 +38,5 @@ namespace CSI.IBTA.Shared.DTOs
         ClaimStatus Status);
 
     public record UpdateClaimDto(DateOnly DateOfService, int PlanId, decimal Amount);
+    public record FileClaimDto(DateOnly DateOfService, int EnrollmentId, decimal Amount, IFormFile Receipt);
 }
