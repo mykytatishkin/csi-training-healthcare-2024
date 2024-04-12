@@ -6,6 +6,7 @@ namespace CSI.IBTA.Employer.Models
     {
         public IEnumerable<EmployeeDto> Employees { get; set; } = [];
         public int EmployerId { get; set; }
+        public bool EmployerAddConsumers { get; set; }
         public int Page { get; set; }
         public int TotalPages { get; set; }
         public int TotalCount { get; set; }

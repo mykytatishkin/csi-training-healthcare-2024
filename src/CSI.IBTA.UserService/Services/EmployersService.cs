@@ -50,7 +50,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<EmployerDto>(new HttpError("There is an employer with the same code and name combination", HttpStatusCode.BadRequest), null);
             }
 
-            var e = new Employer()
+            var e = new Shared.Entities.Employer()
             {
                 Name = dto.Name,
                 Code = dto.Code,
@@ -77,7 +77,7 @@ namespace CSI.IBTA.UserService.Services
             }
 
             var success = await _unitOfWork.Employers.Add(e);
-            if(!success)
+            if (!success)
                 return new GenericResponse<EmployerDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _unitOfWork.CompleteAsync();
@@ -88,7 +88,7 @@ namespace CSI.IBTA.UserService.Services
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if(e == null) return new GenericResponse<EmployerDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericResponse<EmployerDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
             var hasSameCombination = await _unitOfWork.Employers
                 .Find(x => x.Name == dto.Name && x.Code == dto.Code && employerId != x.Id);
@@ -133,18 +133,21 @@ namespace CSI.IBTA.UserService.Services
 
             if (!success)
                 return new GenericResponse<bool>(new HttpError("Server failed to delete employer", HttpStatusCode.InternalServerError), false);
-            
+
             await _unitOfWork.CompleteAsync();
             return new GenericResponse<bool>(null, true);
         }
 
-        public async Task<GenericResponse<EmployerDto>> GetEmployer(int employerId)
+        public async Task<GenericResponse<EmployerWithConsumerSettingDto>> GetEmployer(int employerId)
         {
             var e = await _unitOfWork.Employers.GetById(employerId);
 
-            if (e == null) return new GenericResponse<EmployerDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
+            if (e == null) return new GenericResponse<EmployerWithConsumerSettingDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
 
-            return new GenericResponse<EmployerDto>(null, new EmployerDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo));
+            var addConsumersSetting = (await _unitOfWork.Settings.Find(s => s.EmployerId == e.Id && s.Condition.Equals(EmployerConstants.AddConsumers))).SingleOrDefault();
+            if (addConsumersSetting == null) return new GenericResponse<EmployerWithConsumerSettingDto>(new HttpError("Employer AddConsumers setting not found", HttpStatusCode.NotFound), null);
+
+            return new GenericResponse<EmployerWithConsumerSettingDto>(null, new EmployerWithConsumerSettingDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo, addConsumersSetting.State));
         }
 
         public async Task<GenericResponse<IEnumerable<EmployerDto>>> GetEmployers(List<int> employerIds)
@@ -265,7 +268,6 @@ namespace CSI.IBTA.UserService.Services
             var employer = await _unitOfWork.Employers.Include(e => e.Settings)
                 .SingleOrDefaultAsync(s => s.Id == employerId);
             if (employer == null) return new GenericResponse<SettingsWithEmployerStateDto>(new HttpError("Employer not found", HttpStatusCode.NotFound), null);
-
 
             var setting = employer.Settings.Where(s => s.Condition.Equals(EmployerConstants.ClaimFilling)).FirstOrDefault();
             if (setting == null)

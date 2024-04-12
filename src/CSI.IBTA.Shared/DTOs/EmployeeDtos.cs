@@ -14,7 +14,8 @@ public record EmployeeDto(
     string Firstname,
     string Lastname,
     string SSN,
-    DateTime? DateOfBirth);
+    DateTime? DateOfBirth,
+    int UserId);
 
 public record CreateEmployeeDto(
     string UserName,
@@ -39,16 +40,13 @@ public record FullEmployeeDto(
     string LastName,
     string SSN,
     string PhoneNumber,
-    DateTime DateOfBirth,
+    DateOnly DateOfBirth,
     string Email,
     string AddressState,
     string AddressStreet,
     string AddressCity,
     string AddressZip,
-    int EmployerId) : IEmployeeOwnedResource
-{
-    public int EmployeeId => Id;
-}
+    int EmployerId);
 
 public record UpdateEmployeeDto(
     int Id,

@@ -4,7 +4,7 @@ namespace CSI.IBTA.Employer.Models
 {
     public class EmployerProfileViewModel
     {
-        public EmployerDto Employer { get; set; }
+        public EmployerWithConsumerSettingDto Employer { get; set; }
         public IFormFile? NewLogo { get; set; }
     }
 }
