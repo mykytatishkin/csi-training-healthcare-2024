@@ -23,7 +23,7 @@
 <div class="claim-container">
     <p id="title-text">Claims</p>
     <div id="add-new-button-parent">
-        <button class="btn btn-primary" disabled='@(@Model.EmployerClaimFilling == true ? null : "disabled")' onclick="openClaimForm(@Model.EmployerId, @(@Model.EmployerClaimFilling ? "true" : "false"))">Add New</button>
+        <button class="btn btn-primary" disabled='@(@Model.EmployerClaimFilling == true ? null : "disabled")' onclick="openClaimForm(@Model.EmployerId, @(@Model.EmployerClaimFilling ? "true" : "false"))">File a Claim</button>
     </div>
     @if (Model.Claims.Any())
     {
