@@ -1,4 +1,6 @@
-﻿namespace CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.Authorization.Interfaces;
+
+namespace CSI.IBTA.Shared.DTOs;
 
 public record PagedEmployeesResponse(
     List<EmployeeDto> Employees,

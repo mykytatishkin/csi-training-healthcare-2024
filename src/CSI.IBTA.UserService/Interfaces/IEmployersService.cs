@@ -7,6 +7,7 @@ namespace CSI.IBTA.UserService.Interfaces
         public Task<GenericResponse<IEnumerable<EmployerDto>>> GetAll();
         public Task<GenericResponse<PagedEmployersResponse>> GetEmployersFiltered(int page, int pageSize, string nameFilter = "", string codeFilter = "");
         public Task<GenericResponse<EmployerWithConsumerSettingDto>> GetEmployer(int employerId);
+        public Task<GenericResponse<EmployerLogoDto>> GetEmployerLogo(int userId);
         public Task<GenericResponse<IEnumerable<EmployerDto>>> GetEmployers(List<int> employerIds);
         public Task<GenericResponse<EmployerDto>> CreateEmployer(CreateEmployerDto dto);
         public Task<GenericResponse<EmployerDto>> UpdateEmployer(int employerId, UpdateEmployerDto dto);

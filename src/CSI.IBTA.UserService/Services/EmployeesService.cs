@@ -8,6 +8,7 @@ using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
 using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.Shared.Constants;
+using System.Threading.Tasks;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -25,12 +26,12 @@ namespace CSI.IBTA.UserService.Services
         public async Task<GenericResponse<PagedEmployeesResponse>> GetEmployees(int page, int pageSize, int employerId, string firstname = "", string lastname = "", string ssn = "")
         {
             var filteredEmployees = _userUnitOfWork.Users.GetSet()
-            .Include(c => c.Account)
-            .Where(c => c.EmployerId == employerId)
-            .Where(c => c.Account.Role == Role.Employee)
-            .Where(c => firstname == "" || c.Firstname.ToLower().Contains(firstname.ToLower()))
-            .Where(c => lastname == "" || c.Lastname.ToLower().Contains(lastname.ToLower()))
-            .Where(c => ssn == "" || c.SSN != null && c.SSN.ToLower().Contains(ssn.ToLower()));
+                .Include(c => c.Account)
+                .Where(c => c.EmployerId == employerId)
+                .Where(c => c.Account.Role == Role.Employee)
+                .Where(c => firstname == "" || c.Firstname.ToLower().Contains(firstname.ToLower()))
+                .Where(c => lastname == "" || c.Lastname.ToLower().Contains(lastname.ToLower()))
+                .Where(c => ssn == "" || c.SSN != null && c.SSN.ToLower().Contains(ssn.ToLower()));
 
             var totalCount = filteredEmployees.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
@@ -47,13 +48,27 @@ namespace CSI.IBTA.UserService.Services
             return new GenericResponse<PagedEmployeesResponse>(null, response);
         }
 
+        public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId)
+        {
+            var employee = _userUnitOfWork.Users.GetSet()
+                .Include(x => x.Emails)
+                .Include(x => x.Phones)
+                .Include(x => x.Addresses)
+                .Include(x => x.Account)
+                .FirstOrDefault(x => x.Id == employeeId);
+
+            if (employee == null) return new GenericResponse<FullEmployeeDto>(HttpErrors.ResourceNotFound, null);
+
+            return new GenericResponse<FullEmployeeDto>(null, _mapper.Map<FullEmployeeDto>(employee));
+        }
+
         public async Task<GenericResponse<FullEmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
         {
-            var addConsumerSetting = (await _userUnitOfWork.Settings.Find(s => s.EmployerId == dto.EmployerId 
+            var addConsumerSetting = (await _userUnitOfWork.Settings.Find(s => s.EmployerId == dto.EmployerId
                 && s.Condition.Equals(EmployerConstants.AddConsumers))).SingleOrDefault();
 
-            if (addConsumerSetting == null || !addConsumerSetting.IsAllowed) 
-            { 
+            if (addConsumerSetting == null || !addConsumerSetting.IsAllowed)
+            {
                 return new GenericResponse<FullEmployeeDto>(new HttpError("Administrator has forbidden adding consumers. Try again later.", HttpStatusCode.BadRequest), null);
             }
 

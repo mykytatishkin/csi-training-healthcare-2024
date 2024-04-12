@@ -1,5 +1,6 @@
 ﻿using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.Shared.Extensions;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -250,6 +251,26 @@ namespace CSI.IBTA.UserService.Controllers
             }
 
             return Ok(employerUsersResponse.Result);
+        }
+
+        [HttpGet("Logo")]
+        [Authorize]
+        public async Task<IActionResult> GetEmployerLogo()
+        {
+            var userId = User.GetEmployeeId(); 
+            if (userId == null) return Unauthorized();
+
+            var response = await _employerService.GetEmployerLogo((int) userId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
         }
     }
 }

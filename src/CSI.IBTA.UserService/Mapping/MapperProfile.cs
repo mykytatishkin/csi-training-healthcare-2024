@@ -75,6 +75,24 @@ namespace CSI.IBTA.UserService.Mapping
                     user.SSN,
                     user.DateOfBirth,
                     user.Id));
+            CreateMap<User, EmployeeDto>();
+
+            CreateMap<User, FullEmployeeDto>()
+                .ConstructUsing(e => new FullEmployeeDto(
+                    e.Id,
+                    e.Account.Username,
+                    e.Account.Password,
+                    e.Firstname,
+                    e.Lastname,
+                    e.SSN ?? "",
+                    e.Phones.First().PhoneNumber,
+                    e.DateOfBirth ?? DateTime.MinValue,
+                    e.Emails.First().EmailAddress,
+                    e.Addresses.First().State,
+                    e.Addresses.First().Street,
+                    e.Addresses.First().City,
+                    e.Addresses.First().Zip,
+                    e.EmployerId ?? 0));
         }
     }
 }
