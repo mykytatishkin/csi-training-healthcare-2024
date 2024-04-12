@@ -22,7 +22,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                 .ConstructUsing(planType => new PlanTypeDto(
                     planType.Id,
                     planType.Name));
-                    
+
             CreateMap<Package, InsurancePackageDto>()
                 .ConstructUsing(x => new InsurancePackageDto(
                     x.Id,
@@ -54,7 +54,7 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     plan.Name,
                     plan.Contribution,
                     new PlanTypeDto(plan.PlanType.Id, plan.PlanType.Name)));
-                    
+
 
             CreateMap<Claim, ClaimDto>()
                 .ConstructUsing(x => new ClaimDto(

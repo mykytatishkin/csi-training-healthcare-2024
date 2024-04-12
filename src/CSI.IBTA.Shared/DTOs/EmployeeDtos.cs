@@ -46,7 +46,10 @@ public record FullEmployeeDto(
     string AddressStreet,
     string AddressCity,
     string AddressZip,
-    int EmployerId);
+    int EmployerId) : IEmployeeOwnedResource
+{
+    public int EmployeeId => Id;
+}
 
 public record UpdateEmployeeDto(
     int Id,

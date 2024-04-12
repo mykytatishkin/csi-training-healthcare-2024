@@ -17,9 +17,24 @@ namespace CSI.IBTA.Customer.Controllers
             _jwtTokenService = jwtTokenService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var token = _jwtTokenService.GetCachedToken();
+            var userId = JwtSecurityTokenExtensions.GetEmployeeId(token);
+
+            if (userId == null)
+            {
+                return Problem(title: "User ID claim not found or invalid");
+            }
+
+            var res = await _employeesClient.GetEmployee((int)userId);
+
+            if (res.Error != null || res.Result == null)
+            {
+                return Problem(title: "Failed to retrieve employee");
+            }
+
+            return View(res.Result);
         }
 
         [HttpGet("HomePartialView")]

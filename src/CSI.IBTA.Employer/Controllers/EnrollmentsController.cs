@@ -31,7 +31,7 @@ namespace CSI.IBTA.Employer.Controllers
                 Enrollments = [],
                 Packages = []
             };
-
+            
             var encryptedEmployeeResponse = await _employeesClient.GetEncryptedEmployee(employerId, employeeId);
 
             if (encryptedEmployeeResponse.Error != null)
@@ -57,7 +57,7 @@ namespace CSI.IBTA.Employer.Controllers
             {
                 return PartialView("Enrollments/_Enrollments", viewModel);
             }
-
+            
             var fullEnrollmentDtos = enrollmentsResponse.Result!
                 .Select(e => new FullEnrollmentDto(
                     e.Id,

@@ -1,10 +1,11 @@
-﻿namespace CSI.IBTA.Employer.Endpoints
+﻿namespace CSI.IBTA.Customer.Endpoints
 {
     public static class BenefitsServiceEndpoints
     {
         public const string ImportContributions = "v1/Contributions";
 
         public const string Enrollments = "v1/Enrollments/{0}";
+        public const string ActivePagedEnrollments = "v1/Enrollments/{0}/ActivePaged?page={1}&pageSize={2}";
         public const string EnrollmentsByUserIds = "v1/Enrollments/GetByUserIds";
         public const string UpdateEnrollments = "v1/Enrollments/Employer/{0}/Employee/{1}";
         public const string GetEnrollmentsBalances = "v1/Enrollments/Balances";
