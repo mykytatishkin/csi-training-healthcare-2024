@@ -32,10 +32,6 @@ namespace CSI.IBTA.Customer.Controllers
             }
 
             var claims = claimsResponse.Result.Claims;
-            //var claims = new List<ClaimDto>();
-            //claims.Add(new ClaimDto(1, 3, 4, 5, "LT202201185181", DateOnly.FromDateTime(DateTime.UtcNow), "PLANN", "Medical", 100, ClaimStatus.Pending, null));
-            //claims.Add(new ClaimDto(1, 3, 4, 5, "LT202201185121", DateOnly.FromDateTime(DateTime.UtcNow), "PLANN", "Mental", 75, ClaimStatus.Approved, null));
-            //claims.Add(new ClaimDto(1, 3, 4, 5, "LT202201185141", DateOnly.FromDateTime(DateTime.UtcNow), "PLANN", "Dental", 50, ClaimStatus.Denied, null));
 
             var viewModel = new ClaimsSearchViewModel
             {
