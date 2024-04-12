@@ -22,4 +22,8 @@
     <ProjectReference Include="..\CSI.IBTA.DB.Migrations\CSI.IBTA.DB.Migrations.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Authorization\Extensions\" />
+  </ItemGroup>
+
 </Project>

@@ -78,7 +78,7 @@ namespace CSI.IBTA.UserService.Controllers
 
         [HttpGet]
         [Authorize(Roles = nameof(Role.Administrator))]
-        public async Task<IActionResult> GelAllEmployers()
+        public async Task<IActionResult> GetAllEmployers()
         {
             var response = await _employerService.GetAll();
 
@@ -95,7 +95,7 @@ namespace CSI.IBTA.UserService.Controllers
 
         [HttpGet("Filtered")]
         [Authorize(Roles = nameof(Role.Administrator))]
-        public async Task<IActionResult> GelEmployersFiltered(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
+        public async Task<IActionResult> GetEmployersFiltered(int page = 1, int pageSize = 8, string nameFilter = "", string codeFilter = "")
         {
             var response = await _employerService.GetEmployersFiltered(page, pageSize, nameFilter, codeFilter);
 

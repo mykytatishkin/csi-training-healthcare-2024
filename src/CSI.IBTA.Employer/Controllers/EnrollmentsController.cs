@@ -17,6 +17,7 @@ namespace CSI.IBTA.Employer.Controllers
             _employeesClient = employeesClient;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return PartialView("Enrollments/_Enrollments");
