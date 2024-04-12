@@ -52,14 +52,17 @@ namespace CSI.IBTA.UserService.Controllers
         public async Task<IActionResult> GetEmployee(int employeeId)
         {
             var response = await _employeesService.GetEmployee(employeeId);
+
             if (response.Error != null)
             {
                 return Problem(
-                    statusCode: (int)response.Error.StatusCode,
-                    title: response.Error.Title);
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
-            var result = await _authorizationService.AuthorizeAsync(User, response.Result.EmployerId, PolicyConstants.EmployerAdminOwner);
+            var result = await _authorizationService.AuthorizeAsync(User, response.Result, PolicyConstants.EmployeeOwner);
+
             if (!result.Succeeded) return Forbid();
 
             return Ok(response.Result);
