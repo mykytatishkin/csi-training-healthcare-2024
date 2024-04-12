@@ -1,5 +1,4 @@
 ﻿function showClaims(employeeId, employerId, pageNumber) {
-    console.log(pageNumber, employeeId, employerId)
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
     }
