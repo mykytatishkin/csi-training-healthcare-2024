@@ -50,16 +50,37 @@ namespace CSI.IBTA.UserService.Services
 
         public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId)
         {
-            var employee = _userUnitOfWork.Users.GetSet()
-                .Include(x => x.Emails)
-                .Include(x => x.Phones)
-                .Include(x => x.Addresses)
-                .Include(x => x.Account)
-                .FirstOrDefault(x => x.Id == employeeId);
+            var employee = await _userUnitOfWork.Users.GetSet()
+                .Include(u => u.Addresses)
+                .Include(u => u.Account)
+                .Include(u => u.Phones)
+                .Include(u => u.Emails)
+                .FirstOrDefaultAsync(u => u.Id == employeeId);
 
-            if (employee == null) return new GenericResponse<FullEmployeeDto>(HttpErrors.ResourceNotFound, null);
+            if (employee == null)
+            {
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
+            }
 
-            return new GenericResponse<FullEmployeeDto>(null, _mapper.Map<FullEmployeeDto>(employee));
+            var address = employee.Addresses is { Count: > 0 } ? employee.Addresses[0] : null;
+
+            var employeeDto = new FullEmployeeDto(
+                employee.Id,
+                employee.Account.Username,
+                employee.Account.Password,
+                employee.Firstname,
+                employee.Lastname,
+                employee.SSN,
+                employee.Phones is { Count: > 0 } ? employee.Phones[0].PhoneNumber : "",
+                DateOnly.FromDateTime(employee.DateOfBirth.GetValueOrDefault()),
+                employee.Emails is { Count: > 0 } ? employee.Emails[0].EmailAddress : "",
+                address?.State ?? "",
+                address?.Street ?? "",
+                address?.City ?? "",
+                address?.Zip ?? "",
+                employee.EmployerId.GetValueOrDefault());
+
+            return new GenericResponse<FullEmployeeDto>(null, employeeDto);
         }
 
         public async Task<GenericResponse<FullEmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
@@ -137,41 +158,6 @@ namespace CSI.IBTA.UserService.Services
 
             await _userUnitOfWork.CompleteAsync();
             return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()?.EmailAddress, user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
-        }
-
-        public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int id)
-        {
-            var user = await _userUnitOfWork.Users.GetSet()
-                .Include(u => u.Addresses)
-                .Include(u => u.Account)
-                .Include(u => u.Phones)
-                .Include(u => u.Emails)
-                .FirstOrDefaultAsync(u => u.Id == id);
-
-            if (user == null)
-            {
-                return new GenericResponse<FullEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
-            }
-
-            var address = user.Addresses is { Count: > 0 } ? user.Addresses[0] : null;
-
-            var employeeDto = new FullEmployeeDto(
-                user.Id,
-                user.Account.Username,
-                user.Account.Password,
-                user.Firstname,
-                user.Lastname,
-                user.SSN,
-                user.Phones is { Count: > 0 } ? user.Phones[0].PhoneNumber : "",
-                DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()),
-                user.Emails is { Count: > 0 } ? user.Emails[0].EmailAddress : "",
-                address?.State ?? "",
-                address?.Street ?? "",
-                address?.City ?? "",
-                address?.Zip ?? "",
-                user.EmployerId.GetValueOrDefault());
-
-            return new GenericResponse<FullEmployeeDto>(null, employeeDto);
         }
 
         public async Task<GenericResponse<FullEmployeeDto>> UpdateEmployee(UpdateEmployeeDto dto)

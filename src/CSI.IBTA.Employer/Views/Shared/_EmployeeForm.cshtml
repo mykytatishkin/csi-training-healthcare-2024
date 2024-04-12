@@ -37,7 +37,7 @@
 
                 <div class="form-member">
                     <label for="DateOfBirth">Date of Birth:</label>
-                    <input asp-for="Employee.DateOfBirth" type="date" value="@Model.Employee.DateOfBirth.ToAmericanDateOnlyFormat()" required />
+                    <input asp-for="Employee.DateOfBirth" type="date" required defaultvalue="@Model.Employee.DateOfBirth.ToAmericanDateOnlyFormat()" />
                 </div>
                 <div id="error-Employee.DateOfBirth" class="text-danger form-validity-error"></div>
 

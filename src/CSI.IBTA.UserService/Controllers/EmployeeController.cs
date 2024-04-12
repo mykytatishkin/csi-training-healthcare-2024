@@ -52,17 +52,14 @@ namespace CSI.IBTA.UserService.Controllers
         public async Task<IActionResult> GetEmployee(int employeeId)
         {
             var response = await _employeesService.GetEmployee(employeeId);
-
             if (response.Error != null)
             {
                 return Problem(
-                    title: response.Error.Title,
-                    statusCode: (int)response.Error.StatusCode
-                );
+                    statusCode: (int)response.Error.StatusCode,
+                    title: response.Error.Title);
             }
 
-            var result = await _authorizationService.AuthorizeAsync(User, response.Result, PolicyConstants.EmployeeOwner);
-
+            var result = await _authorizationService.AuthorizeAsync(User, response.Result.EmployerId, PolicyConstants.EmployerAdminOwner);
             if (!result.Succeeded) return Forbid();
 
             return Ok(response.Result);
@@ -103,24 +100,6 @@ namespace CSI.IBTA.UserService.Controllers
             }
 
             return Ok(response.Result);
-        }
-
-        [HttpGet("{id}")]
-        [Authorize]
-        public async Task<IActionResult> GetEmployee(int id)
-        {
-            var userResponse = await _employeesService.GetEmployee(id);
-            if (userResponse.Error != null)
-            {
-                return Problem(
-                    statusCode: (int)userResponse.Error.StatusCode,
-                    title: userResponse.Error.Title);
-            }
-
-            var result = await _authorizationService.AuthorizeAsync(User, userResponse.Result.EmployerId, PolicyConstants.EmployerAdminOwner);
-            if (!result.Succeeded) return Forbid();
-
-            return Ok(userResponse.Result);
         }
 
         [HttpPut("{id}")]

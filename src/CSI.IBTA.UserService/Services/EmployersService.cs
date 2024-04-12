@@ -147,7 +147,6 @@ namespace CSI.IBTA.UserService.Services
             var addConsumersSetting = (await _unitOfWork.Settings.Find(s => s.EmployerId == e.Id && s.Condition.Equals(EmployerConstants.AddConsumers))).SingleOrDefault();
             if (addConsumersSetting == null) return new GenericResponse<EmployerWithConsumerSettingDto>(new HttpError("Employer AddConsumers setting not found", HttpStatusCode.NotFound), null);
 
-
             return new GenericResponse<EmployerWithConsumerSettingDto>(null, new EmployerWithConsumerSettingDto(e.Id, e.Name, e.Code, e.Email, e.Street, e.City, e.State, e.Zip, e.Phone, e.Logo, addConsumersSetting.State));
         }
 
