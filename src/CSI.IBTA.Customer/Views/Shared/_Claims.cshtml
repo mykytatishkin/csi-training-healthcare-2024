@@ -49,10 +49,10 @@
                                 @(item.DateOfService.ToString("MM/dd/yyyy") ?? "N/A")
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.PlanTypeName)
+                                @Html.DisplayFor(modelItem => item.PlanName)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Amount)
+                                @item.Amount.ToString("0.##")$
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Status)

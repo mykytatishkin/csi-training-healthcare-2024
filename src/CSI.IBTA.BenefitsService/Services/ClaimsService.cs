@@ -14,16 +14,34 @@ namespace CSI.IBTA.BenefitsService.Services
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
         private readonly IUserBalanceService _userBalanceService;
+        private readonly IDecodingService _decodingService;
 
-        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IUserBalanceService userBalanceService)
+        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IUserBalanceService userBalanceService, IDecodingService decodingService)
         {
             _benefitsUnitOfWork = benefitsUnitOfWork;
             _mapper = mapper;
             _userBalanceService = userBalanceService;
+            _decodingService = decodingService;
         }
 
-        public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string employeeId = "", string claimStatus = "")
+        public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, byte[]? encodedEmployerEmployee, string claimNumber = "", string employerId = "", string employeeId = "", string claimStatus = "")
         {
+            if (encodedEmployerEmployee != null)
+            {
+                var decodedResponse = _decodingService.GetDecodedEmployerEmployee(encodedEmployerEmployee);
+
+                if (decodedResponse.Result == null)
+                {
+                    return new GenericResponse<PagedClaimsResponse>(decodedResponse.Error, null);
+                }
+
+                if (decodedResponse.Result.EmployeeId != int.Parse(employeeId))
+                {
+                    var error = new HttpError("Employee does not have access to view this employee claims", HttpStatusCode.Forbidden);
+                    return new GenericResponse<PagedClaimsResponse>(error, null);
+                }
+            }
+
             var filteredClaims = _benefitsUnitOfWork.Claims.GetSet()
                 .Include(c => c.Enrollment.Plan.Package)
                 .Include(c => c.Enrollment.Plan.PlanType)

@@ -21,7 +21,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetClaimsPaged(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "")
         {
-            var response = await _claimsService.GetClaims(page, pageSize, claimNumber, employerId, claimStatus);
+            var response = await _claimsService.GetClaims(page, pageSize, null, claimNumber, employerId, claimStatus);
 
             if (response.Error != null)
             {
@@ -34,11 +34,11 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpGet("ByEmployee")]
+        [HttpPost("ByEmployee")]
         [Authorize]
-        public async Task<IActionResult> GetEmployeeClaims(int page, int pageSize, string employeeId)
+        public async Task<IActionResult> GetEmployeeClaims(int page, int pageSize, string employeeId, GetEnrollmentsDto dto)
         {
-            var response = await _claimsService.GetClaims(page, pageSize, employeeId: employeeId);
+            var response = await _claimsService.GetClaims(page, pageSize, dto.EncodedEmployerEmployee, employeeId: employeeId);
 
             if (response.Error != null)
             {

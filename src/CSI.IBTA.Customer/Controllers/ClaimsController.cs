@@ -11,10 +11,12 @@ namespace CSI.IBTA.Customer.Controllers
     public class ClaimsController : Controller
     {
         private readonly IClaimsClient _claimsClient;
+        private readonly IEmployeesClient _employeesClient;
 
-        public ClaimsController(IClaimsClient claimsClient)
+        public ClaimsController(IClaimsClient claimsClient, IEmployeesClient employeesClient)
         {
             _claimsClient = claimsClient;
+            _employeesClient = employeesClient;
         }
 
         public async Task<IActionResult> Index(
@@ -22,7 +24,20 @@ namespace CSI.IBTA.Customer.Controllers
             int employerId,
             int? pageNumber)
         {
-            var claimsResponse = await _claimsClient.GetClaimsByEmployee(pageNumber ?? 1, PaginationConstants.ClaimsPerPage, employeeId.ToString());
+            var encryptedEmployeeResponse = await _employeesClient.GetEncryptedEmployee(employerId, employeeId);
+
+            if (encryptedEmployeeResponse.Error != null)
+            {
+                return Problem(
+                    detail: encryptedEmployeeResponse.Error.Title,
+                    statusCode: (int)encryptedEmployeeResponse.Error.StatusCode
+                );
+            }
+
+            var claimsResponse = await _claimsClient.GetClaimsByEmployee(pageNumber ?? 1, 
+                PaginationConstants.ClaimsPerPage, 
+                employeeId.ToString(),
+                new GetEnrollmentsDto(encryptedEmployeeResponse.Result!));
 
             if (claimsResponse.Error != null)
             {
