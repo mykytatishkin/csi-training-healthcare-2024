@@ -1,6 +1,8 @@
 ﻿using CSI.IBTA.BenefitsService.Interfaces;
+using CSI.IBTA.DB.Migrations.Migrations;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
+using CSI.IBTA.Shared.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,11 +36,18 @@ namespace CSI.IBTA.BenefitsService.Controllers
             return Ok(response.Result);
         }
 
-        [HttpPost("ByEmployee")]
-        [Authorize]
-        public async Task<IActionResult> GetEmployeeClaims(int page, int pageSize, string employeeId, GetEnrollmentsDto dto)
+        [HttpGet("ByEmployee")]
+        [Authorize(Roles = nameof(Role.Employee))]
+        public async Task<IActionResult> GetEmployeeClaims(int page, int pageSize)
         {
-            var response = await _claimsService.GetClaims(page, pageSize, dto.EncodedEmployerEmployee, employeeId: employeeId);
+            var employeeId = User.GetEmployeeId();
+
+            if (employeeId == null)
+            {
+                return Problem(title: "UserId claim not found or invalid");
+            }
+
+            var response = await _claimsService.GetClaims(page, pageSize, employeeId: employeeId.ToString());
 
             if (response.Error != null)
             {

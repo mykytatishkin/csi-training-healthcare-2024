@@ -16,13 +16,11 @@ namespace CSI.IBTA.Customer.Clients
             _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
         }
 
-        public async Task<GenericResponse<PagedClaimsResponse>> GetClaimsByEmployee(int page, int pageSize, string employeeId, GetEnrollmentsDto dto)
+        public async Task<GenericResponse<PagedClaimsResponse>> GetClaimsByEmployee(int page, int pageSize)
         {
-            var jsonBody = JsonConvert.SerializeObject(dto);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var requestUrl = string.Format(BenefitsServiceEndpoints.ClaimsByEmployee, page, pageSize, employeeId);
-            var response = await _httpClient.PostAsync(requestUrl, content);
+            var requestUrl = string.Format(BenefitsServiceEndpoints.ClaimsByEmployee, page, pageSize);
+            var response = await _httpClient.GetAsync(requestUrl);
             var responseContent = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             var claims = JsonConvert.DeserializeObject<PagedClaimsResponse>(responseContent);

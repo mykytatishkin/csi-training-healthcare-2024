@@ -4,6 +4,6 @@ namespace CSI.IBTA.Customer.Interfaces
 {
     public interface IClaimsClient
     {
-        Task<GenericResponse<PagedClaimsResponse>> GetClaimsByEmployee(int page, int pageSize, string employeeId, GetEnrollmentsDto dto);
+        Task<GenericResponse<PagedClaimsResponse>> GetClaimsByEmployee(int page, int pageSize);
     }
 }
