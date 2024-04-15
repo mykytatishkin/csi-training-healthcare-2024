@@ -152,6 +152,11 @@ namespace CSI.IBTA.BenefitsService.Services
 
             if (enrollment.EmployeeId != userId) return new GenericResponse<bool>(HttpErrors.Forbidden, false);
 
+            var balanceRes = await _userBalanceService.GetCurrentBalance(enrollment.Id);
+
+            if (balanceRes?.Result == null) return new GenericResponse<bool>(balanceRes?.Error, false);
+            if(balanceRes.Result < dto.Amount) return new GenericResponse<bool>(new HttpError("Insufficient balance", HttpStatusCode.BadRequest), false);
+
             if (dto.Amount < 0) return new GenericResponse<bool>(new HttpError("Amount can not be negative", HttpStatusCode.BadRequest), false);
             if (dto.DateOfService > DateOnly.FromDateTime(DateTime.UtcNow)) return new GenericResponse<bool>(new HttpError("Date of service date must be less than current date", HttpStatusCode.BadRequest), false);
             if (dto.DateOfService < DateOnly.FromDateTime(enrollment.Plan.Package.PlanStart)) return new GenericResponse<bool>(new HttpError("Date of service date must be greater than package start date", HttpStatusCode.BadRequest), false);
