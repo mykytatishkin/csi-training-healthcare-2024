@@ -24,7 +24,7 @@ namespace CSI.IBTA.Customer.Controllers
         {
 
             var claimsResponse = await _claimsClient.GetClaimsByEmployee(pageNumber ?? 1, 
-                PaginationConstants.ClaimsPerPage);
+                PaginationConstants.ClaimsPerPage, employeeId);
 
             if (claimsResponse.Error != null)
             {

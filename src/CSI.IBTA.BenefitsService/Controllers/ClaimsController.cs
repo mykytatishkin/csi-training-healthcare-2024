@@ -38,11 +38,11 @@ namespace CSI.IBTA.BenefitsService.Controllers
 
         [HttpGet("ByEmployee")]
         [Authorize(Roles = nameof(Role.Employee))]
-        public async Task<IActionResult> GetEmployeeClaims(int page, int pageSize)
+        public async Task<IActionResult> GetEmployeeClaims(int page, int pageSize, int employeeId)
         {
-            var employeeId = User.GetEmployeeId();
+            var userId = User.GetEmployeeId();
 
-            if (employeeId == null)
+            if (userId == null || userId != employeeId)
             {
                 return Problem(title: "UserId claim not found or invalid");
             }
