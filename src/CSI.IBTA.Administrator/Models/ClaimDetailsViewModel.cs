@@ -6,5 +6,6 @@ namespace CSI.IBTA.Administrator.Models
     {
         public ClaimDto Claim { get; set; }
         public UserDto Consumer { get; set; }
+        public decimal EnrollmentBalance { get; set; }
     }
 }
