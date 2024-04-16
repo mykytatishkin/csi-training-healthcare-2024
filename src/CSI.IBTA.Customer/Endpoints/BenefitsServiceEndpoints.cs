@@ -13,5 +13,7 @@
         public const string InsurancePackagesByEmployer = "v1/InsurancePackage/GetFullByEmployer";
 
         public const string ActivePlansByNames = "v1/ActivePlansByNames?employerId={0}";
+
+        public const string FileClaim = "v1/Claims/FileClaim";
     }
 }

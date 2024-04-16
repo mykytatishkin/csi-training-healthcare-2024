@@ -1,9 +1,9 @@
-﻿function showClaims() {
+﻿function showClaims(employeeId, employerId) {
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
     }
 
-    route = '/Claims';
+    route = `/Claims?employeeId=${employeeId}&employerId=${employerId}`;
     fetchRoute(route, onSuccess, null);
 }
 
@@ -44,4 +44,33 @@ function dataValidation() {
     // If all data is valid, you can proceed with form submission or other actions
     console.log("Form data is valid. Submitting form...");
     // document.getElementById('file-claim-form').submit(); // Uncomment this line to submit the form
+}
+
+function saveFileClaimData() {
+    dataValidation();
+    var form = document.getElementById('file-claim-form');
+    var formData = new FormData(form);
+
+    if (form.checkValidity() == false) {
+        return;
+    }
+
+    fetch(`/Claims`, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(function (response) {
+            if (!response.ok) {
+                return response.json().then(function (json) {
+                    throw new Error(json.title);
+                });
+            }
+        })
+        .then(function (data) {
+            showClaims();
+        })
+        .catch(function (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+
 }
