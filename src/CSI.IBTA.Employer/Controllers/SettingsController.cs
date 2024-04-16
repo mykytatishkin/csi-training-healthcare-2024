@@ -1,6 +1,7 @@
 ﻿using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Employer.Models;
+using CSI.IBTA.Shared.Constants;
 using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,10 @@ namespace CSI.IBTA.Employer.Controllers
             _settingsClient = settingsClient;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index(int employerId)
         {
-            var res = await _settingsClient.GetClaimSetting(employerId);
+            var res = await _settingsClient.GetEmployerSetting(employerId, EmployerConstants.ClaimFilling);
 
             if (res.Error != null || res.Result == null)
             {

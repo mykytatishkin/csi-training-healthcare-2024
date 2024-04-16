@@ -17,6 +17,7 @@ namespace CSI.IBTA.Customer
             services.AddTransient<AuthorizedHttpClient>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IEmployeesClient, EmployeesClient>();
+            services.AddScoped<IEnrollmentsClient, EnrollmentsClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
             return services;
         }

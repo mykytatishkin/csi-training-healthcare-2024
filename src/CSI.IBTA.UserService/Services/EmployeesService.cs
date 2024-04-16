@@ -7,6 +7,8 @@ using AutoMapper;
 using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
 using CSI.IBTA.Shared.Utils;
+using CSI.IBTA.Shared.Constants;
+using System.Threading.Tasks;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -48,36 +50,66 @@ namespace CSI.IBTA.UserService.Services
 
         public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId)
         {
-            var employee = _userUnitOfWork.Users.GetSet()
-                .Include(x => x.Emails)
-                .Include(x => x.Phones)
-                .Include(x => x.Addresses)
-                .Include(x => x.Account)
-                .FirstOrDefault(x => x.Id == employeeId);
+            var employee = await _userUnitOfWork.Users.GetSet()
+                .Include(u => u.Addresses)
+                .Include(u => u.Account)
+                .Include(u => u.Phones)
+                .Include(u => u.Emails)
+                .FirstOrDefaultAsync(u => u.Id == employeeId);
 
-            if(employee == null) return new GenericResponse<FullEmployeeDto>(HttpErrors.ResourceNotFound, null);
-
-            return new GenericResponse<FullEmployeeDto>(null, _mapper.Map<FullEmployeeDto>(employee));
-        }
-
-        public async Task<GenericResponse<EmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
-        {
-            bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN);
-            if (hasSameSSN)
+            if (employee == null)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
             }
 
-            bool hasSameName = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Firstname == dto.FirstName && x.Lastname == dto.LastName);
-            if (hasSameName)
+            var address = employee.Addresses is { Count: > 0 } ? employee.Addresses[0] : null;
+
+            var employeeDto = new FullEmployeeDto(
+                employee.Id,
+                employee.Account.Username,
+                employee.Account.Password,
+                employee.Firstname,
+                employee.Lastname,
+                employee.SSN,
+                employee.Phones is { Count: > 0 } ? employee.Phones[0].PhoneNumber : "",
+                DateOnly.FromDateTime(employee.DateOfBirth.GetValueOrDefault()),
+                employee.Emails is { Count: > 0 } ? employee.Emails[0].EmailAddress : "",
+                address?.State ?? "",
+                address?.Street ?? "",
+                address?.City ?? "",
+                address?.Zip ?? "",
+                employee.EmployerId.GetValueOrDefault());
+
+            return new GenericResponse<FullEmployeeDto>(null, employeeDto);
+        }
+
+        public async Task<GenericResponse<FullEmployeeDto>> CreateEmployee(CreateEmployeeDto dto)
+        {
+            var addConsumerSetting = (await _userUnitOfWork.Settings.Find(s => s.EmployerId == dto.EmployerId
+                && s.Condition.Equals(EmployerConstants.AddConsumers))).SingleOrDefault();
+
+            if (addConsumerSetting == null || !addConsumerSetting.IsAllowed)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same name.", HttpStatusCode.BadRequest), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Administrator has forbidden adding consumers. Try again later.", HttpStatusCode.BadRequest), null);
+            }
+
+            bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN);
+            string invalidValues = "";
+            if (hasSameSSN)
+            {
+                invalidValues += "SSN";
             }
 
             bool hasSameUsername = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.Account.Username == dto.UserName);
             if (hasSameUsername)
             {
-                return new GenericResponse<EmployeeDto>(new HttpError("An employee already exists with the same username.", HttpStatusCode.BadRequest), null);
+                invalidValues += invalidValues == "" ? "" : ", ";
+                invalidValues += "username";
+            }
+
+            if (invalidValues != "")
+            {
+                return new GenericResponse<FullEmployeeDto>(new HttpError($"An employee already exists with the same: {invalidValues}.", HttpStatusCode.BadRequest), null);
             }
 
             var user = new User()
@@ -101,7 +133,13 @@ namespace CSI.IBTA.UserService.Services
                         Zip = dto.AddressZip,
                     }
                 },
-                Emails = new List<Email>(),
+                Emails = new List<Email>()
+                {
+                    new Email()
+                    {
+                        EmailAddress = dto.Email
+                    }
+                },
                 Phones = new List<Phone>
                 {
                     new Phone()
@@ -116,10 +154,50 @@ namespace CSI.IBTA.UserService.Services
 
             var success = await _userUnitOfWork.Users.Add(user);
             if (!success)
-                return new GenericResponse<EmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<EmployeeDto>(null, new EmployeeDto(user.Id, user.Firstname, user.Lastname, user.SSN, user.DateOfBirth));
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()?.EmailAddress, user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
+        }
+
+        public async Task<GenericResponse<FullEmployeeDto>> UpdateEmployee(UpdateEmployeeDto dto)
+        {
+            var user = await _userUnitOfWork.Users.GetSet()
+                .Include(u => u.Addresses)
+                .Include(u => u.Account)
+                .Include(u => u.Phones)
+                .Include(u => u.Emails)
+                .FirstOrDefaultAsync(u => u.Id == dto.Id);
+
+            if (user == null)
+            {
+                return new GenericResponse<FullEmployeeDto>(new HttpError("Employee not found", HttpStatusCode.NotFound), null);
+            }
+
+            bool hasSameSSN = await _userUnitOfWork.Users.GetSet().AnyAsync(x => x.SSN == dto.SSN && x.Id != dto.Id);
+            if (hasSameSSN)
+            {
+                return new GenericResponse<FullEmployeeDto>(new HttpError("An employee already exists with the same SSN.", HttpStatusCode.BadRequest), null);
+            }
+
+            if (!string.IsNullOrEmpty(dto.Password))
+            {
+                user.Account.Password = PasswordHasher.Hash(dto.Password);
+            }
+            user.Firstname = dto.FirstName;
+            user.Lastname = dto.LastName;
+            user.DateOfBirth = dto.DateOfBirth.ToDateTime(TimeOnly.MinValue);
+            user.SSN = dto.SSN;
+            user.Addresses[0].State = dto.AddressState;
+            user.Addresses[0].Street = dto.AddressStreet;
+            user.Addresses[0].City = dto.AddressCity;
+            user.Addresses[0].Zip = dto.AddressZip;
+            user.Phones[0].PhoneNumber = dto.PhoneNumber;
+            user.Emails[0].EmailAddress = dto.Email;
+
+            await _userUnitOfWork.CompleteAsync();
+
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()?.EmailAddress, user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
         }
 
         public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId)
