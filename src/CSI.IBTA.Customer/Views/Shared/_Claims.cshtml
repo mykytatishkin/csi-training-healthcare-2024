@@ -1,1 +1,30 @@
-﻿Claims partial view
+﻿<form enctype="multipart/form-data">
+    <div class="form-group" class="file-claim-content">
+        <div class class="form-row">
+            Plan
+            <select>
+                <optgroup label="Choose plan">
+                    <option>Test option</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="form-row">
+            Date of Service
+            <input type="date"/>
+        </div>
+        <div class="form-row">
+            Amount
+            <input type="number"/>
+        </div>
+        <div class="form-row">
+            Receipt
+            <input type="file"/>
+        </div>
+    </div>
+</form>
+<div class="form-buttons">
+    <div id="file-claim-errors" class="form-errors text-danger"></div>
+    <button class="btn btn-outline-primary">Cancel</button>
+    <button class="btn btn-primary">Submit</button>
+</div>
+   
