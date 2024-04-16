@@ -7,6 +7,10 @@
     fetchRoute(route, onSuccess, null);
 }
 
+function handleCancel() {
+    document.getElementById('file-claim-form').reset();
+}
+
 function dataValidation() {
     var plan = document.getElementById('plan').value;
     var dateOfService = document.getElementById('date-of-service').value;
