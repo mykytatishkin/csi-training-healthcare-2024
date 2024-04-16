@@ -1,30 +1,30 @@
-﻿<form enctype="multipart/form-data">
+﻿<form id="file-claim-form" enctype="multipart/form-data">
     <div class="form-group" class="file-claim-content">
-        <div class class="form-row">
+        <div class="form-row">
             Plan
-            <select>
-                <optgroup label="Choose plan">
-                    <option>Test option</option>
-                </optgroup>
+            <select id="plan" required>
+                <option value="">Choose plan</option>
+                <option value="test_option">Test option</option>
             </select>
         </div>
         <div class="form-row">
             Date of Service
-            <input type="date"/>
+            <input type="date" id="date-of-service" required />
         </div>
         <div class="form-row">
             Amount
-            <input type="number"/>
+            <input type="number" id="amount" required />
         </div>
         <div class="form-row">
             Receipt
-            <input type="file"/>
+            <input type="file" id="receipt" required />
         </div>
     </div>
 </form>
 <div class="form-buttons">
     <div id="file-claim-errors" class="form-errors text-danger"></div>
     <button class="btn btn-outline-primary">Cancel</button>
-    <button class="btn btn-primary">Submit</button>
+    <button onclick="dataValidation()" class="btn btn-primary">Submit</button>
 </div>
-   
+
+<script src="~/Scripts/claims-page.js"></script>
