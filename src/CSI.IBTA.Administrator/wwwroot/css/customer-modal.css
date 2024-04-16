@@ -1,0 +1,102 @@
+﻿@import url('global.css');
+
+.modal-buttons {
+    margin: 20px 15px 5px 0px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+    .modal-buttons button {
+        padding: 0px;
+        height: 30px;
+        width: 120px;
+        border-radius: 10px;
+    }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    padding: 0px 20px 20px 20px;
+    border: 1px solid #888;
+    max-width: 600px;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    animation-name: modalopen;
+    animation-duration: 0.4s;
+}
+
+    .modal-content span {
+        margin-top: 0px;
+        margin-left: auto
+    }
+
+    .modal-content p {
+        text-align: center;
+    }
+
+@keyframes modalopen {
+    from {
+        opacity: 0
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+
+.container-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.container-column {
+    width: 300px;
+}
+
+.container-row {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+    .container-row label {
+        width: 100px;
+        margin-right: 10px;
+    }
+
+    .container-row input {
+        flex: 1;
+    }

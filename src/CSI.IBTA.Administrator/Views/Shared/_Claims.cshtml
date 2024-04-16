@@ -26,6 +26,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/claims-home-page.css">
+    <link rel="stylesheet" href="~/css/customer-modal.css">
 </head>
 <div id="claims-view">
     <div id="table-employer" class="container">
@@ -83,7 +84,7 @@
                                     <a onclick="showClaimDetails(@item.Id)" class="highlight-on-hover"> @Html.DisplayFor(modelItem => item.ClaimNumber)</a>
                                 </td>
                                 <td>
-                                    <a onclick="" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployeeName)</a>
+                                    <a onclick="showCustomerInfoModal(@item.EmployeeId, 'customerInfoModal')" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployeeName)</a>
                                 </td>
                                 <td>
                                     <a onclick="redirectToEmployersMenu(@item.EmployerId)" class="highlight-on-hover">@Html.DisplayFor(modelItem => item.EmployerName)</a>
@@ -141,3 +142,8 @@
     </div>
 </div>
 
+
+<!-- Customer Info Modal -->
+<div id="customerInfoModal" class="modal" onclick="closeModal('customerInfoModal')">
+    
+</div>

@@ -55,6 +55,15 @@ namespace CSI.IBTA.Administrator.Clients
             return new GenericResponse<PagedEmployersResponse>(null, employers);
         }
 
+        public async Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId)
+        {
+            var response = await _httpClient.GetAsync($"{UserServiceApiEndpoints.Employees}/{employeeId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            var employees = JsonConvert.DeserializeObject<FullEmployeeDto>(responseContent);
+            return new GenericResponse<FullEmployeeDto>(null, employees);
+        }
+
         public async Task<GenericResponse<UserDto>> GetUser(int userId)
         {
             string requestUrl = string.Format(UserServiceApiEndpoints.User, userId);

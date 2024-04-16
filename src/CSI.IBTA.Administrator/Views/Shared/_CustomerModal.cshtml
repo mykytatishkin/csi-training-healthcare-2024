@@ -1,0 +1,58 @@
+﻿@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Utils.Extensions
+@model FullEmployeeDto
+<head>
+    <link rel="stylesheet" href="~/css/customer-modal.css">
+</head>
+<div id="modal-container" class="modal-content" onclick="event.stopPropagation();">
+    <span class="close" onclick="closeModal('customerInfoModal')">&times;</span>
+    <p>Customer information</p>
+    <div id="employee-profile">
+        <div class="container-columns">
+            <div class="container-column">
+                <div class="container-row">
+                    <label for="Firstname">First Name:</label>
+                    <span>@Model.FirstName</span>
+                </div>
+                <div class="container-row">
+                    <label for="Lastname">Last Name:</label>
+                    <span>@Model.LastName</span>
+                </div>
+                <div class="container-row">
+                    <label for="SSN">SSN:</label>
+                    <span>@Model.SSN</span>
+                </div>
+                <div class="container-row">
+                    <label for="Phone">Phone:</label>
+                    <span>@Model.PhoneNumber</span>
+                </div>
+                <div class="container-row">
+                    <label for="Email">Email:</label>
+                    <span>@Model.Email</span>
+                </div>
+                <div class="container-row">
+                    <label for="DateOfBirth">Date of Birth:</label>
+                    <span>@Model.DateOfBirth.ToAmericanDateOnlyFormat()</span>
+                </div>
+            </div>
+            <div class="container-column">
+                <div class="container-row">
+                    <label for="Street">Street:</label>
+                    <span>@Model.AddressStreet</span>
+                </div>
+                <div class="container-row">
+                    <label for="City">City:</label>
+                    <span>@Model.AddressCity</span>
+                </div>
+                <div class="container-row">
+                    <label for="State">State:</label>
+                    <span>@Model.AddressState</span>
+                </div>
+                <div class="container-row">
+                    <label for="ZipCode">Zip Code:</label>
+                    <span>@Model.AddressZip</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
