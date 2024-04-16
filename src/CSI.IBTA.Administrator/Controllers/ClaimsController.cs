@@ -30,7 +30,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 throw new Exception("Failed to retrieve claim details");
             }
 
-            var userRes = await _usersClient.GetUser(claimsRes.Result.EmployeeId);
+            var userRes = await _usersClient.GetUser(claimsRes.Result.Claim.EmployeeId);
             if (userRes.Result == null)
             {
                 throw new Exception("Failed to retrieve claim details");
@@ -38,8 +38,9 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var viewModel = new ClaimDetailsViewModel
             {
-                Claim = claimsRes.Result,
-                Consumer = userRes.Result
+                Claim = claimsRes.Result.Claim,
+                Consumer = userRes.Result,
+                EnrollmentBalance = claimsRes.Result.EnrollmentBalance
             };
 
             return PartialView("_ClaimDetails", viewModel);
