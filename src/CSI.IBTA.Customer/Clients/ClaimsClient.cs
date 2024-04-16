@@ -21,10 +21,9 @@ namespace CSI.IBTA.Customer.Clients
 
             var requestUrl = string.Format(BenefitsServiceEndpoints.ClaimsByEmployee, page, pageSize, employeeId);
             var response = await _httpClient.GetAsync(requestUrl);
-            var responseContent = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
-            var claims = JsonConvert.DeserializeObject<PagedClaimsResponse>(responseContent);
-            return new GenericResponse<PagedClaimsResponse>(null, claims);
+            var responseClaims = await response.Content.ReadFromJsonAsync<PagedClaimsResponse>();
+            return new GenericResponse<PagedClaimsResponse>(null, responseClaims);
         }
     }
 }

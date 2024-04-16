@@ -23,7 +23,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
         [Authorize(Roles = nameof(Role.Administrator))]
         public async Task<IActionResult> GetClaimsPaged(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "")
         {
-            var response = await _claimsService.GetClaims(page, pageSize, null, claimNumber, employerId, claimStatus);
+            var response = await _claimsService.GetClaims(page, pageSize, claimNumber: claimNumber, employerId: employerId, claimStatus: claimStatus);
 
             if (response.Error != null)
             {

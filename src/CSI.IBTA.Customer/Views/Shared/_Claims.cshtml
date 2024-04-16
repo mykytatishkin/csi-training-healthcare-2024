@@ -9,11 +9,6 @@
 @{
     var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
     var prevDisabled = Model.Page <= 1 ? "disabled" : "";
-
-    string GetFilter(string viewDataId)
-    {
-        return ViewData[viewDataId] == null ? "" : ViewData[viewDataId]!.ToString()!;
-    }
 }
 
 <head>

@@ -14,14 +14,12 @@ namespace CSI.IBTA.BenefitsService.Services
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
         private readonly IUserBalanceService _userBalanceService;
-        private readonly IDecodingService _decodingService;
 
-        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IUserBalanceService userBalanceService, IDecodingService decodingService)
+        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IUserBalanceService userBalanceService)
         {
             _benefitsUnitOfWork = benefitsUnitOfWork;
             _mapper = mapper;
             _userBalanceService = userBalanceService;
-            _decodingService = decodingService;
         }
 
         public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string employeeId = "", string claimStatus = "")
