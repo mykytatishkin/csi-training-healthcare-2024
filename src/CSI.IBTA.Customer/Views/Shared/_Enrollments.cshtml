@@ -8,6 +8,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/enrollments-partial-view.css">
+    <script src="~/Scripts/claims-page.js"></script>
 </head>
 
 <p id="title-text">Active Enrollments:</p>
@@ -45,7 +46,7 @@
                             @item.TotalBalance.ToString("0.##")$
                         </td>
                         <td>
-                            <button class="anchor-style-button">File a Claim</button>
+                            <button onclick ="showFileClaim('@Model.EmployeeId', '@Model.EmployerId', '@item.Id') "class="anchor-style-button">File a Claim</button>
                         </td>
                     </tr>
                 }

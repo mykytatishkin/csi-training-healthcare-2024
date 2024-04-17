@@ -2,13 +2,23 @@
     function onSuccess(data) {
         document.getElementById('main-partial-screen').innerHTML = data;
     }
-
     route = `/Claims?employeeId=${employeeId}&employerId=${employerId}`;
     fetchRoute(route, onSuccess, null);
 }
 
-function handleCancel() {
-    document.getElementById('file-claim-form').reset();
+function updateFileName(event) {
+    var input = event.target;
+    var fileName = input.files[0].name;
+    document.getElementById('fileNameDisplay').innerText = fileName;
+}
+
+function showFileClaim(employeeId, employerId, enrollmentId) {
+    function onSuccess(data) {
+        document.getElementById('main-partial-screen').innerHTML = data;
+    }
+
+    route = `/Claims/FileClaim?employeeId=${employeeId}&employerId=${employerId}&enrollmentId=${enrollmentId}`;
+    fetchRoute(route, onSuccess, null);
 }
 
 function dataValidation() {
@@ -27,8 +37,8 @@ function dataValidation() {
         errors.push("Please enter the date of service.");
     }
 
-    if (amount === "") {
-        errors.push("Please enter the amount.");
+    if (amount <= 0) {
+        errors.push("Amount should be greater than 0.");
     }
 
     if (receipt === "") {
@@ -40,37 +50,38 @@ function dataValidation() {
         errorContainer.innerHTML = errors.join('<br>');
         return false; // Prevent form submission
     }
-
-    // If all data is valid, you can proceed with form submission or other actions
-    console.log("Form data is valid. Submitting form...");
-    // document.getElementById('file-claim-form').submit(); // Uncomment this line to submit the form
 }
 
 function saveFileClaimData() {
-    dataValidation();
+    var errorContainer = document.getElementById('file-claim-errors');
+    errorContainer.innerHTML = ''
+    document.getElementById('file-claim-message').innerText = "";
+
+    let validationRes = dataValidation();
     var form = document.getElementById('file-claim-form');
     var formData = new FormData(form);
 
-    if (form.checkValidity() == false) {
+    if (validationRes == false) {
         return;
     }
 
-    fetch(`/Claims`, {
+    fetch(`/Claims/FileClaim`, {
         method: 'POST',
         body: formData,
     })
-        .then(function (response) {
-            if (!response.ok) {
-                return response.json().then(function (json) {
-                    throw new Error(json.title);
-                });
-            }
-        })
-        .then(function (data) {
-            showClaims();
-        })
-        .catch(function (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        if (data.result != true) {
+            showMessage('file-claim-message', data.error.title, "red");
+        }
+        else {
+            showMessage('file-claim-message', "Claim has been filed succesfully", "green");  
+        }
+    })
+    .catch(function (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    });
 
 }

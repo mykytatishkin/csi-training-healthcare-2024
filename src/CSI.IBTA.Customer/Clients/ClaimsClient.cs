@@ -13,6 +13,7 @@ namespace CSI.IBTA.Customer.Clients
         public ClaimsClient(AuthorizedHttpClient httpClient) 
         {
             _httpClient = httpClient;
+            _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
         }
         public async Task<GenericResponse<bool>> FileClaim(FileClaimDto dto)
         {
@@ -27,18 +28,15 @@ namespace CSI.IBTA.Customer.Clients
 
             using (var stream = new MemoryStream())
             {
-                if (dto.Receipt != null)
-                {
-                    await dto.Receipt.CopyToAsync(stream);
-                    stream.Position = 0;
-                    formData.Add(new StreamContent(stream), nameof(dto.Receipt), dto.Receipt.FileName);
-                }
+                await dto.Receipt.CopyToAsync(stream);
+                stream.Position = 0;
+                formData.Add(new StreamContent(stream), nameof(dto.Receipt), dto.Receipt.FileName);
 
-                var response = await _httpClient.PutAsync(BenefitsServiceEndpoints.FileClaim, formData);
+                var response = await _httpClient.PostAsync(BenefitsServiceEndpoints.FileClaim, formData);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorJson = await response.Content.ReadAsStringAsync();
+                    var errorJson = await response.Content.ReadAsStringAsync(); 
                     var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
                     var errorMessage = error?.Title ?? response.ReasonPhrase ?? defaultErrorMessage;
                     return new GenericResponse<bool>(new HttpError(errorMessage, response.StatusCode), false);

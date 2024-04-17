@@ -19,13 +19,21 @@ namespace CSI.IBTA.Customer.Controllers
             _claimsClient = claimsClient;
         }
 
-        public async Task<IActionResult> Index(int employerId, int employeeId)
+        public IActionResult Index(int employerId, int employeeId)
+        {
+            return PartialView("_Claims");
+        }
+
+        [Route("FileClaim")]
+        public async Task<IActionResult> FileClaimForm(int employerId, int employeeId, int enrollmentId)
         {
             var viewModel = new FileClaimViewModel()
             {
+                EmployerId = employerId,
+                EmployeeId = employeeId,
                 Enrollments = [],
                 Amount = 0,
-                EnrollmentId = 0,
+                EnrollmentId = enrollmentId,
                 DateOfService = DateOnly.FromDateTime(DateTime.UtcNow)
             };
 
@@ -42,23 +50,18 @@ namespace CSI.IBTA.Customer.Controllers
 
             if (enrollmentsResponse.Error != null)
             {
-                return PartialView("_Claims", viewModel);
+                return PartialView("_FileClaim", viewModel);
             }
 
+            viewModel.Enrollments = enrollmentsResponse.Result!.Enrollments;
 
-            viewModel = new FileClaimViewModel()
-            {
-                Enrollments = enrollmentsResponse.Result!.Enrollments,
-            };
-            
-
-            return PartialView("_Claims", viewModel);
+            return PartialView("_FileClaim", viewModel);
         }
 
         [HttpPost]
+        [Route("FileClaim")]
         public async Task<IActionResult> FileClaim(FileClaimViewModel model)
         {
-            var e = model.Enrollments;
             var res = await _claimsClient.FileClaim(new FileClaimDto(model.DateOfService, model.EnrollmentId, model.Amount, model.Receipt));
             return Json(res);
         }
