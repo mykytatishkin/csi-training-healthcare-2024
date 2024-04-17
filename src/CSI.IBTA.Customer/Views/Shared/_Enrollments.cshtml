@@ -4,6 +4,8 @@
 @{
     var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
     var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+
+    var totalBalance = Model.Enrollments.Sum(e => e.TotalBalance);
 }
 
 <head>
@@ -49,6 +51,10 @@
                         </td>
                     </tr>
                 }
+                <tr>
+                    <td colspan="4" id="total-balance">Total Balance:</td>
+                    <td colspan="2">@totalBalance$</td>
+                </tr>
             </tbody>
         </table>
 
