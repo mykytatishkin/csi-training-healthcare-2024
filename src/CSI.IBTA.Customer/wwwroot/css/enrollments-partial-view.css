@@ -52,3 +52,8 @@ th {
     .anchor-style-button:hover {
         text-decoration: none;
     }
+
+#total-balance {
+    text-align: right;
+    font-weight: 600;
+}
