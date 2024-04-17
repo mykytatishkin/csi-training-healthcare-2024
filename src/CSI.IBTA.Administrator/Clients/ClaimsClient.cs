@@ -18,13 +18,13 @@ namespace CSI.IBTA.Administrator.Clients
             _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
         }
 
-        public async Task<GenericResponse<ClaimDto?>> GetClaim(int claimId)
+        public async Task<GenericResponse<ClaimWithBalanceDto?>> GetClaim(int claimId)
         {
             var response = await _httpClient.GetAsync($"{BenefitsServiceApiEndpoints.Claims}/{claimId}");
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-            var claim = JsonConvert.DeserializeObject<ClaimDto>(responseContent);
-            return new GenericResponse<ClaimDto?>(null, claim);
+            var claim = JsonConvert.DeserializeObject<ClaimWithBalanceDto>(responseContent);
+            return new GenericResponse<ClaimWithBalanceDto?>(null, claim);
         }
 
         public async Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)
