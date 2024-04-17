@@ -82,6 +82,9 @@
             @Model.Claim.Amount
         </span>
     </div>
+    <div class="claim-details">
+        <button class="btn btn-primary" onclick="showReceiptModal('@Model.Claim.Receipt')">Receipt</button>
+    </div>
 </div>
 @if (Model.Claim.Status == ClaimStatus.Pending)
 {
@@ -119,4 +122,12 @@
             </div>
         </div>
     </form>
+</div>
+
+<!-- Receipt Modal -->
+<div id="receiptModal" class="modal" onclick="closeModal('receiptModal')">
+    <div class="modal-content" onclick="event.stopPropagation();">
+        <span class="close" onclick="closeModal('receiptModal')">&times;</span>
+        <img id="img-receipt" />
+    </div>
 </div>

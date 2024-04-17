@@ -65,3 +65,18 @@ function handleDenyClaim(claimId) {
             showError("modal-form-errors", "Server failed to modify the claim, try again");
         });
 }
+
+function showReceiptModal(encodedReceipt) {
+    showReceipt(encodedReceipt);
+    showModal('receiptModal');
+}
+
+function showReceipt(encodedReceipt) {
+    if (encodedReceipt != null && encodedReceipt != "") {
+        try {
+            window.atob(encodedReceipt);
+            document.getElementById('img-receipt').src = "data:image/png;base64," + encodedReceipt;
+            return;
+        } catch (e) { }
+    }
+}

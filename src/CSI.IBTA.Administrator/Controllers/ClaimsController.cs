@@ -92,7 +92,7 @@ namespace CSI.IBTA.Administrator.Controllers
             claimModel.Claim = new ClaimDto(claimModel.Claim.Id, claimModel.Claim.EmployeeId,
                 claimModel.Claim.EmployerId, claimModel.Claim.PlanId, claimModel.Claim.ClaimNumber,
                 claimModel.Claim.DateOfService, plan.Name, plan.PlanType.Name,
-                claimModel.Claim.Amount, claimModel.Claim.Status, claimModel.Claim.RejectionReason);
+                claimModel.Claim.Amount, claimModel.Claim.Status, claimModel.Claim.RejectionReason, claimModel.Claim.Receipt);
 
             var updateClaimDto = new UpdateClaimDto(claimModel.Claim.DateOfService, claimModel.Claim.PlanId, claimModel.Claim.Amount);
             var res = await _claimsClient.UpdateClaim(claimModel.Claim.Id, updateClaimDto);

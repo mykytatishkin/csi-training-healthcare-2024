@@ -99,20 +99,24 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    padding:0px 20px 20px 20px;
+    margin: auto;
+    padding: 0px 20px 20px 20px;
     border: 1px solid #888;
     max-width: 600px;
     width: 80%;
+    max-height: 100%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     animation-name: modalopen;
     animation-duration: 0.4s;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
     .modal-content span {
-        margin-top:0px;
-        margin-left:auto
+        margin-top: 0px;
+        margin-left: auto
     }
 
     .modal-content p {
@@ -142,3 +146,8 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+#img-receipt {
+    max-width: 100%;
+    max-height: 100%;
+}

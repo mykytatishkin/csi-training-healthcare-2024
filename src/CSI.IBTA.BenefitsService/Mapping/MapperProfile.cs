@@ -68,7 +68,8 @@ namespace CSI.IBTA.BenefitsService.Mapping
                     x.Enrollment.Plan.PlanType.Name,
                     x.Amount,
                     x.Status,
-                    x.RejectionReason)
+                    x.RejectionReason,
+                    x.Receipt)
                 );
 
             CreateMap<Enrollment, EnrollmentDto>()
