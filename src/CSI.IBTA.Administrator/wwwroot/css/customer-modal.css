@@ -1,20 +1,20 @@
 ﻿@import url('global.css');
 
-.modal-buttons {
+.info-modal-buttons {
     margin: 20px 15px 5px 0px;
     display: flex;
     justify-content: flex-end;
     gap: 20px;
 }
 
-    .modal-buttons button {
+    .info-modal-buttons button {
         padding: 0px;
         height: 30px;
         width: 120px;
         border-radius: 10px;
     }
 
-.modal {
+.info-modal {
     display: none;
     position: fixed;
     z-index: 1;
@@ -26,9 +26,9 @@
     background-color: rgba(0,0,0,0.4);
 }
 
-.modal-content {
+.info-modal-content {
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     padding: 0px 20px 20px 20px;
     border: 1px solid #888;
@@ -39,12 +39,13 @@
     animation-duration: 0.4s;
 }
 
-    .modal-content span {
+    .info-modal-content span {
         margin-top: 0px;
         margin-left: auto
     }
 
-    .modal-content p {
+    .info-modal-content p {
+        padding-top: 10px;
         text-align: center;
     }
 

@@ -29,7 +29,9 @@ namespace CSI.IBTA.Administrator.Controllers
                 throw new Exception("Failed to retrieve user details");
             }
 
-            return PartialView("_CustomerModal", userRes.Result);
+            var viewModel = new CustomerViewModel(userRes.Result);
+
+            return PartialView("_CustomerModal", viewModel);
         }
 
         [HttpGet("Details")]
