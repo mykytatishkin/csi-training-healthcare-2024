@@ -4,7 +4,6 @@ using CSI.IBTA.Customer.Types;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace CSI.IBTA.Customer.Clients
 {
@@ -17,6 +16,7 @@ namespace CSI.IBTA.Customer.Clients
             _httpClient = httpClient;
             _httpClient.SetBaseAddress("BenefitsServiceApiUrl");
         }
+
         public async Task<GenericResponse<bool>> FileClaim(FileClaimDto dto)
         {
             var defaultErrorMessage = "Failed to file a claim";
@@ -50,7 +50,6 @@ namespace CSI.IBTA.Customer.Clients
             
         public async Task<GenericResponse<PagedClaimsResponse>> GetClaimsByEmployee(int page, int pageSize, int employeeId)
         {
-
             var requestUrl = string.Format(BenefitsServiceEndpoints.ClaimsByEmployee, page, pageSize, employeeId);
             var response = await _httpClient.GetAsync(requestUrl);
             response.EnsureSuccessStatusCode();

@@ -2,11 +2,6 @@
 using CSI.IBTA.Customer.Interfaces;
 using CSI.IBTA.Customer.Models;
 using CSI.IBTA.Shared.DTOs;
-using CSI.IBTA.Shared.Entities;
-using CSI.IBTA.Customer.Clients;
-using CSI.IBTA.Customer.Interfaces;
-using CSI.IBTA.Customer.Models;
-using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSI.IBTA.Customer.Controllers
@@ -22,11 +17,6 @@ namespace CSI.IBTA.Customer.Controllers
             _enrollmentsClient = enrollmentsClient;
             _employeesClient = employeesClient;
             _claimsClient = claimsClient;
-        }
-
-        public IActionResult Index(int employerId, int employeeId)
-        {
-            return PartialView("_Claims");
         }
 
         [Route("FileClaim")]

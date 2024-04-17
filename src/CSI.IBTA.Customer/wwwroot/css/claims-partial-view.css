@@ -38,3 +38,8 @@ th {
 #title-text {
     margin-bottom: 0px;
 }
+
+#add-new-button-parent {
+    display: flex;
+    justify-content: flex-end;
+}
