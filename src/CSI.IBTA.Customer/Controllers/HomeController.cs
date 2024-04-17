@@ -52,7 +52,7 @@ namespace CSI.IBTA.Customer.Controllers
 
             if (res.Error != null || res.Result == null)
             {
-                return Problem(title: "Failed to retrieve employer");
+                return Problem(title: "Failed to retrieve employee");
             }
 
             return PartialView("_Home", res.Result);
