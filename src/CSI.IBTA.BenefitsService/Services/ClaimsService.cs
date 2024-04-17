@@ -22,13 +22,14 @@ namespace CSI.IBTA.BenefitsService.Services
             _userBalanceService = userBalanceService;
         }
 
-        public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string claimStatus = "")
+        public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string employeeId = "", string claimStatus = "")
         {
             var filteredClaims = _benefitsUnitOfWork.Claims.GetSet()
                 .Include(c => c.Enrollment.Plan.Package)
                 .Include(c => c.Enrollment.Plan.PlanType)
                 .Where(c => claimNumber == "" || c.ClaimNumber.Contains(claimNumber))
                 .Where(c => employerId == "" || c.Enrollment.Plan.Package.EmployerId.ToString() == employerId)
+                .Where(c => employeeId == "" || c.Enrollment.EmployeeId.ToString() == employeeId)
                 .Where(c => claimStatus == "" || c.Status == Enum.Parse<ClaimStatus>(claimStatus));
 
             var totalCount = filteredClaims.Count();
@@ -46,7 +47,7 @@ namespace CSI.IBTA.BenefitsService.Services
             return new GenericResponse<PagedClaimsResponse>(null, response);
         }
 
-        public async Task<GenericResponse<ClaimDto>> GetClaim(int claimId)
+        public async Task<GenericResponse<ClaimWithBalanceDto>> GetClaim(int claimId)
         {
             var claim = await _benefitsUnitOfWork.Claims
                 .Include(x => x.Enrollment.Plan)
@@ -54,9 +55,19 @@ namespace CSI.IBTA.BenefitsService.Services
                 .Include(c => c.Enrollment.Plan.Package)
                 .FirstOrDefaultAsync(x => x.Id == claimId);
 
-            if (claim == null) return new GenericResponse<ClaimDto>(HttpErrors.ResourceNotFound, null);
+            if (claim == null) return new GenericResponse<ClaimWithBalanceDto>(HttpErrors.ResourceNotFound, null);
 
-            return new GenericResponse<ClaimDto>(null, _mapper.Map<ClaimDto>(claim));
+            decimal balanceToDisplay = -1;
+            if (claim.Status == ClaimStatus.Pending)
+            {
+                var balanceResponse = await _userBalanceService.GetCurrentBalance(claim.EnrollmentId);
+                if (balanceResponse.Error != null) return new GenericResponse<ClaimWithBalanceDto>(balanceResponse.Error, null);
+                balanceToDisplay = balanceResponse.Result;
+            }
+
+            var claimInfo = new ClaimWithBalanceDto(_mapper.Map<ClaimDto>(claim), balanceToDisplay);
+
+            return new GenericResponse<ClaimWithBalanceDto>(null, claimInfo);
         }
 
         public async Task<GenericResponse<bool>> UpdateClaim(int claimId, UpdateClaimDto updateClaimDto)

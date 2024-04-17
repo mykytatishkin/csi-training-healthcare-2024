@@ -16,6 +16,10 @@ namespace CSI.IBTA.Shared.DTOs
         ClaimStatus Status,
         string? RejectionReason);
 
+    public record ClaimWithBalanceDto(
+        ClaimDto Claim,
+        decimal EnrollmentBalance);
+
     public record DenyClaimDto(string RejectionReason);
 
     public record PagedClaimsResponse(

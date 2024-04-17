@@ -1,1 +1,95 @@
-﻿Claim view
+﻿@using CSI.IBTA.Shared.Utils.Extensions
+@using CSI.IBTA.Shared.DataStructures
+@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Entities
+@using CSI.IBTA.Shared.Extensions
+@using CSI.IBTA.Customer.Constants
+@model ClaimsSearchViewModel
+
+@{
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/claims-partial-view.css">
+</head>
+
+<div class="claim-container">
+    <p id="title-text">Claims:</p>
+    <div id="add-new-button-parent">
+        <button class="btn btn-primary" disabled='@(@Model.EmployerClaimFilling == true ? null : "disabled")' onclick="openClaimForm(@Model.EmployerId, @(@Model.EmployerClaimFilling ? "true" : "false"))">File a Claim</button>
+    </div>
+    @if (Model.Claims.Any())
+    {
+        <div class="claims-table">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Claim Number</th>
+                        <th>Date of Service</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Claims)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ClaimNumber)
+                            </td>
+                            <td>
+                                @(item.DateOfService.ToString("MM/dd/yyyy") ?? "N/A")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PlanName)
+                            </td>
+                            <td>
+                                @item.Amount.ToString("0.##")$
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="pages">
+                <a onclick="showClaims(@Model.EmployeeId, @Model.EmployerId, @(Model.Page - 1))"
+                   class="btn btn-default @prevDisabled">
+                    &lt;&lt; Prev
+                </a>
+                @{
+                    var nextPages = Math.Max(PaginationConstants.PagesToShow, Model.Page + PaginationConstants.NextPages);
+                    var lastPage = Math.Min(nextPages, Model.TotalPages);
+                    var firstPage = Math.Max(1, lastPage - (PaginationConstants.NextPages + PaginationConstants.PrevPages));
+                    for (int i = firstPage; i <= lastPage; i++)
+                    {
+                        if (i == Model.Page || Model.Page == 0)
+                        {
+                            <span class="page-button selected">@Model.Page</span>
+                        }
+                        else
+                        {
+                            <a onclick="showClaims(@Model.EmployeeId, @Model.EmployerId, @(i))"
+                               class="btn btn-default page-button">
+                                @i
+                            </a>
+                        }
+                    }
+                }
+                <a onclick="showClaims(@Model.EmployeeId, @Model.EmployerId, @(Model.Page + 1))"
+                   class="btn btn-default @nextDisabled">
+                    Next >>
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>No claims found</p>
+    }
+</div>
