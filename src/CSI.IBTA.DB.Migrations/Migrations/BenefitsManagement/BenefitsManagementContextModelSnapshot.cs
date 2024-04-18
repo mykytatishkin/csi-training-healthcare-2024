@@ -36,7 +36,7 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
                     b.Property<string>("ClaimNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
+                    
                     b.Property<DateOnly>("DateOfService")
                         .HasColumnType("date");
 
@@ -46,10 +46,6 @@ namespace CSI.IBTA.DB.Migrations.Migrations.BenefitsManagement
 
                     b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Receipt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RejectionReason")
                         .HasColumnType("nvarchar(max)");
