@@ -104,7 +104,7 @@
     border: 1px solid #888;
     max-width: 600px;
     width: 80%;
-    max-height: 100%;
+    max-height: 90%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     animation-name: modalopen;
     animation-duration: 0.4s;
@@ -147,7 +147,18 @@
         cursor: pointer;
     }
 
+#img-receipt-wrapper {
+    position: absolute;
+    margin-top: 42px;
+    height: 90%;
+    width: 560px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #img-receipt {
-    max-width: 100%;
     max-height: 100%;
+    position: relative;
+    /*transform: translate(50%, 5%);*/
 }
