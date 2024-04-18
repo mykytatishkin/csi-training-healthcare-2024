@@ -57,7 +57,17 @@ namespace CSI.IBTA.Customer.Controllers
         [Route("FileClaim")]
         public async Task<IActionResult> FileClaim(FileClaimViewModel model)
         {
-            var res = await _claimsClient.FileClaim(new FileClaimDto(model.DateOfService, model.EnrollmentId, model.Amount, model.Receipt));
+            var encryptedResponse = await _employeesClient.GetEncryptedEmployeeSettings(model.EmployerId, model.EmployeeId);
+
+            if (encryptedResponse.Result == null)
+            {
+                return Problem(
+                    detail: encryptedResponse.Error?.Title,
+                    statusCode: (int)encryptedResponse.Error?.StatusCode!
+                );
+            }
+
+            var res = await _claimsClient.FileClaim(new FileClaimDto(model.DateOfService, model.EnrollmentId, model.Amount, model.Receipt, encryptedResponse.Result!));
             return Json(res);
         }
 
@@ -79,12 +89,14 @@ namespace CSI.IBTA.Customer.Controllers
 
             var claims = claimsResponse.Result.Claims;
 
+            var settingsResponse = await _employeesClient.GetEmployerClaimFillingSetting(employeeId);
+
             var viewModel = new ClaimsSearchViewModel
             {
                 Claims = claims,
                 EmployeeId = employeeId,
                 EmployerId = employerId,
-                EmployerClaimFilling = true,
+                EmployerClaimFilling = settingsResponse?.Result ?? false,
                 Page = pageNumber ?? 1,
                 TotalCount = claimsResponse.Result.TotalCount,
                 TotalPages = claimsResponse.Result.TotalPages,

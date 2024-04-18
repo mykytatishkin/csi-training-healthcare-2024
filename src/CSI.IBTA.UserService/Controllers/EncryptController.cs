@@ -40,5 +40,25 @@ namespace CSI.IBTA.UserService.Controllers
 
             return Ok(response.Result);
         }
+
+        [HttpGet("Employer/{employerId}/Employee/{employeeId}/Settings")]
+        [Authorize(Roles = $"{nameof(Role.EmployerAdmin)}, {nameof(Role.Employee)}")]
+        public async Task<IActionResult> EncodeEmployerEmployeeSettings(int employerId, int employeeId)
+        {
+            var authRes = await _authorizationService.AuthorizeAsync(User, (employeeId, employerId).GetResource(), PolicyConstants.EmployeeOwner);
+            if (!authRes.Succeeded) return Forbid();
+
+            var response = await _encodingService.GetEncodedEmployerEmployeeSettings(employerId, employeeId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
+            }
+
+            return Ok(response.Result);
+        }
     }
 }

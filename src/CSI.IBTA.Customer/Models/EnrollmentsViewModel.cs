@@ -10,5 +10,6 @@ namespace CSI.IBTA.Customer.Models
         public int Page { get; set; }
         public int TotalPages { get; set; }
         public int TotalCount { get; set; }
+        public bool AllowClaimFilling { get; set; }
     }
 }

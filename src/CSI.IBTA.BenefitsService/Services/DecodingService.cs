@@ -23,7 +23,7 @@ namespace CSI.IBTA.BenefitsService.Services
             _aesKey = aesKey;
         }
 
-        public GenericResponse<EmployerEmployeeDto> GetDecodedEmployerEmployee(byte[] encryptedData)
+        public GenericResponse<T> GetDecodedData<T>(byte[] encryptedData) where T : class 
         {
             using (Aes aes = Aes.Create())
             {
@@ -43,8 +43,8 @@ namespace CSI.IBTA.BenefitsService.Services
                         using (StreamReader reader = new StreamReader(memoryStream, Encoding.UTF8))
                         {
                             string decryptedJson = reader.ReadToEnd();
-                            var deserialized = JsonSerializer.Deserialize<EmployerEmployeeDto>(decryptedJson);
-                            return new GenericResponse<EmployerEmployeeDto>(null, deserialized);
+                            var deserialized = JsonSerializer.Deserialize<T>(decryptedJson);
+                            return new GenericResponse<T>(null, deserialized);
                         }
                     }
                 }

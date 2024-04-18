@@ -8,7 +8,6 @@ using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
 using CSI.IBTA.Shared.Utils;
 using CSI.IBTA.Shared.Constants;
-using System.Threading.Tasks;
 
 namespace CSI.IBTA.UserService.Services
 {
@@ -212,6 +211,19 @@ namespace CSI.IBTA.UserService.Services
                 .ToListAsync();
 
             return new GenericResponse<IEnumerable<UserDto>>(null, users.Select(_mapper.Map<UserDto>));
+        }
+
+        public async Task<GenericResponse<bool>> GetAllowClaimFilling(int employeeId)
+        {
+            var employee = await _userUnitOfWork.Users
+                .Include(x => x.Employer)
+                .Include(x => x.Employer.Settings)
+                .FirstOrDefaultAsync(x => x.Id == employeeId);
+
+            if(employee == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+
+            var setting = employee.Employer?.Settings.FirstOrDefault(x => x.Condition == EmployerConstants.ClaimFilling);
+            return new GenericResponse<bool>(null, setting?.IsAllowed ?? false);
         }
     }
 }

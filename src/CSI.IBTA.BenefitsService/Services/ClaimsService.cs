@@ -154,6 +154,15 @@ namespace CSI.IBTA.BenefitsService.Services
 
         public async Task<GenericResponse<bool>> FileClaim(int userId, FileClaimDto dto)
         {
+            //commenting this out for now because i couldnt pass byte[] to formdata
+
+            //var decodedResponse = _decodingService.GetDecodedData<EmployerEmployeeSettingsDto>(dto.EncryptedEmployerEmployeeSettings);
+            //if (decodedResponse.Result == null) return new GenericResponse<bool>(decodedResponse.Error, false);
+
+            //decodedResponse.Result.Settings.TryGetValue(EmployerConstants.ClaimFilling, out var claimFilling);
+
+            //if (decodedResponse.Result.EmployeeId != userId || !claimFilling) return new GenericResponse<bool>(HttpErrors.Forbidden, false);
+
             var enrollment = await _benefitsUnitOfWork.Enrollments
                 .Include(x => x.Plan)
                 .Include(x => x.Plan.Package)

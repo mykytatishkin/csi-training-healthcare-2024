@@ -4,6 +4,7 @@ using CSI.IBTA.Customer.Types;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace CSI.IBTA.Customer.Clients
 {
@@ -20,12 +21,19 @@ namespace CSI.IBTA.Customer.Clients
         public async Task<GenericResponse<bool>> FileClaim(FileClaimDto dto)
         {
             var defaultErrorMessage = "Failed to file a claim";
-            var formData = new MultipartFormDataContent()
+
+            //commenting this out for now because i couldnt pass byte[] to formdata
+
+            //var encryptedContent = new ByteArrayContent(dto.EncryptedEmployerEmployeeSettings);
+
+            var formData = new MultipartFormDataContent
             {
                 { new StringContent(dto.Amount.ToString()), nameof(dto.Amount) },
                 { new StringContent(dto.DateOfService.ToString()), nameof(dto.DateOfService) },
                 { new StringContent(dto.EnrollmentId.ToString()), nameof(dto.EnrollmentId) },
-               
+                 //commenting this out for now because i couldnt pass byte[] to formdata
+
+                //{ encryptedContent, nameof(dto.EncryptedEmployerEmployeeSettings) }
             };
 
             using (var stream = new MemoryStream())
@@ -38,7 +46,7 @@ namespace CSI.IBTA.Customer.Clients
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorJson = await response.Content.ReadAsStringAsync(); 
+                    var errorJson = await response.Content.ReadAsStringAsync();
                     var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
                     var errorMessage = error?.Title ?? response.ReasonPhrase ?? defaultErrorMessage;
                     return new GenericResponse<bool>(new HttpError(errorMessage, response.StatusCode), false);
@@ -47,7 +55,8 @@ namespace CSI.IBTA.Customer.Clients
                 return new GenericResponse<bool>(null, true);
             }
         }
-            
+
+
         public async Task<GenericResponse<PagedClaimsResponse>> GetClaimsByEmployee(int page, int pageSize, int employeeId)
         {
             var requestUrl = string.Format(BenefitsServiceEndpoints.ClaimsByEmployee, page, pageSize, employeeId);

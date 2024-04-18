@@ -4,6 +4,6 @@ namespace CSI.IBTA.BenefitsService.Interfaces
 {
     public interface IDecodingService
     {
-        GenericResponse<EmployerEmployeeDto> GetDecodedEmployerEmployee(byte[] encryptedData);
+        GenericResponse<T> GetDecodedData<T>(byte[] encryptedData) where T : class;
     }
 }
