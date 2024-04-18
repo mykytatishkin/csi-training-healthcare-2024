@@ -16,7 +16,7 @@
                         <option disabled selected="@(Model.EnrollmentId == 0)">Select enrollment</option>
                         @foreach (var item in Model.Enrollments)
                         {
-                            <option selected="@(item.Id == Model.EnrollmentId)" value="@item.Id">@item.Plan.Name (@item.PackageName)</option>
+                            <option selected="@(item.Id == Model.EnrollmentId)" value="@item.Id">@item.Plan.Name (@item.PackageName) - Total Balance: $@item.TotalBalance.ToString("F2")</option>
                         }
                     </select>
                 </div>
@@ -46,6 +46,6 @@
 }
 else
 {
-    <p>No active enrollements</p>
+    <p>No active enrollments</p>
 }
 <script src="~/Scripts/claims-page.js"></script>
