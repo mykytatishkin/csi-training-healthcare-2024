@@ -159,6 +159,10 @@
 
 #img-receipt {
     max-height: 100%;
+    max-width: 100%;
     position: relative;
-    /*transform: translate(50%, 5%);*/
+}
+
+#pdf-viewer {
+    z-index: 1;
 }

@@ -99,7 +99,7 @@ function showReceipt(encodedReceipt) {
                 });
             })
             .then(dataUrl => {
-                document.getElementById('pdfViewer').setAttribute('src', dataUrl);
+                document.getElementById('pdf-viewer').setAttribute('src', dataUrl);
             })
             .catch(error => {
                 console.error('Error loading PDF:', error);
