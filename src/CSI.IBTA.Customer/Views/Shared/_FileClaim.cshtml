@@ -1,0 +1,51 @@
+﻿@using CSI.IBTA.Shared.Utils.Extensions
+@model FileClaimViewModel
+<head>
+    <link rel="stylesheet" href="~/css/file-claim.css" asp-append-version="true" />
+</head>
+@if (Model.Enrollments.Any())
+{
+    <form id="file-claim-form" enctype="multipart/form-data">
+        @Html.HiddenFor(m => m.EmployeeId)
+        @Html.HiddenFor(m => m.EmployerId)
+        <div class="main-container">
+            <div class="form-group">
+                <div class="form-row">
+                    <label>Plan* :</label>
+                    <select name="EnrollmentId" id="plan" required>
+                        <option disabled selected="@(Model.EnrollmentId == 0)">Select enrollment</option>
+                        @foreach (var item in Model.Enrollments)
+                        {
+                            <option selected="@(item.Id == Model.EnrollmentId)" value="@item.Id">@item.Plan.Name (@item.PackageName) - Total Balance: $@item.TotalBalance.ToString("F2")</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Date of Service* :</label>
+                    <input name="DateOfService" type="date" value="@Model.DateOfService.ToString("yyyy-MM-dd")" id="date-of-service" required />
+                </div>
+                <div class="form-row">
+                    <label>Amount, $* :</label>
+                    <input name="Amount" type="number" value="@Model.Amount" id="amount" required />
+                </div>
+                <div class="receipt-row">
+                    <label>Receipt* :</label>
+                    <div class="receipt-name-display" id="fileNameDisplay"></div>
+                    <input type="file" name="Receipt" style="display: none;" onchange="updateFileName(event);" accept="image/*, application/pdf" id="receipt" />
+                    <input class="btn btn-primary" type="button" id="loadFile" value="Upload" onclick="document.getElementById('receipt').click();" />
+                </div>
+            </div>
+        </div>
+    </form>
+    <div id="file-claim-errors" class="form-errors text-danger"></div>
+    <div id="file-claim-message" class="form-errors"></div>
+    <div class="form-buttons">
+        <button onclick="showClaims(@Model.EmployeeId, @Model.EmployerId);" class="btn btn-outline-primary form-button">Cancel</button>
+        <button onclick="saveFileClaimData()" class="btn btn-primary form-button">Submit</button>
+    </div>
+}
+else
+{
+    <p>No active enrollments</p>
+}
+<script src="~/Scripts/claims-page.js"></script>

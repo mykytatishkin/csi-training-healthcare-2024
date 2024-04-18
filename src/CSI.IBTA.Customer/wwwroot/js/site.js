@@ -29,3 +29,9 @@ function showEmployerLogo() {
     route = `/EmployerLogo`;
     fetchRoute(route, onSuccess, null);
 }
+
+function showMessage(id, text, color) {
+    var element = document.getElementById(id);
+    element.innerText = text;
+    element.style.color = color; 
+}

@@ -2,8 +2,6 @@
 using CSI.IBTA.Employer.Interfaces;
 using CSI.IBTA.Shared.Constants;
 using CSI.IBTA.Shared.DTOs;
-using Newtonsoft.Json;
-using System.Net.Http;
 
 namespace CSI.IBTA.Employer.Clients
 {

@@ -1,4 +1,5 @@
-﻿using CSI.IBTA.Shared.DTOs;
+﻿using CSI.IBTA.Shared.Authorization.Types;
+using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.UserService.Authorization.Constants;
 using CSI.IBTA.UserService.Interfaces;
@@ -126,6 +127,27 @@ namespace CSI.IBTA.UserService.Controllers
                 return Problem(
                     statusCode: (int)response.Error.StatusCode,
                     title: response.Error.Title);
+            }
+
+            return Ok(response.Result);
+        }
+
+        [HttpGet("{employeeId}/ClaimFilling")]
+        [Authorize]
+        public async Task<IActionResult> GetClaimFillingSetting(int employeeId)
+        { 
+            var result = await _authorizationService.AuthorizeAsync(User, new EmployeeOwnedResource() { EmployeeId = employeeId }, PolicyConstants.EmployeeOwner);
+
+            if (!result.Succeeded) return Forbid();
+
+            var response = await _employeesService.GetAllowClaimFilling(employeeId);
+
+            if (response.Error != null)
+            {
+                return Problem(
+                    title: response.Error.Title,
+                    statusCode: (int)response.Error.StatusCode
+                );
             }
 
             return Ok(response.Result);

@@ -13,8 +13,9 @@ namespace CSI.IBTA.UserService.Services
         private readonly IUserUnitOfWork _userUnitOfWork;
         private readonly ILogger<EncodingService> _logger;
         private readonly byte[] _aesKey;
+        private readonly IEmployersService _employerService;
 
-        public EncodingService(IUserUnitOfWork userUnitOfWork, IConfiguration configuration, ILogger<EncodingService> logger)
+        public EncodingService(IUserUnitOfWork userUnitOfWork, IConfiguration configuration, ILogger<EncodingService> logger, IEmployersService employerService)
         {
             _userUnitOfWork = userUnitOfWork;
             _logger = logger;
@@ -25,24 +26,18 @@ namespace CSI.IBTA.UserService.Services
                 throw new InvalidOperationException("AesKey is missing in appsettings.json");
             }
             _aesKey = aesKey;
+            _employerService = employerService;
         }
 
-        public async Task<GenericResponse<byte[]>> GetEncodedEmployerEmployee(int employerId, int employeeId)
+        public GenericResponse<byte[]> Encode(object o)
         {
-            var employee = (await _userUnitOfWork.Users.Find(x => x.Id == employeeId && x.EmployerId == employerId))
-                .FirstOrDefault();
-
-            if (employee == null) return new GenericResponse<byte[]>(HttpErrors.ResourceNotFound, null);
-
-            var dto = new EmployerEmployeeDto(employerId, employeeId);
-
             using (MemoryStream memoryStream = new MemoryStream())
             using (Aes aes = Aes.Create())
             {
                 aes.Key = _aesKey;
                 aes.GenerateIV();
 
-                var json = JsonSerializer.Serialize(dto);
+                var json = JsonSerializer.Serialize(o);
                 var jsonBytes = Encoding.UTF8.GetBytes(json);
 
                 using (CryptoStream cryptoStream = new CryptoStream(memoryStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
@@ -57,6 +52,33 @@ namespace CSI.IBTA.UserService.Services
 
                 return new GenericResponse<byte[]>(null, ivPlusEncrypted);
             }
+        }
+
+        public async Task<GenericResponse<byte[]>> GetEncodedEmployerEmployee(int employerId, int employeeId)
+        {
+            var employee = (await _userUnitOfWork.Users.Find(x => x.Id == employeeId && x.EmployerId == employerId))
+                .FirstOrDefault();
+
+            if (employee == null) return new GenericResponse<byte[]>(HttpErrors.ResourceNotFound, null);
+
+            var dto = new EmployerEmployeeDto(employerId, employeeId);
+
+            return Encode(dto);
+        }
+
+        public async Task<GenericResponse<byte[]>> GetEncodedEmployerEmployeeSettings(int employerId, int employeeId)
+        {
+            var employee = (await _userUnitOfWork.Users.Find(x => x.Id == employeeId && x.EmployerId == employerId))
+               .FirstOrDefault();
+
+            if (employee == null) return new GenericResponse<byte[]>(HttpErrors.ResourceNotFound, null);
+
+            var settingsResponse = await _employerService.GetAllEmployerSettings(employerId);
+            if (settingsResponse.Result == null) new GenericResponse<byte[]>(settingsResponse.Error, null);
+
+            var dto = new EmployerEmployeeSettingsDto(employerId, employeeId, settingsResponse.Result?.ToDictionary(x => x.Condition, x => x.State)!);
+
+            return Encode(dto);
         }
     }
 }

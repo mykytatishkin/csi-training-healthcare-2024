@@ -20,6 +20,11 @@ namespace CSI.IBTA.Shared.DTOs
         int EmployerId,
         int EmployeeId);
 
+    public record EmployerEmployeeSettingsDto(
+        int EmployerId,
+        int EmployeeId,
+        Dictionary<string, bool> Settings);
+
     public record EmployerLogoDto(
         string? EncodedLogo);
 

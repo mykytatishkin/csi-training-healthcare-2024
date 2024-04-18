@@ -6,6 +6,7 @@ using CSI.IBTA.Shared.DTOs;
 using AutoMapper;
 using CSI.IBTA.Shared.DTOs.Errors;
 using System.Net;
+using CSI.IBTA.Shared.Constants;
 
 namespace CSI.IBTA.BenefitsService.Services
 {
@@ -14,12 +15,14 @@ namespace CSI.IBTA.BenefitsService.Services
         private readonly IBenefitsUnitOfWork _benefitsUnitOfWork;
         private readonly IMapper _mapper;
         private readonly IUserBalanceService _userBalanceService;
+        private readonly IDecodingService _decodingService;
 
-        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IUserBalanceService userBalanceService)
+        public ClaimsService(IBenefitsUnitOfWork benefitsUnitOfWork, IMapper mapper, IUserBalanceService userBalanceService, IDecodingService decodingService)
         {
             _benefitsUnitOfWork = benefitsUnitOfWork;
             _mapper = mapper;
             _userBalanceService = userBalanceService;
+            _decodingService = decodingService;
         }
 
         public async Task<GenericResponse<PagedClaimsResponse>> GetClaims(int page, int pageSize, string claimNumber = "", string employerId = "", string employeeId = "", string claimStatus = "")
@@ -150,6 +153,65 @@ namespace CSI.IBTA.BenefitsService.Services
             await _benefitsUnitOfWork.CompleteAsync();
 
             return new GenericResponse<bool>(null, true);
+        }
+
+        public async Task<GenericResponse<bool>> FileClaim(int userId, UploadFileClaimDto dto)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                dto.EncryptedEmployerEmployeeSettings.CopyTo(memoryStream);
+                var encodedData = memoryStream.ToArray();
+
+                var decodedResponse = _decodingService.GetDecodedData<EmployerEmployeeSettingsDto>(encodedData);
+                if (decodedResponse.Result == null) return new GenericResponse<bool>(decodedResponse.Error, false);
+
+                decodedResponse.Result.Settings.TryGetValue(EmployerConstants.ClaimFilling, out var claimFilling);
+
+                if (decodedResponse.Result.EmployeeId != userId || !claimFilling) return new GenericResponse<bool>(HttpErrors.Forbidden, false);
+            }
+
+            var enrollment = await _benefitsUnitOfWork.Enrollments
+                .Include(x => x.Plan)
+                .Include(x => x.Plan.Package)
+                .FirstOrDefaultAsync(x => x.Id == dto.EnrollmentId);
+
+            if (enrollment == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);
+
+            if (enrollment.EmployeeId != userId) return new GenericResponse<bool>(HttpErrors.Forbidden, false);
+
+            var balanceRes = await _userBalanceService.GetCurrentBalance(enrollment.Id);
+
+            if (balanceRes?.Result == null) return new GenericResponse<bool>(balanceRes?.Error, false);
+            if (balanceRes.Result < dto.Amount) return new GenericResponse<bool>(new HttpError("Insufficient balance", HttpStatusCode.BadRequest), false);
+
+            if (dto.Amount <= 0) return new GenericResponse<bool>(new HttpError("Amount must be greater than 0", HttpStatusCode.BadRequest), false);
+            if (dto.DateOfService > DateOnly.FromDateTime(DateTime.UtcNow)) return new GenericResponse<bool>(new HttpError("Date of service date must be less than current date", HttpStatusCode.BadRequest), false);
+            if (dto.DateOfService < DateOnly.FromDateTime(enrollment.Plan.Package.PlanStart)) return new GenericResponse<bool>(new HttpError("Date of service date must be greater than package start date", HttpStatusCode.BadRequest), false);
+
+            if (dto.Receipt == null || dto.Receipt.Length == 0)
+                return new GenericResponse<bool>(new HttpError("Receipt file is invalid", HttpStatusCode.BadRequest), false);
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                await dto.Receipt.CopyToAsync(memoryStream);
+                var bytes = memoryStream.ToArray();
+                var encodedReceipt = Convert.ToBase64String(bytes);
+
+                var claim = new Claim()
+                {
+                    ClaimNumber = "TempNumber",
+                    DateOfService = dto.DateOfService,
+                    EnrollmentId = dto.EnrollmentId,
+                    Amount = dto.Amount,
+                    Status = ClaimStatus.Pending,
+                    EncodedReceipt = encodedReceipt
+                };
+
+                await _benefitsUnitOfWork.Claims.Add(claim);
+                await _benefitsUnitOfWork.CompleteAsync();
+
+                return new GenericResponse<bool>(null, true);
+            }
         }
     }
 }
