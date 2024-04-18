@@ -4,7 +4,6 @@ using CSI.IBTA.Customer.Types;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.DTOs.Errors;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace CSI.IBTA.Customer.Clients
 {
@@ -22,40 +21,40 @@ namespace CSI.IBTA.Customer.Clients
         {
             var defaultErrorMessage = "Failed to file a claim";
 
-            //commenting this out for now because i couldnt pass byte[] to formdata
-
-            //var encryptedContent = new ByteArrayContent(dto.EncryptedEmployerEmployeeSettings);
-
-            var formData = new MultipartFormDataContent
+            using (var formData = new MultipartFormDataContent())
             {
-                { new StringContent(dto.Amount.ToString()), nameof(dto.Amount) },
-                { new StringContent(dto.DateOfService.ToString()), nameof(dto.DateOfService) },
-                { new StringContent(dto.EnrollmentId.ToString()), nameof(dto.EnrollmentId) },
-                 //commenting this out for now because i couldnt pass byte[] to formdata
+                formData.Add(new StringContent(dto.Amount.ToString()), nameof(dto.Amount));
+                formData.Add(new StringContent(dto.DateOfService.ToString()), nameof(dto.DateOfService));
+                formData.Add(new StringContent(dto.EnrollmentId.ToString()), nameof(dto.EnrollmentId));
 
-                //{ encryptedContent, nameof(dto.EncryptedEmployerEmployeeSettings) }
-            };
-
-            using (var stream = new MemoryStream())
-            {
-                await dto.Receipt.CopyToAsync(stream);
-                stream.Position = 0;
-                formData.Add(new StreamContent(stream), nameof(dto.Receipt), dto.Receipt.FileName);
-
-                var response = await _httpClient.PostAsync(BenefitsServiceEndpoints.FileClaim, formData);
-
-                if (!response.IsSuccessStatusCode)
+                using (var settingsStream = new MemoryStream(dto.EncryptedEmployerEmployeeSettings))
                 {
-                    var errorJson = await response.Content.ReadAsStringAsync();
-                    var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
-                    var errorMessage = error?.Title ?? response.ReasonPhrase ?? defaultErrorMessage;
-                    return new GenericResponse<bool>(new HttpError(errorMessage, response.StatusCode), false);
-                }
+                    var encryptedSettingsContent = new StreamContent(settingsStream);
+                    encryptedSettingsContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
 
-                return new GenericResponse<bool>(null, true);
+                    formData.Add(encryptedSettingsContent, nameof(dto.EncryptedEmployerEmployeeSettings), "settings.bin");
+                    
+                    using (var stream = new MemoryStream())
+                    {
+                        await dto.Receipt.CopyToAsync(stream);
+                        stream.Position = 0;
+                        formData.Add(new StreamContent(stream), nameof(dto.Receipt), dto.Receipt.FileName);
+
+                        var response = await _httpClient.PostAsync(BenefitsServiceEndpoints.FileClaim, formData);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            var errorJson = await response.Content.ReadAsStringAsync();
+                            var error = JsonConvert.DeserializeObject<ErrorResponse>(errorJson);
+                            var errorMessage = error?.Title ?? response.ReasonPhrase ?? defaultErrorMessage;
+                            return new GenericResponse<bool>(new HttpError(errorMessage, response.StatusCode), false);
+                        }
+
+                        return new GenericResponse<bool>(null, true);
+                    }
+                }
             }
         }
-
 
         public async Task<GenericResponse<PagedClaimsResponse>> GetClaimsByEmployee(int page, int pageSize, int employeeId)
         {

@@ -42,5 +42,6 @@ namespace CSI.IBTA.Shared.DTOs
         ClaimStatus Status);
 
     public record UpdateClaimDto(DateOnly DateOfService, int PlanId, decimal Amount);
-    public record FileClaimDto(DateOnly DateOfService, int EnrollmentId, decimal Amount, IFormFile Receipt, byte[]? EncryptedEmployerEmployeeSettings= null);
+    public record UploadFileClaimDto(DateOnly DateOfService, int EnrollmentId, decimal Amount, IFormFile Receipt, IFormFile EncryptedEmployerEmployeeSettings);
+    public record FileClaimDto(DateOnly DateOfService, int EnrollmentId, decimal Amount, IFormFile Receipt, byte[] EncryptedEmployerEmployeeSettings);
 }

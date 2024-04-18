@@ -1,5 +1,4 @@
 ﻿using CSI.IBTA.BenefitsService.Interfaces;
-using CSI.IBTA.DB.Migrations.Migrations;
 using CSI.IBTA.Shared.DTOs;
 using CSI.IBTA.Shared.Entities;
 using CSI.IBTA.Shared.Extensions;
@@ -130,7 +129,7 @@ namespace CSI.IBTA.BenefitsService.Controllers
 
         [HttpPost("FileClaim")]
         [Authorize(Roles = nameof(Role.Employee))]
-        public async Task<IActionResult> FileClaim([FromForm] FileClaimDto dto)
+        public async Task<IActionResult> FileClaim([FromForm] UploadFileClaimDto dto)
         {
             var userId = User.GetEmployeeId();
             if (userId == null) return Problem(title: "UserId claim not found or invalid");
