@@ -28,6 +28,7 @@ namespace CSI.IBTA.Customer.Controllers
                 TotalPages = 0,
                 EmployeeId = employeeId,
                 EmployerId = employerId,
+                AllowClaimFilling = false,
             };
 
             var encryptedEmployeeResponse = await _employeesClient.GetEncryptedEmployee(employerId, employeeId);
@@ -51,6 +52,8 @@ namespace CSI.IBTA.Customer.Controllers
                 return PartialView("_Enrollments", viewModel);
             }
 
+            var settingsResponse = await _employeesClient.GetEmployerClaimFillingSetting(employeeId);
+
             viewModel = new EnrollmentsViewModel()
             {
                 Enrollments = enrollmentsResponse.Result!.Enrollments,
@@ -58,7 +61,8 @@ namespace CSI.IBTA.Customer.Controllers
                 Page = enrollmentsResponse.Result.CurrentPage,
                 TotalPages = enrollmentsResponse.Result.TotalPages,
                 EmployerId = employerId,
-                EmployeeId = employeeId
+                EmployeeId = employeeId,
+                AllowClaimFilling = settingsResponse.Result
             };
 
             return PartialView("_Enrollments", viewModel);

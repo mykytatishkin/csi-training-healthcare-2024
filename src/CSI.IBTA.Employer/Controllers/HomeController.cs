@@ -1,9 +1,7 @@
 using CSI.IBTA.Employer.Extensions;
 using CSI.IBTA.Employer.Filters;
 using CSI.IBTA.Employer.Interfaces;
-using CSI.IBTA.Shared.Constants;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace CSI.IBTA.Employer.Controllers
 {

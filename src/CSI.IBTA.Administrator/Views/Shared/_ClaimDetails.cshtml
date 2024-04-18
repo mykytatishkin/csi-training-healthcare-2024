@@ -82,6 +82,15 @@
             @Model.Claim.Amount
         </span>
     </div>
+    @if (@Model.Claim.Status == ClaimStatus.Pending)
+    {
+        <div class="claim-details">
+            <label for="balance">Consumer enrollment balance, $:</label>
+            <span id="balance">
+                @Model.EnrollmentBalance
+            </span>
+        </div>
+    }
     <div class="claim-details">
         <button class="btn btn-primary" onclick="showReceiptModal('@Model.Claim.Receipt')">Receipt</button>
     </div>

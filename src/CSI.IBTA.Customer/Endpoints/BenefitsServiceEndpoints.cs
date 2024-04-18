@@ -2,6 +2,7 @@
 {
     public static class BenefitsServiceEndpoints
     {
+        public const string ClaimsByEmployee = "v1/Claims/ByEmployee/?page={0}&pageSize={1}&employeeId={2}";
         public const string ImportContributions = "v1/Contributions";
 
         public const string Enrollments = "v1/Enrollments/{0}";
@@ -13,5 +14,7 @@
         public const string InsurancePackagesByEmployer = "v1/InsurancePackage/GetFullByEmployer";
 
         public const string ActivePlansByNames = "v1/ActivePlansByNames?employerId={0}";
+
+        public const string FileClaim = "v1/Claims/FileClaim";
     }
 }

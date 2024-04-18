@@ -21,6 +21,20 @@ namespace CSI.IBTA.Administrator.Controllers
             _plansClient = plansClient;
         }
 
+        [HttpGet("EmployeeInfo")]
+        public async Task<IActionResult> GetEmployeeInfo(int employeeId)
+        {
+            var userRes = await _usersClient.GetEmployee(employeeId);
+            if (userRes.Result == null)
+            {
+                throw new Exception("Failed to retrieve user details");
+            }
+
+            var viewModel = new CustomerViewModel(userRes.Result);
+
+            return PartialView("_CustomerModal", viewModel);
+        }
+
         [HttpGet("Details")]
         public async Task<IActionResult> ClaimDetails(int claimId)
         {
@@ -31,7 +45,7 @@ namespace CSI.IBTA.Administrator.Controllers
                 throw new Exception("Failed to retrieve claim details");
             }
 
-            var userRes = await _usersClient.GetUser(claimsRes.Result.EmployeeId);
+            var userRes = await _usersClient.GetUser(claimsRes.Result.Claim.EmployeeId);
             if (userRes.Result == null)
             {
                 throw new Exception("Failed to retrieve claim details");
@@ -39,8 +53,9 @@ namespace CSI.IBTA.Administrator.Controllers
 
             var viewModel = new ClaimDetailsViewModel
             {
-                Claim = claimsRes.Result,
-                Consumer = userRes.Result
+                Claim = claimsRes.Result.Claim,
+                Consumer = userRes.Result,
+                EnrollmentBalance = claimsRes.Result.EnrollmentBalance
             };
 
             return PartialView("_ClaimDetails", viewModel);

@@ -15,9 +15,11 @@ namespace CSI.IBTA.Customer
             services.AddSingleton(Options.Create(jwtSettings));
             services.AddHttpContextAccessor();
             services.AddTransient<AuthorizedHttpClient>();
+            services.AddScoped<IClaimsClient, ClaimsClient>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IEmployeesClient, EmployeesClient>();
             services.AddScoped<IEnrollmentsClient, EnrollmentsClient>();
+            services.AddScoped<IClaimsClient, ClaimsClient>();
             services.AddHttpClient<IAuthClient, AuthClient>();
             return services;
         }
