@@ -7,6 +7,7 @@ namespace CSI.IBTA.Administrator.Interfaces
         Task<GenericResponse<IQueryable<EmployerDto>?>> GetEmployers();
         Task<GenericResponse<PagedEmployersResponse>> GetEmployers(int page, int pageSize, string nameFilter = "", string codeFilter = "");
         Task<GenericResponse<UserDto>> GetUser(int userId);
+        Task<GenericResponse<FullEmployeeDto>> GetEmployee(int employeeId);
         Task<GenericResponse<IEnumerable<UserDto>>> GetUsers(List<int> userIds);
         Task<GenericResponse<IQueryable<SettingsDto>?>> GetEmployerSettings(int employerId);
         Task<GenericResponse<IQueryable<SettingsDto>?>> UpdateEmployerSettings(int employerId, List<SettingsDto>? model);

@@ -1,0 +1,58 @@
+﻿@using CSI.IBTA.Shared.DTOs
+@using CSI.IBTA.Shared.Utils.Extensions
+@model CustomerViewModel
+<head>
+    <link rel="stylesheet" href="~/css/customer-modal.css">
+</head>
+<div id="info-modal-container" class="info-modal-content" onclick="event.stopPropagation();">
+    <span class="close" onclick="closeModal('customerInfoModal')">&times;</span>
+    <p>Customer information</p>
+    <div id="employee-profile">
+        <div class="container-columns">
+            <div class="container-column">
+                <div class="container-row">
+                    <label for="Firstname">First Name:</label>
+                    <span>@Model.Employee.FirstName</span>
+                </div>
+                <div class="container-row">
+                    <label for="Lastname">Last Name:</label>
+                    <span>@Model.Employee.LastName</span>
+                </div>
+                <div class="container-row">
+                    <label for="SSN">SSN:</label>
+                    <span>@Model.Employee.SSN</span>
+                </div>
+                <div class="container-row">
+                    <label for="Phone">Phone:</label>
+                    <span>@Model.Employee.PhoneNumber</span>
+                </div>
+                <div class="container-row">
+                    <label for="Email">Email:</label>
+                    <span>@Model.Employee.Email</span>
+                </div>
+                <div class="container-row">
+                    <label for="DateOfBirth">Date of Birth:</label>
+                    <span>@Model.Employee.DateOfBirth.ToAmericanDateOnlyFormat()</span>
+                </div>
+            </div>
+            <div class="container-column">
+                <div class="container-row">
+                    <label for="Street">Street:</label>
+                    <span>@Model.Employee.AddressStreet</span>
+                </div>
+                <div class="container-row">
+                    <label for="City">City:</label>
+                    <span>@Model.Employee.AddressCity</span>
+                </div>
+                <div class="container-row">
+                    <label for="State">State:</label>
+                    <span>@Model.Employee.AddressState</span>
+                </div>
+                <div class="container-row">
+                    <label for="ZipCode">Zip Code:</label>
+                    <span>@Model.Employee.AddressZip</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
