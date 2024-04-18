@@ -20,6 +20,20 @@ namespace CSI.IBTA.Administrator.Controllers
             _plansClient = plansClient;
         }
 
+        [HttpGet("EmployeeInfo")]
+        public async Task<IActionResult> GetEmployeeInfo(int employeeId)
+        {
+            var userRes = await _usersClient.GetEmployee(employeeId);
+            if (userRes.Result == null)
+            {
+                throw new Exception("Failed to retrieve user details");
+            }
+
+            var viewModel = new CustomerViewModel(userRes.Result);
+
+            return PartialView("_CustomerModal", viewModel);
+        }
+
         [HttpGet("Details")]
         public async Task<IActionResult> ClaimDetails(int claimId)
         {

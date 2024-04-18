@@ -111,3 +111,14 @@ function redirectToEmployersMenu(employerId) {
     route = '/Employers';
     fetchRoute(route, onSuccess, null);
 }
+
+function showCustomerInfoModal(employeeId, modalId) {
+    function onSuccess(data) {
+        var modal = document.getElementById(modalId);
+        modal.innerHTML = data;
+        modal.style.display = "block";
+    }
+
+    route = `/Claims/EmployeeInfo?employeeId=${employeeId}`;
+    fetchRoute(route, onSuccess, null);
+}
