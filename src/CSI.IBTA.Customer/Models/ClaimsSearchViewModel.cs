@@ -4,7 +4,7 @@ namespace CSI.IBTA.Customer.Models
 {
     public class ClaimsSearchViewModel
     {
-        public IEnumerable<ClaimDto> Claims { get; set; } = [];
+        public IEnumerable<ClaimShortDto> Claims { get; set; } = [];
         public int EmployeeId { get; set; }
         public int EmployerId { get; set; }
         public bool EmployerClaimFilling { get; set; }

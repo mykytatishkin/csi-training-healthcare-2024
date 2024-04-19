@@ -17,6 +17,19 @@ namespace CSI.IBTA.Shared.DTOs
         string? RejectionReason,
         string Receipt);
 
+    public record ClaimShortDto(
+        int Id,
+        int EmployeeId,
+        int EmployerId,
+        int PlanId,
+        string ClaimNumber,
+        DateOnly DateOfService,
+        string PlanName,
+        string PlanTypeName,
+        decimal Amount,
+        ClaimStatus Status,
+        string? RejectionReason);
+
     public record ClaimWithBalanceDto(
         ClaimDto Claim,
         decimal EnrollmentBalance);
@@ -24,7 +37,7 @@ namespace CSI.IBTA.Shared.DTOs
     public record DenyClaimDto(string RejectionReason);
 
     public record PagedClaimsResponse(
-        List<ClaimDto> Claims,
+        List<ClaimShortDto> Claims,
         int CurrentPage,
         int PageSize,
         int TotalPages,

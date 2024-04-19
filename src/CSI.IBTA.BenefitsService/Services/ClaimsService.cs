@@ -38,13 +38,25 @@ namespace CSI.IBTA.BenefitsService.Services
             var totalCount = filteredClaims.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            var claims = await filteredClaims
+            var claimDtos = await filteredClaims
                 .OrderBy(p => p.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .Select(x => new ClaimShortDto(
+                    x.Id,
+                    x.Enrollment.EmployeeId,
+                    x.Enrollment.Plan.Package.EmployerId,
+                    x.Enrollment.PlanId,
+                    x.ClaimNumber,
+                    x.DateOfService,
+                    x.Enrollment.Plan.Name,
+                    x.Enrollment.Plan.PlanType.Name,
+                    x.Amount,
+                    x.Status,
+                    x.RejectionReason)
+                )
                 .ToListAsync();
 
-            var claimDtos = claims.Select(_mapper.Map<ClaimDto>).ToList();
 
             var response = new PagedClaimsResponse(claimDtos, page, pageSize, totalPages, totalCount);
             return new GenericResponse<PagedClaimsResponse>(null, response);
