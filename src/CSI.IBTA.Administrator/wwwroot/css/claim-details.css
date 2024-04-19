@@ -166,3 +166,11 @@
 #pdf-viewer {
     z-index: 1;
 }
+
+#action-buttons {
+    display: flex;
+}
+
+#action-buttons button {
+    margin-right: 8px;
+}

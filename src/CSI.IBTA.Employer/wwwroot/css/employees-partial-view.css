@@ -264,3 +264,15 @@ th {
     .anchor-style-button:hover {
         text-decoration: none;
     }
+
+#cancel-button {
+    padding: 4px 12px !important;
+}
+
+.action-buttons {
+    display: flex;
+}
+
+.action-buttons button {
+    margin-right: 8px;
+}
