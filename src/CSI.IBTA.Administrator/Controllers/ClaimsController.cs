@@ -1,6 +1,7 @@
 using CSI.IBTA.Administrator.Clients;
 using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
+using CSI.IBTA.Administrator.Types;
 using CSI.IBTA.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -107,7 +108,7 @@ namespace CSI.IBTA.Administrator.Controllers
             claimModel.Claim = new ClaimDto(claimModel.Claim.Id, claimModel.Claim.EmployeeId,
                 claimModel.Claim.EmployerId, claimModel.Claim.PlanId, claimModel.Claim.ClaimNumber,
                 claimModel.Claim.DateOfService, plan.Name, plan.PlanType.Name,
-                claimModel.Claim.Amount, claimModel.Claim.Status, claimModel.Claim.RejectionReason);
+                claimModel.Claim.Amount, claimModel.Claim.Status, claimModel.Claim.RejectionReason, claimModel.Claim.Receipt);
 
             var updateClaimDto = new UpdateClaimDto(claimModel.Claim.DateOfService, claimModel.Claim.PlanId, claimModel.Claim.Amount);
             var res = await _claimsClient.UpdateClaim(claimModel.Claim.Id, updateClaimDto);
@@ -124,6 +125,13 @@ namespace CSI.IBTA.Administrator.Controllers
             };
 
             return PartialView("_ClaimDetails", viewModel);
+        }
+
+        [HttpPost("PdfReceipt")]
+        public IActionResult ViewPdf([FromBody] EncodedReceiptBody encodedReceipt)
+        {
+            byte[] pdfBytes = Convert.FromBase64String(encodedReceipt.EncodedReceipt);
+            return File(pdfBytes, "application/pdf");
         }
     }
 }

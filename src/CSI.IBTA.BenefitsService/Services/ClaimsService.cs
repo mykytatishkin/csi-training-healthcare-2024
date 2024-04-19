@@ -190,6 +190,10 @@ namespace CSI.IBTA.BenefitsService.Services
 
             if (dto.Receipt == null || dto.Receipt.Length == 0)
                 return new GenericResponse<bool>(new HttpError("Receipt file is invalid", HttpStatusCode.BadRequest), false);
+            
+            var claimCount = await _benefitsUnitOfWork.Claims.GetSet()
+                .Where(c => c.EnrollmentId == dto.EnrollmentId)
+                .CountAsync();
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -199,7 +203,7 @@ namespace CSI.IBTA.BenefitsService.Services
 
                 var claim = new Claim()
                 {
-                    ClaimNumber = "TempNumber",
+                    ClaimNumber = $"{enrollment.Id}{DateTime.UtcNow:yyyyMMdd}M{claimCount:000000}",
                     DateOfService = dto.DateOfService,
                     EnrollmentId = dto.EnrollmentId,
                     Amount = dto.Amount,
