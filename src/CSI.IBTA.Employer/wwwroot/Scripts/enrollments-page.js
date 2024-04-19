@@ -209,8 +209,8 @@ function showEnrollmentsSection() {
         let package = getItemById(fetchedPackages, enrollment.plan.packageId);
         html += '<tr>';
         html += '<td>' + enrollment.plan.name + ` (${package.name})` + '</td>';
-        html += '<td>' + enrollment.election + '</td>';
-        html += '<td>' + enrollment.contribution + '</td>';
+        html += '<td>' + enrollment.election + '$</td>';
+        html += '<td>' + enrollment.contribution + '$</td>';
         html += '<td>';
         if (!didPackageEnd(package)) {
             html += '<button class="btn btn-secondary update-button" ';
