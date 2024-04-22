@@ -35,3 +35,8 @@ function showMessage(id, text, color) {
     element.innerText = text;
     element.style.color = color; 
 }
+
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "block";
+}
