@@ -60,7 +60,6 @@ function dataValidation() {
 function saveFileClaimData() {
     var errorContainer = document.getElementById('file-claim-errors');
     errorContainer.innerHTML = ''
-    document.getElementById('file-claim-message').innerText = "";
 
     let validationRes = dataValidation();
     var form = document.getElementById('file-claim-form');
@@ -82,10 +81,7 @@ function saveFileClaimData() {
             showMessage('file-claim-message', data.error.title, "red");
         }
         else {
-            showMessage('file-claim-message', "Claim has been filed succesfully", "green");  
-            document.getElementById('amount').value = '';
-            document.getElementById('receipt').value = '';
-            document.getElementById('fileNameDisplay').innerText = "";
+            showModal('confirmModal');
         }
     })
     .catch(function (error) {
