@@ -216,8 +216,8 @@ namespace CSI.IBTA.UserService.Services
         public async Task<GenericResponse<bool>> GetAllowClaimFilling(int employeeId)
         {
             var employee = await _userUnitOfWork.Users
-                .Include(x => x.Employer)
-                .Include(x => x.Employer.Settings)
+                .Include(x => x.Employer!)
+                .Include(x => x.Employer!.Settings)
                 .FirstOrDefaultAsync(x => x.Id == employeeId);
 
             if(employee == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);

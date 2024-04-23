@@ -34,7 +34,7 @@ namespace CSI.IBTA.BenefitsService
             {
                 options.TokenValidationParameters.ValidAudience = configuration["JwtSettings:Audience"];
                 options.TokenValidationParameters.ValidIssuer = configuration["JwtSettings:Issuer"];
-                options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]));
+                options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]!));
             });
 
             services.AddAuthorization();
