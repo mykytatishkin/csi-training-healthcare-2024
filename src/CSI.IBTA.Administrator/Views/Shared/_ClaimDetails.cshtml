@@ -42,10 +42,13 @@
 
 <span class="border-label">Detail</span>
 <div class="details-container">
-    @if (Model.Claim.Status == ClaimStatus.Pending)
-    {
-        <button onclick="showEditClaim()" class="btn btn-primary smaller-width-button">Edit</button>
-    }
+    <div id="action-buttons">
+        @if (Model.Claim.Status == ClaimStatus.Pending)
+        {
+            <button onclick="showEditClaim()" class="btn btn-primary smaller-width-button">Edit</button>
+        }
+        <button class="btn btn-primary" onclick="showReceiptModal('@Model.Claim.Receipt')">Receipt</button>
+    </div>
     <div class="claim-details">
         <label for="consumer">Consumer:</label>
         <span id="consumer">
@@ -91,9 +94,6 @@
             </span>
         </div>
     }
-    <div class="claim-details">
-        <button class="btn btn-primary" onclick="showReceiptModal('@Model.Claim.Receipt')">Receipt</button>
-    </div>
 </div>
 @if (Model.Claim.Status == ClaimStatus.Pending)
 {
