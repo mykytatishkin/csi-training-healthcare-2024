@@ -87,7 +87,7 @@ namespace CSI.IBTA.Customer.Controllers
                     title: claimsResponse.Error.Title);
             }
 
-            var claims = claimsResponse.Result.Claims;
+            var claims = claimsResponse.Result!.Claims;
 
             var settingsResponse = await _employeesClient.GetEmployerClaimFillingSetting(employeeId);
 

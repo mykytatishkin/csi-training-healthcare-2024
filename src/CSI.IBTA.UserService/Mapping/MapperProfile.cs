@@ -72,7 +72,7 @@ public class MapperProfile : Profile
                 user.Id,
                 user.Firstname,
                 user.Lastname,
-                user.SSN,
+                user.SSN ?? "",
                 user.DateOfBirth,
                 user.Id));
 

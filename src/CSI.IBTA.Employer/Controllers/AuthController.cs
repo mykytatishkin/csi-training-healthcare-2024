@@ -33,7 +33,7 @@ namespace CSI.IBTA.Employer.Controllers
             var response = await _client.Authenticate(model.ToDto());
             if (!response.Result)
             {
-                ModelState.AddModelError("", response.Error.Title);
+                ModelState.AddModelError("", response.Error!.Title);
                 return View("Index");
             }
 

@@ -96,7 +96,7 @@ namespace CSI.IBTA.Administrator.Controllers
             var viewModel = new InsurancePackageFormViewModel
             {
                 EmployerId = employerId,
-                Package = packageDetails.Result,
+                Package = packageDetails.Result!,
                 AvailablePlanTypes = planTypes.Result
             };
 
