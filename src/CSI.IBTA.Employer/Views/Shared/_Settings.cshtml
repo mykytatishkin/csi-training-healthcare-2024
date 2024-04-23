@@ -16,19 +16,19 @@
                              (object)new { onChange = "onFollowAdminSettingClick();onAnySettingClick()" })
                     <span>Administrator Default</span>
                     @Html.RadioButtonFor(m => m.FollowAdminCondition, false,
-                             !Model.AdminCondition ? (object)new { disabled = "disabled" } 
+                             !Model.AdminCondition ? (object)new { disabled = "disabled" }
                              : (object)new { onChange = "onFollowAdminSettingClick();onAnySettingClick()" })
                     <span>Customize</span>
                 </div>
                 <div class="form-member-right">
                     @Html.RadioButtonFor(m => m.EmployerAdminCondition, true,
-                             !Model.AdminCondition || Model.FollowAdminCondition 
-                             ? (object)new { disabled = "disabled", onChange = "onAnySettingClick()" } 
+                             !Model.AdminCondition || Model.FollowAdminCondition
+                             ? (object)new { disabled = "disabled", onChange = "onAnySettingClick()" }
                              : (object)new { onChange = "onAnySettingClick()" })
                     <span>Allow</span>
                     @Html.RadioButtonFor(m => m.EmployerAdminCondition, false,
-                             !Model.AdminCondition || Model.FollowAdminCondition 
-                             ? (object)new { disabled = "disabled", onChange = "onAnySettingClick()" } 
+                             !Model.AdminCondition || Model.FollowAdminCondition
+                             ? (object)new { disabled = "disabled", onChange = "onAnySettingClick()" }
                              : (object)new { onChange = "onAnySettingClick()" })
                     <span>Prevent</span>
                 </div>
@@ -36,8 +36,10 @@
         </div>
         <div>
             <div id="setting-errors" class="text-danger"></div>
-            <button id="submit-button" class="align-left custom-button" onclick="saveSettings()" disabled type="button">Submit</button>
-            <button class="align-left custom-button secondary" onclick="showEmployees(@Model.EmployerId)" type="button">Cancel</button>
+            <div class="action-buttons">
+                <button id="submit-button" class="align-left custom-button" onclick="saveSettings()" disabled type="button">Submit</button>
+                <button class="align-left btn btn-outline-primary" onclick="showEmployees(@Model.EmployerId)" type="button">Cancel</button>
+            </div>
         </div>
     </form>
 </div>

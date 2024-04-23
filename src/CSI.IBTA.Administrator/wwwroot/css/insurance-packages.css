@@ -106,6 +106,10 @@ div.text-danger ul {
         background-color: var(--button-secondary-color);
     }
 
+.action-buttons button {
+    padding: 4px 12px;
+}
+
 select {
     padding: 0px 4px 0px 4px;
 }

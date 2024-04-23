@@ -213,7 +213,7 @@ function showEnrollmentsSection() {
         html += '<td>' + enrollment.contribution + '$</td>';
         html += '<td>';
         if (!didPackageEnd(package)) {
-            html += '<button class="btn btn-secondary update-button" ';
+            html += '<button class="btn btn-primary update-button" ';
             html += `onclick = "showEnrollmentModal(${enrollment.id}, ${enrollment.plan.id}, ${enrollment.election})">`;
             html += 'Update';
             html += '</button></td>';
