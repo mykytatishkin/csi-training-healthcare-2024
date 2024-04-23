@@ -2,6 +2,7 @@
 @model FileClaimViewModel
 <head>
     <link rel="stylesheet" href="~/css/file-claim.css" asp-append-version="true" />
+    <script src="~/Scripts/claims-page.js"></script>
 </head>
 @if (Model.Enrollments.Any())
 {
@@ -38,7 +39,6 @@
         </div>
     </form>
     <div id="file-claim-errors" class="form-errors text-danger"></div>
-    <div id="file-claim-message" class="form-errors"></div>
     <div class="form-buttons">
         <button onclick="showClaims(@Model.EmployeeId, @Model.EmployerId);" class="btn btn-outline-primary form-button">Cancel</button>
         <button onclick="saveFileClaimData()" class="btn btn-primary form-button">Submit</button>
@@ -48,4 +48,12 @@ else
 {
     <p>No active enrollments</p>
 }
-<script src="~/Scripts/claims-page.js"></script>
+
+<div id="confirmModal" class="modal" onclick="showClaims(@Model.EmployeeId, @Model.EmployerId);">
+    <div class="modal-content" onclick="event.stopPropagation();">
+        <p id="confirmModalText">Claim has been filed successfully</p>
+        <div class="modal-buttons">
+            <button onclick="showClaims(@Model.EmployeeId, @Model.EmployerId);" class="btn btn-outline-primary">Ok</button>
+        </div>
+    </div>
+</div>
