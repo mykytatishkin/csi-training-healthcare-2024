@@ -67,6 +67,7 @@
 
     .employer-users-section .action-buttons button {
         margin-bottom: 8px;
+        padding: 4px 12px;
     }
 
 .highlight {
@@ -122,6 +123,10 @@ div.text-danger ul {
     .custom-button.secondary {
         background-color: var(--button-secondary-color);
     }
+
+.user-information-section #generate-password-button {
+    padding: 0px 8px !important;
+}
 
 .error-text {
     color: var(--text-danger-color);

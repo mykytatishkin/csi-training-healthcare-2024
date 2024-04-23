@@ -57,3 +57,7 @@
     .custom-button.secondary {
         background-color: var(--button-secondary-color);
     }
+
+#plan-form-submit-btn {
+    padding: 4px 12px;
+}

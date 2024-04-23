@@ -112,7 +112,7 @@
 
             <div class="align-left action-buttons">
                 <button id="package-form-submit-btn" type="button" onclick="upsertInsurancePackage()" class="custom-button">@(Model.Package.Id == 0 ? "Create" : "Update")</button>
-                <button type="button" class="custom-button secondary" onclick="showEmployerPackagePlans(@Model.EmployerId)">Cancel</button>
+                <button type="button" class="btn btn-outline-primary" onclick="showEmployerPackagePlans(@Model.EmployerId)">Cancel</button>
             </div>
 
             <p class="text-align-left info-label text-danger" id="create-insurance-package-errors"></p>

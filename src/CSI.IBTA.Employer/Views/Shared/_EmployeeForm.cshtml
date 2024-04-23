@@ -63,7 +63,7 @@
 
                 <div class="form-member">
                     <label for="ZipCode">Zip Code:</label>
-                    <input id = "employee-zip" asp-for="Employee.AddressZip" type="text" required defaultvalue="@Model.Employee.AddressZip" oninput="setCustomValidity('')" />
+                    <input id="employee-zip" asp-for="Employee.AddressZip" type="text" required defaultvalue="@Model.Employee.AddressZip" oninput="setCustomValidity('')" />
                 </div>
                 <div id="error-Employee.AddressZip" class="text-danger form-validity-error"></div>
 
@@ -96,8 +96,10 @@
 
         <div>
             <div id="employee-errors" class="text-danger"></div>
-            <button id="submit-button" class="align-left custom-button" onclick="saveEmployeeData()" type="button">Submit</button>
-            <button class="align-left custom-button secondary" onclick="showEmployees(@Model.Employee.EmployerId)" type="button">Cancel</button>
+            <div class="action-buttons">
+                <button id="submit-button" class="align-left custom-button" onclick="saveEmployeeData()" type="button">Submit</button>
+                <button id="cancel-button" class="align-left btn btn-outline-primary" onclick="showEmployees(@Model.Employee.EmployerId)" type="button">Cancel</button>
+            </div>
         </div>
     </form>
 </div>
