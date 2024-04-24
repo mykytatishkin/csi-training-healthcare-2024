@@ -127,7 +127,7 @@ namespace CSI.IBTA.UserService.Controllers
                     statusCode: (int)getResponse.Error.StatusCode
                 );
             }
-            if (!IsNextSuperiorRole(HttpContext.User, getResponse.Result.Role))
+            if (!IsNextSuperiorRole(HttpContext.User, getResponse.Result!.Role))
             {
                 return Unauthorized("User is unauthorized");
             }

@@ -33,7 +33,7 @@ namespace CSI.IBTA.Administrator.Clients
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var employers = JsonConvert.DeserializeObject<List<EmployerDto>>(responseContent).AsQueryable();
+            var employers = JsonConvert.DeserializeObject<List<EmployerDto>>(responseContent)!.AsQueryable();
             return new GenericResponse<IQueryable<EmployerDto>?>(null, employers);
         }
 
@@ -106,11 +106,11 @@ namespace CSI.IBTA.Administrator.Clients
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Request unsuccessful");
-                return new GenericResponse<IQueryable<SettingsDto>?>(new HttpError(response.ReasonPhrase, response.StatusCode), null);
+                return new GenericResponse<IQueryable<SettingsDto>?>(new HttpError(response.ReasonPhrase!, response.StatusCode), null);
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent)!.AsQueryable();
 
             return new GenericResponse<IQueryable<SettingsDto>?>(null, employersSettings);
         }
@@ -129,7 +129,7 @@ namespace CSI.IBTA.Administrator.Clients
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent).AsQueryable();
+            var employersSettings = JsonConvert.DeserializeObject<List<SettingsDto>>(responseContent)!.AsQueryable();
 
             return new GenericResponse<IQueryable<SettingsDto>?>(null, employersSettings);
         }

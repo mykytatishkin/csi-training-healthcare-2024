@@ -69,7 +69,7 @@ namespace CSI.IBTA.UserService.Services
                 employee.Account.Password,
                 employee.Firstname,
                 employee.Lastname,
-                employee.SSN,
+                employee.SSN!,
                 employee.Phones is { Count: > 0 } ? employee.Phones[0].PhoneNumber : "",
                 DateOnly.FromDateTime(employee.DateOfBirth.GetValueOrDefault()),
                 employee.Emails is { Count: > 0 } ? employee.Emails[0].EmailAddress : "",
@@ -156,7 +156,7 @@ namespace CSI.IBTA.UserService.Services
                 return new GenericResponse<FullEmployeeDto>(new HttpError("Server failed to save changes", HttpStatusCode.InternalServerError), null);
 
             await _userUnitOfWork.CompleteAsync();
-            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()?.EmailAddress, user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()!.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()!.EmailAddress, user.Addresses.FirstOrDefault()!.State, user.Addresses.FirstOrDefault()!.Street, user.Addresses.FirstOrDefault()!.City, user.Addresses.FirstOrDefault()!.Zip, (int)user.EmployerId));
         }
 
         public async Task<GenericResponse<FullEmployeeDto>> UpdateEmployee(UpdateEmployeeDto dto)
@@ -196,7 +196,7 @@ namespace CSI.IBTA.UserService.Services
 
             await _userUnitOfWork.CompleteAsync();
 
-            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()?.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()?.EmailAddress, user.Addresses.FirstOrDefault()?.State, user.Addresses.FirstOrDefault()?.Street, user.Addresses.FirstOrDefault()?.City, user.Addresses.FirstOrDefault()?.Zip, (int)user.EmployerId));
+            return new GenericResponse<FullEmployeeDto>(null, new FullEmployeeDto(user.Id, user.Account.Username, user.Account.Password, user.Firstname, user.Lastname, user.SSN, user.Phones.FirstOrDefault()!.PhoneNumber, DateOnly.FromDateTime(user.DateOfBirth.GetValueOrDefault()), user.Emails.FirstOrDefault()!.EmailAddress, user.Addresses.FirstOrDefault()!.State, user.Addresses.FirstOrDefault()!.Street, user.Addresses.FirstOrDefault()!.City, user.Addresses.FirstOrDefault()!.Zip, (int)user.EmployerId!));
         }
 
         public async Task<GenericResponse<IEnumerable<UserDto>>> GetEmployeesByUsernames(List<string> usernames, int employerId)
@@ -216,8 +216,8 @@ namespace CSI.IBTA.UserService.Services
         public async Task<GenericResponse<bool>> GetAllowClaimFilling(int employeeId)
         {
             var employee = await _userUnitOfWork.Users
-                .Include(x => x.Employer)
-                .Include(x => x.Employer.Settings)
+                .Include(x => x.Employer!)
+                .Include(x => x.Employer!.Settings)
                 .FirstOrDefaultAsync(x => x.Id == employeeId);
 
             if(employee == null) return new GenericResponse<bool>(HttpErrors.ResourceNotFound, false);

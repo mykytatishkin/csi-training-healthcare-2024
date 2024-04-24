@@ -113,7 +113,7 @@ namespace CSI.IBTA.Administrator.Controllers
             var updateClaimDto = new UpdateClaimDto(claimModel.Claim.DateOfService, claimModel.Claim.PlanId, claimModel.Claim.Amount);
             var res = await _claimsClient.UpdateClaim(claimModel.Claim.Id, updateClaimDto);
 
-            if (res.Error != null || res.Result == null)
+            if (res.Error != null)
             {
                 return Problem(title: res.Error.Title);
             }

@@ -118,7 +118,7 @@ namespace CSI.IBTA.UserService.Controllers
                     title: userResponse.Error.Title);
             }
 
-            var result = await _authorizationService.AuthorizeAsync(User, userResponse.Result.EmployerId, PolicyConstants.EmployerAdminOwner);
+            var result = await _authorizationService.AuthorizeAsync(User, userResponse.Result!.EmployerId, PolicyConstants.EmployerAdminOwner);
             if (!result.Succeeded) return Forbid();
 
             var response = await _employeesService.UpdateEmployee(dto);

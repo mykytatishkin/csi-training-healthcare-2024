@@ -31,7 +31,7 @@ namespace CSI.IBTA.Customer.Controllers
             }
 
             var response = await _client.Authenticate(model.ToDto());
-            if (!response.Result)
+            if (response.Error != null)
             {
                 ModelState.AddModelError("", response.Error.Title);
                 return View("Index");

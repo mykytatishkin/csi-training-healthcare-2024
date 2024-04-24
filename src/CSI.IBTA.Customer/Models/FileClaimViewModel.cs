@@ -10,6 +10,6 @@ namespace CSI.IBTA.Customer.Models
         public DateOnly DateOfService {  get; set; }
         public int EnrollmentId {  get; set; }
         public decimal Amount { get; set; }
-        public IFormFile Receipt { get; set; }
+        public IFormFile Receipt { get; set; } = null!;
     }
 }

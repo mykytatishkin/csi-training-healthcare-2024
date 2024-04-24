@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Web.Mvc;
-using IExceptionFilter = Microsoft.AspNetCore.Mvc.Filters.IExceptionFilter;
-
-namespace CSI.IBTA.Administrator.Middleware
+﻿namespace CSI.IBTA.Administrator.Middleware
 {
     public class ErrorHandlingMiddleware
     {

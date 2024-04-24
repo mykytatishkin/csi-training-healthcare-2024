@@ -8,6 +8,6 @@ namespace CSI.IBTA.Administrator.Models
         public int PlanId { get; set; }
         public string Name { get; set; } = null!;
         public decimal Contribution { get; set; }
-        public PlanTypeDto PlanType { get; set; }
+        public PlanTypeDto PlanType { get; set; } = null!;
     }
 }

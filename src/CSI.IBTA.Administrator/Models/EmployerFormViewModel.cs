@@ -5,30 +5,22 @@ namespace CSI.IBTA.Administrator.Models
     public class EmployerFormViewModel
     {
         public int? Id { get; set; }
-        [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        [Required]
-        public string Code { get; set; }
+        public string Code { get; set; } = null!;
 
-        [Required]
         [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
 
-        [Required]
-        public string Street { get; set; }
+        public string Street { get; set; } = null!;
 
-        [Required]
-        public string City { get; set; }
+        public string City { get; set; } = null!;
 
-        [Required]
-        public string State { get; set; }
+        public string State { get; set; } = null!;
 
-        [Required]
-        public string ZipCode { get; set; }
+        public string ZipCode { get; set; } = null!;
 
-        [Required]
-        public string Phone { get; set; }
+        public string Phone { get; set; } = null!;
 
         public string? EncodedLogo { get; set; }
         public IFormFile? NewLogo { get; set; }
