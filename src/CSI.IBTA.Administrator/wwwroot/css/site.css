@@ -89,3 +89,9 @@ a {
 a:hover{
     color:dodgerblue
 }
+
+.add-emp-btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center; 
+}
