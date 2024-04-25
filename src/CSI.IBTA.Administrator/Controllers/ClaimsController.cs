@@ -89,7 +89,8 @@ namespace CSI.IBTA.Administrator.Controllers
             {
                 Claim = claimModel.Claim,
                 Consumer = claimModel.Consumer,
-                AvailablePlans = Plans.ToList()
+                AvailablePlans = Plans.ToList(),
+                EnrollmentBalance = claimModel.EnrollmentBalance,
             };
 
             return PartialView("_ClaimEditMenu", model);
@@ -121,7 +122,8 @@ namespace CSI.IBTA.Administrator.Controllers
             var viewModel = new ClaimDetailsViewModel
             {
                 Claim = claimModel.Claim,
-                Consumer = claimModel.Consumer
+                Consumer = claimModel.Consumer,
+                EnrollmentBalance = claimModel.EnrollmentBalance
             };
 
             return PartialView("_ClaimDetails", viewModel);
