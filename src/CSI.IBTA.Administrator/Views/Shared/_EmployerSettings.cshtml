@@ -1,44 +1,55 @@
 ﻿@model EmployerSettingsViewModel
 
+<head>
+    <link rel="stylesheet" href="~/css/settings.css">
+</head>
+@{
+    string AddSpaces(string val)
+    {
+        return string
+            .Concat(val.Select(x => Char.IsUpper(x) ? " " + x : x.ToString()))
+            .TrimStart(' ');
+    }
+}
 <form asp-controller="Employer" asp-action="AllSettings" method="post" id="employer-settings-form">
-    <table class="table">
+    <div>
+
         @Html.HiddenFor(m => m.EmployerId)
-        <tbody>
+        <div>
             @for (int i = 0; i < Model.EmployerSettings.Count; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        <tr><td colspan="2"><legend>Employer data management</legend></td></tr>
+                        <span class="border-label-settings">Employer data management</span>
                         break;
                     case 1:
-                        <tr><td colspan="2"><legend>Consumer data management</legend></td></tr>
+                        <span class="border-label-settings">Consumer data management</span>
                         break;
                 }
 
-                <tr>
-                    <td>
+                <div class="general-container">
+                    <div class="form-member">
                         @Html.HiddenFor(m => m.EmployerSettings[i].Condition)
-                        @Html.DisplayFor(m => m.EmployerSettings[i].Condition)
-                    </td>
-                    <td>
-                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, true) Allow
-                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, false) Prevent
-                    </td>
-                </tr>
+                        <p class="width-content">
+                            @AddSpaces(@Model.EmployerSettings[i].Condition)
+                        </p>
+                    </div>
+                    <div class="form-member">
+                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, true, new { @class = "spacing-x" }) Allow
+                        @Html.RadioButtonFor(m => m.EmployerSettings[i].State, false, new { @class = "spacing-x" }) Prevent
+                    </div>
+                </div>
             }
         @if (!ViewData.ModelState.IsValid)
         {
-            <tr>
-                <td></td>
-                <td>
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                </td>
-            </tr>
+            <div asp-validation-summary="All" class="text-danger"></div>
         }
 
-        </tbody>
-    </table>
+        </div>
+    </div>
 </form>
-<button class="align-left btn btn-outline-primary" onclick="showEmployerAdministration(@Model.EmployerId)">Cancel</button>
-<button class="align-left btn btn-primary" onclick="saveSettings()" type="button">Submit</button>
+<div class="form-submit">
+    <button class="align-left btn btn-outline-primary" onclick="showEmployerAdministration(@Model.EmployerId)">Cancel</button>
+    <button class="align-left btn btn-primary spacing-l" onclick="saveSettings()" type="button">Submit</button>
+</div>

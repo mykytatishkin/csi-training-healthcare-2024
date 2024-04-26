@@ -1,0 +1,49 @@
+﻿@import url('global.css');
+
+.border-label-settings {
+    position: relative;
+    left: 30px;
+    top: 20px;
+    background-color: var(--container-background-color);
+    padding: 0 10px;
+    text-align: left;
+}
+
+.general-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    margin: 10px;
+    padding: 22px;
+}
+.form-member {
+    margin-top: 10px;
+    margin-left: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+    .form-member label {
+        padding-right: 5px;
+    }
+.form-submit {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.width-content {
+    width: 125px;
+}
+
+.spacing-l {
+    margin-left: 10px;
+}
+.spacing-x {
+    margin-left: 10px;
+    margin-right: 10px;
+}
