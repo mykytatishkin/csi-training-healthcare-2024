@@ -31,7 +31,6 @@ function dataValidation() {
     var dateOfService = document.getElementById('date-of-service').value;
     var amount = document.getElementById('amount').value;
     var receipt = document.getElementById('receipt').value;
-
     var errors = [];
 
     if (plan === "") {
@@ -78,7 +77,7 @@ function saveFileClaimData() {
     })
     .then(function (data) {
         if (data.result != true) {
-            showMessage('file-claim-message', data.error.title, "red");
+            showMessage('file-claim-errors', data.error.title, "red");
         }
         else {
             showModal('confirmModal');

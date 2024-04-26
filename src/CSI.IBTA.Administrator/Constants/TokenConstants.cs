@@ -2,6 +2,6 @@
 {
     public static class TokenConstants
     {
-        public const string JwtTokenCookieName = "jwtToken";
+        public const string JwtTokenCookieName = "jwtAdminToken";
     }
 }

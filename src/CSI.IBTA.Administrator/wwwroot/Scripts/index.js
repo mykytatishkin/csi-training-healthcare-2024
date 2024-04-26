@@ -5,6 +5,7 @@
 
     document.getElementById("employerBtn").setAttribute("class", "left view-btn-active");
     document.getElementById("claimBtn").setAttribute("class", "right view-btn");
+    hideLogo();
 
     route = '/Employers';
     fetchRoute(route, onSuccess, null);
