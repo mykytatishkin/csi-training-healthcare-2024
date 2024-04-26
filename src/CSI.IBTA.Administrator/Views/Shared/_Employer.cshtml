@@ -11,14 +11,9 @@
 
 
 <div id="table-employer" class="container">
-    <div class="row">
-        <div class="col-sm-8">
-        </div>
-        <div class="col-sm-4">
-            <button class="btn btn-primary" onclick="showEmployerCreateForm()">Add New Employer</button>
-        </div>
+    <div class="add-emp-btn">
+        <button class="btn btn-primary" onclick="showEmployerCreateForm()">Add New Employer</button>
     </div>
-
     <span class="border-label" style="text-align:left">Search Criteria</span>
     <div class="row form-columns">
         <form asp-action="Employers" method="get" id="employer-search-form">
@@ -86,8 +81,6 @@
                    class="btn btn-default @nextDisabled">
                     Next
                 </a>
-                <div class="test">
-                </div>
             </div>
         </div>
     </div>
