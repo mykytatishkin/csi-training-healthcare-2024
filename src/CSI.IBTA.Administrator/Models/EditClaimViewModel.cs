@@ -9,5 +9,6 @@ namespace CSI.IBTA.Administrator.Models
         public ClaimDto Claim { get; set; } = null!;
         public UserDto Consumer { get; set; } = null!;
         public IList<PlanDto> AvailablePlans { get; set; } = new List<PlanDto>();
+        public decimal EnrollmentBalance { get; set; }
     }
 }
