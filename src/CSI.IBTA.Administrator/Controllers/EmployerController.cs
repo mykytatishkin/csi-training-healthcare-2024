@@ -41,7 +41,10 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpGet("CreateEmployerForm")]
         public IActionResult CreateEmployerForm()
         {
-            return PartialView("_EmployerForm", new EmployerFormViewModel());
+            return PartialView("_EmployerForm", new EmployerFormViewModel()
+            {
+                Id = 0
+            });
         }
 
         [HttpGet("UpdateEmployerForm")]
@@ -67,7 +70,7 @@ namespace CSI.IBTA.Administrator.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateEmployer(EmployerFormViewModel model)
         {
-            var res = await _userServiceClient.UpdateEmployer(model.ToUpdateEmployerDto(), model.Id ?? 0);
+            var res = await _userServiceClient.UpdateEmployer(model.ToUpdateEmployerDto(), model.Id);
             return Json(res);
         }
 

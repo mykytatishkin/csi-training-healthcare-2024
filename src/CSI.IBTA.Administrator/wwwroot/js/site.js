@@ -4,7 +4,6 @@
 }
 
 function showControl(id, name) {
-    console.log("ShowControl(" + id + "," + name + ")")
     $("#table-employer").hide();
     $("#control-employer").show();
     let a = document.getElementById("employer-id");

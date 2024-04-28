@@ -4,7 +4,7 @@ namespace CSI.IBTA.Administrator.Models
 {
     public class EmployerFormViewModel
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
 
         public string Code { get; set; } = null!;
