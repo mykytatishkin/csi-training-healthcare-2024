@@ -206,7 +206,7 @@ namespace CSI.IBTA.Administrator.Controllers
             var viewModel = new EmployerSettingsViewModel
             {
                 EmployerId = employerId,
-                EmployerSettings = response.Result.ToList()
+                EmployerSettings = response.Result.OrderBy(x => x.Condition).ToList()
             };
 
             return PartialView("_EmployerSettings", viewModel);
