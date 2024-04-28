@@ -4,10 +4,13 @@ using CSI.IBTA.Administrator.Interfaces;
 using CSI.IBTA.Administrator.Models;
 using CSI.IBTA.Administrator.Tests.Utils;
 using CSI.IBTA.Shared.DTOs;
+using CSI.IBTA.Shared.DTOs.Errors;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Moq.AutoMock;
+using System.Net;
 namespace CSI.IBTA.Administrator.Tests.Controllers;
 
 public class ClaimsControllerTests
@@ -77,5 +80,92 @@ public class ClaimsControllerTests
         model!.Claim.Should().Be(claimWithBalance.Claim);
         model!.Consumer.Should().Be(user);
         model!.EnrollmentBalance.Should().Be(claimWithBalance.EnrollmentBalance);
+    }
+
+    [Theory, AutoDataEx]
+    public async Task EditClaimPost_WhenPlansExist_ReturnsViewModel(ClaimDetailsViewModel inputModel)
+    {
+        //Arrange
+        var plans = _fixture.CreateMany<PlanDto>().ToList();
+        _container.GetMock<IPlansClient>()
+            .Setup(x => x.GetPlans(inputModel.Consumer.Id))
+            .ReturnsAsync(new GenericResponse<List<PlanDto>>(null, plans));
+
+        var target = _container.CreateInstance<ClaimsController>();
+
+        //Act
+        var result = await target.EditClaim(inputModel);
+
+        //Assert
+        result.Should().BeOfType<PartialViewResult>();
+        var resultTyped = result as PartialViewResult;
+        resultTyped!.Model.Should().BeOfType<EditClaimViewModel>();
+        var model = (EditClaimViewModel?)resultTyped.Model;
+        model.Should().NotBeNull();
+        model!.EnrollmentBalance.Should().Be(inputModel.EnrollmentBalance);
+        model!.Claim.Should().Be(inputModel.Claim);
+        model!.Consumer.Should().Be(inputModel.Consumer);
+        model!.AvailablePlans.Should().BeEquivalentTo(plans);
+    }
+
+    [Theory, AutoDataEx]
+    public async Task EditClaimPatch_WhenEditSucceeds_ReturnsViewModel(EditClaimViewModel inputModel)
+    {
+        //Arrange
+        var plan = _fixture.Build<PlanDto>()
+            .With(x => x.Id, inputModel.Claim.PlanId)
+            .Create();
+        _container.GetMock<IPlansClient>()
+            .Setup(x => x.GetPlan(inputModel.Claim.PlanId))
+            .ReturnsAsync(new GenericResponse<PlanDto>(null, plan));
+
+        var updateClaimDto = new UpdateClaimDto(inputModel.Claim.DateOfService, inputModel.Claim.PlanId, inputModel.Claim.Amount);
+        
+        _container.GetMock<IClaimsClient>()
+            .Setup(x => x.UpdateClaim(inputModel.Claim.Id, updateClaimDto))
+            .ReturnsAsync(new GenericResponse<bool>(null, true));
+
+        var target = _container.CreateInstance<ClaimsController>();
+
+        //Act
+        var result = await target.EditClaim(inputModel);
+
+        //Assert
+        result.Should().BeOfType<PartialViewResult>();
+        var resultTyped = result as PartialViewResult;
+        resultTyped!.Model.Should().BeOfType<ClaimDetailsViewModel>();
+        var model = (ClaimDetailsViewModel?)resultTyped.Model;
+        model.Should().NotBeNull();
+        model!.EnrollmentBalance.Should().Be(inputModel.EnrollmentBalance);
+        model!.Claim.Should().Be(inputModel.Claim);
+        model!.Consumer.Should().Be(inputModel.Consumer);
+    }
+
+    [Theory, AutoDataEx]
+    public async Task EditClaimPatch_WhenEditFails_ReturnsProblem(EditClaimViewModel inputModel)
+    {
+        //Arrange
+        var plan = _fixture.Build<PlanDto>()
+            .With(x => x.Id, inputModel.Claim.PlanId)
+            .Create();
+        _container.GetMock<IPlansClient>()
+            .Setup(x => x.GetPlan(inputModel.Claim.PlanId))
+            .ReturnsAsync(new GenericResponse<PlanDto>(null, plan));
+
+        var updateClaimDto = new UpdateClaimDto(inputModel.Claim.DateOfService, inputModel.Claim.PlanId, inputModel.Claim.Amount);
+
+        _container.GetMock<IClaimsClient>()
+            .Setup(x => x.UpdateClaim(inputModel.Claim.Id, updateClaimDto))
+            .ReturnsAsync(new GenericResponse<bool>(new HttpError("Bad request", HttpStatusCode.BadRequest), false));
+
+        var target = _container.CreateInstance<ClaimsController>();
+
+        //Act
+        var result = await target.EditClaim(inputModel);
+
+        //Assert
+        result.Should().BeOfType<ObjectResult>();
+        var resultTyped = result as ObjectResult;
+        resultTyped!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
     }
 }
